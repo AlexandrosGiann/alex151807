@@ -2,8 +2,8 @@ body {
     background-color: grey;
 }
 #alexander_organization_view1 {
-    margin-left: 50%;
-    margin-right: 50%;
+    margin-right:auto;
+    margin-left: auto;
 }
 h1 {
     color: green;
