@@ -1,23 +1,1081 @@
-<!DOCTYPE html>
-<html lang="en">
+<div id="resultsContainer" style="margin-top: 30px;"></div>
+
+                <div id="testSection" style="display: none; margin-top: 40px;">
+                    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 2px solid #667eea;">
+                        <h3 style="color: #333; margin-bottom: 20px; font-size: 1.5em;">🧪 Δοκιμή Μοντέλου</h3>
+                        <p style="color: #666; margin-bottom: 20px;">Εισάγετε τιμές για τα χαρακτηριστικά και δείτε την πρόβλεψη:</p>
+                        
+                        <div id="testInputs" style="margin-bottom: 20px;"></div>
+                        
+                        <button onclick="testModel()" 
+                                style="padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1em;">
+                            🔮 Πρόβλεψη
+                        </button>
+                        
+                        <div id="predictionResult" style="margin-top: 20px;"></div>
+                    </div>
+                </div><!DOCTYPE html>
+<html lang="el">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="CSS/decor.css">
-    <title>Alexander Organization Site</title>
+    <title>AI Tools Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Content Container */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Home Page */
+        .home-page {
+            text-align: center;
+            animation: fadeIn 0.8s ease-in;
+            display: none;
+        }
+
+        .home-page.active {
+            display: block;
+        }
+
+        .welcome-text {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .gear-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
+            animation: scaleIn 1s ease-out;
+        }
+
+        .gear-svg {
+            width: 300px;
+            height: 300px;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+            animation: rotateGear 10s linear infinite;
+        }
+
+        @keyframes rotateGear {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .news-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 1s ease-out;
+        }
+
+        .news-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .no-news {
+            color: #666;
+            font-size: 1.2em;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        /* Framework Page */
+        .framework-page {
+            display: none;
+        }
+
+        .framework-page.active {
+            display: block;
+        }
+
+        .page-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .page-header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .page-header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .category-btn {
+            padding: 15px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            animation: scaleIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .tool-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .tool-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .tool-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .tool-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tool-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-text {
+                font-size: 2em;
+            }
+
+            .page-header h1 {
+                font-size: 2em;
+            }
+
+            .gear-svg {
+                width: 200px;
+                height: 200px;
+            }
+
+            .search-section {
+                padding: 25px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav id="main-nav" aria-label="Main navigation">
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="framework.html">Framework</a></li>
-        </ul>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">🤖 AI Platform</div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" class="active" onclick="showPage('home')">Αρχική</a></li>
+                <li><a href="#" onclick="showPage('framework')">Framework</a></li>
+                <li><a href="#" onclick="showPage('articles')">Άρθρα</a></li>
+                <li><a href="#" onclick="showPage('tools')">Τα εργαλεία μας</a></li>
+            </ul>
+        </div>
     </nav>
-    <div id="alexander_organization_view1">
-        <h1>Καλωσήλθατε στην ιστοσελίδα μας</h1>
-        <img src="12_teeth_gear.png" style="width: 300px; height: 300px;">
+
+    <div class="content">
+        <!-- Home Page -->
+        <div class="home-page active" id="homePage">
+            <h1 class="welcome-text">Καλωσήλθατε στην ιστοσελίδα μας</h1>
+            
+            <div class="gear-container">
+                <svg class="gear-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Gear teeth -->
+                    <g fill="#4a5568">
+                        <!-- 12 teeth around the gear -->
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(0 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(30 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(60 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(90 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(120 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(150 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(180 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(210 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(240 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(270 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(300 100 100)"/>
+                        <path d="M 100 10 L 90 30 L 110 30 Z" transform="rotate(330 100 100)"/>
+                    </g>
+                    
+                    <!-- Main gear body -->
+                    <circle cx="100" cy="100" r="60" fill="#718096"/>
+                    
+                    <!-- Inner circle -->
+                    <circle cx="100" cy="100" r="45" fill="#4a5568"/>
+                    
+                    <!-- Red eye in center -->
+                    <circle cx="100" cy="100" r="25" fill="#dc2626"/>
+                    <circle cx="100" cy="100" r="15" fill="#7f1d1d"/>
+                    <circle cx="95" cy="95" r="5" fill="#fee2e2" opacity="0.7"/>
+                </svg>
+            </div>
+
+            <div class="news-section">
+                <h2 class="news-title">📢 Νέα & Ανακοινώσεις</h2>
+                <p class="no-news">Δεν υπάρχουν νέα προς το παρόν</p>
+            </div>
+        </div>
+
+        <!-- Framework Page -->
+        <div class="framework-page" id="frameworkPage">
+            <div class="page-header">
+                <h1>🤖 AI Tools Finder</h1>
+                <p class="subtitle">Βρες το ιδανικό AI εργαλείο για κάθε ανάγκη</p>
+            </div>
+
+            <div class="search-section">
+                <div class="category-grid" id="categoryGrid"></div>
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Αναζήτησε εργαλεία (π.χ. 'βίντεο', 'γραφή', 'εικόνες')...">
+            </div>
+
+            <div class="results-section" id="resultsSection"></div>
+        </div>
+
+        <!-- Articles Page -->
+        <div class="framework-page" id="articlesPage">
+            <div class="page-header">
+                <h1>📚 Άρθρα</h1>
+                <p class="subtitle">Διάβασε τα τελευταία μας άρθρα</p>
+            </div>
+
+            <div class="news-section">
+                <p class="no-news">Δεν υπάρχουν άρθρα προς το παρόν</p>
+            </div>
+        </div>
+
+        <!-- Tools Page -->
+        <div class="framework-page" id="toolsPage">
+            <div class="page-header">
+                <h1>🛠️ Τα Εργαλεία μας</h1>
+                <p class="subtitle">Χρησιμοποίησε τα δικά μας AI εργαλεία</p>
+            </div>
+
+            <div class="search-section">
+                <h2 style="color: #333; margin-bottom: 20px; font-size: 1.8em;">Naive Bayes Classifier</h2>
+                <p style="color: #666; margin-bottom: 30px; line-height: 1.6;">
+                    Φόρτωσε ένα Excel αρχείο ή δημιούργησε χειροκίνητα έναν πίνακα δεδομένων για να εκπαιδεύσεις έναν Naive Bayes ταξινομητή.
+                </p>
+
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 10px; color: #333; font-weight: 600;">📁 Φόρτωση Excel:</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" 
+                           style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; width: 100%; cursor: pointer;">
+                </div>
+
+                <div style="text-align: center; margin: 20px 0; color: #999; font-weight: 600;">ή</div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 10px; color: #333; font-weight: 600;">✏️ Χειροκίνητη Δημιουργία:</label>
+                    <button onclick="showManualInput()" 
+                            style="padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; transition: transform 0.3s ease;">
+                        Δημιουργία Πίνακα
+                    </button>
+                </div>
+
+                <div id="manualInputSection" style="display: none; margin-top: 30px;">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: #333;">Αριθμός Χαρακτηριστικών:</label>
+                        <input type="number" id="numFeatures" min="1" value="2" 
+                               style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; width: 150px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: #333;">Αριθμός Δειγμάτων:</label>
+                        <input type="number" id="numSamples" min="1" value="5" 
+                               style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; width: 150px;">
+                    </div>
+                    <button onclick="generateTable()" 
+                            style="padding: 10px 25px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Δημιουργία
+                    </button>
+                </div>
+
+                <div id="tableContainer" style="margin-top: 30px; overflow-x: auto;"></div>
+
+                <div id="trainSection" style="display: none; margin-top: 30px; text-align: center;">
+                    <button onclick="trainNaiveBayes()" 
+                            style="padding: 15px 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; font-weight: 600; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                        🚀 Εκπαίδευση Μοντέλου
+                    </button>
+                    <div id="resultsContainer" style="margin-top: 30px;"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    <h2>Νέα:</h2>
-    <h4>Δεν υπάρχουν ακόμα νέα.</h4>
-</body>
-</html>
+
+    <script>
+        const aiTools = [
+            {
+                name: "ChatGPT",
+                category: "Γραφή & Κείμενο",
+                description: "Το πιο δημοφιλές AI chatbot για συνομιλία, γραφή, προγραμματισμό και δημιουργική σκέψη.",
+                icon: "💬",
+                tags: ["Chatbot", "Γραφή", "Κώδικας"],
+                url: "https://chat.openai.com"
+            },
+            {
+                name: "Midjourney",
+                category: "Εικόνες & Τέχνη",
+                description: "Δημιουργία εκπληκτικών εικόνων από κείμενο με υψηλή ποιότητα και καλλιτεχνικό στυλ.",
+                icon: "🎨",
+                tags: ["Εικόνες", "Τέχνη", "Δημιουργικότητα"],
+                url: "https://midjourney.com"
+            },
+            {
+                name: "DALL-E 3",
+                category: "Εικόνες & Τέχνη",
+                description: "Δημιουργία εικόνων από την OpenAI με εξαιρετική κατανόηση των οδηγιών.",
+                icon: "🖼️",
+                tags: ["Εικόνες", "OpenAI", "Δημιουργικότητα"],
+                url: "https://openai.com/dall-e-3"
+            },
+            {
+                name: "Runway",
+                category: "Βίντεο",
+                description: "Επεξεργασία και δημιουργία βίντεο με AI, από text-to-video έως visual effects.",
+                icon: "🎬",
+                tags: ["Βίντεο", "Επεξεργασία", "Effects"],
+                url: "https://runwayml.com"
+            },
+            {
+                name: "ElevenLabs",
+                category: "Ήχος & Μουσική",
+                description: "Δημιουργία ρεαλιστικών φωνών AI και μετατροπή κειμένου σε ομιλία.",
+                icon: "🎙️",
+                tags: ["Φωνή", "Text-to-Speech", "Ήχος"],
+                url: "https://elevenlabs.io"
+            },
+            {
+                name: "GitHub Copilot",
+                category: "Προγραμματισμός",
+                description: "AI βοηθός προγραμματισμού που σε βοηθά να γράψεις κώδικα πιο γρήγορα.",
+                icon: "💻",
+                tags: ["Κώδικας", "Προγραμματισμός", "GitHub"],
+                url: "https://github.com/features/copilot"
+            },
+            {
+                name: "Notion AI",
+                category: "Παραγωγικότητα",
+                description: "AI βοηθός μέσα στο Notion για γραφή, οργάνωση και brainstorming.",
+                icon: "📝",
+                tags: ["Σημειώσεις", "Οργάνωση", "Γραφή"],
+                url: "https://notion.so/product/ai"
+            },
+            {
+                name: "Jasper",
+                category: "Γραφή & Κείμενο",
+                description: "AI copywriting για marketing, blog posts και περιεχόμενο social media.",
+                icon: "✍️",
+                tags: ["Marketing", "Copywriting", "Περιεχόμενο"],
+                url: "https://jasper.ai"
+            },
+            {
+                name: "Stable Diffusion",
+                category: "Εικόνες & Τέχνη",
+                description: "Open-source AI για δημιουργία εικόνων με πλήρη έλεγχο και customization.",
+                icon: "🌟",
+                tags: ["Εικόνες", "Open Source", "Customizable"],
+                url: "https://stability.ai"
+            },
+            {
+                name: "Grammarly",
+                category: "Γραφή & Κείμενο",
+                description: "AI βοηθός γραφής για διόρθωση, βελτίωση και τόνο κειμένων.",
+                icon: "📚",
+                tags: ["Διόρθωση", "Γραμματική", "Γραφή"],
+                url: "https://grammarly.com"
+            },
+            {
+                name: "Synthesia",
+                category: "Βίντεο",
+                description: "Δημιουργία AI βίντεο με virtual avatars χωρίς κάμερα.",
+                icon: "🎥",
+                tags: ["Βίντεο", "Avatars", "Παρουσιάσεις"],
+                url: "https://synthesia.io"
+            },
+            {
+                name: "Claude",
+                category: "Γραφή & Κείμενο",
+                description: "AI βοηθός από την Anthropic για συνομιλία, ανάλυση και δημιουργικές εργασίες.",
+                icon: "🤖",
+                tags: ["Chatbot", "Ανάλυση", "Γραφή"],
+                url: "https://claude.ai"
+            },
+            {
+                name: "Canva AI",
+                category: "Εικόνες & Τέχνη",
+                description: "AI εργαλεία μέσα στο Canva για σχεδιασμό και δημιουργία γραφικών.",
+                icon: "🎭",
+                tags: ["Design", "Γραφικά", "Εικόνες"],
+                url: "https://canva.com"
+            },
+            {
+                name: "Perplexity",
+                category: "Αναζήτηση & Έρευνα",
+                description: "AI μηχανή αναζήτησης που δίνει απαντήσεις με πηγές.",
+                icon: "🔍",
+                tags: ["Αναζήτηση", "Έρευνα", "Πληροφορίες"],
+                url: "https://perplexity.ai"
+            },
+            {
+                name: "Copy.ai",
+                category: "Γραφή & Κείμενο",
+                description: "Δημιουργία marketing copy, emails και περιεχομένου με AI.",
+                icon: "📧",
+                tags: ["Marketing", "Emails", "Copy"],
+                url: "https://copy.ai"
+            },
+            {
+                name: "Tome",
+                category: "Παραγωγικότητα",
+                description: "Δημιουργία παρουσιάσεων με AI σε λεπτά.",
+                icon: "📊",
+                tags: ["Παρουσιάσεις", "Slides", "Design"],
+                url: "https://tome.app"
+            },
+            {
+                name: "Murf AI",
+                category: "Ήχος & Μουσική",
+                description: "Text-to-speech με ρεαλιστικές φωνές για voiceovers.",
+                icon: "🎤",
+                tags: ["Φωνή", "Voiceover", "TTS"],
+                url: "https://murf.ai"
+            },
+            {
+                name: "Otter.ai",
+                category: "Ήχος & Μουσική",
+                description: "Αυτόματη μεταγραφή συναντήσεων και ηχογραφήσεων.",
+                icon: "🎧",
+                tags: ["Μεταγραφή", "Συναντήσεις", "Notes"],
+                url: "https://otter.ai"
+            },
+            {
+                name: "Fireflies.ai",
+                category: "Παραγωγικότητα",
+                description: "AI βοηθός για καταγραφή και ανάλυση συναντήσεων.",
+                icon: "🔥",
+                tags: ["Συναντήσεις", "Μεταγραφή", "Ανάλυση"],
+                url: "https://fireflies.ai"
+            },
+            {
+                name: "Descript",
+                category: "Βίντεο",
+                description: "Επεξεργασία βίντεο και podcast με text-based editing.",
+                icon: "✂️",
+                tags: ["Βίντεο", "Podcast", "Επεξεργασία"],
+                url: "https://descript.com"
+            }
+        ];
+
+        const categories = [...new Set(aiTools.map(tool => tool.category))];
+        let selectedCategory = null;
+        let searchTerm = '';
+
+        // Page Navigation
+        function showPage(pageName) {
+            // Hide all pages
+            document.getElementById('homePage').classList.remove('active');
+            document.getElementById('frameworkPage').classList.remove('active');
+            document.getElementById('articlesPage').classList.remove('active');
+            document.getElementById('toolsPage').classList.remove('active');
+
+            // Show selected page
+            if (pageName === 'home') {
+                document.getElementById('homePage').classList.add('active');
+            } else if (pageName === 'framework') {
+                document.getElementById('frameworkPage').classList.add('active');
+            } else if (pageName === 'articles') {
+                document.getElementById('articlesPage').classList.add('active');
+            } else if (pageName === 'tools') {
+                document.getElementById('toolsPage').classList.add('active');
+            }
+
+            // Update active nav link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Close mobile menu
+            document.getElementById('navLinks').classList.remove('active');
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        // Framework Functions
+        function initCategories() {
+            const grid = document.getElementById('categoryGrid');
+            
+            const allBtn = document.createElement('button');
+            allBtn.className = 'category-btn active';
+            allBtn.textContent = '🌐 Όλα';
+            allBtn.onclick = () => selectCategory(null);
+            grid.appendChild(allBtn);
+
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.textContent = getCategoryIcon(cat) + ' ' + cat;
+                btn.onclick = () => selectCategory(cat);
+                grid.appendChild(btn);
+            });
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                'Γραφή & Κείμενο': '✍️',
+                'Εικόνες & Τέχνη': '🎨',
+                'Βίντεο': '🎬',
+                'Ήχος & Μουσική': '🎵',
+                'Προγραμματισμός': '💻',
+                'Παραγωγικότητα': '⚡',
+                'Αναζήτηση & Έρευνα': '🔎'
+            };
+            return icons[category] || '🔧';
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+            
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            displayTools();
+        }
+
+        function displayTools() {
+            const container = document.getElementById('resultsSection');
+            container.innerHTML = '';
+
+            let filtered = aiTools;
+
+            if (selectedCategory) {
+                filtered = filtered.filter(tool => tool.category === selectedCategory);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(tool => 
+                    tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    tool.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    tool.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="no-results">😕 Δεν βρέθηκαν εργαλεία. Δοκίμασε διαφορετική αναζήτηση!</div>';
+                return;
+            }
+
+            filtered.forEach((tool, index) => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="tool-icon">${tool.icon}</div>
+                    <h3 class="tool-title">${tool.name}</h3>
+                    <p class="tool-description">${tool.description}</p>
+                    <div class="tool-tags">
+                        ${tool.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <a href="${tool.url}" target="_blank" class="tool-link">Επίσκεψη →</a>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            displayTools();
+        });
+
+        // Initialize
+        initCategories();
+        displayTools();
+
+        // Mobile menu event listener
+        document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+
+        // Naive Bayes Functions
+        let dataTable = [];
+        let trainedModel = null;
+        let featureNames = [];
+
+        function showManualInput() {
+            document.getElementById('manualInputSection').style.display = 'block';
+        }
+
+        function generateTable() {
+            const numFeatures = parseInt(document.getElementById('numFeatures').value);
+            const numSamples = parseInt(document.getElementById('numSamples').value);
+
+            if (numFeatures < 1 || numSamples < 1) {
+                alert('Παρακαλώ εισάγετε έγκυρους αριθμούς!');
+                return;
+            }
+
+            dataTable = [];
+            let tableHTML = '<table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">';
+            
+            // Header
+            tableHTML += '<thead><tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">';
+            for (let i = 0; i < numFeatures; i++) {
+                tableHTML += `<th style="padding: 12px; text-align: left;">Χαρακτηριστικό ${i + 1}</th>`;
+            }
+            tableHTML += '<th style="padding: 12px; text-align: left;">Κλάση</th></tr></thead>';
+            
+            // Body
+            tableHTML += '<tbody>';
+            for (let i = 0; i < numSamples; i++) {
+                tableHTML += `<tr style="border-bottom: 1px solid #e0e0e0;">`;
+                for (let j = 0; j < numFeatures; j++) {
+                    tableHTML += `<td style="padding: 10px;"><input type="text" id="f${i}_${j}" style="width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 4px;"></td>`;
+                }
+                tableHTML += `<td style="padding: 10px;"><input type="text" id="c${i}" style="width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 4px;"></td>`;
+                tableHTML += '</tr>';
+            }
+            tableHTML += '</tbody></table>';
+
+            document.getElementById('tableContainer').innerHTML = tableHTML;
+            document.getElementById('trainSection').style.display = 'block';
+        }
+
+        function createTestInputs(numFeatures) {
+            let inputsHTML = '<div style="display: grid; gap: 15px;">';
+            
+            for (let i = 0; i < numFeatures; i++) {
+                inputsHTML += `
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 600;">Χαρακτηριστικό ${i + 1}:</label>
+                        <input type="text" id="test_f${i}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                `;
+            }
+            
+            inputsHTML += '</div>';
+            document.getElementById('testInputs').innerHTML = inputsHTML;
+        }
+        
+    function trainNaiveBayes() {
+    	const numFeatures = parseInt(document.getElementById('numFeatures').value);
+    	const numSamples = parseInt(document.getElementById('numSamples').value);
+	
+    	const data = [];
+    	for (let i = 0; i < numSamples; i++) {
+        	const features = [];
+        	for (let j = 0; j < numFeatures; j++) {
+            	features.push(document.getElementById(`f${i}_${j}`).value.trim());
+        	}
+        	const cls = document.getElementById(`c${i}`).value.trim();
+        	if (!cls) {
+            	alert('Παρακαλώ συμπληρώστε όλες τις τιμές κλάσεων!');
+            	return;
+        	}
+        	data.push({ features, cls });
+    	}
+	
+    	const model = {
+        	classes: {},
+        	featureValues: Array.from({ length: numFeatures }, () => ({})),
+        	totalSamples: data.length,
+        	numFeatures
+    	};
+	
+    	// Υπολογισμός πιθανοτήτων
+    	data.forEach(row => {
+        	if (!model.classes[row.cls]) model.classes[row.cls] = { count: 0 };
+        	model.classes[row.cls].count++;
+	
+        	row.features.forEach((val, idx) => {
+            	if (!model.featureValues[idx][row.cls]) model.featureValues[idx][row.cls] = {};
+            	if (!model.featureValues[idx][row.cls][val]) model.featureValues[idx][row.cls][val] = 0;
+            	model.featureValues[idx][row.cls][val]++;
+        	});
+    	});
+	
+    	trainedModel = model;
+    	createTestInputs(numFeatures);
+	
+    	document.getElementById('resultsContainer').innerHTML = `
+        	<div style="margin-top:20px; padding:20px; background:#ecfdf5; border:2px solid #10b981; border-radius:8px;">
+            	✅ Το μοντέλο εκπαιδεύτηκε επιτυχώς!
+        	</div>
+    	`;
+    	document.getElementById('testSection').style.display = 'block';
+	}
+	
+
+        function testModel() {
+            if (!trainedModel) {
+                alert('Παρακαλώ εκπαιδεύστε πρώτα το μοντέλο!');
+                return;
+            }
+
+            // Collect test input
+            const testInput = [];
+            for (let i = 0; i < trainedModel.numFeatures; i++) {
+                const val = document.getElementById(`test_f${i}`).value.trim();
+                if (!val) {
+                    alert('Παρακαλώ συμπληρώστε όλα τα πεδία!');
+                    return;
+                }
+                testInput.push(val);
+            }
+
+            // Calculate probabilities for each class
+            const probabilities = {};
+            const classNames = Object.keys(trainedModel.classes);
+            
+            classNames.forEach(cls => {
+                // P(Class)
+                const classProb = trainedModel.classes[cls].count / trainedModel.totalSamples;
+                
+                // P(Features|Class)
+                let featureProb = 1;
+                testInput.forEach((val, idx) => {
+                    const featureCount = trainedModel.featureValues[idx][cls]?.[val] || 0;
+                    const classTotalCount = trainedModel.classes[cls].count;
+                    // Laplace smoothing
+                    const prob = (featureCount + 1) / (classTotalCount + Object.keys(trainedModel.featureValues[idx][cls] || {}).length + 1);
+                    featureProb *= prob;
+                });
+                
+                probabilities[cls] = classProb * featureProb;
+            });
+
+            // Normalize probabilities
+            const totalProb = Object.values(probabilities).reduce((a, b) => a + b, 0);
+            Object.keys(probabilities).forEach(cls => {
+                probabilities[cls] = (probabilities[cls] / totalProb) * 100;
+            });
+
+            // Find predicted class
+            const predictedClass = Object.keys(probabilities).reduce((a, b) => 
+                probabilities[a] > probabilities[b] ? a : b
+            );
+
+            // Display result
+            let resultHTML = '<div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 8px; border: 2px solid #0ea5e9;">';
+            resultHTML += '<h4 style="color: #0c4a6e; margin-bottom: 15px; font-size: 1.3em;">📈 Αποτέλεσμα Πρόβλεψης</h4>';
+            resultHTML += `<p style="color: #0c4a6e; font-size: 1.2em; margin-bottom: 15px;"><strong>Προβλεπόμενη Κλάση:</strong> <span style="background: #667eea; color: white; padding: 5px 15px; border-radius: 6px; font-weight: 700;">${predictedClass}</span></p>`;
+            
+            resultHTML += '<div style="margin-top: 15px;"><strong style="color: #0c4a6e;">Πιθανότητες:</strong></div>';
+            resultHTML += '<div style="display: grid; gap: 10px; margin-top: 10px;">';
+            
+            Object.keys(probabilities).sort((a, b) => probabilities[b] - probabilities[a]).forEach(cls => {
+                const prob = probabilities[cls].toFixed(2);
+                resultHTML += `
+                    <div style="background: white; padding: 12px; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #333; font-weight: 600;">${cls}</span>
+                            <span style="color: #667eea; font-weight: 700;">${prob}%</span>
+                        </div>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${prob}%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultHTML += '</div></div>';
+            
+            document.getElementById('predictionResult').innerHTML = resultHTML;
+        }
+
+        // Excel file handling
+        document.getElementById('excelFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                alert('Η λειτουργία φόρτωσης Excel θα είναι διαθέσιμη σύντομα! Χρησιμοποιήστε την χειροκίνητη δημιουργία πίνακα.');
+            }
+        });
+    </script>
