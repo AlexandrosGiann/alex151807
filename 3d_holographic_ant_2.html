@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ρεαλιστικό Ολογραφικό Μυρμήγκι</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #2d1b4e 100%);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; }
+        .info {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            color: #ff6b35; font-size: 32px; font-weight: bold;
+            text-shadow: 0 0 20px rgba(255,107,53,0.8), 0 0 40px rgba(255,107,53,0.5);
+            z-index: 10; text-align: center; letter-spacing: 2px;
+        }
+        .controls {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            color: #ffffff; background: rgba(0,0,0,0.5); padding: 15px 25px;
+            border-radius: 15px; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,107,53,0.3); z-index: 10; text-align: center; font-size: 14px;
+        }
+        #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="info">ΚΟΚΚΙΝΟ ΜΥΡΜΗΓΚΙ</div>
+    <div class="controls">Σύρετε για περιστροφή | Scroll για zoom</div>
+    <canvas id="particles"></canvas>
+    <div id="canvas-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Particle background
+        const particleCanvas = document.getElementById('particles');
+        const ctx = particleCanvas.getContext('2d');
+        particleCanvas.width = window.innerWidth;
+        particleCanvas.height = window.innerHeight;
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                x: Math.random() * particleCanvas.width,
+                y: Math.random() * particleCanvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 2
+            });
+        }
+        function animateParticles() {
+            ctx.fillStyle = 'rgba(10, 10, 26, 0.1)';
+            ctx.fillRect(0, 0, particleCanvas.width, particleCanvas.height);
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > particleCanvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > particleCanvas.height) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff6b35';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ff6b35';
+                ctx.fill();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Three.js Scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        mainLight.position.set(5, 10, 7);
+        mainLight.castShadow = true;
+        scene.add(mainLight);
+        const pointLight1 = new THREE.PointLight(0xff6b35, 1.5, 100);
+        pointLight1.position.set(8, 5, 8);
+        scene.add(pointLight1);
+        const pointLight2 = new THREE.PointLight(0xff4500, 1, 100);
+        pointLight2.position.set(-8, 3, 8);
+        scene.add(pointLight2);
+
+        // Ground
+        const groundGeo = new THREE.PlaneGeometry(20, 20);
+        const groundMat = new THREE.ShadowMaterial({ opacity: 0.3 });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // Materials
+        const headMaterial = new THREE.MeshPhongMaterial({ color: 0xd94a1a, emissive: 0x3a0a00, shininess: 80, transparent: true, opacity: 0.9 });
+        const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xff6b35, emissive: 0x4a1500, shininess: 60, transparent: true, opacity: 0.9 });
+        const legMaterial = new THREE.MeshPhongMaterial({ color: 0xc94000, emissive: 0x2a0800, shininess: 40, transparent: true, opacity: 0.85 });
+        const wireMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa66, wireframe: true, transparent: true, opacity: 0.15 });
+
+        const antGroup = new THREE.Group();
+
+        // THORAX (ακριβώς ίδιο με τον αρχικό σου κώδικα)
+        const thoraxGroup = new THREE.Group();
+        thoraxGroup.position.set(0, 0.05, 0);
+
+        const thorax1Geo = new THREE.SphereGeometry(0.3, 16, 16);
+        const thorax1 = new THREE.Mesh(thorax1Geo, bodyMaterial);
+        const thorax1Wire = new THREE.Mesh(thorax1Geo, wireMaterial);
+        thorax1.scale.set(0.9, 0.8, 1);
+        thorax1Wire.scale.set(0.9, 0.8, 1);
+        thorax1.position.set(0, 0, 0.3);
+        thorax1Wire.position.set(0, 0, 0.3);
+        thorax1.castShadow = true;
+        thoraxGroup.add(thorax1, thorax1Wire);
+
+        const thorax2Geo = new THREE.SphereGeometry(0.28, 16, 16);
+        const thorax2 = new THREE.Mesh(thorax2Geo, bodyMaterial);
+        const thorax2Wire = new THREE.Mesh(thorax2Geo, wireMaterial);
+        thorax2.scale.set(0.85, 0.75,0.9);
+        thorax2Wire.scale.set(0.85,0.75,0.9);
+        thorax2.position.set(0,-0.05,-0.2);
+        thorax2Wire.position.set(0,-0.05,-0.2);
+        thorax2.castShadow = true;
+        thoraxGroup.add(thorax2, thorax2Wire);
+
+        // HEAD (ακριβώς ίδιο)
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 0.05, 0.55);
+        const headGeo = new THREE.SphereGeometry(0.35, 16, 16);
+        const head = new THREE.Mesh(headGeo, headMaterial);
+        const headWire = new THREE.Mesh(headGeo, wireMaterial);
+        head.scale.set(1, 0.9, 1.1);
+        headWire.scale.set(1, 0.9, 1.1);
+        head.position.set(0, 0, 0.3);
+        headWire.position.set(0, 0, 0.3);
+        head.castShadow = true;
+        headGroup.add(head, headWire);
+
+        // Mandibles
+        const mandibleGeo = new THREE.SphereGeometry(0.08, 8, 8);
+        const mandible1 = new THREE.Mesh(mandibleGeo, legMaterial);
+        mandible1.scale.set(0.6, 0.5, 1.5);
+        mandible1.position.set(0.15, 0.05, 0.5);
+        mandible1.rotation.z = 0.3;
+        headGroup.add(mandible1);
+        const mandible2 = new THREE.Mesh(mandibleGeo, legMaterial);
+        mandible2.scale.set(0.6, 0.5, 1.5);
+        mandible2.position.set(-0.15, 0.05, 0.5);
+        mandible2.rotation.z = -0.3;
+        headGroup.add(mandible2);
+
+        // Eyes
+        const eyeGeo = new THREE.SphereGeometry(0.08, 8, 8);
+        const eyeMat = new THREE.MeshPhongMaterial({ color: 0x000000, emissive: 0x330000, shininess: 100 });
+        const eye1 = new THREE.Mesh(eyeGeo, eyeMat);
+        eye1.position.set(0.25, 0.15, 0.35);
+        headGroup.add(eye1);
+        const eye2 = new THREE.Mesh(eyeGeo, eyeMat);
+        eye2.position.set(-0.25, 0.15, 0.35);
+        headGroup.add(eye2);
+
+        thoraxGroup.add(headGroup);
+
+        // Antennae (ακριβώς ίδιες)
+        const antennaSegments = [];
+        [-1, 1].forEach(side => {
+            const antennaBase = new THREE.Group();
+            antennaBase.position.set(side * 0.15, 0.25, 0.4);
+            const scapeGeo = new THREE.CylinderGeometry(0.03, 0.025, 0.25, 8);
+            const scape = new THREE.Mesh(scapeGeo, legMaterial);
+            const scapePivot = new THREE.Group();
+            scape.position.set(0, 0.125,0);
+            scapePivot.rotation.x = -Math.PI / 6;
+            scapePivot.rotation.z = side * Math.PI / 12;
+            scapePivot.add(scape);
+            antennaBase.add(scapePivot);
+
+            const seg1Geo = new THREE.CylinderGeometry(0.02,.02,.22,8);
+            const seg1 = new THREE.Mesh(seg1Geo, legMaterial);
+            const seg1Pivot = new THREE.Group();
+            seg1.position.set(0,0.11,0);
+            seg1Pivot.position.set(0,0.25,0);
+            seg1Pivot.rotation.x = -Math.PI / 8;
+            seg1Pivot.add(seg1);
+            scapePivot.add(seg1Pivot);
+
+            const seg2Geo = new THREE.CylinderGeometry(0.018,0.018,0.2,8);
+            const seg2 = new THREE.Mesh(seg2Geo, legMaterial);
+            const seg2Pivot = new THREE.Group();
+            seg2.position.set(0,0.1,0);
+            seg2Pivot.position.set(0,0.22,0);
+            seg2Pivot.rotation.x = -Math.PI / 10;
+            seg2Pivot.add(seg2);
+            seg1Pivot.add(seg2Pivot);
+
+            antennaSegments.push({ scapePivot, seg1Pivot, seg2Pivot, side });
+            headGroup.add(antennaBase);
+        });
+
+        // ABDOMEN (ακριβώς ίδιο)
+        const petioleGeo = new THREE.CylinderGeometry(0.08,0.1,0.3,8);
+        const petiole = new THREE.Mesh(petioleGeo, legMaterial);
+        petiole.position.set(0,-0.02,-0.45);
+        petiole.rotation.x = Math.PI / 2;
+        petiole.castShadow = true;
+        thoraxGroup.add(petiole);
+
+        const abdomenGroup = new THREE.Group();
+        abdomenGroup.position.set(0,-0.02,-0.95);
+        const abdomenGeo = new THREE.SphereGeometry(0.5,16,16);
+        const abdomen = new THREE.Mesh(abdomenGeo, bodyMaterial);
+        const abdomenWire = new THREE.Mesh(abdomenGeo, wireMaterial);
+        abdomen.scale.set(0.9,0.95,1.4);
+        abdomenWire.scale.set(0.9,0.95,1.4);
+        abdomen.castShadow = true;
+        abdomenGroup.add(abdomen, abdomenWire);
+        thoraxGroup.add(abdomenGroup);
+
+        antGroup.add(thoraxGroup);
+
+        // === Η ΝΕΑ ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ ===
+        // ΔΙΟΡΘΩΜΕΝΑ ΠΟΔΙΑ - Οι τιμές x μειώθηκαν περαιτέρω (από 0.12 σε 0.05)
+        const legSegments = [];
+        const legPositions = [
+    { x: 0.0, z: 0.25, side: 1 },
+    { x: 0.0, z: 0.0, side: 1 },
+    { x: 0.0, z: -0.25, side: 1 },
+    { x: -0.0, z: 0.25, side: -1 },
+    { x: -0.0, z: 0.0, side: -1 },
+    { x: -0.0, z: -0.25, side: -1 }
+];
+
+legPositions.forEach((pos, i) => {
+    const legGroup = new THREE.Group();
+    legGroup.position.set(pos.x, -0.15, pos.z);
+
+    // Coxa: μήκος 0.12, άκρο y=-0.06
+    const coxa = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.12, 8), legMaterial);
+    coxa.rotation.z = pos.side * Math.PI / 3;
+    coxa.position.set(pos.side * 0.14, -0.06, 0);
+    coxa.castShadow = true;
+    legGroup.add(coxa);
+
+    // Femur: pivot = coxa_end = -0.06, μήκος 0.28, άκρο -0.20
+    const femurPivot = new THREE.Group();
+    femurPivot.position.y = pos.side * 0.1;
+    femurPivot.rotation.z = pos.side * Math.PI / 3.5;
+    femurPivot.position.set(pos.side * 0.3, -0.18, 0); // == coxa_end
+    legGroup.add(femurPivot);
+    const femur = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.025, 0.30, 10), legMaterial);
+    femur.castShadow = true;
+    femurPivot.add(femur);
+
+    // Tibia: pivot = femur_end = -0.20, μήκος 0.25, άκρο -0.325
+    const tibiaPivot = new THREE.Group();
+    tibiaPivot.position.y = -0.16; // == femur_end
+    tibiaPivot.rotation.z = pos.side * -Math.PI / 2.5;
+    femur.add(tibiaPivot);
+    const tibia = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.018, 0.25, 8), legMaterial);
+    tibia.position.y = -0.125; // μισό μήκος
+    tibia.castShadow = true;
+    tibiaPivot.add(tibia);
+
+    // Tarsus: pivot = tibia_end = -0.325, μήκος 0.18, άκρο -0.415
+    const tarsusPivot = new THREE.Group();
+    tarsusPivot.position.y = -0.12; // == tibia_end
+    tarsusPivot.rotation.z = pos.side * Math.PI / 8;
+    tibia.add(tarsusPivot);
+    const tarsus = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.18, 6), legMaterial);
+    tarsus.position.y = -0.09; // μισό μήκος
+    tarsus.castShadow = true;
+    tarsusPivot.add(tarsus);
+
+    legSegments.push({ femurPivot, tibiaPivot, tarsusPivot, side: pos.side, index: i });
+    thoraxGroup.add(legGroup);
+});
+
+
+        scene.add(antGroup);
+        antGroup.position.y = 0.5;
+        camera.position.set(3, 2, 5);
+        camera.lookAt(0, 0, 0);
+
+        // Mouse interaction
+        let isDragging = false, previousMouseX = 0, previousMouseY = 0;
+        let rotationX = 0, rotationY = 0;
+
+        document.addEventListener('mousedown', e => { isDragging = true; previousMouseX = e.clientX; previousMouseY = e.clientY; });
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mousemove', e => {
+            if (isDragging) {
+                const deltaX = e.clientX - previousMouseX;
+                const deltaY = e.clientY - previousMouseY;
+                rotationY += deltaX * 0.01;
+                rotationX += deltaY * 0.01;
+                rotationX = Math.max(-Math.PI/3, Math.min(Math.PI/3, rotationX));
+                previousMouseX = e.clientX;
+                previousMouseY = e.clientY;
+            }
+        });
+        document.addEventListener('wheel', e => {
+            camera.position.z += e.deltaY * 0.01;
+            camera.position.z = Math.max(2, Math.min(10, camera.position.z));
+        });
+
+        // Animation
+        let time = 0, walkCycle = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+            walkCycle += 0.08;
+
+            if (!isDragging) antGroup.rotation.y += 0.003;
+            else {
+                antGroup.rotation.y = rotationY;
+                antGroup.rotation.x = rotationX;
+            }
+
+            // Βελτιωμένη κίνηση ποδιών - πιο ρεαλιστική και συνεκτική
+            legSegments.forEach((leg, i) => {
+                const phase = walkCycle + (i % 3) * (Math.PI * 2 / 3);
+                const legLift = Math.max(0, Math.sin(phase) * 0.4);
+                
+                //leg.femurPivot.rotation.z = leg.side * (Math.PI / 3 + Math.sin(phase) * 0.3);
+                leg.tibiaPivot.rotation.z = leg.side * (-Math.PI / 2.5 + Math.cos(phase) * 0.4);
+                leg.tarsusPivot.rotation.z = leg.side * (Math.PI / 8 + Math.sin(phase * 1.5) * 0.2);
+                
+            });
+
+            // Antennae
+            antennaSegments.forEach((a, i) => {
+                const p = time * 2 + i * Math.PI;
+                a.seg1Pivot.rotation.x = -Math.PI/8 + Math.sin(p)*0.15;
+                a.seg2Pivot.rotation.x = -Math.PI/10 + Math.cos(p*1.5)*0.2;
+                a.scapePivot.rotation.z = a.side * (Math.PI/12 + Math.sin(p*0.7)*0.1);
+            });
+
+            // Mandibles & bobbing
+            mandible1.rotation.z = 0.3 + Math.sin(time*3)*0.1;
+            mandible2.rotation.z = -0.3 - Math.sin(time*3)*0.1;
+            antGroup.position.y = 0.5 + Math.sin(walkCycle*2)*0.08;
+            if (!isDragging) antGroup.rotation.z = Math.sin(walkCycle)*0.05;
+
+            // Shimmer effect & lights
+            const shimmer = Math.sin(time*2)*0.5 + 0.5;
+            headMaterial.emissive.setHSL(0.05,1,0.05 + shimmer*0.1);
+            bodyMaterial.emissive.setHSL(0.08,1,0.08 + shimmer*0.1);
+            pointLight1.position.x = Math.cos(time*1.5)*8;
+            pointLight1.position.z = Math.sin(time*1.5)*8;
+            pointLight2.position.x = Math.sin(time)*8;
+            pointLight2.position.z = Math.cos(time)*8;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
