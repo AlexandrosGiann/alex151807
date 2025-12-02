@@ -107,7 +107,7 @@
 
         const antGroup = new THREE.Group();
 
-        // THORAX (ακριβώς ίδιο με τον αρχικό σου κώδικα)
+        // THORAX
         const thoraxGroup = new THREE.Group();
         thoraxGroup.position.set(0, 0.05, 0);
 
@@ -131,7 +131,7 @@
         thorax2.castShadow = true;
         thoraxGroup.add(thorax2, thorax2Wire);
 
-        // HEAD (ακριβώς ίδιο)
+        // HEAD
         const headGroup = new THREE.Group();
         headGroup.position.set(0, 0.05, 0.55);
         const headGeo = new THREE.SphereGeometry(0.35, 16, 16);
@@ -144,60 +144,75 @@
         head.castShadow = true;
         headGroup.add(head, headWire);
 
-        // Mandibles
-        const mandibleGeo = new THREE.SphereGeometry(0.08, 8, 8);
-        const mandible1 = new THREE.Mesh(mandibleGeo, legMaterial);
-        mandible1.scale.set(0.6, 0.5, 1.5);
-        mandible1.position.set(0.15, 0.05, 0.5);
-        mandible1.rotation.z = 0.3;
-        headGroup.add(mandible1);
-        const mandible2 = new THREE.Mesh(mandibleGeo, legMaterial);
-        mandible2.scale.set(0.6, 0.5, 1.5);
-        mandible2.position.set(-0.15, 0.05, 0.5);
-        mandible2.rotation.z = -0.3;
-        headGroup.add(mandible2);
+        // MANDIBLES
+        const mandibleCurve = new THREE.CubicBezierCurve3(
+            new THREE.Vector3(0.28, -0.05, 0.48),
+            new THREE.Vector3(0.45, -0.12, 0.60),
+            new THREE.Vector3(0.30, -0.18, 0.72),
+            new THREE.Vector3(0.05, -0.05, 0.63)
+        );
+        const mandibleGeo = new THREE.TubeGeometry(mandibleCurve, 25, 0.07, 12, false);
+        const mandibleMesh = new THREE.Mesh(mandibleGeo, legMaterial);
+        mandibleMesh.castShadow = true;
+        headGroup.add(mandibleMesh);
+
+        const mandibleCurve2 = new THREE.CubicBezierCurve3(
+            new THREE.Vector3(-0.28, -0.05, 0.48),
+            new THREE.Vector3(-0.45, -0.12, 0.60),
+            new THREE.Vector3(-0.30, -0.18, 0.72),
+            new THREE.Vector3(-0.05, -0.05, 0.63)
+        );
+        const mandibleGeo2 = new THREE.TubeGeometry(mandibleCurve2, 25, 0.07, 12, false);
+        const mandibleMesh2 = new THREE.Mesh(mandibleGeo2, legMaterial);
+        mandibleMesh2.castShadow = true;
+        headGroup.add(mandibleMesh2);
 
         // Eyes
         const eyeGeo = new THREE.SphereGeometry(0.08, 8, 8);
         const eyeMat = new THREE.MeshPhongMaterial({ color: 0x000000, emissive: 0x330000, shininess: 100 });
         const eye1 = new THREE.Mesh(eyeGeo, eyeMat);
-        eye1.position.set(0.25, 0.15, 0.35);
+        eye1.position.set(0.25, 0.15, 0.20);
         headGroup.add(eye1);
         const eye2 = new THREE.Mesh(eyeGeo, eyeMat);
-        eye2.position.set(-0.25, 0.15, 0.35);
+        eye2.position.set(-0.25, 0.15, 0.20);
         headGroup.add(eye2);
 
         thoraxGroup.add(headGroup);
 
-        // Antennae (ακριβώς ίδιες)
+        // ANTENNAE - FIXED VERSION (TURNED FORWARD)
         const antennaSegments = [];
         [-1, 1].forEach(side => {
             const antennaBase = new THREE.Group();
             antennaBase.position.set(side * 0.15, 0.25, 0.4);
+            
+            // ΜΟΝΟ ΑΥΤΗ Η ΑΛΛΑΓΗ: από -Math.PI/4 σε Math.PI/4 (90 μοίρες περιστροφή)
+            antennaBase.rotation.x = Math.PI / 6;
+            antennaBase.rotation.y = side * Math.PI / 3;
+            
             const scapeGeo = new THREE.CylinderGeometry(0.03, 0.025, 0.25, 8);
             const scape = new THREE.Mesh(scapeGeo, legMaterial);
             const scapePivot = new THREE.Group();
-            scape.position.set(0, 0.125,0);
-            scapePivot.rotation.x = -Math.PI / 6;
-            scapePivot.rotation.z = side * Math.PI / 12;
+            scape.position.set(0, 0.125, 0);
+            scapePivot.rotation.x = Math.PI / 3;
+            scapePivot.rotation.z = side * Math.PI / 3;
             scapePivot.add(scape);
             antennaBase.add(scapePivot);
 
-            const seg1Geo = new THREE.CylinderGeometry(0.02,.02,.22,8);
+            const seg1Geo = new THREE.CylinderGeometry(0.02, 0.02, 0.22, 8);
             const seg1 = new THREE.Mesh(seg1Geo, legMaterial);
             const seg1Pivot = new THREE.Group();
-            seg1.position.set(0,0.11,0);
-            seg1Pivot.position.set(0,0.25,0);
-            seg1Pivot.rotation.x = -Math.PI / 8;
+            seg1.position.set(0, 0.11, 0);
+            seg1Pivot.position.set(0, 0.25, 0);
+            seg1Pivot.rotation.x = Math.PI / 8;
             seg1Pivot.add(seg1);
             scapePivot.add(seg1Pivot);
 
-            const seg2Geo = new THREE.CylinderGeometry(0.018,0.018,0.2,8);
+            const seg2Geo = new THREE.CylinderGeometry(0.018, 0.018, 0.2, 8);
             const seg2 = new THREE.Mesh(seg2Geo, legMaterial);
             const seg2Pivot = new THREE.Group();
-            seg2.position.set(0,0.1,0);
-            seg2Pivot.position.set(0,0.22,0);
-            seg2Pivot.rotation.x = -Math.PI / 10;
+            seg2.position.set(0, 0.1, 0);
+            seg2Pivot.position.set(0, 0.22, 0);
+            seg2Pivot.rotation.x = Math.PI / 10;
             seg2Pivot.add(seg2);
             seg1Pivot.add(seg2Pivot);
 
@@ -205,7 +220,7 @@
             headGroup.add(antennaBase);
         });
 
-        // ABDOMEN (ακριβώς ίδιο)
+        // ABDOMEN
         const petioleGeo = new THREE.CylinderGeometry(0.08,0.1,0.3,8);
         const petiole = new THREE.Mesh(petioleGeo, legMaterial);
         petiole.position.set(0,-0.02,-0.45);
@@ -226,63 +241,57 @@
 
         antGroup.add(thoraxGroup);
 
-        // === Η ΝΕΑ ΑΛΛΑΓΗ ΕΙΝΑΙ ΕΔΩ ===
-        // ΔΙΟΡΘΩΜΕΝΑ ΠΟΔΙΑ - Οι τιμές x μειώθηκαν περαιτέρω (από 0.12 σε 0.05)
+        // LEGS
         const legSegments = [];
         const legPositions = [
-    { x: 0.0, z: 0.25, side: 1 },
-    { x: 0.0, z: 0.0, side: 1 },
-    { x: 0.0, z: -0.25, side: 1 },
-    { x: -0.0, z: 0.25, side: -1 },
-    { x: -0.0, z: 0.0, side: -1 },
-    { x: -0.0, z: -0.25, side: -1 }
-];
+            { x: 0.0, z: 0.25, side: 1 },
+            { x: 0.0, z: 0.0, side: 1 },
+            { x: 0.0, z: -0.25, side: 1 },
+            { x: -0.0, z: 0.25, side: -1 },
+            { x: -0.0, z: 0.0, side: -1 },
+            { x: -0.0, z: -0.25, side: -1 }
+        ];
 
-legPositions.forEach((pos, i) => {
-    const legGroup = new THREE.Group();
-    legGroup.position.set(pos.x, -0.15, pos.z);
+        legPositions.forEach((pos, i) => {
+            const legGroup = new THREE.Group();
+            legGroup.position.set(pos.x, -0.15, pos.z);
 
-    // Coxa: μήκος 0.12, άκρο y=-0.06
-    const coxa = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.12, 8), legMaterial);
-    coxa.rotation.z = pos.side * Math.PI / 3;
-    coxa.position.set(pos.side * 0.14, -0.06, 0);
-    coxa.castShadow = true;
-    legGroup.add(coxa);
+            const coxa = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.12, 8), legMaterial);
+            coxa.rotation.z = pos.side * Math.PI / 3;
+            coxa.position.set(pos.side * 0.14, -0.06, 0);
+            coxa.castShadow = true;
+            legGroup.add(coxa);
 
-    // Femur: pivot = coxa_end = -0.06, μήκος 0.28, άκρο -0.20
-    const femurPivot = new THREE.Group();
-    femurPivot.position.y = pos.side * 0.1;
-    femurPivot.rotation.z = pos.side * Math.PI / 3.5;
-    femurPivot.position.set(pos.side * 0.3, -0.18, 0); // == coxa_end
-    legGroup.add(femurPivot);
-    const femur = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.025, 0.30, 10), legMaterial);
-    femur.castShadow = true;
-    femurPivot.add(femur);
+            const femurPivot = new THREE.Group();
+            femurPivot.position.y = pos.side * 0.1;
+            femurPivot.rotation.z = pos.side * Math.PI / 3.5;
+            femurPivot.position.set(pos.side * 0.3, -0.18, 0);
+            legGroup.add(femurPivot);
+            const femur = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.025, 0.30, 10), legMaterial);
+            femur.castShadow = true;
+            femurPivot.add(femur);
 
-    // Tibia: pivot = femur_end = -0.20, μήκος 0.25, άκρο -0.325
-    const tibiaPivot = new THREE.Group();
-    tibiaPivot.position.y = -0.16; // == femur_end
-    tibiaPivot.rotation.z = pos.side * -Math.PI / 2.5;
-    femur.add(tibiaPivot);
-    const tibia = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.018, 0.25, 8), legMaterial);
-    tibia.position.y = -0.125; // μισό μήκος
-    tibia.castShadow = true;
-    tibiaPivot.add(tibia);
+            const tibiaPivot = new THREE.Group();
+            tibiaPivot.position.y = -0.16;
+            tibiaPivot.rotation.z = pos.side * -Math.PI / 2.5;
+            femur.add(tibiaPivot);
+            const tibia = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.018, 0.25, 8), legMaterial);
+            tibia.position.y = -0.125;
+            tibia.castShadow = true;
+            tibiaPivot.add(tibia);
 
-    // Tarsus: pivot = tibia_end = -0.325, μήκος 0.18, άκρο -0.415
-    const tarsusPivot = new THREE.Group();
-    tarsusPivot.position.y = -0.12; // == tibia_end
-    tarsusPivot.rotation.z = pos.side * Math.PI / 8;
-    tibia.add(tarsusPivot);
-    const tarsus = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.18, 6), legMaterial);
-    tarsus.position.y = -0.09; // μισό μήκος
-    tarsus.castShadow = true;
-    tarsusPivot.add(tarsus);
+            const tarsusPivot = new THREE.Group();
+            tarsusPivot.position.y = -0.12;
+            tarsusPivot.rotation.z = pos.side * Math.PI / 8;
+            tibia.add(tarsusPivot);
+            const tarsus = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.18, 6), legMaterial);
+            tarsus.position.y = -0.09;
+            tarsus.castShadow = true;
+            tarsusPivot.add(tarsus);
 
-    legSegments.push({ femurPivot, tibiaPivot, tarsusPivot, side: pos.side, index: i });
-    thoraxGroup.add(legGroup);
-});
-
+            legSegments.push({ femurPivot, tibiaPivot, tarsusPivot, side: pos.side, index: i });
+            thoraxGroup.add(legGroup);
+        });
 
         scene.add(antGroup);
         antGroup.position.y = 0.5;
@@ -311,7 +320,6 @@ legPositions.forEach((pos, i) => {
             camera.position.z = Math.max(2, Math.min(10, camera.position.z));
         });
 
-        // Animation
         let time = 0, walkCycle = 0;
 
         function animate() {
@@ -325,32 +333,23 @@ legPositions.forEach((pos, i) => {
                 antGroup.rotation.x = rotationX;
             }
 
-            // Βελτιωμένη κίνηση ποδιών - πιο ρεαλιστική και συνεκτική
             legSegments.forEach((leg, i) => {
                 const phase = walkCycle + (i % 3) * (Math.PI * 2 / 3);
                 const legLift = Math.max(0, Math.sin(phase) * 0.4);
-                
-                //leg.femurPivot.rotation.z = leg.side * (Math.PI / 3 + Math.sin(phase) * 0.3);
                 leg.tibiaPivot.rotation.z = leg.side * (-Math.PI / 2.5 + Math.cos(phase) * 0.4);
                 leg.tarsusPivot.rotation.z = leg.side * (Math.PI / 8 + Math.sin(phase * 1.5) * 0.2);
-                
             });
 
-            // Antennae
             antennaSegments.forEach((a, i) => {
                 const p = time * 2 + i * Math.PI;
-                a.seg1Pivot.rotation.x = -Math.PI/8 + Math.sin(p)*0.15;
-                a.seg2Pivot.rotation.x = -Math.PI/10 + Math.cos(p*1.5)*0.2;
+                a.seg1Pivot.rotation.x = Math.PI/8 + Math.sin(p)*0.15;
+                a.seg2Pivot.rotation.x = Math.PI/10 + Math.cos(p*1.5)*0.2;
                 a.scapePivot.rotation.z = a.side * (Math.PI/12 + Math.sin(p*0.7)*0.1);
             });
 
-            // Mandibles & bobbing
-            mandible1.rotation.z = 0.3 + Math.sin(time*3)*0.1;
-            mandible2.rotation.z = -0.3 - Math.sin(time*3)*0.1;
             antGroup.position.y = 0.5 + Math.sin(walkCycle*2)*0.08;
             if (!isDragging) antGroup.rotation.z = Math.sin(walkCycle)*0.05;
 
-            // Shimmer effect & lights
             const shimmer = Math.sin(time*2)*0.5 + 0.5;
             headMaterial.emissive.setHSL(0.05,1,0.05 + shimmer*0.1);
             bodyMaterial.emissive.setHSL(0.08,1,0.08 + shimmer*0.1);
