@@ -25,13 +25,84 @@
             border: 1px solid rgba(255,107,53,0.3); z-index: 10; text-align: center; font-size: 14px;
         }
         #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: rgba(30, 30, 40, 0.95);
+            border: 2px solid #ff6b35;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            padding: 25px;
+            color: white;
+            position: relative;
+            box-shadow: 0 0 40px rgba(255, 107, 53, 0.4);
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-header {
+            color: #ff6b35;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.7);
+        }
+        
+        .modal-body {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .modal-close {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            background: #ff4500;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.7);
+        }
     </style>
 </head>
 <body>
     <div class="info">ΜΥΡΜΗΓΚΙ</div>
-    <div class="controls">Σύρετε για περιστροφή | Scroll για zoom</div>
+    <div class="controls">Σύρετε για περιστροφή | Scroll για zoom | Κάντε κλικ σε μέρη του μυρμηγκιού</div>
     <canvas id="particles"></canvas>
     <div id="canvas-container"></div>
+    
+    <!-- Modal Structure -->
+    <div id="part-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-title" class="modal-header">Τίτλος</h2>
+            <p id="modal-description" class="modal-body">Περιγραφή...</p>
+            <button id="modal-close" class="modal-close">Κλείσιμο</button>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -119,6 +190,8 @@
         thorax1.position.set(0, 0, 0.3);
         thorax1Wire.position.set(0, 0, 0.3);
         thorax1.castShadow = true;
+        // Προσθήκη userData για αναγνώριση
+        thorax1.userData = { part: 'thorax', name: 'Θώρακας', description: 'Ο θώρακας είναι το μεσαίο τμήμα του σώματος του μυρμηγκιού, στο οποίο προσαρτώνται τα πόδια και οι πτέρυγες (στα ενηλίκα αρσενικά και θηλυκά).' };
         thoraxGroup.add(thorax1, thorax1Wire);
 
         const thorax2Geo = new THREE.SphereGeometry(0.28, 16, 16);
@@ -129,6 +202,7 @@
         thorax2.position.set(0,-0.05,-0.2);
         thorax2Wire.position.set(0,-0.05,-0.2);
         thorax2.castShadow = true;
+        thorax2.userData = { part: 'thorax2', name: 'Μεσοθώρακας', description: 'Το μεσαίο τμήμα του θώρακα που συνδέεται με την κοιλιά.' };
         thoraxGroup.add(thorax2, thorax2Wire);
 
         // HEAD
@@ -142,6 +216,7 @@
         head.position.set(0, 0, 0.3);
         headWire.position.set(0, 0, 0.3);
         head.castShadow = true;
+        head.userData = { part: 'head', name: 'Κεφάλι', description: 'Το κεφάλι του μυρμηγκιού περιέχει τα μάτια, τις κεραίες και τα δυνατά σαγόνια (μαντιβύλες).' };
         headGroup.add(head, headWire);
 
         // MANDIBLES
@@ -154,6 +229,7 @@
         const mandibleGeo = new THREE.TubeGeometry(mandibleCurve, 25, 0.07, 12, false);
         const mandibleMesh = new THREE.Mesh(mandibleGeo, legMaterial);
         mandibleMesh.castShadow = true;
+        mandibleMesh.userData = { part: 'mandible', name: 'Μαντιβύλα (Αριστερή)', description: 'Οι μαντιβύλες είναι τα δυνατά σαγόνια του μυρμηγκιού, που χρησιμοποιούνται για να μεταφέρουν τροφή, να αμύνονται και να χειρίζονται αντικείμενα.' };
         headGroup.add(mandibleMesh);
 
         const mandibleCurve2 = new THREE.CubicBezierCurve3(
@@ -165,6 +241,7 @@
         const mandibleGeo2 = new THREE.TubeGeometry(mandibleCurve2, 25, 0.07, 12, false);
         const mandibleMesh2 = new THREE.Mesh(mandibleGeo2, legMaterial);
         mandibleMesh2.castShadow = true;
+        mandibleMesh2.userData = { part: 'mandible2', name: 'Μαντιβύλα (Δεξιά)', description: 'Οι μαντιβύλες είναι τα δυνατά σαγόνια του μυρμηγκιού, που χρησιμοποιούνται για να μεταφέρουν τροφή, να αμύνονται και να χειρίζονται αντικείμενα.' };
         headGroup.add(mandibleMesh2);
 
         // Eyes
@@ -172,9 +249,11 @@
         const eyeMat = new THREE.MeshPhongMaterial({ color: 0x000000, emissive: 0x330000, shininess: 100 });
         const eye1 = new THREE.Mesh(eyeGeo, eyeMat);
         eye1.position.set(0.25, 0.15, 0.20);
+        eye1.userData = { part: 'eye', name: 'Μάτι (Αριστερό)', description: 'Τα μάτια του μυρμηγκιού είναι σύνθετα και αποτελούνται από πολλές μικρές οφθαλμίδες, που του επιτρέπουν να ανιχνεύει κίνηση.' };
         headGroup.add(eye1);
         const eye2 = new THREE.Mesh(eyeGeo, eyeMat);
         eye2.position.set(-0.25, 0.15, 0.20);
+        eye2.userData = { part: 'eye2', name: 'Μάτι (Δεξί)', description: 'Τα μάτια του μυρμηγκιού είναι σύνθετα και αποτελούνται από πολλές μικρές οφθαλμίδες, που του επιτρέπουν να ανιχνεύει κίνηση.' };
         headGroup.add(eye2);
 
         thoraxGroup.add(headGroup);
@@ -195,6 +274,7 @@
             scape.position.set(0, 0.125, 0);
             scapePivot.rotation.x = Math.PI / 3;
             scapePivot.rotation.z = side * Math.PI / 3;
+            scape.userData = { part: 'antenna', name: 'Κεραία', description: 'Οι κεραίες είναι τα κύρια αισθητήρια όργανα του μυρμηγκιού, χρησιμοποιούνται για την αφή, τη μυρωδιά και την επικοινωνία.' };
             scapePivot.add(scape);
             antennaBase.add(scapePivot);
 
@@ -226,6 +306,7 @@
         petiole.position.set(0,-0.02,-0.45);
         petiole.rotation.x = Math.PI / 2;
         petiole.castShadow = true;
+        petiole.userData = { part: 'petiole', name: 'Πετίολος', description: 'Ο πετίολος είναι ο λεπτός σύνδεσμος μεταξύ του θώρακα και της κοιλιάς, που δίνει ευελιξία στο μυρμήγκι.' };
         thoraxGroup.add(petiole);
 
         const abdomenGroup = new THREE.Group();
@@ -236,6 +317,7 @@
         abdomen.scale.set(0.9,0.95,1.4);
         abdomenWire.scale.set(0.9,0.95,1.4);
         abdomen.castShadow = true;
+        abdomen.userData = { part: 'abdomen', name: 'Κοιλιά', description: 'Η κοιλιά περιέχει τα εντόσθια, το αναπαραγωγικό σύστημα και το κεντρί (στα είδη που έχουν).' };
         abdomenGroup.add(abdomen, abdomenWire);
         thoraxGroup.add(abdomenGroup);
 
@@ -260,6 +342,12 @@
             coxa.rotation.z = pos.side * Math.PI / 3;
             coxa.position.set(pos.side * 0.14, -0.06, 0);
             coxa.castShadow = true;
+            coxa.userData = { 
+                part: 'coxa', 
+                name: 'Κόξα', 
+                description: 'Η κόξα είναι το πρώτο τμήμα του ποδιού, που συνδέεται απευθείας με τον θώρακα.',
+                legIndex: i 
+            };
             legGroup.add(coxa);
 
             const femurPivot = new THREE.Group();
@@ -269,6 +357,12 @@
             legGroup.add(femurPivot);
             const femur = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.025, 0.30, 10), legMaterial);
             femur.castShadow = true;
+            femur.userData = { 
+                part: 'femur', 
+                name: 'Μηρός', 
+                description: 'Ο μηρός είναι το δεύτερο και μεγαλύτερο τμήμα του ποδιού, παρέχει δύναμη για το περπάτημα.',
+                legIndex: i 
+            };
             femurPivot.add(femur);
 
             const tibiaPivot = new THREE.Group();
@@ -278,6 +372,12 @@
             const tibia = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.018, 0.25, 8), legMaterial);
             tibia.position.y = -0.125;
             tibia.castShadow = true;
+            tibia.userData = { 
+                part: 'tibia', 
+                name: 'Κνήμη', 
+                description: 'Η κνήμη είναι το τρίτο τμήμα του ποδιού, συνδέει τον μηρό με τον ταρσό.',
+                legIndex: i 
+            };
             tibiaPivot.add(tibia);
 
             const tarsusPivot = new THREE.Group();
@@ -287,6 +387,12 @@
             const tarsus = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.18, 6), legMaterial);
             tarsus.position.y = -0.09;
             tarsus.castShadow = true;
+            tarsus.userData = { 
+                part: 'tarsus', 
+                name: 'Ταρσός', 
+                description: 'Ο ταρσός είναι το τελευταίο τμήμα του ποδιού, αποτελείται από πολλά μικρά άρθρωμα κομμάτια.',
+                legIndex: i 
+            };
             tarsusPivot.add(tarsus);
 
             legSegments.push({ femurPivot, tibiaPivot, tarsusPivot, side: pos.side, index: i });
@@ -298,12 +404,47 @@
         camera.position.set(3, 2, 5);
         camera.lookAt(0, 0, 0);
 
+        // Modal Elements
+        const modalOverlay = document.getElementById('part-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+        const modalClose = document.getElementById('modal-close');
+
+        // Συνάρτηση εμφάνισης modal
+        function showModal(title, description) {
+            modalTitle.textContent = title;
+            modalDescription.textContent = description;
+            modalOverlay.style.display = 'flex';
+        }
+
+        // Κλείσιμο modal
+        modalClose.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+        });
+
+        // Κλείσιμο modal με κλικ έξω από το περιεχόμενο
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.style.display = 'none';
+            }
+        });
+
         // Mouse interaction
         let isDragging = false, previousMouseX = 0, previousMouseY = 0;
         let rotationX = 0, rotationY = 0;
 
-        document.addEventListener('mousedown', e => { isDragging = true; previousMouseX = e.clientX; previousMouseY = e.clientY; });
+        // Raycaster για ανίχνευση κλικ σε αντικείμενα
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        document.addEventListener('mousedown', e => { 
+            isDragging = true; 
+            previousMouseX = e.clientX; 
+            previousMouseY = e.clientY; 
+        });
+        
         document.addEventListener('mouseup', () => isDragging = false);
+        
         document.addEventListener('mousemove', e => {
             if (isDragging) {
                 const deltaX = e.clientX - previousMouseX;
@@ -315,9 +456,48 @@
                 previousMouseY = e.clientY;
             }
         });
+        
         document.addEventListener('wheel', e => {
             camera.position.z += e.deltaY * 0.01;
             camera.position.z = Math.max(2, Math.min(10, camera.position.z));
+        });
+
+        // Κλικ σε αντικείμενα
+        document.addEventListener('click', (e) => {
+            if (isDragging) {
+                // Αν ο χρήστης έκανε drag, μην εμφανιστεί modal
+                isDragging = false;
+                return;
+            }
+            
+            // Υπολογισμός θέσης του mouse σε κανονικοποιημένες συντεταγμένες
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            
+            // Ορισμός του raycaster
+            raycaster.setFromCamera(mouse, camera);
+            
+            // Υπολογισμός τομών
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            
+            if (intersects.length > 0) {
+                const clickedObject = intersects[0].object;
+                
+                // Έλεγχος αν το αντικείμενο έχει userData
+                if (clickedObject.userData && clickedObject.userData.name) {
+                    // Εμφάνιση modal με τα δεδομένα του αντικειμένου
+                    showModal(clickedObject.userData.name, clickedObject.userData.description);
+                    
+                    // Προσθήκη εφέ για το αντικείμενο που επιλέχθηκε
+                    clickedObject.material.emissive.setHex(0x444444);
+                    setTimeout(() => {
+                        if (clickedObject.material.emissive) {
+                            clickedObject.material.emissive.setHex(clickedObject.userData.part.includes('head') ? 0x3a0a00 : 
+                                clickedObject.userData.part.includes('body') ? 0x4a1500 : 0x2a0800);
+                        }
+                    }, 300);
+                }
+            }
         });
 
         let time = 0, walkCycle = 0;
