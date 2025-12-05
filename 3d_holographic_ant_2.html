@@ -191,7 +191,7 @@
         thorax1Wire.position.set(0, 0, 0.3);
         thorax1.castShadow = true;
         // Προσθήκη userData για αναγνώριση
-        thorax1.userData = { part: 'thorax', name: 'Θώρακας', description: 'Ο θώρακας είναι το μεσαίο τμήμα του σώματος του μυρμηγκιού, στο οποίο προσαρτώνται τα πόδια και οι πτέρυγες (στα ενηλίκα αρσενικά και θηλυκά).' };
+        thorax1.userData = { part: 'thorax', name: 'Θώρακας', description: 'Ο θώρακας είναι το μεσαίο τμήμα του σώματος του μυρμηγκιού, στο οποίο προσαρτώνται τα πόδια και οι πτέρυγες (στα ενηλίκα αρσενικά και θηλυκά). Συνδεδεμένα γονίδια: Si-CSP10, Si-OBP14' };
         thoraxGroup.add(thorax1, thorax1Wire);
 
         const thorax2Geo = new THREE.SphereGeometry(0.28, 16, 16);
@@ -216,7 +216,7 @@
         head.position.set(0, 0, 0.3);
         headWire.position.set(0, 0, 0.3);
         head.castShadow = true;
-        head.userData = { part: 'head', name: 'Κεφάλι', description: 'Το κεφάλι του μυρμηγκιού περιέχει τα μάτια, τις κεραίες και τα δυνατά σαγόνια (μαντιβύλες).' };
+        head.userData = { part: 'head', name: 'Κεφάλι', description: 'Το κεφάλι του μυρμηγκιού περιέχει τα μάτια, τις κεραίες και τα δυνατά σαγόνια (μαντιβύλες). Συνδεδεμένα γονίδια: Gp-9, Si-OBP15' };
         headGroup.add(head, headWire);
 
         // MANDIBLES
@@ -274,7 +274,7 @@
             scape.position.set(0, 0.125, 0);
             scapePivot.rotation.x = Math.PI / 3;
             scapePivot.rotation.z = side * Math.PI / 3;
-            scape.userData = { part: 'antenna', name: 'Κεραία', description: 'Οι κεραίες είναι τα κύρια αισθητήρια όργανα του μυρμηγκιού, χρησιμοποιούνται για την αφή, τη μυρωδιά και την επικοινωνία.' };
+            scape.userData = { part: 'antenna', name: 'Κεραία', description: 'Οι κεραίες είναι τα κύρια αισθητήρια όργανα του μυρμηγκιού, χρησιμοποιούνται για την αφή, τη μυρωδιά και την επικοινωνία. Συνδεδεμένα γονίδια: Si-CSP1, Si-OBP5' };
             scapePivot.add(scape);
             antennaBase.add(scapePivot);
 
@@ -317,7 +317,7 @@
         abdomen.scale.set(0.9,0.95,1.4);
         abdomenWire.scale.set(0.9,0.95,1.4);
         abdomen.castShadow = true;
-        abdomen.userData = { part: 'abdomen', name: 'Κοιλιά', description: 'Η κοιλιά περιέχει τα εντόσθια, το αναπαραγωγικό σύστημα και το κεντρί (στα είδη που έχουν).' };
+        abdomen.userData = { part: 'abdomen', name: 'Κοιλιά', description: 'Η κοιλιά περιέχει τα εντόσθια, το αναπαραγωγικό σύστημα και το κεντρί (στα είδη που έχουν). Συνδεδεμένα γονίδια: Gp-9, Si-OBP12, Si-OBP13' };
         abdomenGroup.add(abdomen, abdomenWire);
         thoraxGroup.add(abdomenGroup);
 
