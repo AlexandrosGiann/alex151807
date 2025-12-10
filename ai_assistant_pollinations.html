@@ -1,0 +1,339 @@
+<!--
+AI Assistant (HTML + CSS + JavaScript)
+Uses the same Pollinations endpoint you provided: https://text.pollinations.ai
+Features:
+ - System prompt (συμπληρώσιμο)
+ - Conversation history (localStorage)
+ - Nice minimal UI (HTML/CSS)
+ - Error handling + typing indicator
+ - Clear / Download chat buttons
+ - Typing indicator before AI message appears
+
+Save this as a single file and open in the browser. Note: the endpoint may impose CORS restrictions when called from a browser.
+-->
+
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Assistant (Pollinations) — Demo</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#94a3b8;--accent:#7c3aed;--glass:rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#071029 0%, #071a2a 60%);color:#e6eef8}
+    .app{max-width:980px;margin:32px auto;padding:20px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.7)}
+    header{display:flex;align-items:center;gap:14px}
+    h1{margin:0;font-size:20px}
+    .meta{color:var(--muted);font-size:13px}
+
+    .layout{display:grid;grid-template-columns:360px 1fr;gap:18px;margin-top:18px}
+
+    .panel{background:var(--card);padding:12px;border-radius:10px}
+    .panel h2{margin:0 0 8px 0;font-size:14px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+
+    textarea,input[type=text]{width:100%;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;resize:vertical}
+    button{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+
+    .controls{display:flex;gap:8px;align-items:center}
+
+    .chat{display:flex;flex-direction:column;gap:12px;height:64vh;overflow:auto;padding:12px}
+    .msg{max-width:78%;padding:12px;border-radius:12px;line-height:1.35}
+    .user{align-self:flex-end;background:linear-gradient(180deg,#0b1220,#0b1a2a);border:1px solid rgba(255,255,255,0.02)}
+    .assistant{align-self:flex-start;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+    .meta-small{font-size:12px;color:var(--muted);margin-top:6px}
+
+    .footer{display:flex;gap:8px;align-items:center;padding-top:10px}
+
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+    .small{font-size:13px}
+
+    .btn-row{display:flex;gap:8px}
+
+    .status{font-size:13px;color:var(--muted)}
+
+    /* Typing indicator */
+    .typing-indicator {
+      align-self: flex-start;
+      max-width: 78%;
+      padding: 12px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    
+    .typing-dots {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 0;
+    }
+    
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--muted);
+      opacity: 0.6;
+      animation: typing-blink 1.4s infinite both;
+    }
+    
+    .typing-dots span:nth-child(1) { animation-delay: 0s; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typing-blink {
+      0%, 80%, 100% { opacity: 0.3; }
+      40% { opacity: 1; }
+    }
+
+    @media (max-width:880px){.layout{grid-template-columns:1fr;}.chat{height:50vh}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>AI Assistant — Pollinations (Demo)</h1>
+        <div class="meta">Γράψε στα ελληνικά. Χρησιμοποιεί το endpoint <code>https://text.pollinations.ai</code></div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="panel">
+        <h2>Ρυθμίσεις</h2>
+        <div style="margin-bottom:8px">
+          <label>System prompt (προσωπικότητα του assistant)</label>
+          <textarea id="systemPrompt" rows="6">Είσαι ένας ευγενικός, έξυπνος και βοηθητικός AI assistant. Απαντάς στα ελληνικά, περιεκτικά, με παραδείγματα όταν χρειάζεται.</textarea>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <div style="flex:1">
+            <label>Μοντέλο (metadata)</label>
+            <input type="text" id="modelField" value="openai" />
+          </div>
+          <div style="width:120px">
+            <label>Seed (προαιρετικό)</label>
+            <input type="text" id="seedField" placeholder="τυχαίο" />
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-bottom:10px">
+          <button id="saveSettings">Αποθήκευση</button>
+          <button id="clearHistory" class="ghost">Καθαρισμός συνομιλίας</button>
+        </div>
+        <div style="margin-top:8px">
+          <button id="downloadBtn" class="ghost">Κατέβασε συνομιλία (.json)</button>
+        </div>
+
+        <div class="hint">Σημείωση: κάποια endpoints ενδέχεται να περιορίζουν αιτήσεις από browsers (CORS). Αν δεις σφάλμα CORS θα χρειαστείς backend proxy.</div>
+      </div>
+
+      <div>
+        <div class="panel" style="display:flex;flex-direction:column;height:100%">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Συνομιλία</h2>
+            <div class="status" id="status">Έτοιμο</div>
+          </div>
+
+          <div class="chat" id="chat"></div>
+
+          <div style="margin-top:8px">
+            <textarea id="userInput" rows="3" placeholder="Γράψε μήνυμα..."></textarea>
+            <div class="footer">
+              <div class="controls">
+                <button id="sendBtn">Αποστολή</button>
+                <button id="stopBtn" class="ghost" disabled>Διακοπή</button>
+              </div>
+              <div style="margin-left:auto" class="small meta-small">Αλληλεπίδραση: <span id="turnCount">0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Core settings and state
+    const endpoint = 'https://text.pollinations.ai';
+    const chatEl = document.getElementById('chat');
+    const userInput = document.getElementById('userInput');
+    const systemPromptEl = document.getElementById('systemPrompt');
+    const modelField = document.getElementById('modelField');
+    const seedField = document.getElementById('seedField');
+    const statusEl = document.getElementById('status');
+    const turnCountEl = document.getElementById('turnCount');
+
+    let isRequesting = false;
+    let history = []; // {role: 'user'|'assistant', content}
+
+    // Load saved history + settings from localStorage
+    function loadState(){
+      const st = localStorage.getItem('ai_demo_history');
+      if(st){ try{ history = JSON.parse(st); }catch(e){ history = []; } }
+      const sp = localStorage.getItem('ai_demo_system_prompt');
+      if(sp) systemPromptEl.value = sp;
+      const mdl = localStorage.getItem('ai_demo_model'); if(mdl) modelField.value = mdl;
+      renderChat();
+    }
+
+    function saveState(){
+      localStorage.setItem('ai_demo_history', JSON.stringify(history));
+      localStorage.setItem('ai_demo_system_prompt', systemPromptEl.value);
+      localStorage.setItem('ai_demo_model', modelField.value);
+    }
+
+    function renderChat(){
+      chatEl.innerHTML = '';
+      history.forEach(m => {
+        const d = document.createElement('div');
+        d.className = 'msg ' + (m.role==='user' ? 'user' : 'assistant');
+        d.innerHTML = '<div>' + escapeHtml(m.content).replace(/\n/g,'<br/>') + '</div>'; 
+        chatEl.appendChild(d);
+      });
+      turnCountEl.textContent = history.filter(h=>h.role==='user').length;
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    // Show typing indicator
+    function showTypingIndicator() {
+      const indicator = document.createElement('div');
+      indicator.className = 'typing-indicator';
+      indicator.id = 'typingIndicator';
+      indicator.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+      chatEl.appendChild(indicator);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    // Hide typing indicator
+    function hideTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) {
+        indicator.remove();
+      }
+    }
+
+    function escapeHtml(s){ return s.replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]; }); }
+
+    async function generateText(prompt, system_prompt){
+      // Build payload similar to your Python example
+      const seedVal = seedField.value ? parseInt(seedField.value)||Math.floor(Math.random()*999999999) : Math.floor(Math.random()*999999999);
+      const payload = {
+        messages: [
+          {role: 'system', content: system_prompt},
+          {role: 'user', content: prompt}
+        ],
+        model: modelField.value || 'openai',
+        seed: seedVal,
+        jsonMode: false,
+        private: true,
+        stream: false
+      };
+
+      // Note: direct browser requests may fail due to CORS. If so, use a proxy server.
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+      });
+
+      if(!res.ok){
+        const txt = await res.text().catch(()=>res.statusText);
+        throw new Error('Server responded with ' + res.status + ': ' + txt);
+      }
+
+      const text = await res.text();
+      return text;
+    }
+
+    // UI actions
+    document.getElementById('sendBtn').addEventListener('click', async ()=>{
+      const text = userInput.value.trim();
+      if(!text || isRequesting) return;
+      isRequesting = true; 
+      statusEl.textContent = 'Αποστολή...'; 
+      document.getElementById('stopBtn').disabled = false;
+
+      // add user message
+      history.push({role: 'user', content: text});
+      renderChat(); 
+      saveState(); 
+      userInput.value = '';
+
+      // Show typing indicator with a small delay for realism
+      setTimeout(() => {
+        showTypingIndicator();
+      }, 300);
+
+      try{
+        const sys = systemPromptEl.value;
+        const assistantText = await generateText(text, sys);
+        
+        // Remove typing indicator and show actual message
+        hideTypingIndicator();
+        history.push({role: 'assistant', content: assistantText});
+        renderChat(); 
+        saveState();
+        statusEl.textContent = 'Έτοιμο';
+      }catch(err){
+        console.error(err);
+        hideTypingIndicator();
+        history.push({role:'assistant', content: 'Σφάλμα: ' + (err.message || String(err))});
+        renderChat(); 
+        saveState();
+        statusEl.textContent = 'Σφάλμα';
+      }finally{
+        isRequesting = false; 
+        document.getElementById('stopBtn').disabled = true;
+      }
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', ()=>{
+      // Since we don't use streaming, we cannot cancel a fetch reliably without AbortController.
+      // For simplicity, we just update UI. In a production app use AbortController to cancel fetch.
+      hideTypingIndicator();
+      statusEl.textContent = 'Ακυρώθηκε από χρήστη (μη υλοποιημένο πλήρως)';
+      isRequesting = false;
+      document.getElementById('stopBtn').disabled = true;
+    });
+
+    document.getElementById('clearHistory').addEventListener('click', ()=>{
+      if(!confirm('Θέλεις σίγουρα να καθαρίσεις τη συνομιλία;')) return;
+      history = []; 
+      saveState(); 
+      renderChat();
+    });
+
+    document.getElementById('saveSettings').addEventListener('click', ()=>{ 
+      saveState(); 
+      alert('Ρυθμίσεις αποθηκεύτηκαν.'); 
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      const blob = new Blob([ JSON.stringify({system: systemPromptEl.value, model: modelField.value, history}, null, 2) ], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); 
+      a.href = url; 
+      a.download = 'conversation.json'; 
+      document.body.appendChild(a); 
+      a.click(); 
+      a.remove(); 
+      URL.revokeObjectURL(url);
+    });
+
+    // Allow sending with Enter (Shift+Enter for new line)
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('sendBtn').click();
+      }
+    });
+
+    // initial load
+    loadState();
+
+  </script>
+</body>
+</html>
