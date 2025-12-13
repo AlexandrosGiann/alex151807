@@ -90,7 +90,7 @@
     </style>
 </head>
 <body>
-    <div class="info">ΜΥΡΜΗΓΚΙ (Βασισμένο στο Solenopsis invicta)</div>
+    <div class="info">ΜΥΡΜΗΓΚΙ</div>
     <div class="controls">Σύρετε για περιστροφή | Scroll για zoom | Κάντε κλικ σε μέρη του μυρμηγκιού</div>
     <canvas id="particles"></canvas>
     <div id="canvas-container"></div>
@@ -218,31 +218,95 @@
         head.castShadow = true;
         head.userData = { part: 'head', name: 'Κεφάλι', description: 'Το κεφάλι του μυρμηγκιού περιέχει τα μάτια, τις κεραίες και τα δυνατά σαγόνια (μαντιβύλες). Συνδεδεμένα γονίδια: Gp-9, Si-OBP15' };
         headGroup.add(head, headWire);
+        
+// MANDIBLES (two semicircles with teeth) — rotated 90° and pushed inside
+const mandiblesGroup = new THREE.Group();
 
-        // MANDIBLES
-        const mandibleCurve = new THREE.CubicBezierCurve3(
-            new THREE.Vector3(0.28, -0.05, 0.48),
-            new THREE.Vector3(0.45, -0.12, 0.60),
-            new THREE.Vector3(0.30, -0.18, 0.72),
-            new THREE.Vector3(0.05, -0.05, 0.63)
-        );
-        const mandibleGeo = new THREE.TubeGeometry(mandibleCurve, 25, 0.07, 12, false);
-        const mandibleMesh = new THREE.Mesh(mandibleGeo, legMaterial);
-        mandibleMesh.castShadow = true;
-        mandibleMesh.userData = { part: 'mandible', name: 'Μαντιβύλα (Αριστερή)', description: 'Οι μαντιβύλες είναι τα δυνατά σαγόνια του μυρμηγκιού, που χρησιμοποιούνται για να μεταφέρουν τροφή, να αμύνονται και να χειρίζονται αντικείμενα.' };
-        headGroup.add(mandibleMesh);
+// (1) Πιο μέσα στο κεφάλι: χαμήλωσα λίγο το z (προς τα πίσω) και ελάχιστα το y
+mandiblesGroup.position.set(0, -0.06, 0.56);
 
-        const mandibleCurve2 = new THREE.CubicBezierCurve3(
-            new THREE.Vector3(-0.28, -0.05, 0.48),
-            new THREE.Vector3(-0.45, -0.12, 0.60),
-            new THREE.Vector3(-0.30, -0.18, 0.72),
-            new THREE.Vector3(-0.05, -0.05, 0.63)
-        );
-        const mandibleGeo2 = new THREE.TubeGeometry(mandibleCurve2, 25, 0.07, 12, false);
-        const mandibleMesh2 = new THREE.Mesh(mandibleGeo2, legMaterial);
-        mandibleMesh2.castShadow = true;
-        mandibleMesh2.userData = { part: 'mandible2', name: 'Μαντιβύλα (Δεξιά)', description: 'Οι μαντιβύλες είναι τα δυνατά σαγόνια του μυρμηγκιού, που χρησιμοποιούνται για να μεταφέρουν τροφή, να αμύνονται και να χειρίζονται αντικείμενα.' };
-        headGroup.add(mandibleMesh2);
+// (2) Περιστροφή 90°: από “κύκλο στο X-Y” σε “κύκλο στο X-Z”
+mandiblesGroup.rotation.x = Math.PI / 2;
+
+headGroup.add(mandiblesGroup);
+
+const ringR = 0.30;      // ακτίνα
+const tubeR = 0.060;     // πάχος μαντιβύλας
+const gapA  = 0.16;      // κενό στο “σπάσιμο” του κύκλου
+
+const toothCount = 10;
+const toothH = 0.10;
+const toothR = 0.022;
+
+function buildSemiMandible(thetaStart, thetaEnd, userData) {
+  const mat = legMaterial.clone();
+
+  // Arc στο τοπικό επίπεδο X-Y (μετά το group rotation θα γίνει X-Z)
+  const arc2 = new THREE.EllipseCurve(
+    0, 0,
+    ringR, ringR,
+    thetaStart, thetaEnd,
+    false,
+    0
+  );
+
+  const pts2 = arc2.getPoints(80);
+  const pts3 = pts2.map(p => new THREE.Vector3(p.x, p.y, 0));
+
+  const path = new THREE.CatmullRomCurve3(pts3, false, "centripetal", 0.5);
+
+  const mandibleGeo = new THREE.TubeGeometry(path, 180, tubeR, 16, false);
+  const mandibleMesh = new THREE.Mesh(mandibleGeo, mat);
+  mandibleMesh.castShadow = true;
+  mandibleMesh.userData = userData;
+  mandiblesGroup.add(mandibleMesh);
+
+  // Teeth: προς το κέντρο, και “μισοθαμμένα” στο σωλήνα
+  const toothGeo = new THREE.ConeGeometry(toothR, toothH, 12);
+  const up = new THREE.Vector3(0, 1, 0);
+
+  for (let i = 0; i < toothCount; i++) {
+    const t = (i + 1) / (toothCount + 1);
+
+    const p = path.getPoint(t);
+    const inward = p.clone().multiplyScalar(-1).normalize(); // προς το (0,0,0)
+
+    // Σημείο κόλλησης κοντά στην εσωτερική επιφάνεια
+    const attach = p.clone().addScaledVector(inward, tubeR * 0.90);
+
+    const tooth = new THREE.Mesh(toothGeo, mat);
+    tooth.quaternion.setFromUnitVectors(up, inward);
+
+    // “Μισό μέσα”: αν το έβαζα toothH/2 θα ήταν πολύ έξω
+    tooth.position.copy(attach).addScaledVector(inward, toothH * 0.35);
+
+    tooth.castShadow = true;
+    tooth.userData = userData;
+    mandiblesGroup.add(tooth);
+  }
+}
+
+// Δεξί “)” (x >= 0)
+buildSemiMandible(
+  -Math.PI / 2 + gapA,
+   Math.PI / 2 - gapA,
+  {
+    part: "mandible",
+    name: "Μαντιβύλα (Αριστερή)",
+    description: "Ημικυκλικό σαγόνι με δόντια."
+  }
+);
+
+// Αριστερό “(” (x <= 0)
+buildSemiMandible(
+   Math.PI / 2 + gapA,
+   3 * Math.PI / 2 - gapA,
+  {
+    part: "mandible2",
+    name: "Μαντιβύλα (Δεξιά)",
+    description: "Ημικυκλικό σαγόνι με δόντια."
+  }
+);
 
         // Eyes
         const eyeGeo = new THREE.SphereGeometry(0.08, 8, 8);
