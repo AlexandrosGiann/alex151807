@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site by Alexander Organization</title>
+    <title>3d Ζώα</title>
     <style>
         * {
             margin: 0;
@@ -329,13 +329,81 @@
             font-size: 1.2em;
         }
 
-        /* 3D Ant Page */
-        .ant3d-page {
+        /* 3D Animals Page */
+        .animals3d-page {
             display: none;
         }
 
-        .ant3d-page.active {
+        .animals3d-page.active {
             display: block;
+        }
+
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .animal-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .animal-card-header {
+            padding: 18px 22px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .animal-card-title {
+            font-size: 1.35em;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        .animal-card-subtitle {
+            font-size: 0.95em;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        .animal-viewport {
+            width: 100%;
+            height: 62vh;
+            border: none;
+            display: block;
+            background: #050505;
+        }
+
+        .animal-card-actions {
+            padding: 18px 22px 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .animal-action {
+            display: inline-block;
+            padding: 12px 22px;
+            background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .animal-action:hover {
+            transform: scale(1.04);
         }
 
         /* Animations */
@@ -436,7 +504,7 @@
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
+        <!-- Navigation Bar -->
     <nav>
         <div class="nav-container">
             <div class="logo">🤖 Site by Alexander Organization</div>
@@ -446,7 +514,7 @@
                 <li><a href="#" onclick="showPage('framework')">Framework</a></li>
                 <li><a href="#" onclick="showPage('articles')">Άρθρα</a></li>
                 <li><a href="#" onclick="showPage('tools')">Τα εργαλεία μας</a></li>
-                <li><a href="3d_holographic_ant_2.html" target="_blank">3D Μυρμήγκι</a></li>
+                <li><a href="#" id="animals3DNav">3d Ζώα</a></li>
 		<li><a href="ai_assistant_pollinations.html">AI Assistant</a></li>
             </ul>
         </div>
@@ -596,22 +664,37 @@
             </div>
         </div>
 
-        <!-- 3D Ant Page (iframe version) -->
-        <div class="framework-page" id="ant3DPage">
+        <!-- 3D Animals Page (iframe version) -->
+        <div class="framework-page animals3d-page" id="animals3DPage">
             <div class="page-header">
-                <h1>3D Μυρμήγκι</h1>
-                <p class="subtitle">Περιστρέψτε και ζουμάρετε για να δείτε το μυρμήγκι από όλες τις γωνίες</p>
+                <h1>3d Ζώα</h1>
+                <p class="subtitle">Περιστρέψτε και ζουμάρετε για να δείτε τα ζώα από όλες τις γωνίες</p>
             </div>
-            
-            <div style="width: 100%; height: 80vh; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                <iframe src="3d_holographic_ant_2.html" style="width: 100%; height: 100%; border: none;"></iframe>
-            </div>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="3d_holographic_ant_2.html" target="_blank" 
-                   style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.3s ease;">
-                    🔗 Άνοιγμα σε νέα καρτέλα
-                </a>
+
+            <div class="animals-grid">
+                <!-- Ant -->
+                <div class="animal-card">
+                    <div class="animal-card-header">
+                        <div class="animal-card-title">🐜 Μυρμήγκι</div>
+                        <div class="animal-card-subtitle">3D προβολή</div>
+                    </div>
+                    <iframe class="animal-viewport" src="3d_holographic_ant_2.html" title="3D Μυρμήγκι"></iframe>
+                    <div class="animal-card-actions">
+                        <a class="animal-action" href="3d_holographic_ant_2.html" target="_blank">🔗 Άνοιγμα μυρμηγκιού σε νέα καρτέλα</a>
+                    </div>
+                </div>
+
+                <!-- Scorpion -->
+                <div class="animal-card">
+                    <div class="animal-card-header">
+                        <div class="animal-card-title">🦂 Σκορπιός</div>
+                        <div class="animal-card-subtitle">3D προβολή</div>
+                    </div>
+                    <iframe class="animal-viewport" src="3d_holographic_scorpion.html" title="3D Σκορπιός"></iframe>
+                    <div class="animal-card-actions">
+                        <a class="animal-action" href="3d_holographic_scorpion.html" target="_blank">🔗 Άνοιγμα σκορπιού σε νέα καρτέλα</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -785,13 +868,13 @@
         let searchTerm = '';
 
         // Page Navigation
-        function showPage(pageName) {
+        function showPage(pageName, evt) {
             // Hide all pages
             document.getElementById('homePage').classList.remove('active');
             document.getElementById('frameworkPage').classList.remove('active');
             document.getElementById('articlesPage').classList.remove('active');
             document.getElementById('toolsPage').classList.remove('active');
-            document.getElementById('ant3DPage').classList.remove('active');
+            document.getElementById('animals3DPage').classList.remove('active');
 
             // Show selected page
             if (pageName === 'home') {
@@ -802,16 +885,17 @@
                 document.getElementById('articlesPage').classList.add('active');
             } else if (pageName === 'tools') {
                 document.getElementById('toolsPage').classList.add('active');
-            } else if (pageName === 'ant3D') {
-                document.getElementById('ant3DPage').classList.add('active');
+            } else if (pageName === 'animals3D' || pageName === 'ant3D') {
+                document.getElementById('animals3DPage').classList.add('active');
             }
 
-            // Update active nav link (only for internal navigation, not external links)
-            if (pageName !== 'ant3D') {
+            // Update active nav link (safe even if showPage() is called without a click event)
+            const e = evt || (typeof event !== 'undefined' ? event : null);
+            if (e && e.target) {
                 document.querySelectorAll('.nav-links a').forEach(link => {
                     link.classList.remove('active');
                 });
-                event.target.classList.add('active');
+                e.target.classList.add('active');
             }
 
             // Close mobile menu
@@ -1114,12 +1198,14 @@
             }
         });
 
-        // Update the navigation link for 3D Ant to use internal page
-        document.querySelectorAll('.nav-links a')[4].onclick = function(e) {
-            showPage('ant3D');
-            // Prevent default only if we're using the internal page
-            e.preventDefault();
-        };
+        // Update the navigation link for 3D Animals to use internal page
+        const animals3DNav = document.getElementById('animals3DNav');
+        if (animals3DNav) {
+            animals3DNav.addEventListener('click', function(e) {
+                showPage('animals3D', e);
+                e.preventDefault();
+            });
+        }
     </script>
 </body>
 </html>
