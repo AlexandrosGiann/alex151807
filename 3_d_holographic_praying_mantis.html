@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holographic Mantis Anatomy</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000000; font-family: 'Courier New', Courier, monospace; }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: #00ffff;
+            pointer-events: none;
+            text-shadow: 0 0 5px #00ffff;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 0;
+        }
+        .hud-line {
+            border-top: 1px solid #00ffff;
+            width: 80%;
+            margin: 5px auto;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h3>ΑΛΟΓΑΚΙ ΤΗΣ ΠΑΝΑΓΙΑΣ</h3>
+    </div>
+        <p>SYSTEM ONLINE • MOVE MOUSE TO TRACK • DRAG TO ROTATE</p>
+    </div>
+
+    <!-- Import Map for modern Three.js usage -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Scene Setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050505); // Very dark grey, almost black
+        scene.fog = new THREE.Fog(0x050505, 10, 40);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(6, 4, 6);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.target.set(0, 1.5, 0);
+
+        // --- HOLOGRAPHIC MATERIALS ---
+        const holoMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x00ff00, // Green
+            wireframe: true,
+            transparent: true,
+            opacity: 0.35
+        });
+        
+        const holoJointMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x00ff00, // Green for joints
+            wireframe: true,
+            transparent: true,
+            opacity: 0.5 
+        });
+
+        const holoEyeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff00, // Bright Green Eyes
+            wireframe: true,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const pupilMaterial = new THREE.MeshBasicMaterial({ color: 0x006600 }); // Dark green for contrast // Keep black for contrast
+
+        // --- MANTIS CONSTRUCTION ---
+        const mantisGroup = new THREE.Group();
+        scene.add(mantisGroup);
+
+        // 1. Meso & Meta Thorax
+        const bodyGeo = new THREE.CylinderGeometry(0.3, 0.25, 1.5, 8);
+        bodyGeo.rotateX(Math.PI / 2);
+        const thoraxLower = new THREE.Mesh(bodyGeo, holoMaterial);
+        thoraxLower.position.y = 1.5;
+        mantisGroup.add(thoraxLower);
+
+        // 2. Prothorax (Neck) - UPDATED ROTATION
+        const neckGroup = new THREE.Group();
+        neckGroup.position.set(0, 0, 0.7); 
+        // Rotated by additional 90 degrees (-Math.PI/2) to rear up
+        neckGroup.rotation.x = Math.PI / 6; 
+        thoraxLower.add(neckGroup);
+
+        const proThoraxGeo = new THREE.CylinderGeometry(0.15, 0.2, 2.5, 8);
+        proThoraxGeo.translate(0, 1.25, 0);
+        const prothorax = new THREE.Mesh(proThoraxGeo, holoMaterial);
+        neckGroup.add(prothorax);
+
+        // 3. Head
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 2.5, 0);
+        prothorax.add(headGroup);
+
+        // Head Shape
+        const headGeo = new THREE.ConeGeometry(0.4, 0.6, 4); // Reduced segments for cooler low-poly holo look
+        headGeo.rotateX(Math.PI/2); 
+        headGeo.rotateZ(Math.PI);   
+        headGeo.scale(1, 0.5, 1);   
+        const head = new THREE.Mesh(headGeo, holoMaterial);
+        headGroup.add(head);
+
+        // Eyes
+        function createEye(x) {
+            const eyeGroup = new THREE.Group();
+            const eyeGeo = new THREE.SphereGeometry(0.18, 8, 8); // Lower poly for holo style
+            const eye = new THREE.Mesh(eyeGeo, holoEyeMaterial);
+            eyeGroup.add(eye);
+            
+            const pupilGeo = new THREE.SphereGeometry(0.04, 4, 4);
+            const pupil = new THREE.Mesh(pupilGeo, pupilMaterial);
+            pupil.position.z = 0.15;
+            eyeGroup.add(pupil);
+            
+            eyeGroup.position.set(x, 0.1, 0.1);
+            return eyeGroup;
+        }
+        headGroup.add(createEye(0.25));
+        headGroup.add(createEye(-0.25));
+        // Antennae
+        const antennae = [];
+        function createAntenna(x) {
+            const antGroup = new THREE.Group();
+
+            // Base segment
+            const baseGeo = new THREE.CylinderGeometry(0.02, 0.03, 0.9, 6);
+            baseGeo.translate(0, 0.45, 0);
+            const base = new THREE.Mesh(baseGeo, holoJointMaterial);
+            base.rotation.x = 0.35;
+            base.rotation.z = -x * 2.2;
+            antGroup.add(base);
+
+            // Tip segment (slimmer, slightly bent)
+            const tipGroup = new THREE.Group();
+            tipGroup.position.set(0, 0.9, 0);
+            base.add(tipGroup);
+
+            const tipGeo = new THREE.CylinderGeometry(0.008, 0.018, 0.9, 6);
+            tipGeo.translate(0, 0.45, 0);
+            const tip = new THREE.Mesh(tipGeo, holoJointMaterial);
+            tipGroup.rotation.x = 0.15;
+            tipGroup.add(tip);
+
+            // Anchor on head
+            antGroup.position.set(x, 0.18, -0.05);
+
+            antennae.push({ base, tipGroup, side: Math.sign(x) || 1 });
+            return antGroup;
+        }
+        headGroup.add(createAntenna(0.1));
+        headGroup.add(createAntenna(-0.1));
+
+        // 4. Abdomen
+        const abdomenGroup = new THREE.Group();
+        abdomenGroup.position.set(0, 0, -0.7); 
+        thoraxLower.add(abdomenGroup);
+
+        for(let i = 0; i < 6; i++) {
+            const s = 1 - (i * 0.1);
+            const segGeo = new THREE.CylinderGeometry(0.35 * s, 0.4 * s, 0.6, 8);
+            segGeo.rotateX(Math.PI / 2);
+            const segment = new THREE.Mesh(segGeo, holoMaterial);
+            segment.position.z = -(i * 0.5) - 0.3;
+            segment.position.y = -(i * 0.05);
+            segment.rotation.x = -0.1 * i;
+            abdomenGroup.add(segment);
+        }
+        // Wings (Holo sheets) - FIXED
+        const wingLength = 4.4;
+        const wingWidth = 1.2;
+
+        // Flat oval wing shape
+        const wingRx = wingWidth / 2;
+        const wingRy = wingLength / 2;
+        const wingShape = new THREE.Shape();
+        wingShape.absellipse(0, 0, wingRx, wingRy, 0, Math.PI * 2, false, 0);
+
+        const wingGeo = new THREE.ShapeGeometry(wingShape, 24);
+        wingGeo.translate(0, -wingRy, 0); // Pivot at hinge (front)
+        wingGeo.rotateX(Math.PI / 2); // Lay along back, extend toward -Z // Lay along back, extend toward -Z
+
+        const wingSolidMat = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            transparent: true,
+            opacity: 0.1,
+            side: THREE.DoubleSide,
+            wireframe: false
+        });
+
+        const wingWireMat = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.3,
+            side: THREE.DoubleSide
+        });
+
+        const wingsGroup = new THREE.Group();
+        wingsGroup.position.set(0, 0.3, 0.6); // Start where neck ends
+        thoraxLower.add(wingsGroup);
+
+        const wingMeshes = [];
+
+        function addWing(side) {
+            const wing = new THREE.Mesh(wingGeo, wingSolidMat);
+            const wingWire = new THREE.Mesh(wingGeo, wingWireMat);
+            wing.add(wingWire);
+
+            wing.position.x = side * 0.28;
+            wing.rotation.z = side * 0.35; // Open slightly to the sides
+            wing.rotation.x = 0.08;        // Slight lift
+            wing.rotation.y = side * 0.18; // Tiny twist for depth
+            wingsGroup.add(wing);
+            wingMeshes.push({ wing, side });
+        }
+
+        addWing(1);
+        addWing(-1);
+
+        // 5. Raptorial Legs (Forelegs)
+        function createRaptorialLeg(side) { 
+            const legRoot = new THREE.Group();
+            legRoot.position.set(side * 0.15, 2.0, 0.1); 
+            prothorax.add(legRoot);
+
+            // Coxa
+            const coxaGeo = new THREE.CylinderGeometry(0.08, 0.1, 1.2, 6);
+            coxaGeo.translate(0, 0.6, 0);
+            const coxa = new THREE.Mesh(coxaGeo, holoMaterial);
+            
+            coxa.rotation.x = 2.5; 
+            coxa.rotation.z = side * -0.2;
+            legRoot.add(coxa);
+
+            // Femur
+            const femurGroup = new THREE.Group();
+            femurGroup.position.set(0, 1.2, 0); 
+            coxa.add(femurGroup);
+
+            const femurGeo = new THREE.BoxGeometry(0.15, 1.0, 0.2);
+            femurGeo.translate(0, 0.5, 0);
+            const femur = new THREE.Mesh(femurGeo, holoMaterial);
+            
+            femurGroup.rotation.x = -2.0; 
+            femurGroup.add(femur);
+
+            // Tibia
+            const tibiaGroup = new THREE.Group();
+            tibiaGroup.position.set(0, 1.0, 0); 
+            femur.add(tibiaGroup);
+
+            const tibiaGeo = new THREE.CylinderGeometry(0.05, 0.08, 0.8, 6);
+            tibiaGeo.translate(0, 0.4, 0);
+            const tibia = new THREE.Mesh(tibiaGeo, holoJointMaterial);
+            
+            tibiaGroup.rotation.x = 2.8; 
+            tibiaGroup.add(tibia);
+
+            return { root: legRoot };
+        }
+
+        const rightArm = createRaptorialLeg(1);
+        const leftArm = createRaptorialLeg(-1);
+
+
+        // 6. Walking Legs (Mid and Hind) - ROTATION FIXED
+        function createWalkingLeg(zPos, side, isHind) {
+            const root = new THREE.Group();
+            root.position.set(side * 0.2, -0.1, zPos);
+            thoraxLower.add(root);
+
+            // Pivot the whole leg group first
+            // Mid legs point slightly forward (-), Hind legs point backward (+)
+            // Adjusted to ensure hind legs point back and mid legs point forward
+            const legAngle = isHind ? (side * 0.6) : (side * -0.4);
+            root.rotation.y = legAngle;
+
+            // Femur
+            const femurGeo = new THREE.CylinderGeometry(0.05, 0.06, 1.4, 6);
+            femurGeo.translate(0, 0.7, 0); // Pivot at bottom
+            const femur = new THREE.Mesh(femurGeo, holoMaterial);
+            
+            // Femur angles up and out
+            // side * -0.8 lifts it nicely to create an "arch"
+            femur.rotation.z = side * -0.9; 
+            root.add(femur);
+
+            // Tibia
+            const tibiaGroup = new THREE.Group();
+            tibiaGroup.position.set(0, 1.4, 0); // End of femur
+            
+            // UPDATED: Rotate the lower leg group (parts after femur) by 180 degrees
+            tibiaGroup.rotation.y = Math.PI;
+
+            femur.add(tibiaGroup);
+
+            const tibiaGeo = new THREE.CylinderGeometry(0.03, 0.05, 1.8, 6);
+            tibiaGeo.translate(0, 0.9, 0); // Pivot at bottom
+            const tibia = new THREE.Mesh(tibiaGeo, holoJointMaterial);
+            
+            // Tibia angles back down towards the floor relative to femur
+            // This creates the "knee" joint
+            tibiaGroup.rotation.z = side * 2.1; 
+            tibiaGroup.add(tibia);
+
+            // Tarsus (Foot)
+            const tarsusGeo = new THREE.CylinderGeometry(0.02, 0.03, 0.4, 4);
+            tarsusGeo.translate(0, 0.2, 0);
+            const tarsus = new THREE.Mesh(tarsusGeo, holoMaterial);
+            tarsus.position.set(0, 1.8, 0);
+            // Bend foot to look like it's flat on ground
+            tarsus.rotation.z = side * -1.2;
+            tibia.add(tarsus);
+
+            return root;
+        }
+
+        // Mid Legs
+        createWalkingLeg(0.2, 1, false);
+        createWalkingLeg(0.2, -1, false);
+        // Hind Legs
+        createWalkingLeg(-0.5, 1, true);
+        createWalkingLeg(-0.5, -1, true);
+
+
+        // Holographic Grid Floor
+        const gridHelper = new THREE.GridHelper(20, 20, 0x00ffff, 0x004444);
+        scene.add(gridHelper);
+        
+        // Add a "base" ring
+        const ringGeo = new THREE.RingGeometry(3, 3.1, 32);
+        ringGeo.rotateX(-Math.PI/2);
+        const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0x00ffff, side: THREE.DoubleSide }));
+        scene.add(ring);
+
+        // Interaction State
+        const mouse = new THREE.Vector2();
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+        function onDocumentMouseMove(event) {
+            mouse.x = (event.clientX - windowHalfX) / 200; 
+            mouse.y = (event.clientY - windowHalfY) / 200;
+        }
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = clock.getElapsedTime();
+
+            // 1. Idle Sway
+            mantisGroup.position.y = 1.6 + Math.sin(time * 0.5) * 0.05; // Base height adjustment
+            mantisGroup.rotation.z = Math.sin(time * 0.3) * 0.02;
+
+            // 2. Head Tracking
+            const lookX = Math.max(-1.5, Math.min(1.5, -mouse.x)); 
+            const lookY = Math.max(-0.8, Math.min(0.8, -mouse.y)); 
+
+            headGroup.rotation.y = THREE.MathUtils.lerp(headGroup.rotation.y, lookX, 0.1);
+            headGroup.rotation.x = THREE.MathUtils.lerp(headGroup.rotation.x, lookY, 0.1);
+
+            // 3. Antennae twitching
+            antennae.forEach(({ base, tipGroup, side }) => {
+                const w = Math.sin(time * 6 + side * 1.7) * 0.08;
+                base.rotation.x = 0.35 + w * 0.35;
+                base.rotation.y = side * 0.05 + Math.sin(time * 4 + side) * 0.03;
+                tipGroup.rotation.x = 0.15 + Math.sin(time * 8 + side * 2.3) * 0.12;
+            });
+
+            // 4. Raptorial Leg Breathing
+            const breath = Math.sin(time * 1.5) * 0.1;
+            rightArm.root.rotation.z = -0.1 + breath * 0.5;
+            leftArm.root.rotation.z = 0.1 - breath * 0.5;
+
+            // 5. Wing Flap (open/close)
+            const flap = (Math.sin(time * 2.2) * 0.5 + 0.5); // 0..1
+            const openZ = 0.22 + flap * 0.35;
+            const twistY = 0.12 + flap * 0.10;
+            wingMeshes.forEach(({ wing, side }) => {
+                wing.rotation.z = side * openZ;
+                wing.rotation.y = side * twistY;
+            });
+
+            // 5. Rotate Ring
+            ring.rotation.z -= 0.005;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+    </script>
+</body>
+</html>
