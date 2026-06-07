@@ -764,6 +764,11 @@
         </button>
       </div>
       
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="shuffleOptionsUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span>Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+      
       <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;">Επιστροφή</button>
     </section>
 
@@ -784,6 +789,11 @@
         <!-- Unit items will be populated by JS -->
       </div>
       
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 10px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="shuffleOptionsGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span>Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
       <div style="display: flex; gap: 15px; margin-top: 15px; width: 100%; justify-content: center; flex-wrap: wrap;">
         <button id="startConfiguredTestBtn" class="btn btn-primary" style="padding: 14px 28px; font-size: 1rem;" disabled>
           Έναρξη Τεστ
@@ -873,6 +883,7 @@
     let currentOrderType = 'original'; // 'original' or 'random'
     let activeQuestions = []; // Array of active questions (original order or shuffled)
     let selectedQuizIndexForOrder = -1;
+    let currentShuffleOptions = false;
 
     // Sound Synthesis (Web Audio API)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -928,6 +939,8 @@
     const unitsSelectionList = document.getElementById('unitsSelectionList');
     const startConfiguredTestBtn = document.getElementById('startConfiguredTestBtn');
     const configBackBtn = document.getElementById('configBackBtn');
+    const shuffleOptionsUnitCheckbox = document.getElementById('shuffleOptionsUnitCheckbox');
+    const shuffleOptionsGeneralCheckbox = document.getElementById('shuffleOptionsGeneralCheckbox');
     
     const quizUnitText = document.getElementById('quizUnitText');
     const progressText = document.getElementById('progressText');
@@ -959,6 +972,22 @@
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
       return shuffled;
+    }
+
+    // Shuffle Options Helper
+    function shuffleQuestionOptions(question) {
+      let optionsWithIndices = question.options.map((opt, idx) => ({
+        text: opt,
+        isCorrect: (idx === question.correct_idx)
+      }));
+      let shuffled = shuffleArray(optionsWithIndices);
+      let newOptions = shuffled.map(item => item.text);
+      let newCorrectIdx = shuffled.findIndex(item => item.isCorrect);
+      return {
+        text: question.text,
+        options: newOptions,
+        correct_idx: newCorrectIdx
+      };
     }
 
     // Initialize Dashboard
@@ -1158,6 +1187,8 @@
       const quiz = QUIZZES[quizIdx];
 
       if (quizIdx === 7) {
+        currentShuffleOptions = shuffleOptionsGeneralCheckbox.checked;
+        
         // Pool questions from selected units
         let pool = [];
         selectedUnitsForTest.forEach(idx => {
@@ -1167,8 +1198,13 @@
         });
         
         const testSize = Math.min(30, pool.length);
-        const selectedQuestions = shuffleArray(pool).slice(0, testSize);
+        let selectedQuestions = shuffleArray(pool).slice(0, testSize);
         
+        // Shuffle options if checked
+        selectedQuestions = selectedQuestions.map(q => {
+          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+        });
+
         const selectedUnitsLabels = Array.from(selectedUnitsForTest)
           .map(i => i === 6 ? "7-8" : (i + 1).toString())
           .sort((a,b) => parseFloat(a) - parseFloat(b))
@@ -1181,11 +1217,14 @@
         
         activeQuestions = selectedQuestions;
       } else {
-        if (orderType === 'random') {
-          activeQuestions = shuffleArray(quiz.questions);
-        } else {
-          activeQuestions = [...quiz.questions];
-        }
+        currentShuffleOptions = shuffleOptionsUnitCheckbox.checked;
+        
+        let tempQuestions = (orderType === 'random') ? shuffleArray(quiz.questions) : [...quiz.questions];
+        
+        // Shuffle options if checked
+        activeQuestions = tempQuestions.map(q => {
+          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+        });
       }
 
       currentQuizIndex = quizIdx;
