@@ -352,6 +352,24 @@
       border-color: var(--text-main);
     }
 
+    .order-option-btn {
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .order-option-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    }
+    #randomOrderBtn:hover {
+      background-color: var(--success-glow) !important;
+      border-color: var(--success) !important;
+      color: white !important;
+    }
+    #originalOrderBtn:hover {
+      background-color: var(--primary-glow) !important;
+      border-color: var(--primary) !important;
+      color: white !important;
+    }
+
     /* Shake animation for error state */
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
@@ -564,7 +582,7 @@
         background-color: #ffffff !important;
         color: #000000 !important;
       }
-      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection {
+      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection, #orderSection {
         display: none !important;
       }
       .results-quiz-title {
@@ -681,6 +699,27 @@
       <!-- Cards will be populated by JS -->
     </section>
 
+    <!-- ORDER SELECTION SECTION -->
+    <section id="orderSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 30px auto; align-items: center;">
+      <h2 id="orderQuizTitle" class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Όνομα Κουίζ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 420px; margin-bottom: 10px;">
+        Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+        <button id="originalOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          Αρχική Σειρά (Όπως στο έγγραφο)
+        </button>
+        <button id="randomOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; border-color: var(--success); color: var(--success); width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+          Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)
+        </button>
+      </div>
+      
+      <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;">Επιστροφή</button>
+    </section>
+
     <!-- ACTIVE QUIZ SECTION -->
     <section id="quizSection" class="card hidden">
       <div class="progress-section">
@@ -759,6 +798,9 @@
     let correctCount = 0;
     let isAnswered = false;
     let soundEnabled = false; // Default off, user can toggle on
+    let currentOrderType = 'original'; // 'original' or 'random'
+    let activeQuestions = []; // Array of active questions (original order or shuffled)
+    let selectedQuizIndexForOrder = -1;
 
     // Sound Synthesis (Web Audio API)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -804,6 +846,11 @@
     const dashboardSection = document.getElementById('dashboardSection');
     const quizSection = document.getElementById('quizSection');
     const resultsSection = document.getElementById('resultsSection');
+    const orderSection = document.getElementById('orderSection');
+    const orderQuizTitle = document.getElementById('orderQuizTitle');
+    const originalOrderBtn = document.getElementById('originalOrderBtn');
+    const randomOrderBtn = document.getElementById('randomOrderBtn');
+    const orderBackBtn = document.getElementById('orderBackBtn');
     
     const quizUnitText = document.getElementById('quizUnitText');
     const progressText = document.getElementById('progressText');
@@ -845,7 +892,7 @@
       QUIZZES.slice(0, 7).forEach((quiz, index) => {
         const card = document.createElement('div');
         card.className = 'card quiz-card';
-        card.addEventListener('click', () => startQuiz(index));
+        card.addEventListener('click', () => promptOrderSelection(index));
         
         // Infer unit number
         let unitText = `Ενότητα ${index + 1}`;
@@ -875,7 +922,7 @@
       card.className = 'card quiz-card';
       card.style.borderColor = 'var(--success)';
       card.style.boxShadow = '0 10px 25px -5px rgba(16, 185, 129, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.3)';
-      card.addEventListener('click', () => startQuiz(7));
+      card.addEventListener('click', () => startQuiz(7, 'random'));
       card.innerHTML = `
         <div>
           <span class="unit-tag" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">Γενικό Τεστ</span>
@@ -906,8 +953,38 @@
       }
     });
 
+    // Order Selection Logic
+    function promptOrderSelection(quizIdx) {
+      selectedQuizIndexForOrder = quizIdx;
+      const quiz = QUIZZES[quizIdx];
+      orderQuizTitle.textContent = quiz.title;
+      
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.remove('hidden');
+    }
+
+    originalOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'original');
+    });
+
+    randomOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'random');
+    });
+
+    orderBackBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
     // Start Quiz
-    function startQuiz(quizIdx) {
+    function startQuiz(quizIdx, orderType) {
+      currentOrderType = orderType;
+      const quiz = QUIZZES[quizIdx];
+
       if (quizIdx === 7) {
         // Generate random 30-question test:
         // 23 from first 6 quizzes (indices 0 to 5)
@@ -933,6 +1010,14 @@
           title: "Γενικό Τεστ (30 τυχαίες ερωτήσεις)",
           questions: combinedQuestions
         };
+        
+        activeQuestions = combinedQuestions;
+      } else {
+        if (orderType === 'random') {
+          activeQuestions = shuffleArray(quiz.questions);
+        } else {
+          activeQuestions = [...quiz.questions];
+        }
       }
 
       currentQuizIndex = quizIdx;
@@ -945,7 +1030,6 @@
       resultsSection.classList.add('hidden');
       quizSection.classList.remove('hidden');
       
-      const quiz = QUIZZES[currentQuizIndex];
       if (currentQuizIndex === 7) {
         quizUnitText.textContent = "ΓΕΝΙΚΟ ΤΕΣΤ";
       } else if (currentQuizIndex === 6) {
@@ -961,12 +1045,12 @@
     // Load Question
     function loadQuestion() {
       const quiz = QUIZZES[currentQuizIndex];
-      const q = quiz.questions[currentQuestionIndex];
+      const q = activeQuestions[currentQuestionIndex];
       isAnswered = false;
       nextBtn.disabled = true;
       
-      progressText.textContent = `Ερώτηση ${currentQuestionIndex + 1} από ${quiz.questions.length}`;
-      const progressPercent = (currentQuestionIndex / quiz.questions.length) * 100;
+      progressText.textContent = `Ερώτηση ${currentQuestionIndex + 1} από ${activeQuestions.length}`;
+      const progressPercent = (currentQuestionIndex / activeQuestions.length) * 100;
       progressBar.style.width = `${progressPercent}%`;
       
       questionTitle.textContent = q.text;
@@ -994,7 +1078,7 @@
       userAnswers.push(optionIdx);
       
       const quiz = QUIZZES[currentQuizIndex];
-      const q = quiz.questions[currentQuestionIndex];
+      const q = activeQuestions[currentQuestionIndex];
       const correctIdx = q.correct_idx;
       const isCorrect = (optionIdx === correctIdx);
       
@@ -1022,10 +1106,9 @@
 
     // Next Question Button Click
     nextBtn.addEventListener('click', () => {
-      const quiz = QUIZZES[currentQuizIndex];
       currentQuestionIndex++;
       
-      if (currentQuestionIndex < quiz.questions.length) {
+      if (currentQuestionIndex < activeQuestions.length) {
         loadQuestion();
       } else {
         showResults();
@@ -1043,7 +1126,7 @@
         resultsQuizTitle.textContent = quiz.title;
       }
       
-      const totalQuestions = quiz.questions.length;
+      const totalQuestions = activeQuestions.length;
       const scorePercent = Math.round((correctCount / totalQuestions) * 100);
       
       scoreNumber.textContent = `${scorePercent}%`;
@@ -1068,7 +1151,7 @@
       }
       
       reviewContainer.innerHTML = '';
-      quiz.questions.forEach((q, idx) => {
+      activeQuestions.forEach((q, idx) => {
         const userChoiceIdx = userAnswers[idx];
         const correctIdx = q.correct_idx;
         const isUserCorrect = (userChoiceIdx === correctIdx);
@@ -1110,7 +1193,7 @@
 
     // Restart Quiz
     restartBtn.addEventListener('click', () => {
-      startQuiz(currentQuizIndex);
+      startQuiz(currentQuizIndex, currentOrderType);
     });
 
     // Go Back to Dashboard
