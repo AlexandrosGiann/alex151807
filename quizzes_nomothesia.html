@@ -49,7 +49,7 @@
     header {
       width: 100%;
       max-width: 960px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -98,7 +98,6 @@
       max-width: 960px;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 20px;
     }
 
@@ -107,43 +106,204 @@
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 50px 30px;
+      padding: 30px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-      max-width: 650px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       width: 100%;
-      text-align: center;
+    }
+
+    /* Dashboard styling centered for single card */
+    #dashboardSection {
+      max-width: 550px;
+      margin: 20px auto;
+      width: 100%;
+    }
+
+    .quiz-card {
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 25px;
-      margin-top: 20px;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 35px 30px;
     }
 
-    .placeholder-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: rgba(56, 189, 248, 0.1);
+    .quiz-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.1), 0 10px 10px -5px rgba(56, 189, 248, 0.04);
+      background-color: var(--card-hover);
+      border-color: var(--primary);
+    }
+
+    .unit-tag {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: rgba(56, 189, 248, 0.15);
       color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+      margin-bottom: 5px;
     }
 
-    .placeholder-title {
+    .quiz-card-title {
       font-family: var(--font-outfit);
-      font-size: 1.8rem;
+      font-size: 1.35rem;
       font-weight: 700;
+      line-height: 1.4;
       color: var(--text-main);
     }
 
-    .placeholder-desc {
-      font-size: 0.98rem;
+    .quiz-meta {
+      font-size: 0.88rem;
       color: var(--text-muted);
-      line-height: 1.6;
-      max-width: 450px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Active Quiz Screen */
+    .hidden {
+      display: none !important;
+    }
+
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8 0%, #10b981 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .question-title {
+      font-family: var(--font-outfit);
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 25px;
+      color: var(--text-main);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px 20px;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-marker {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      margin-top: 1px;
+    }
+
+    .option-btn:hover:not(:disabled) .option-marker {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* State Styles for Options */
+    .option-btn.selected-correct {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-correct .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect {
+      background-color: var(--error-glow);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect .option-marker {
+      background-color: var(--error);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.correct-reveal {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+    }
+
+    .option-btn.correct-reveal .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .action-row {
+      margin-top: 30px;
+      display: flex;
+      justify-content: flex-end;
     }
 
     .btn {
@@ -158,19 +318,379 @@
       align-items: center;
       gap: 8px;
       text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #000;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #7dd3fc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
       background-color: transparent;
       border: 1px solid var(--border-color);
       color: var(--text-main);
     }
 
-    .btn:hover {
+    .btn-outline:hover {
       background-color: rgba(255, 255, 255, 0.05);
       border-color: var(--text-main);
+    }
+
+    .order-option-btn {
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .order-option-btn:hover {
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    }
+    #randomOrderBtn:hover {
+      background-color: var(--success-glow) !important;
+      border-color: var(--success) !important;
+      color: white !important;
+    }
+    #originalOrderBtn:hover {
+      background-color: var(--primary-glow) !important;
+      border-color: var(--primary) !important;
+      color: white !important;
+    }
+
+    /* Shake animation for error state */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* Timer Pulsing Animation */
+    @keyframes timerPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+    .timer-warning {
+      color: var(--error) !important;
+      animation: timerPulse 1s infinite;
+    }
+
+    .results-quiz-title {
+      font-family: var(--font-outfit);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    /* Circular Score Summary Styling */
+    .results-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .score-circle-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 15px 0;
+    }
+
+    .score-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .score-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 12;
+    }
+
+    .score-fill {
+      fill: none;
+      stroke: var(--success);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+
+    .score-text-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .score-number {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .result-feedback-title {
+      font-family: var(--font-outfit);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .result-feedback-text {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 500px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Review Area */
+    .review-section {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .review-title-text {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .review-item {
+      background-color: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .review-item-q {
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .review-opt {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .review-opt-correct {
+      background-color: rgba(16, 185, 129, 0.08);
+      border: 1px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .review-opt-incorrect {
+      background-color: rgba(239, 68, 68, 0.08);
+      border: 1px solid var(--error);
+      color: #fca5a5;
+    }
+
+    .review-opt-neutral {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .review-opt-marker {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 1px;
+    }
+
+    /* Custom audio control overlay */
+    .sound-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .sound-toggle:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .sound-toggle.muted {
+      opacity: 0.6;
+    }
+
+    /* Print styling to save beautifully as PDF */
+    @media print {
+      @page {
+        margin: 15mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection, #orderSection {
+        display: none !important;
+      }
+      .results-quiz-title {
+        color: #000000 !important;
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+      }
+      .score-label {
+        color: #475569 !important;
+      }
+      .results-card {
+        background-color: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+      .card {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      /* Ensure SVG scores look good in print */
+      .score-bg {
+        stroke: #f1f5f9 !important;
+      }
+      .score-fill {
+        stroke: #10b981 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .score-number {
+        color: #000000 !important;
+      }
+      .result-feedback-title {
+        color: #000000 !important;
+      }
+      .result-feedback-text {
+        color: #475569 !important;
+      }
+      .review-title-text {
+        color: #000000 !important;
+        border-bottom-color: #cbd5e1 !important;
+      }
+      .review-item {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .review-item-q {
+        color: #000000 !important;
+      }
+      /* Hide individual report buttons in print */
+      .review-item button {
+        display: none !important;
+      }
+      .review-opt {
+        border-width: 1px !important;
+        border-style: solid !important;
+      }
+      .review-opt-correct {
+        background-color: #f0fdf4 !important;
+        border-color: #10b981 !important;
+        color: #14532d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-incorrect {
+        background-color: #fef2f2 !important;
+        border-color: #ef4444 !important;
+        color: #7f1d1d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-neutral {
+        background-color: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #475569 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- Background sound settings -->
+  <button id="soundToggle" class="sound-toggle" title="Ενεργοποίηση/Απενεργοποίηση Ήχου">
+    <svg id="soundOnIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+    <svg id="soundMutedIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+  </button>
 
   <header>
     <div class="nav-bar">
@@ -184,18 +704,617 @@
 
   <main class="container">
     
-    <div class="card">
-      <div class="placeholder-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-      </div>
-      <h2 class="placeholder-title">Σύντομα Διαθέσιμο</h2>
-      <p class="placeholder-desc">
-        Το περιεχόμενο και τα διαδραστικά κουίζ για τη θεματική ενότητα <strong>«Νομοθεσία και Ευζωία των ζώων»</strong> βρίσκονται υπό κατασκευή και θα προστεθούν σύντομα.
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection">
+      <!-- Cards will be populated by JS -->
+    </section>
+
+    <!-- ORDER SELECTION SECTION -->
+    <section id="orderSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 30px auto; align-items: center;">
+      <h2 id="orderQuizTitle" class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Όνομα Κουίζ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 420px; margin-bottom: 10px;">
+        Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:
       </p>
-      <a href="quizess.html" class="btn">Επιστροφή στα Κουίζ</a>
-    </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+        <button id="originalOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          Αρχική Σειρά (Όπως στο έγγραφο)
+        </button>
+        <button id="randomOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; border-color: var(--success); color: var(--success); width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+          Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)
+        </button>
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="shuffleOptionsUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span>Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
+      <!-- Countdown Timer Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="timerEnableUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+          <span>Ενεργοποίηση Χρονομέτρου</span>
+        </label>
+        <div id="timerDurationUnitContainer" style="display: none; align-items: center; gap: 6px;">
+          <input type="number" id="timerDurationUnitInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
+          <span>λεπτά</span>
+        </div>
+      </div>
+      
+      <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;">Επιστροφή</button>
+    </section>
+
+    <!-- ACTIVE QUIZ SECTION -->
+    <section id="quizSection" class="card hidden">
+      <div class="progress-section">
+        <div class="progress-header">
+          <span id="quizUnitText">ΔΙΚΑΙΟ ΤΩΝ ΖΩΩΝ</span>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="quizTimerText" class="hidden" style="font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 5px; font-family: monospace; font-size: 1rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span id="timerCountdown">30:00</span>
+            </span>
+            <span id="progressText">Ερώτηση 1 από 81</span>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+      
+      <div id="questionContainer">
+        <h2 id="questionTitle" class="question-title">Φόρτωση ερώτησης...</h2>
+        <div id="optionsList" class="options-list">
+          <!-- Options will be populated by JS -->
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="nextBtn" class="btn btn-primary" disabled>
+          Επόμενο
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section id="resultsSection" class="card results-card hidden">
+      <h1 id="resultsQuizTitle" class="results-quiz-title"></h1>
+      <div class="score-circle-wrapper">
+        <svg class="score-svg" viewBox="0 0 160 160">
+          <circle class="score-bg" cx="80" cy="80" r="70"></circle>
+          <circle id="scoreFill" class="score-fill" cx="80" cy="80" r="70"></circle>
+        </svg>
+        <div class="score-text-center">
+          <div id="scoreNumber" class="score-number">0%</div>
+          <div class="score-label">Σκορ</div>
+        </div>
+      </div>
+
+      <h2 id="resultFeedbackTitle" class="result-feedback-title">Συγχαρητήρια!</h2>
+      <p id="resultFeedbackText" class="result-feedback-text">Ολοκληρώσατε το κουίζ. Δείτε τις απαντήσεις σας παρακάτω.</p>
+
+      <div class="button-group">
+        <button id="restartBtn" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          Επανάληψη
+        </button>
+        <button id="backBtn" class="btn btn-outline">Επιστροφή στα Κουίζ</button>
+        <button id="pdfBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Αποθήκευση ως PDF
+        </button>
+        <button id="generalReportBtn" class="btn btn-outline" style="border-color: var(--error); color: #fca5a5;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          Αναφορά / Σχόλια
+        </button>
+      </div>
+
+      <!-- Review Section -->
+      <div class="review-section">
+        <h3 class="review-title-text">Αναλυτικά Αποτελέσματα</h3>
+        <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 15px; text-align: left; width: 100%;">
+          <!-- Review items populated by JS -->
+        </div>
+      </div>
+    </section>
 
   </main>
 
+  <!-- Embedded Quiz Data & Core Script -->
+  <script>
+    const QUIZZES = [{"title": "Κουίζ Δικαίου των Ζώων", "filename": "quiz_dikaiou_zoon.md", "questions": [{"text": "Ποιο χαρακτηριστικό αποδίδεται στο Δίκαιο ως ανθρώπινο πολιτισμικό δημιούργημα;", "options": ["Είναι εύλογα ανθρωποκεντρικό", "Είναι αποκλειστικά οικολογικό", "Είναι αμετάβλητο στον χρόνο", "Δεν εξυπηρετεί κοινωνικές ανάγκες"], "correct_idx": 0}, {"text": "Τι σημαίνει η ιστορικότητα του Δικαίου των Ζώων κατά τις σημειώσεις;", "options": ["Ότι οι κανόνες του είναι αιώνιοι", "Ότι αντανακλά τις ιστορικές, οικονομικές και πολιτισμικές συνθήκες μιας κοινωνίας", "Ότι αφορά μόνο το ρωμαϊκό δίκαιο", "Ότι δεν επηρεάζεται από την ηθική φιλοσοφία"], "correct_idx": 1}, {"text": "Γιατί ο συγγραφέας τονίζει ότι η νομοθεσία περί ζώων μεταβάλλεται γρήγορα;", "options": ["Επειδή δεν υπάρχουν σταθεροί κανόνες δικαίου", "Επειδή το δίκαιο των ζώων είναι αποκλειστικά ποινικό", "Επειδή μεταβάλλονται ταχύρρυθμα οι υποκείμενες κοινωνικές πεποιθήσεις", "Επειδή απαγορεύεται η ερμηνεία των κανόνων"], "correct_idx": 2}, {"text": "Ποια εικόνα σχέσης ανθρώπου-ζώων αποδίδεται κυρίως στην παραδοσιακή ανάγνωση της Γένεσης;", "options": ["Ισότητα όλων των όντων", "Απόλυτη απαγόρευση χρήσης ζώων", "Νομική προσωποποίηση των ζώων", "Κυριαρχία και ηγεμονία του ανθρώπου επί των ζώων"], "correct_idx": 3}, {"text": "Η αναφορά στην ινδουιστική αχίμσα χρησιμοποιείται για να δείξει ότι:", "options": ["Οι αντιλήψεις για τα ζώα είναι ιστορικά και πολιτισμικά σχετικές", "Οι θρησκείες έχουν πάντοτε ίδια στάση προς τα ζώα", "Η ελληνική νομοθεσία προέρχεται από την Ινδία", "Τα ζώα δεν έχουν καμία θέση στη θρησκεία"], "correct_idx": 0}, {"text": "Ποιο από τα παρακάτω παραδείγματα γλώσσας δείχνει, κατά τις σημειώσεις, υποκείμενη ανθρωποκεντρική ιδεολογία;", "options": ["Η φράση «ο άνθρωπος και τα άλλα ζώα»", "Η διάκριση «ο άνθρωπος πεθαίνει, το ζώο ψοφάει»", "Η χρήση επιστημονικών ονομασιών", "Η χρήση του όρου «μη ανθρώπινα ζώα»"], "correct_idx": 1}, {"text": "Γιατί προτιμάται ως ακριβέστερη η διατύπωση «ο άνθρωπος και τα άλλα ζώα»;", "options": ["Επειδή αρνείται τη βιολογική ένταξη του ανθρώπου στα ζώα", "Επειδή καταργεί το δίκαιο", "Επειδή αναγνωρίζει ότι ο άνθρωπος είναι βιολογικά είδος ζώου", "Επειδή αφορά μόνο τα άγρια ζώα"], "correct_idx": 2}, {"text": "Ποια σύγχρονη κοινωνική εξέλιξη αναφέρεται ως παράγοντας επιρροής στο Δίκαιο των Ζώων;", "options": ["Η εξαφάνιση των ζώων συντροφιάς", "Η κατάργηση όλων των διεθνών συμβάσεων", "Η επιστροφή αποκλειστικά στην εμπράγματη θεώρηση", "Η άνοδος κατοχής ζώων συντροφιάς και το φιλοζωικό/vegan κίνημα"], "correct_idx": 3}, {"text": "Η ρύθμιση του Σωφρονιστικού Κώδικα για ειδικά διαιτολόγια δείχνει ότι ο νομοθέτης λαμβάνει υπόψη:", "options": ["Θρησκευτικές ή άλλες πεποιθήσεις, όπως χορτοφαγικές/vegan πεποιθήσεις", "Μόνο ιατρικούς λόγους", "Μόνο οικονομικά κριτήρια", "Μόνο την ηλικία των κρατουμένων"], "correct_idx": 0}, {"text": "Τι είναι η ικανότητα δικαίου;", "options": ["Η ικανότητα σωματικής άμυνας", "Η ικανότητα να είναι κάποιος υποκείμενο δικαιωμάτων και υποχρεώσεων", "Η ικανότητα κατοχής κατοικιδίου", "Η ικανότητα συμμετοχής σε φιλοζωικό σωματείο"], "correct_idx": 1}, {"text": "Ποια είναι η βασική θέση de lege lata για τα ζώα στις σημειώσεις;", "options": ["Υπάρχει ήδη ρητή πανηγυρική αναγνώριση τους ως πλήρων προσώπων", "Τα ζώα είναι αποκλειστικά νομικά πρόσωπα", "Δεν υπάρχει ρητή αναγνώριση ως προσώπων, αλλά υπάρχουν ισχυρές ενδείξεις προς αυτή την κατεύθυνση", "Τα ζώα δεν προστατεύονται καθόλου"], "correct_idx": 2}, {"text": "Ποια διάταξη του Αστικού Κώδικα αναφέρεται ως θεμέλιο της ικανότητας δικαίου των φυσικών προσώπων;", "options": ["Άρθρο 24 ΑΚ", "Άρθρο 924 ΑΚ", "Άρθρο 1000 ΑΚ", "Άρθρο 34 ΑΚ"], "correct_idx": 3}, {"text": "Ποια θέση υποστηρίζεται για τα νομικά πρόσωπα;", "options": ["Είναι τεχνητά πρόσωπα που αποκτούν ικανότητα δικαίου από νομικές διατάξεις", "Είναι φυσικά όντα", "Δεν έχουν ποτέ δικαιώματα", "Έχουν όλα τα δικαιώματα των ανθρώπων"], "correct_idx": 0}, {"text": "Τι δείχνει το παράδειγμα του κυοφορούμενου στο άρθρο 36 ΑΚ;", "options": ["Ότι ο νομοθέτης δεν μπορεί να δημιουργήσει ενδιάμεσες κατηγορίες", "Ότι μπορεί να υπάρξει υποκείμενο δικαίου με δικαιώματα υπό προϋποθέσεις, χωρίς πλήρες φάσμα υποχρεώσεων", "Ότι μόνο τα νομικά πρόσωπα έχουν δικαιώματα", "Ότι το έμβρυο είναι πράγμα"], "correct_idx": 1}, {"text": "Τι είναι το «ατελές υποκείμενο του δικαίου» όπως χρησιμοποιείται στις σημειώσεις;", "options": ["Υποκείμενο μόνο υποχρεώσεων", "Πράγμα χωρίς δικαιώματα", "Υποκείμενο με δικαιώματα, αλλά χωρίς αντίστοιχες υποχρεώσεις", "Πλήρες φυσικό πρόσωπο"], "correct_idx": 2}, {"text": "Ποια σημασία έχει η Διακήρυξη του Καίμπριτζ περί ζωικής συνείδησης;", "options": ["Αρνείται ότι τα ζώα έχουν συνείδηση", "Αφορά μόνο φυτά", "Καταργεί την ανάγκη νομοθεσίας", "Υποστηρίζει ότι μη ανθρώπινα ζώα διαθέτουν υποστρώματα συνειδητών καταστάσεων και ικανότητα εμπρόθετης συμπεριφοράς"], "correct_idx": 3}, {"text": "Ποια τροποποίηση του άρθρου 34 ΑΚ προτείνεται δικαιοπολιτικά;", "options": ["Να αναγνωριστεί περιορισμένη ικανότητα δικαίου των ζώων ως προς συγκεκριμένα δικαιώματα, ως ζωικό πρόσωπο", "Να θεωρηθούν όλα τα ζώα πλήρη υποκείμενα με όλες τις υποχρεώσεις", "Να καταργηθεί η ικανότητα δικαίου των ανθρώπων", "Να αναχθούν τα ζώα αποκλειστικά σε νομικά πρόσωπα"], "correct_idx": 0}, {"text": "Ποια είναι η σωστή σειρά των τριών αξιολογικών σταδίων της περί ζώων νομοθεσίας;", "options": ["Φιλοζωικό - εμπράγματο - οικολογικό", "Εμπράγματο - περιβαλλοντικό/οικολογικό - φιλοζωικό", "Ποινικό - φορολογικό - διοικητικό", "Θρησκευτικό - εμπορικό - τεχνολογικό"], "correct_idx": 1}, {"text": "Στο περιβαλλοντικό/οικολογικό στάδιο, το ζώο προστατεύεται κυρίως:", "options": ["Ως ατομικό ζωικό πρόσωπο", "Ως φορολογούμενος", "Ως δείγμα είδους ή στοιχείο οικοσυστήματος", "Ως κληρονόμος"], "correct_idx": 2}, {"text": "Στο φιλοζωικό στάδιο, το κέντρο βάρους μετατοπίζεται:", "options": ["Στην προστασία του ιδιοκτήτη μόνο", "Στην προστασία μόνο της βιοποικιλότητας", "Στην εμπορική αξία του ζώου", "Στην προστασία του μεμονωμένου, εξατομικευμένου ζώου"], "correct_idx": 3}, {"text": "Ποια συγκριτική ρύθμιση χαρακτηρίζει κυρίως τον αυστριακό και γερμανικό Αστικό Κώδικα;", "options": ["Τα ζώα δεν είναι πράγματα, αλλά οι διατάξεις για πράγματα εφαρμόζονται επικουρικά όπου δεν υπάρχει άλλη ρύθμιση", "Τα ζώα είναι πλήρως πράγματα", "Τα ζώα είναι πάντοτε νομικά πρόσωπα", "Τα ζώα εξαιρούνται από κάθε δίκαιο"], "correct_idx": 0}, {"text": "Πώς χαρακτηρίζει ο γαλλικός Αστικός Κώδικας τα ζώα;", "options": ["Άψυχα πράγματα", "Ζωντανά όντα προικισμένα με ευαισθησία", "Δημόσια αγαθά", "Φορείς πολιτικών δικαιωμάτων"], "correct_idx": 1}, {"text": "Ποια διάκριση εισάγει ιδιαιτέρως ο βελγικός Αστικός Κώδικας;", "options": ["Μόνο μεταξύ προσώπων και πραγμάτων", "Μεταξύ ζώων εκτροφής και φυτών", "Τριμερή διάκριση μεταξύ προσώπων, ζώων και πραγμάτων", "Μεταξύ άγριων και οικόσιτων φυτών"], "correct_idx": 2}, {"text": "Τι σημαίνει ότι το Δίκαιο των Ζώων έχει διττό χαρακτήρα res/animal;", "options": ["Ότι αφορά μόνο ζώα εκτροφής", "Ότι δεν έχει κανόνες προστασίας", "Ότι τα ζώα είναι μόνο αντικείμενα φόρου", "Ότι άλλοτε αντιμετωπίζει το ζώο ως κινητό πράγμα και άλλοτε ως συναισθανόμενο πλάσμα"], "correct_idx": 3}, {"text": "Γιατί το Δίκαιο των Ζώων περιγράφεται ως δίκαιο προστασίας;", "options": ["Επειδή στη σχέση ανθρώπου-ζώου ο άνθρωπος είναι ισχυρό μέρος και το ζώο αδύναμο", "Επειδή το ζώο είναι ισχυρότερο μέρος", "Επειδή προστατεύει μόνο τους καταναλωτές", "Επειδή δεν επιβάλλει υποχρεώσεις"], "correct_idx": 0}, {"text": "Τι σημαίνει ο αποσπασματικός χαρακτήρας του Δικαίου των Ζώων;", "options": ["Ότι υπάρχει ένας πλήρης Κώδικας Δικαίου των Ζώων", "Ότι οι διατάξεις βρίσκονται διασκορπισμένες και παρέχουν επιμέρους προστασία", "Ότι δεν υπάρχει κανένα νομοθέτημα", "Ότι αφορά αποκλειστικά το Σύνταγμα"], "correct_idx": 1}, {"text": "Ποια ερμηνευτική αρχή αποδίδεται με το in dubio pro animale;", "options": ["Σε αμφιβολία υπέρ του ιδιοκτήτη", "Σε αμφιβολία υπέρ της οικονομικής εκμετάλλευσης", "Σε αμφιβολία υπέρ της προστασίας/ευζωίας του ζώου", "Σε αμφιβολία υπέρ της διοίκησης"], "correct_idx": 2}, {"text": "Ποια από τις παρακάτω πηγές αναφέρεται ως πηγή του Δικαίου των Ζώων;", "options": ["Μόνο ο Αστικός Κώδικας", "Μόνο ιδιωτικές συμβάσεις", "Μόνο θρησκευτικοί κανόνες", "Εθνικοί κώδικες, διεθνείς συμβάσεις και ευρωπαϊκό δίκαιο"], "correct_idx": 3}, {"text": "Ποιο είναι το βασικό νόημα του άρθρου 13 ΣΛΕΕ για τα ζώα;", "options": ["Η Ένωση και τα κράτη μέλη λαμβάνουν πλήρως υπόψη τις απαιτήσεις καλής διαβίωσης των ζώων ως ευαίσθητων όντων", "Η ΕΕ αγνοεί την ευζωία", "Τα ζώα αποκτούν δικαίωμα ψήφου", "Απαγορεύεται κάθε εθνική νομοθεσία"], "correct_idx": 0}, {"text": "Γιατί το Δίκαιο των Ζώων θεωρείται μικτός ή διακλαδικός κλάδος;", "options": ["Επειδή δεν ανήκει σε κανένα πεδίο", "Επειδή μετέχει πολλών κλάδων, όπως φιλοσοφία δικαίου, συνταγματικό, αστικό, ποινικό και διοικητικό δίκαιο", "Επειδή είναι μόνο διοικητικό", "Επειδή αφορά μόνο κτηνιάτρους"], "correct_idx": 1}, {"text": "Ποια έννοια χαρακτηρίζεται ως κεντρική και καθοδηγητική για το Δίκαιο των Ζώων;", "options": ["Η κυριότητα", "Η φορολογία", "Η ευζωία", "Η πώληση"], "correct_idx": 2}, {"text": "Κατά τον ΦΖΝ, ευζωία είναι κυρίως:", "options": ["Μόνο η επιβίωση του ζώου", "Μόνο η οικονομική αξία του ζώου", "Η δυνατότητα πώλησης του ζώου", "Η καλή φυσική και ψυχική κατάσταση του ζώου σε σχέση με τις συνθήκες διαβίωσης και θανάτου του"], "correct_idx": 3}, {"text": "Ποια από τις παρακάτω δεν ανήκει στις Πέντε Ελευθερίες όπως παρουσιάζονται;", "options": ["Ελευθερία συμμετοχής σε εκλογές", "Ελευθερία από πείνα και δίψα", "Ελευθερία από φόβο και αγωνία", "Ελευθερία έκφρασης φυσιολογικής συμπεριφοράς"], "correct_idx": 0}, {"text": "Η ελευθερία από φόβο και αγωνία είναι ιδιαίτερα σημαντική διότι:", "options": ["Αφορά αποκλειστικά την εμπορική αξία του ζώου", "Ανάγεται στον εσωτερικό/ψυχολογικό βίο του ζώου", "Αφορά μόνο τον ιδιοκτήτη", "Καταργεί την ανάγκη κτηνιάτρου"], "correct_idx": 1}, {"text": "Η ελευθερία έκφρασης φυσιολογικής συμπεριφοράς περιλαμβάνει ιδίως:", "options": ["Μόνο την παροχή τροφής", "Μόνο τη σήμανση με microchip", "Κατάλληλες συνθήκες διαβίωσης και κοινωνικοποίησης", "Μόνο την εμπορία"], "correct_idx": 2}, {"text": "Ποια θέση διατυπώνεται για την αυστηρά χορτοφαγική διατροφή σκύλου και γάτας;", "options": ["Και σκύλος και γάτα ευδοκιμούν πάντα χωρίς προϋποθέσεις", "Μόνο η γάτα μπορεί να ευδοκιμήσει", "Το ζήτημα είναι αποκλειστικά συνταγματικό", "Ο σκύλος μπορεί να ευδοκιμήσει με προσεκτική χορτοφαγική διατροφή, ενώ η γάτα αντιθέτως όχι"], "correct_idx": 3}, {"text": "Γιατί δεν υπάρχει ενιαίος νομικός ορισμός του ζώου;", "options": ["Επειδή κάθε νομοθέτημα έχει διαφορετικό σκοπό και ορίζει το ζώο ανάλογα με την τελεολογία του", "Επειδή ο όρος είναι αδύνατο να χρησιμοποιηθεί", "Επειδή όλα τα ζώα είναι πράγματα", "Επειδή ο ορισμός δίνεται μόνο από το ποινικό δίκαιο"], "correct_idx": 0}, {"text": "Σε γενικές γραμμές, το Δίκαιο των Ζώων αφορά ιδίως:", "options": ["Μόνο έντομα", "Σπονδυλωτά, μαλάκια ιδίως κεφαλόποδα και καρκινοειδή", "Μόνο φυτά", "Μόνο μικρόβια"], "correct_idx": 1}, {"text": "Η συναισθαντικότητα περιγράφεται ως:", "options": ["Κλειστός αριθμητικός κατάλογος ειδών", "Καθαρά φορολογική έννοια", "Ανοικτή, πολυδιάστατη αόριστη νομική έννοια που τροφοδοτείται από επιστήμες όπως κτηνιατρική, βιολογία και ψυχολογία", "Έννοια που αφορά μόνο νομικά πρόσωπα"], "correct_idx": 2}, {"text": "Ποιο κοινό στοιχείο έχουν οι ορισμοί του ζώου συντροφιάς;", "options": ["Την έμφαση στην παραγωγική χρησιμότητα", "Την υποχρεωτική πώληση", "Την ένταξη μόνο σε αγροτική εκμετάλλευση", "Την έμφαση στη συναισθηματική σχέση ανθρώπου-ζώου"], "correct_idx": 3}, {"text": "Ποιος είναι ο βασικός ορισμός του σκύλου βοηθείας στον ΦΖΝ;", "options": ["Εκπαιδευμένος ή εκπαιδευόμενος σκύλος οδηγός τυφλού ή σκύλος βοήθειας/προστασίας ατόμων με αναπηρία ή ασθένειες", "Οποιοσδήποτε σκύλος είναι μεγαλόσωμος", "Μόνο κυνηγετικός σκύλος", "Μόνο σκύλος καταφυγίου"], "correct_idx": 0}, {"text": "Πότε ένα ζώο συντροφιάς χαρακτηρίζεται κατ’ αντιδιαστολήν αδέσποτο;", "options": ["Όταν έχει ιδιοκτήτη αλλά κοιμάται έξω", "Όταν δεν έχει ιδιοκτήτη", "Όταν είναι μεγαλόσωμο", "Όταν έχει ηλεκτρονική σήμανση"], "correct_idx": 1}, {"text": "Ποια είναι η νομική σημασία της αναγραφής ιδιοκτήτη στο έγγραφο ταυτοποίησης;", "options": ["Έχει συστατικό χαρακτήρα μεταβίβασης κυριότητας", "Καταργεί την κυριότητα", "Έχει αποδεικτικό χαρακτήρα και δεν μεταβιβάζει την κυριότητα", "Αποδεικνύει μόνο την ηλικία"], "correct_idx": 2}, {"text": "Γιατί προτείνεται ο όρος «κηδεμόνας» αντί «ιδιοκτήτης»;", "options": ["Για να ενισχυθεί το υπόδειγμα κυριαρχίας", "Για να καταργηθεί το ΕΜΖΣ", "Για να αποκλειστούν οι υποχρεώσεις", "Για να φανεί η μετάβαση σε υπόδειγμα ευθύνης του ανθρώπου χάριν του ζώου"], "correct_idx": 3}, {"text": "Ποια από τις παρακάτω είναι υποχρέωση ιδιοκτήτη ζώου συντροφιάς;", "options": ["Να μεριμνά για σήμανση/καταχώριση, εμβολιασμό όπου απαιτείται και τήρηση κανόνων ευζωίας", "Να αποφεύγει κάθε κτηνιατρική εξέταση", "Να το εγκαταλείπει αν δεν το θέλει", "Να το χρησιμοποιεί υποχρεωτικά σε παραστάσεις"], "correct_idx": 0}, {"text": "Τι προβλέπει το σύστημα ελέγχου γεννήσεων για σκύλους και γάτες κατά την ανάλυση;", "options": ["Μόνο υποχρεωτική στείρωση χωρίς εναλλακτική", "Επιλογή μεταξύ στείρωσης και αποστολής γενετικού υλικού στο ΕΦΑΓΥΖΣ", "Καμία υποχρέωση ή διαδικασία", "Μόνο απαγόρευση κατοχής"], "correct_idx": 1}, {"text": "Ποια προϋπόθεση απαιτείται για την αφαίρεση του μέσου ηλεκτρονικής σήμανσης;", "options": ["Απλή βούληση του ιδιοκτήτη", "Μόνο απόφαση φιλοζωικού σωματείου", "Κτηνιατρική γνωμάτευση για την αναγκαιότητα και εντολή αρμόδιου εισαγγελέα", "Καμία διαδικασία"], "correct_idx": 2}, {"text": "Πώς αντιμετωπίζεται η εγκατάλειψη ζώου συντροφιάς;", "options": ["Ως απλή ιδιωτική επιλογή χωρίς συνέπειες", "Ως υποχρεωτική πράξη όταν το ζώο γερνά", "Ως λόγος απόκτησης κυριότητας", "Ως βαρύτατη παραβίαση υποχρεώσεων, με διοικητικές και ποινικές συνέπειες"], "correct_idx": 3}, {"text": "Ποια είναι η νόμιμη διαδικασία όταν ο ιδιοκτήτης θέλει να αποχωριστεί σκύλο ή γάτα και δεν έχει βρει νέο ιδιοκτήτη;", "options": ["Να γνωστοποιήσει την πρόθεση στον δήμο ώστε να αναρτηθεί προς υιοθεσία στην Πανελλήνια Πλατφόρμα για δύο μήνες", "Να το αφήσει στον δρόμο", "Να το πουλήσει υποχρεωτικά σε pet shop", "Να αφαιρέσει τη σήμανση"], "correct_idx": 0}, {"text": "Σε ποια διάταξη παραπέμπει ο ΦΖΝ για την αστική ευθύνη ζημίας από ζώο;", "options": ["Άρθρο 34 ΑΚ", "Άρθρο 924 ΑΚ", "Άρθρο 13 ΣΛΕΕ", "Άρθρο 16 Σ"], "correct_idx": 1}, {"text": "Ποια πρόσθετη υποχρέωση έχει ο ιδιοκτήτης γάτας σύμφωνα με τις σημειώσεις;", "options": ["Να τη διατηρεί μόνιμα σε κλουβί", "Να τη μεταφέρει μόνο με πλοίο", "Να μεριμνά ώστε να μη διαβιοί σε κλουβί", "Να την εκπαιδεύσει ως σκύλο βοηθείας"], "correct_idx": 2}, {"text": "Ποια αρχή χαρακτηρίζει τις αρμοδιότητες των Δήμων για τα αδέσποτα;", "options": ["Οι Δήμοι δεν έχουν καμία υποχρέωση", "Μόνο το κράτος κεντρικά μπορεί να περισυλλέγει ζώα", "Μόνο οι ιδιώτες ευθύνονται για τα αδέσποτα", "Οι Δήμοι είναι αρμόδιες αρχές για φροντίδα, περισυλλογή και διαχείριση των αδέσποτων εντός των ορίων τους"], "correct_idx": 3}, {"text": "Τι περιλαμβάνει το ολοκληρωμένο επιχειρησιακό πρόγραμμα διαχείρισης αδέσποτων;", "options": ["Περισυλλογή, κτηνιατρική περίθαλψη, σήμανση/καταγραφή, στείρωση, αναδοχή και υιοθεσία", "Μόνο διαφημιστικές καμπάνιες", "Μόνο πώληση ζώων", "Μόνο επιβολή τελών"], "correct_idx": 0}, {"text": "Ποιο είναι το πρώτο στάδιο διαχείρισης των αδεσπότων κατά το άρθρο 10 παρ. 5 ΦΖΝ;", "options": ["Η πώληση", "Η περισυλλογή από κατάλληλα εκπαιδευμένα και έμπειρα άτομα", "Η συμμετοχή σε έκθεση", "Η διαγραφή από το ΕΜΖΣ"], "correct_idx": 1}, {"text": "Τι τεκμήριο εισάγεται για σκύλους και γάτες χωρίς σήμανση;", "options": ["Θεωρούνται αυτόματα δεσποζόμενα", "Χάνουν κάθε προστασία", "Θεωρούνται αυτόματα αδέσποτα, με δυνατότητα ανατροπής του τεκμηρίου", "Μετατρέπονται σε ζώα εκτροφής"], "correct_idx": 2}, {"text": "Ποια είναι η λειτουργία της πενταμελούς επιτροπής του Δήμου όπως παρουσιάζεται;", "options": ["Να αποκλείει τη φωνή των φιλόζωων πολιτών", "Να επιβάλλει ειδικά τέλη", "Να πωλεί αποκλειστικά ζώα", "Να εξασφαλίζει πολυφωνία στη διαχείριση αδέσποτων και να μεταφέρει τη φωνή φιλόζωων πολιτών"], "correct_idx": 3}, {"text": "Τι απαγορεύεται στους Δήμους ως προς τους ιδιοκτήτες ζώων συντροφιάς;", "options": ["Να επιβάλλουν ειδικά δημοτικά τέλη σχετικά με την ιδιοκτησία ζώων συντροφιάς", "Να διαχειρίζονται αδέσποτα", "Να συνεργάζονται με φιλοζωικές οργανώσεις", "Να ιδρύουν καταφύγια"], "correct_idx": 0}, {"text": "Ποια θέση υιοθετείται για μισθωτικό όρο που απαγορεύει ζώα συντροφιάς υπό τους όρους του άρθρου 15 ΦΖΝ;", "options": ["Είναι πάντοτε έγκυρος", "Κατά την ορθότερη άποψη είναι άκυρος ως αντίθετος σε αναγκαστικό δίκαιο", "Επιβάλλεται από τον ΦΖΝ", "Αφορά μόνο άγρια ζώα"], "correct_idx": 1}, {"text": "Ποιος περιορισμός τίθεται για τα ζώα συντροφιάς σε πολυκατοικίες;", "options": ["Πρέπει να παραμένουν μόνιμα στη βεράντα", "Απαγορεύονται πάντοτε", "Δεν πρέπει να παραμένουν μόνιμα στις βεράντες ή στους ανοιχτούς χώρους του διαμερίσματος", "Πρέπει να διατηρούνται μόνο σε κοινόχρηστους χώρους"], "correct_idx": 2}, {"text": "Η μη εμπορικού χαρακτήρα μετακίνηση ζώων συντροφιάς εκτός Ελλάδας είναι μετακίνηση που:", "options": ["Αποσκοπεί στην πώληση του ζώου", "Αφορά μόνο ζώα εκτροφής", "Απαγορεύεται απολύτως", "Δεν αποσκοπεί στην πώληση και αποτελεί μέρος της μετακίνησης του ιδιοκτήτη"], "correct_idx": 3}, {"text": "Ποια ζώα συντροφιάς θεωρούνται μικρά για τις σχετικές ρυθμίσεις μεταφοράς;", "options": ["Όσα έχουν βάρος μέχρι 10 κιλά", "Όσα είναι κάτω των 25 κιλών", "Όσα είναι κάτω του ενός έτους", "Όσα είναι μόνο γάτες"], "correct_idx": 0}, {"text": "Κατά τη σύνοψη των σημειώσεων, πού απαγορεύεται de lege lata η πρόσβαση σκύλων στις παραλίες;", "options": ["Σε όλες τις παραλίες χωρίς εξαίρεση", "Σε οργανωμένες παραλίες υπό τις σχετικές προϋποθέσεις και σε παραλίες με Γαλάζια Σημαία", "Μόνο σε ιδιωτικές πισίνες", "Πουθενά"], "correct_idx": 1}, {"text": "Τι ισχύει για άλλα ζώα συντροφιάς, όπως γάτες ή ωδικά πτηνά, ως προς τις παραλίες κατά την ανάλυση;", "options": ["Υπάγονται στον ίδιο περιορισμό που αφορά τους σκύλους", "Απαγορεύονται αυστηρότερα", "Εξ αντιδιαστολής δεν περιορίζεται η πρόσβασή τους με τον ίδιο τρόπο", "Πρέπει να έχουν φίμωτρο"], "correct_idx": 2}, {"text": "Ποια βασική διευκόλυνση προβλέπεται για σκύλους βοηθείας και ζώα θεραπείας;", "options": ["Δεν επιτρέπεται να μπαίνουν σε δημόσιους χώρους", "Χρησιμοποιούνται μόνο σε κυνομαχίες", "Δεν θεωρούνται ζώα συντροφιάς", "Μπορούν να εισέρχονται όπου επιτρέπεται η είσοδος των ατόμων που συνοδεύουν, εφόσον το επιτρέπουν το μέγεθος και τα χαρακτηριστικά τους"], "correct_idx": 3}, {"text": "Ποια είναι η γενική ρύθμιση για συμμετοχή ζώων σε τσίρκα, θίασους και παραστάσεις;", "options": ["Απαγορεύεται κατά κανόνα", "Επιτρέπεται ελεύθερα", "Είναι υποχρεωτική για ζώα συντροφιάς", "Αφορά μόνο φυτά"], "correct_idx": 0}, {"text": "Ποιο στοιχείο περιλαμβάνει ο ευρύς ορισμός της «παράστασης» με ζώο;", "options": ["Μόνο ιδιωτική βόλτα", "Θέαμα μπροστά σε κοινό για κερδοσκοπικό, ψυχαγωγικό, καλλιτεχνικό ή εκπαιδευτικό σκοπό με χρήση ζώου", "Μόνο κτηνιατρική εξέταση", "Μόνο σίτιση αδέσποτου"], "correct_idx": 1}, {"text": "Ποια από τις παρακάτω δραστηριότητες απαγορεύεται ρητά και συνδέεται με βαριά προσβολή της ζωής/σωματικής ακεραιότητας των ζώων;", "options": ["Η κτηνιατρική εξέταση", "Η νόμιμη υιοθεσία", "Η εκτροφή, εκπαίδευση και συμμετοχή ζώων σε μάχες", "Η σήμανση"], "correct_idx": 2}, {"text": "Τι ισχύει για κλήρωση ή διαγωνισμό με έπαθλο ζώα συντροφιάς;", "options": ["Επιτρέπεται χωρίς περιορισμούς", "Είναι υποχρεωτική μορφή υιοθεσίας", "Αφορά μόνο άγρια φυτά", "Τυποποιείται ως πλημμέλημα κατά τις σχετικές ρυθμίσεις του ΦΖΝ"], "correct_idx": 3}, {"text": "Ποια είδη απαγορεύεται να χρησιμοποιούνται ως ζώα εκτροφής κατά το άρθρο 23 παρ. 5 ΦΖΝ, όπως αναλύεται;", "options": ["Ιδίως σκύλοι, γάτες και ιπποειδή", "Μόνο ψάρια", "Μόνο ωδικά πτηνά", "Όλα τα έντομα"], "correct_idx": 0}, {"text": "Ποιο ζήτημα αναδεικνύεται ως αντινομία σε σχέση με τα ιπποειδή;", "options": ["Απαγορεύεται η κατανάλωση αλλά επιτρέπεται η εκτροφή", "Απαγορεύεται η εκτροφή/σφαγή στην Ελλάδα, αλλά δεν απαγορεύεται κατ’ ανάγκη η κατανάλωση προϊόντος που αγοράστηκε στο εξωτερικό", "Επιτρέπεται μόνο η σφαγή τους", "Δεν υπήρξε ποτέ νομοθετική αναφορά"], "correct_idx": 1}, {"text": "Πώς αντιμετωπίζεται ποινικά η ευθανασία ζώου όταν πληρούνται οι νόμιμες προϋποθέσεις;", "options": ["Ως πάντοτε κακούργημα", "Ως πειθαρχικό μόνο ζήτημα", "Ως λόγος άρσης του αδίκου χαρακτήρα της ζωοκτονίας", "Ως πράξη χωρίς κανόνες"], "correct_idx": 2}, {"text": "Γιατί η ευθανασία χαρακτηρίζεται ως εσχάτη των μέτρων ασφαλείας;", "options": ["Επειδή είναι απλή διοικητική πράξη χωρίς συνέπειες", "Επειδή γίνεται από τον ιδιοκτήτη χωρίς έλεγχο", "Επειδή αφορά μόνο φυτά", "Επειδή συνιστά αλλιώς απαγορευόμενη ζωοκτονία και πρέπει να ελέγχεται με την αρχή της αναλογικότητας"], "correct_idx": 3}, {"text": "Στη λεϊσμανίωση, ποιο στοιχείο απαιτείται για την ευθανασία κατά τις ρυθμίσεις που αναλύονται;", "options": ["Θετικό αποτέλεσμα και επιβεβαιωμένη μη αναστρέψιμη πορεία με πρόσθετες εξετάσεις", "Απλή υποψία νόσου", "Μόνο επιθυμία τρίτου", "Ηλικία κάτω των πέντε μηνών"], "correct_idx": 0}, {"text": "Ποιος πραγματοποιεί νόμιμα την ευθανασία σύμφωνα με την ΥΑ 280239/2003 όπως παρατίθεται;", "options": ["Οποιοσδήποτε ιδιοκτήτης", "Αποκλειστικά κτηνίατροι που ασκούν νόμιμα το επάγγελμα στη χώρα", "Μόνο δήμαρχοι", "Μόνο φιλοζωικά σωματεία"], "correct_idx": 1}, {"text": "Τι είναι το καταφύγιο ζώων συντροφιάς κατά τον ορισμό του ΦΖΝ;", "options": ["Χώρος μόνιμης φυλάκισης ζώων", "Κατάστημα πώλησης ζώων", "Αδειοδοτημένη ή προδιαγραφόμενη εγκατάσταση όπου φιλοξενούνται αδέσποτα μέχρι υιοθεσία ή επανένταξη", "Κοινόχρηστο πάρκο χωρίς κανόνες"], "correct_idx": 2}, {"text": "Ποια υποχρέωση έχουν τα καταφύγια ως προς την ιστοσελίδα τους;", "options": ["Να μη δημοσιεύουν κανένα ζώο", "Να δημοσιεύουν μόνο τιμοκατάλογο", "Να δημοσιεύουν μόνο τον ιδιοκτήτη", "Να καταχωρούν τα ζώα που διαμένουν στο καταφύγιο στην ιστοσελίδα εντός 48 ωρών από την είσοδό τους"], "correct_idx": 3}, {"text": "Πού δεν επιτρέπεται η εγκατάσταση περιφραγμένων πάρκων σκύλων;", "options": ["Σε ακτίνα 50 μέτρων από κατοικίες, σχολεία και νοσοκομεία", "Σε κοινόχρηστους χώρους γενικά", "Σε άλση και πάρκα υπό οποιεσδήποτε συνθήκες", "Σε ελεγχόμενες κυνηγετικές περιοχές"], "correct_idx": 0}, {"text": "Ποια υπηρεσία/αρχή έχει αρμοδιότητα απομάκρυνσης νεκρών ζώων από οδούς και πεζοδρόμια;", "options": ["Μόνο ο ιδιοκτήτης που τα βρίσκει", "Οι υπηρεσίες καθαριότητας των οδών του εθνικού, επαρχιακού και αστικού δικτύου", "Τα pet shops", "Τα σχολεία"], "correct_idx": 1}, {"text": "Τι προκύπτει για αποτεφρωτήρια και κοιμητήρια ζώων;", "options": ["Απαγορεύονται ιδιωτικά", "Επιτρέπονται μόνο για ανθρώπους", "Μπορούν να ιδρύονται και να λειτουργούν και από φυσικά πρόσωπα υπό προϋποθέσεις", "Αφορούν μόνο άγρια ζώα"], "correct_idx": 2}, {"text": "Ποια αρμοδιότητα ανατίθεται στον Συνήγορο του Πολίτη στο άρθρο 38 ΦΖΝ;", "options": ["Να πουλά ζώα συντροφιάς", "Να επιβάλλει φόρους κατοικιδίων", "Να ακυρώνει κάθε υιοθεσία", "Να διαμεσολαβεί σχετικά με τα δικαιώματα των ζώων και την τήρηση της σχετικής νομοθεσίας"], "correct_idx": 3}, {"text": "Ποιος είναι ο ρόλος των Βασικών Δεικτών Απόδοσης για τους Δήμους;", "options": ["Να καθιερώνουν στόχους και συγκριτικά στοιχεία για τον έλεγχο της απόδοσης στη διαχείριση ζώων συντροφιάς", "Να καταργούν τα προγράμματα αδέσποτων", "Να επιτρέπουν κυνομαχίες", "Να αντικαθιστούν την ευζωία με οικονομική αξία"], "correct_idx": 0}]}];
+
+    const COURSE_NAME = "Νομοθεσία και Ευζωία των ζώων";
+
+    // State Variables
+    let currentQuizIndex = -1;
+    let currentQuestionIndex = 0;
+    let userAnswers = []; // Store indices of user's chosen options
+    let correctCount = 0;
+    let isAnswered = false;
+    let soundEnabled = false; // Default off, user can toggle on
+    let currentOrderType = 'original'; // 'original' or 'random'
+    let activeQuestions = []; // Array of active questions (original order or shuffled)
+    let selectedQuizIndexForOrder = -1;
+    let currentShuffleOptions = false;
+    
+    // Timer Variables
+    let timerInterval = null;
+    let timeLeftSeconds = 0;
+    let isTimerRunning = false;
+
+    // Sound Synthesis (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      if (!soundEnabled) return;
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      const now = audioCtx.currentTime;
+      
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.12, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === 'incorrect') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(146.83, now); // D3
+        osc.frequency.linearRampToValueAtTime(98.00, now + 0.25); // G2
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    }
+
+    // Elements
+    const dashboardSection = document.getElementById('dashboardSection');
+    const quizSection = document.getElementById('quizSection');
+    const resultsSection = document.getElementById('resultsSection');
+    const orderSection = document.getElementById('orderSection');
+    const orderQuizTitle = document.getElementById('orderQuizTitle');
+    const originalOrderBtn = document.getElementById('originalOrderBtn');
+    const randomOrderBtn = document.getElementById('randomOrderBtn');
+    const orderBackBtn = document.getElementById('orderBackBtn');
+    const shuffleOptionsUnitCheckbox = document.getElementById('shuffleOptionsUnitCheckbox');
+    
+    // Timer DOM references
+    const timerEnableUnitCheckbox = document.getElementById('timerEnableUnitCheckbox');
+    const timerDurationUnitContainer = document.getElementById('timerDurationUnitContainer');
+    const timerDurationUnitInput = document.getElementById('timerDurationUnitInput');
+    const quizTimerText = document.getElementById('quizTimerText');
+    const timerCountdown = document.getElementById('timerCountdown');
+    const generalReportBtn = document.getElementById('generalReportBtn');
+    
+    const quizUnitText = document.getElementById('quizUnitText');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    
+    const questionTitle = document.getElementById('questionTitle');
+    const optionsList = document.getElementById('optionsList');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    const scoreNumber = document.getElementById('scoreNumber');
+    const scoreFill = document.getElementById('scoreFill');
+    const resultFeedbackTitle = document.getElementById('resultFeedbackTitle');
+    const resultFeedbackText = document.getElementById('resultFeedbackText');
+    const reviewContainer = document.getElementById('reviewContainer');
+    const resultsQuizTitle = document.getElementById('resultsQuizTitle');
+    
+    const restartBtn = document.getElementById('restartBtn');
+    const backBtn = document.getElementById('backBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
+    const soundToggle = document.getElementById('soundToggle');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundMutedIcon = document.getElementById('soundMutedIcon');
+
+    // Shuffle Helper (Fisher-Yates)
+    function shuffleArray(array) {
+      let shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Shuffle Options Helper
+    function shuffleQuestionOptions(question) {
+      let optionsWithIndices = question.options.map((opt, idx) => ({
+        text: opt,
+        isCorrect: (idx === question.correct_idx)
+      }));
+      let shuffled = shuffleArray(optionsWithIndices);
+      let newOptions = shuffled.map(item => item.text);
+      let newCorrectIdx = shuffled.findIndex(item => item.isCorrect);
+      return {
+        text: question.text,
+        options: newOptions,
+        correct_idx: newCorrectIdx
+      };
+    }
+
+    // Initialize Dashboard
+    function initDashboard() {
+      dashboardSection.innerHTML = '';
+      
+      QUIZZES.forEach((quiz, index) => {
+        const card = document.createElement('div');
+        card.className = 'card quiz-card';
+        card.addEventListener('click', () => promptOrderSelection(index));
+        
+        card.innerHTML = `
+          <div>
+            <span class="unit-tag">Ενεργό</span>
+            <h3 class="quiz-card-title">${quiz.title}</h3>
+          </div>
+          <div class="quiz-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>${quiz.questions.length} Ερωτήσεις</span>
+          </div>
+        `;
+        dashboardSection.appendChild(card);
+      });
+    }
+
+    // Sound toggle function
+    soundToggle.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) {
+        soundToggle.classList.remove('muted');
+        soundOnIcon.classList.remove('hidden');
+        soundMutedIcon.classList.add('hidden');
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } else {
+        soundToggle.classList.add('muted');
+        soundOnIcon.classList.add('hidden');
+        soundMutedIcon.classList.remove('hidden');
+      }
+    });
+
+    // Timer Toggles listeners
+    timerEnableUnitCheckbox.addEventListener('change', () => {
+      timerDurationUnitContainer.style.display = timerEnableUnitCheckbox.checked ? 'flex' : 'none';
+    });
+
+    // Order Selection Logic
+    function promptOrderSelection(quizIdx) {
+      selectedQuizIndexForOrder = quizIdx;
+      const quiz = QUIZZES[quizIdx];
+      orderQuizTitle.textContent = quiz.title;
+      
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.remove('hidden');
+    }
+
+    originalOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'original');
+    });
+
+    randomOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'random');
+    });
+
+    orderBackBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // Start Quiz
+    function startQuiz(quizIdx, orderType) {
+      currentOrderType = orderType;
+      const quiz = QUIZZES[quizIdx];
+
+      currentShuffleOptions = shuffleOptionsUnitCheckbox.checked;
+      
+      let tempQuestions = (orderType === 'random') ? shuffleArray(quiz.questions) : [...quiz.questions];
+      
+      // Shuffle options if checked
+      activeQuestions = tempQuestions.map(q => {
+        return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+      });
+
+      currentQuizIndex = quizIdx;
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      correctCount = 0;
+      isAnswered = false;
+      
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      
+      quizUnitText.textContent = "ΔΙΚΑΙΟ ΤΩΝ ΖΩΩΝ";
+      
+      // Countdown Timer Start Logic
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      
+      const timerEnabled = timerEnableUnitCheckbox.checked;
+      const durationMinutes = parseInt(timerDurationUnitInput.value);
+      
+      if (timerEnabled && durationMinutes > 0) {
+        isTimerRunning = true;
+        timeLeftSeconds = durationMinutes * 60;
+        quizTimerText.classList.remove('hidden');
+        timerCountdown.classList.remove('timer-warning');
+        updateTimerDisplay();
+        
+        timerInterval = setInterval(() => {
+          timeLeftSeconds--;
+          updateTimerDisplay();
+          
+          if (timeLeftSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isTimerRunning = false;
+            timeIsUp();
+          }
+        }, 1000);
+      } else {
+        isTimerRunning = false;
+        quizTimerText.classList.add('hidden');
+      }
+      
+      loadQuestion();
+    }
+
+    // Timer Update Display Function
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeftSeconds / 60);
+      const seconds = timeLeftSeconds % 60;
+      const formatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      timerCountdown.textContent = formatted;
+      
+      if (timeLeftSeconds < 120) { // under 2 minutes
+        timerCountdown.classList.add('timer-warning');
+      } else {
+        timerCountdown.classList.remove('timer-warning');
+      }
+    }
+
+    // Time is Up auto submit
+    function timeIsUp() {
+      alert("Ο χρόνος έληξε! Το κουίζ θα υποβληθεί αυτόματα με τις απαντήσεις που έχετε δώσει έως τώρα.");
+      showResults();
+    }
+
+    // Load Question
+    function loadQuestion() {
+      const q = activeQuestions[currentQuestionIndex];
+      isAnswered = false;
+      nextBtn.disabled = true;
+      
+      progressText.textContent = `Ερώτηση ${currentQuestionIndex + 1} από ${activeQuestions.length}`;
+      const progressPercent = (currentQuestionIndex / activeQuestions.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+      
+      questionTitle.textContent = q.text;
+      optionsList.innerHTML = '';
+      
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        const markerChar = String.fromCharCode(65 + idx);
+        
+        btn.innerHTML = `
+          <span class="option-marker">${markerChar}</span>
+          <span>${option}</span>
+        `;
+        
+        btn.addEventListener('click', () => selectOption(idx, btn));
+        optionsList.appendChild(btn);
+      });
+    }
+
+    // Select Option
+    function selectOption(optionIdx, buttonEl) {
+      if (isAnswered) return;
+      isAnswered = true;
+      userAnswers.push(optionIdx);
+      
+      const q = activeQuestions[currentQuestionIndex];
+      const correctIdx = q.correct_idx;
+      const isCorrect = (optionIdx === correctIdx);
+      
+      if (isCorrect) {
+        correctCount++;
+        buttonEl.classList.add('selected-correct');
+        playSound('correct');
+      } else {
+        buttonEl.classList.add('selected-incorrect');
+        buttonEl.classList.add('shake');
+        playSound('incorrect');
+        
+        const correctBtn = optionsList.children[correctIdx];
+        if (correctBtn) {
+          correctBtn.classList.add('correct-reveal');
+        }
+      }
+      
+      Array.from(optionsList.children).forEach(btn => {
+        btn.disabled = true;
+      });
+      
+      nextBtn.disabled = false;
+    }
+
+    // Next Question Button Click
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      
+      if (currentQuestionIndex < activeQuestions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    // Show Results
+    function showResults() {
+      // Clear countdown interval
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      isTimerRunning = false;
+      
+      quizSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+      
+      const quiz = QUIZZES[currentQuizIndex];
+      
+      if (resultsQuizTitle) {
+        resultsQuizTitle.textContent = quiz.title;
+      }
+      
+      const totalQuestions = activeQuestions.length;
+      const scorePercent = Math.round((correctCount / totalQuestions) * 100);
+      
+      scoreNumber.textContent = `${scorePercent}%`;
+      
+      const strokeOffset = 440 - (440 * scorePercent) / 100;
+      setTimeout(() => {
+        scoreFill.style.strokeDashoffset = strokeOffset;
+      }, 100);
+      
+      if (scorePercent === 100) {
+        resultFeedbackTitle.textContent = "Άριστα! 🎉";
+        resultFeedbackText.textContent = "Απαντήσατε σωστά σε όλες τις ερωτήσεις! Έχετε κατανοήσει πλήρως την ύλη.";
+      } else if (scorePercent >= 80) {
+        resultFeedbackTitle.textContent = "Εξαιρετική Προσπάθεια! ✨";
+        resultFeedbackText.textContent = `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Πολύ καλή γνώση του αντικειμένου!`;
+      } else if (scorePercent >= 50) {
+        resultFeedbackTitle.textContent = "Πολύ Καλά! 👍";
+        resultFeedbackText.textContent = `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Έχετε καλή βάση, αλλά μπορείτε να βελτιωθείτε.`;
+      } else {
+        resultFeedbackTitle.textContent = "Χρειάζεται Μελέτη! 📚";
+        resultFeedbackText.textContent = `Πετύχατε μόνο ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Σας προτείνουμε να ξαναδιαβάσετε τις σημειώσεις και να δοκιμάσετε ξανά.`;
+      }
+      
+      reviewContainer.innerHTML = '';
+      activeQuestions.forEach((q, idx) => {
+        const userChoiceIdx = userAnswers[idx];
+        const correctIdx = q.correct_idx;
+        const isUserCorrect = (userChoiceIdx === correctIdx);
+        
+        const reviewItem = document.createElement('div');
+        reviewItem.className = 'review-item';
+        
+        let optionsMarkup = '';
+        q.options.forEach((opt, optIdx) => {
+          const optMarker = String.fromCharCode(65 + optIdx);
+          let optClass = 'review-opt-neutral';
+          let statusIndicator = '';
+          
+          if (optIdx === correctIdx) {
+            optClass = 'review-opt-correct';
+            statusIndicator = ' (Σωστό)';
+          } else if (userChoiceIdx !== undefined && optIdx === userChoiceIdx && !isUserCorrect) {
+            optClass = 'review-opt-incorrect';
+            statusIndicator = ' (Η επιλογή σας)';
+          }
+          
+          optionsMarkup += `
+            <div class="review-opt ${optClass}">
+              <span class="review-opt-marker">${optMarker}.</span>
+              <span>${opt}${statusIndicator}</span>
+            </div>
+          `;
+        });
+        
+        let qStatusText = '';
+        if (userChoiceIdx === undefined) {
+          qStatusText = ' <span style="color: var(--error); font-size: 0.85rem; font-weight: 600;">(Δεν απαντήθηκε λόγω χρόνου)</span>';
+        }
+        
+        const escapedTitle = quiz.title.replace(/'/g, "\'");
+        const escapedQText = q.text.replace(/'/g, "\'");
+        
+        reviewItem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;">
+            <div class="review-item-q">${idx + 1}. ${q.text}${qStatusText}</div>
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="reportQuestion('${escapedTitle}', '${idx + 1}', '${escapedQText}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              Αναφορά
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${optionsMarkup}
+          </div>
+        `;
+        reviewContainer.appendChild(reviewItem);
+      });
+    }
+
+    // Google Form individual question report redirection
+    function reportQuestion(quizTitle, unitName, questionText) {
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const questionField = "entry.86795942";
+      
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quizTitle + " - " + unitName)}&${questionField}=${encodeURIComponent(questionText)}`;
+      window.open(prefillUrl, '_blank');
+    }
+
+    // Google Form general report button click listener
+    generalReportBtn.addEventListener('click', () => {
+      const quiz = QUIZZES[currentQuizIndex];
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quiz.title)}`;
+      window.open(prefillUrl, '_blank');
+    });
+
+    // Restart Quiz
+    restartBtn.addEventListener('click', () => {
+      startQuiz(currentQuizIndex, currentOrderType);
+    });
+
+    // Go Back to Dashboard
+    backBtn.addEventListener('click', () => {
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+      initDashboard();
+    });
+
+    // Save Results as PDF
+    pdfBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Initialize Page
+    initDashboard();
+  </script>
 </body>
 </html>
