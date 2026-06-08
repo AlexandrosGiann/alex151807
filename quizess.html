@@ -274,6 +274,108 @@
     .hidden {
       display: none !important;
     }
+
+    /* Manual preview modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+    .modal-header h2 {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+    .modal-header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .modal-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .modal-btn:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+    }
+    .modal-btn.primary {
+      background: var(--primary);
+      color: #0b0f19;
+      border-color: var(--primary);
+    }
+    .modal-btn.primary:hover {
+      background: #7dd3fc;
+      color: #0b0f19;
+    }
+    .modal-body {
+      padding: 24px 28px;
+      overflow-y: auto;
+      color: var(--text-main);
+      line-height: 1.65;
+    }
+    .modal-body h3 {
+      font-family: var(--font-outfit);
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin: 24px 0 8px;
+      padding-left: 10px;
+      border-left: 3px solid var(--primary);
+    }
+    .modal-body h4 {
+      font-family: var(--font-outfit);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 18px 0 6px;
+    }
+    .modal-body p { margin: 8px 0; color: var(--text-main); }
+    .modal-body ul { padding-left: 22px; margin: 6px 0; }
+    .modal-body li { margin: 4px 0; color: var(--text-main); }
+    .modal-body .intro-box {
+      background: var(--primary-glow);
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -371,7 +473,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             <span data-translate="metaManual">HTML / εκτυπώσιμο σε PDF</span>
           </div>
-          <button id="downloadManualBtn" class="btn-action" style="border: none; cursor: pointer; width: 100%;" data-translate="downloadManualBtn">Λήψη Εγχειριδίου</button>
+          <button id="viewManualBtn" class="btn-action" style="border: none; cursor: pointer; width: 100%;" data-translate="viewManualBtn">Προβολή Εγχειριδίου</button>
         </div>
       </div>
 
@@ -404,6 +506,21 @@
     </section>
 
   </main>
+
+  <!-- MANUAL PREVIEW MODAL -->
+  <div id="manualModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="manualModalTitle">Εγχειρίδιο Μελέτης</h2>
+        <div class="modal-header-actions">
+          <button id="manualLangToggle" class="modal-btn" title="Αλλαγή γλώσσας / Switch language">EN</button>
+          <button id="manualDownloadBtn" class="modal-btn primary" data-translate="downloadManualBtn">Λήψη</button>
+          <button id="manualCloseBtn" class="modal-btn" data-translate="closeBtn">Κλείσιμο</button>
+        </div>
+      </div>
+      <div id="manualBody" class="modal-body"></div>
+    </div>
+  </div>
 
   <!-- Floating Control Buttons -->
   <div class="floating-controls">
@@ -469,7 +586,9 @@
         titleManual: "Εγχειρίδιο Μελέτης",
         descManual: "Κατεβάστε ένα ολοκληρωμένο εγχειρίδιο μελέτης με βασικές έννοιες, συμβουλές και οδηγίες για όλες τις θεματικές ενότητες — διαθέσιμο στην επιλεγμένη γλώσσα.",
         metaManual: "HTML / εκτυπώσιμο σε PDF",
-        downloadManualBtn: "Λήψη Εγχειριδίου",
+        viewManualBtn: "Προβολή Εγχειριδίου",
+        downloadManualBtn: "Λήψη",
+        closeBtn: "Κλείσιμο",
         titleAI: "AI Βοηθός Μελέτης",
         descAI: "Συνομιλήστε με έναν AI βοηθό για να διευκρινίσετε έννοιες, να λάβετε επεξηγήσεις και να εξασκηθείτε στην ύλη πριν δώσετε τα κουίζ.",
         metaAI: "Βασισμένο στο Pollinations API",
@@ -500,7 +619,9 @@
         titleManual: "Study Manual",
         descManual: "Download a complete study manual with key concepts, tips and guidance for all thematic units — available in the selected language.",
         metaManual: "HTML / printable to PDF",
-        downloadManualBtn: "Download Manual",
+        viewManualBtn: "View Manual",
+        downloadManualBtn: "Download",
+        closeBtn: "Close",
         titleAI: "AI Study Assistant",
         descAI: "Chat with an AI assistant to clarify concepts, get explanations, and practice the material before taking the quizzes.",
         metaAI: "Powered by the Pollinations API",
@@ -752,14 +873,68 @@
 </html>`;
     }
 
-    document.getElementById('downloadManualBtn').addEventListener('click', (e) => {
-      e.preventDefault();
-      const html = buildManualHTML(currentLang);
+    // Manual preview modal — independent language state so the user can preview
+    // in either language without changing the rest of the page.
+    let manualPreviewLang = currentLang;
+    const manualModal = document.getElementById('manualModal');
+    const manualBody = document.getElementById('manualBody');
+    const manualModalTitle = document.getElementById('manualModalTitle');
+    const manualLangToggle = document.getElementById('manualLangToggle');
+
+    function renderManualPreview() {
+      const m = MANUAL_CONTENT[manualPreviewLang] || MANUAL_CONTENT.el;
+      manualModalTitle.textContent = m.docTitle;
+      manualLangToggle.textContent = manualPreviewLang === 'el' ? 'EN' : 'EL';
+      const sectionsHtml = m.sections.map(sec => `
+        <h3>${escapeHtml(sec.title)}</h3>
+        <h4>${escapeHtml(m.sectionLabels.overview)}</h4>
+        <p>${escapeHtml(sec.overview)}</p>
+        <h4>${escapeHtml(m.sectionLabels.concepts)}</h4>
+        <ul>${sec.concepts.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
+        <h4>${escapeHtml(m.sectionLabels.tips)}</h4>
+        <ul>${sec.tips.map(t => `<li>${escapeHtml(t)}</li>`).join('')}</ul>
+      `).join('');
+      manualBody.innerHTML = `
+        <div class="intro-box"><p>${escapeHtml(m.intro)}</p></div>
+        <h3>${escapeHtml(m.howToUse)}</h3>
+        <ul>${m.howToUseList.map(li => `<li>${escapeHtml(li)}</li>`).join('')}</ul>
+        ${sectionsHtml}
+        <p style="text-align:center;color:var(--text-muted);margin-top:30px;font-size:0.9rem;">${escapeHtml(m.footer)}</p>
+      `;
+    }
+
+    function openManualModal() {
+      manualPreviewLang = currentLang;
+      renderManualPreview();
+      manualModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeManualModal() {
+      manualModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('viewManualBtn').addEventListener('click', openManualModal);
+    document.getElementById('manualCloseBtn').addEventListener('click', closeManualModal);
+    manualModal.addEventListener('click', (e) => {
+      if (e.target === manualModal) closeManualModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !manualModal.classList.contains('hidden')) closeManualModal();
+    });
+
+    manualLangToggle.addEventListener('click', () => {
+      manualPreviewLang = manualPreviewLang === 'el' ? 'en' : 'el';
+      renderManualPreview();
+    });
+
+    document.getElementById('manualDownloadBtn').addEventListener('click', () => {
+      const html = buildManualHTML(manualPreviewLang);
       const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = currentLang === 'el' ? 'egcheiridio_meletis.html' : 'study_manual.html';
+      a.download = manualPreviewLang === 'el' ? 'egcheiridio_meletis.html' : 'study_manual.html';
       document.body.appendChild(a);
       a.click();
       a.remove();
