@@ -795,6 +795,13 @@
           <span>λεπτά</span>
         </div>
       </div>
+
+      <!-- Adjustable Size Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <span style="font-weight: 500;">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="quizQuestionCountInput" min="1" value="10" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="quizQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
       
       <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;">Επιστροφή</button>
     </section>
@@ -831,6 +838,13 @@
           <input type="number" id="timerDurationGeneralInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
           <span>λεπτά</span>
         </div>
+      </div>
+
+      <!-- Adjustable Size Option General -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
+        <span style="font-weight: 500;">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="generalQuestionCountInput" min="1" value="30" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="generalQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
       </div>
 
       <div style="display: flex; gap: 15px; margin-top: 15px; width: 100%; justify-content: center; flex-wrap: wrap;">
@@ -1008,6 +1022,10 @@
     const quizTimerText = document.getElementById('quizTimerText');
     const timerCountdown = document.getElementById('timerCountdown');
     const generalReportBtn = document.getElementById('generalReportBtn');
+    const quizQuestionCountInput = document.getElementById('quizQuestionCountInput');
+    const quizQuestionCountMaxLabel = document.getElementById('quizQuestionCountMaxLabel');
+    const generalQuestionCountInput = document.getElementById('generalQuestionCountInput');
+    const generalQuestionCountMaxLabel = document.getElementById('generalQuestionCountMaxLabel');
     
     const quizUnitText = document.getElementById('quizUnitText');
     const progressText = document.getElementById('progressText');
@@ -1131,6 +1149,13 @@
       const quiz = QUIZZES[quizIdx];
       orderQuizTitle.textContent = quiz.title;
       
+      const totalQuestions = quiz.questions.length;
+      quizQuestionCountInput.max = totalQuestions;
+      quizQuestionCountInput.value = totalQuestions;
+      quizQuestionCountMaxLabel.textContent = `(Μέγιστο: ${totalQuestions})`;
+      
+      validateQuizQuestionCount();
+
       dashboardSection.classList.add('hidden');
       resultsSection.classList.add('hidden');
       quizSection.classList.add('hidden');
@@ -1196,8 +1221,6 @@
     }
     
     function updateStartBtnState() {
-      startConfiguredTestBtn.disabled = (selectedUnitsForTest.size === 0);
-      
       if (selectedUnitsForTest.size === 11) {
         toggleAllUnitsBtn.textContent = 'Αποεπιλογή Όλων';
         toggleAllUnitsBtn.style.color = 'var(--error)';
@@ -1205,6 +1228,8 @@
         toggleAllUnitsBtn.textContent = 'Επιλογή Όλων';
         toggleAllUnitsBtn.style.color = 'var(--primary)';
       }
+      
+      updateGeneralQuestionCountInput();
     }
     
     toggleAllUnitsBtn.addEventListener('click', () => {
@@ -1215,6 +1240,61 @@
       }
       initUnitsSelectionList();
     });
+
+    function validateQuizQuestionCount() {
+      const val = parseInt(quizQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1;
+      originalOrderBtn.disabled = !isValid;
+      randomOrderBtn.disabled = !isValid;
+    }
+    quizQuestionCountInput.addEventListener('input', validateQuizQuestionCount);
+    quizQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(quizQuestionCountInput.value);
+      const maxQ = parseInt(quizQuestionCountInput.max) || 1;
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > maxQ) val = maxQ;
+      quizQuestionCountInput.value = val;
+      validateQuizQuestionCount();
+    });
+
+    function validateGeneralQuestionCount() {
+      const val = parseInt(generalQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1 && selectedUnitsForTest.size > 0;
+      startConfiguredTestBtn.disabled = !isValid;
+    }
+    generalQuestionCountInput.addEventListener('input', validateGeneralQuestionCount);
+    generalQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(generalQuestionCountInput.value);
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > totalAvailable) val = totalAvailable;
+      generalQuestionCountInput.value = val;
+      validateGeneralQuestionCount();
+    });
+
+    function updateGeneralQuestionCountInput() {
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      
+      generalQuestionCountInput.max = totalAvailable;
+      generalQuestionCountMaxLabel.textContent = `(Μέγιστο: ${totalAvailable})`;
+      
+      let currentVal = parseInt(generalQuestionCountInput.value);
+      if (currentVal > totalAvailable) {
+        generalQuestionCountInput.value = totalAvailable;
+      }
+      
+      validateGeneralQuestionCount();
+    }
 
     function promptTestConfiguration() {
       initUnitsSelectionList();
@@ -1251,8 +1331,13 @@
           }
         });
         
-        const testSize = Math.min(30, pool.length);
-        let selectedQuestions = shuffleArray(pool).slice(0, testSize);
+        let N = pool.length;
+        const countVal = parseInt(generalQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          N = Math.min(countVal, pool.length);
+        }
+        
+        let selectedQuestions = shuffleArray(pool).slice(0, N);
         
         // Shuffle options if checked
         selectedQuestions = selectedQuestions.map(q => {
@@ -1265,7 +1350,7 @@
           .join(', ');
 
         QUIZZES[11] = {
-          title: `Γενικό Τεστ (${testSize} ερωτήσεις - Ενότητες: ${selectedUnitsLabels})`,
+          title: `Γενικό Τεστ (${N} ερωτήσεις - Ενότητες: ${selectedUnitsLabels})`,
           questions: selectedQuestions
         };
         
@@ -1279,6 +1364,14 @@
         activeQuestions = tempQuestions.map(q => {
           return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
         });
+
+        // Slice to selected count
+        let limit = activeQuestions.length;
+        const countVal = parseInt(quizQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          limit = Math.min(countVal, activeQuestions.length);
+        }
+        activeQuestions = activeQuestions.slice(0, limit);
       }
 
       currentQuizIndex = quizIdx;

@@ -743,6 +743,13 @@
           <span>λεπτά</span>
         </div>
       </div>
+
+      <!-- Adjustable Size Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <span style="font-weight: 500;">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="quizQuestionCountInput" min="1" value="10" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="quizQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
       
       <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;">Επιστροφή</button>
     </section>
@@ -904,6 +911,8 @@
     const quizTimerText = document.getElementById('quizTimerText');
     const timerCountdown = document.getElementById('timerCountdown');
     const generalReportBtn = document.getElementById('generalReportBtn');
+    const quizQuestionCountInput = document.getElementById('quizQuestionCountInput');
+    const quizQuestionCountMaxLabel = document.getElementById('quizQuestionCountMaxLabel');
     
     const quizUnitText = document.getElementById('quizUnitText');
     const progressText = document.getElementById('progressText');
@@ -998,12 +1007,36 @@
       timerDurationUnitContainer.style.display = timerEnableUnitCheckbox.checked ? 'flex' : 'none';
     });
 
+    // Input Validation Logic
+    function validateQuizQuestionCount() {
+      const val = parseInt(quizQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1;
+      originalOrderBtn.disabled = !isValid;
+      randomOrderBtn.disabled = !isValid;
+    }
+    quizQuestionCountInput.addEventListener('input', validateQuizQuestionCount);
+    quizQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(quizQuestionCountInput.value);
+      const maxQ = parseInt(quizQuestionCountInput.max) || 1;
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > maxQ) val = maxQ;
+      quizQuestionCountInput.value = val;
+      validateQuizQuestionCount();
+    });
+
     // Order Selection Logic
     function promptOrderSelection(quizIdx) {
       selectedQuizIndexForOrder = quizIdx;
       const quiz = QUIZZES[quizIdx];
       orderQuizTitle.textContent = quiz.title;
       
+      const totalQuestions = quiz.questions.length;
+      quizQuestionCountInput.max = totalQuestions;
+      quizQuestionCountInput.value = totalQuestions;
+      quizQuestionCountMaxLabel.textContent = `(Μέγιστο: ${totalQuestions})`;
+      
+      validateQuizQuestionCount();
+
       dashboardSection.classList.add('hidden');
       resultsSection.classList.add('hidden');
       quizSection.classList.add('hidden');
@@ -1038,6 +1071,14 @@
       activeQuestions = tempQuestions.map(q => {
         return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
       });
+
+      // Slice to selected count
+      let limit = activeQuestions.length;
+      const countVal = parseInt(quizQuestionCountInput.value);
+      if (!isNaN(countVal) && countVal >= 1) {
+        limit = Math.min(countVal, activeQuestions.length);
+      }
+      activeQuestions = activeQuestions.slice(0, limit);
 
       currentQuizIndex = quizIdx;
       currentQuestionIndex = 0;
