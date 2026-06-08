@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Διαδραστικά Κουίζ | Αλέξανδρος Γιαννάκης</title>
+  <title>Θεματικές Ενότητες Κουίζ | Αλέξανδρος Γιαννάκης</title>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,7 @@
     header {
       width: 100%;
       max-width: 960px;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -108,42 +108,48 @@
       border-radius: 16px;
       padding: 30px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
       width: 100%;
     }
 
     /* Dashboard styling */
-    .quiz-grid {
+    .categories-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 25px;
     }
 
-    @media (min-width: 600px) {
-      .quiz-grid {
-        grid-template-columns: 1fr 1fr;
+    @media (min-width: 768px) {
+      .categories-grid {
+        grid-template-columns: 1fr 1fr 1fr;
       }
     }
 
-    @media (min-width: 900px) {
-      .quiz-grid {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-      }
-    }
-
-    .quiz-card {
+    .category-card {
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 15px;
+      gap: 20px;
+      text-decoration: none;
+      color: inherit;
     }
 
-    .quiz-card:hover {
-      transform: translateY(-4px);
+    .category-card:hover {
+      transform: translateY(-5px);
       box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.1), 0 10px 10px -5px rgba(56, 189, 248, 0.04);
       background-color: var(--card-hover);
       border-color: var(--primary);
+    }
+
+    .category-card.disabled-style {
+      opacity: 0.85;
+      border-color: rgba(71, 85, 105, 0.5);
+    }
+
+    .category-card.disabled-style:hover {
+      border-color: var(--text-muted);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
 
     .unit-tag {
@@ -155,580 +161,66 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      background-color: rgba(56, 189, 248, 0.15);
-      color: var(--primary);
-      margin-bottom: 5px;
-    }
-
-    .quiz-card-title {
-      font-family: var(--font-outfit);
-      font-size: 1.25rem;
-      font-weight: 700;
-      line-height: 1.4;
-      color: var(--text-main);
-    }
-
-    .quiz-meta {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* Active Quiz Screen */
-    .hidden {
-      display: none !important;
-    }
-
-    .progress-section {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .progress-bar-container {
-      width: 100%;
-      height: 6px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #38bdf8 0%, #10b981 100%);
-      border-radius: 3px;
-      transition: width 0.3s ease;
-    }
-
-    .question-title {
-      font-family: var(--font-outfit);
-      font-size: 1.4rem;
-      font-weight: 700;
-      line-height: 1.45;
-      margin-bottom: 25px;
-      color: var(--text-main);
-    }
-
-    .options-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .option-btn {
-      background-color: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 15px 20px;
-      color: var(--text-main);
-      font-size: 0.98rem;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      transition: all 0.2s ease;
-      line-height: 1.5;
-    }
-
-    .option-btn:hover:not(:disabled) {
-      background-color: rgba(255, 255, 255, 0.08);
-      border-color: var(--primary);
-      transform: translateX(4px);
-    }
-
-    .option-btn:disabled {
-      cursor: not-allowed;
-    }
-
-    .option-marker {
-      flex-shrink: 0;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      background-color: rgba(0, 0, 0, 0.2);
-      color: var(--text-muted);
-      transition: all 0.2s ease;
-      margin-top: 1px;
-    }
-
-    .option-btn:hover:not(:disabled) .option-marker {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    /* State Styles for Options */
-    .option-btn.selected-correct {
-      background-color: var(--success-glow);
-      border-color: var(--success);
-      color: white;
-    }
-
-    .option-btn.selected-correct .option-marker {
-      background-color: var(--success);
-      border-color: var(--success);
-      color: white;
-    }
-
-    .option-btn.selected-incorrect {
-      background-color: var(--error-glow);
-      border-color: var(--error);
-      color: white;
-    }
-
-    .option-btn.selected-incorrect .option-marker {
-      background-color: var(--error);
-      border-color: var(--error);
-      color: white;
-    }
-
-    .option-btn.correct-reveal {
-      background-color: var(--success-glow);
-      border-color: var(--success);
-    }
-
-    .option-btn.correct-reveal .option-marker {
-      background-color: var(--success);
-      border-color: var(--success);
-      color: white;
-    }
-
-    .action-row {
-      margin-top: 30px;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .btn {
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-      font-size: 0.95rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background-color: var(--primary);
-      color: #000;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background-color: #7dd3fc;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-outline {
-      background-color: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-    }
-
-    .btn-outline:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      border-color: var(--text-main);
-    }
-
-    .order-option-btn {
-      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
-    }
-    .order-option-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
-    }
-    #randomOrderBtn:hover {
-      background-color: var(--success-glow) !important;
-      border-color: var(--success) !important;
-      color: white !important;
-    }
-    #originalOrderBtn:hover {
-      background-color: var(--primary-glow) !important;
-      border-color: var(--primary) !important;
-      color: white !important;
-    }
-
-    /* Unit Selection for General Test */
-    .unit-selection-item {
-      background-color: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .unit-selection-item:hover {
-      background-color: rgba(255, 255, 255, 0.06);
-      border-color: var(--primary);
-      transform: translateX(6px);
-    }
-    .unit-selection-item.selected {
       background-color: var(--primary-glow);
-      border-color: var(--primary);
-    }
-    .checkbox-indicator {
-      width: 22px;
-      height: 22px;
-      border: 2.5px solid var(--border-color);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: transparent;
-      background-color: rgba(0,0,0,0.3);
-    }
-    .unit-selection-item.selected .checkbox-indicator {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      color: #0b0f19;
-    }
-
-    /* Shake animation for error state */
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-6px); }
-      40%, 80% { transform: translateX(6px); }
-    }
-
-    .shake {
-      animation: shake 0.4s ease-in-out;
-    }
-
-    .results-quiz-title {
-      font-family: var(--font-outfit);
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 5px;
-      text-align: center;
-    }
-
-    /* Circular Score Summary Styling */
-    .results-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 20px;
-    }
-
-    .score-circle-wrapper {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      margin: 15px 0;
-    }
-
-    .score-svg {
-      width: 100%;
-      height: 100%;
-      transform: rotate(-90deg);
-    }
-
-    .score-bg {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.05);
-      stroke-width: 12;
-    }
-
-    .score-fill {
-      fill: none;
-      stroke: var(--success);
-      stroke-width: 12;
-      stroke-linecap: round;
-      stroke-dasharray: 440;
-      stroke-dashoffset: 440;
-      transition: stroke-dashoffset 1.5s ease-out;
-    }
-
-    .score-text-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-
-    .score-number {
-      font-family: var(--font-outfit);
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    .score-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-    }
-
-    .result-feedback-title {
-      font-family: var(--font-outfit);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .result-feedback-text {
-      font-size: 0.98rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-      max-width: 500px;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 15px;
-      margin-top: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* Review Area */
-    .review-section {
-      margin-top: 30px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .review-title-text {
-      font-family: var(--font-outfit);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-main);
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
+      color: var(--primary);
       margin-bottom: 10px;
     }
 
-    .review-item {
-      background-color: rgba(255, 255, 255, 0.015);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .review-item-q {
-      font-weight: 600;
-      font-size: 1rem;
-      line-height: 1.45;
-      color: var(--text-main);
-    }
-
-    .review-opt {
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      line-height: 1.4;
-    }
-
-    .review-opt-correct {
-      background-color: rgba(16, 185, 129, 0.08);
-      border: 1px solid var(--success);
-      color: #a7f3d0;
-    }
-
-    .review-opt-incorrect {
-      background-color: rgba(239, 68, 68, 0.08);
-      border: 1px solid var(--error);
-      color: #fca5a5;
-    }
-
-    .review-opt-neutral {
-      background-color: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      color: var(--text-muted);
-    }
-
-    .review-opt-marker {
+    .category-title {
+      font-family: var(--font-outfit);
+      font-size: 1.4rem;
       font-weight: 700;
-      font-size: 0.8rem;
-      margin-top: 1px;
+      line-height: 1.4;
+      color: var(--text-main);
+      margin-bottom: 10px;
     }
 
-    /* Custom audio control overlay */
-    .sound-toggle {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
+    .category-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .category-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
       display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      color: var(--text-muted);
+      gap: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 15px;
+      margin-top: 10px;
+    }
+
+    .btn-action {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: var(--primary);
+      color: #0b0f19;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 0.9rem;
       transition: all 0.2s ease;
-      z-index: 1000;
     }
 
-    .sound-toggle:hover {
+    .category-card:hover .btn-action {
+      background-color: #7dd3fc;
+    }
+
+    .category-card.disabled-style .btn-action {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .category-card.disabled-style:hover .btn-action {
+      background: rgba(255, 255, 255, 0.1);
       color: var(--text-main);
-      border-color: var(--primary);
-      transform: scale(1.05);
-    }
-
-    .sound-toggle.muted {
-      opacity: 0.6;
-    }
-
-    /* Print styling to save beautifully as PDF */
-    @media print {
-      @page {
-        margin: 15mm;
-      }
-      body {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-      }
-      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection, #orderSection, #testConfigSection {
-        display: none !important;
-      }
-      .results-quiz-title {
-        color: #000000 !important;
-        font-size: 2rem !important;
-        margin-bottom: 20px !important;
-        text-align: center !important;
-      }
-      .score-label {
-        color: #475569 !important;
-      }
-      .results-card {
-        background-color: #ffffff !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        text-align: center !important;
-      }
-      .container {
-        max-width: 100% !important;
-        width: 100% !important;
-        padding: 0 !important;
-      }
-      .card {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-      }
-      /* Ensure SVG scores look good in print */
-      .score-bg {
-        stroke: #f1f5f9 !important;
-      }
-      .score-fill {
-        stroke: #10b981 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .score-number {
-        color: #000000 !important;
-      }
-      .result-feedback-title {
-        color: #000000 !important;
-      }
-      .result-feedback-text {
-        color: #475569 !important;
-      }
-      .review-title-text {
-        color: #000000 !important;
-        border-bottom-color: #cbd5e1 !important;
-      }
-      .review-item {
-        background-color: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-      .review-item-q {
-        color: #000000 !important;
-      }
-      .review-opt {
-        border-width: 1px !important;
-        border-style: solid !important;
-      }
-      .review-opt-correct {
-        background-color: #f0fdf4 !important;
-        border-color: #10b981 !important;
-        color: #14532d !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .review-opt-incorrect {
-        background-color: #fef2f2 !important;
-        border-color: #ef4444 !important;
-        color: #7f1d1d !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .review-opt-neutral {
-        background-color: #f8fafc !important;
-        border-color: #e2e8f0 !important;
-        color: #475569 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
     }
   </style>
 </head>
 <body>
-
-  <!-- Background sound settings -->
-  <button id="soundToggle" class="sound-toggle" title="Ενεργοποίηση/Απενεργοποίηση Ήχου">
-    <svg id="soundOnIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-    <svg id="soundMutedIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-  </button>
 
   <header>
     <div class="nav-bar">
@@ -736,688 +228,70 @@
       <a href="papers.html" class="nav-link">Έρευνες</a>
       <a href="quizess.html" class="nav-link active">Κουίζ</a>
     </div>
-    <h1 class="page-title">Διαδραστικά Κουίζ</h1>
+    <h1 class="page-title">Θεματικές Ενότητες Κουίζ</h1>
   </header>
 
   <main class="container">
     
-    <!-- DASHBOARD SECTION -->
-    <section id="dashboardSection" class="quiz-grid">
-      <!-- Cards will be populated by JS -->
-    </section>
-
-    <!-- ORDER SELECTION SECTION -->
-    <section id="orderSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 30px auto; align-items: center;">
-      <h2 id="orderQuizTitle" class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Όνομα Κουίζ</h2>
-      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 420px; margin-bottom: 10px;">
-        Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:
-      </p>
+    <div class="categories-grid">
       
-      <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
-        <button id="originalOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; width: 100%;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-          Αρχική Σειρά (Όπως στο έγγραφο)
-        </button>
-        <button id="randomOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; border-color: var(--success); color: var(--success); width: 100%;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
-          Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)
-        </button>
-      </div>
-      
-      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
-        <input type="checkbox" id="shuffleOptionsUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
-        <span>Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
-      </label>
-      
-      <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;">Επιστροφή</button>
-    </section>
-
-    <!-- TEST CONFIGURATION SECTION -->
-    <section id="testConfigSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 650px; margin: 30px auto; align-items: center;">
-      <h2 class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Παραμετροποίηση Γενικού Τεστ</h2>
-      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 500px; margin-bottom: 10px;">
-        Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τυχαίο τεστ. Θα επιλεγούν 30 τυχαίες ερωτήσεις από τις επιλεγμένες ενότητες.
-      </p>
-      
-      <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 5px;">
-        <button id="toggleAllUnitsBtn" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem; border-color: var(--border-color); color: var(--primary);">
-          Επιλογή Όλων
-        </button>
-      </div>
-
-      <div id="unitsSelectionList" style="display: flex; flex-direction: column; gap: 10px; width: 100%; text-align: left;">
-        <!-- Unit items will be populated by JS -->
-      </div>
-      
-      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 10px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
-        <input type="checkbox" id="shuffleOptionsGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
-        <span>Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
-      </label>
-
-      <div style="display: flex; gap: 15px; margin-top: 15px; width: 100%; justify-content: center; flex-wrap: wrap;">
-        <button id="startConfiguredTestBtn" class="btn btn-primary" style="padding: 14px 28px; font-size: 1rem;" disabled>
-          Έναρξη Τεστ
-        </button>
-        <button id="configBackBtn" class="btn btn-outline" style="padding: 14px 28px; font-size: 1rem; border-color: var(--border-color); color: var(--text-muted);">Επιστροφή</button>
-      </div>
-    </section>
-
-    <!-- ACTIVE QUIZ SECTION -->
-    <section id="quizSection" class="card hidden">
-      <div class="progress-section">
-        <div class="progress-header">
-          <span id="quizUnitText">ΕΝΟΤΗΤΑ 1</span>
-          <span id="progressText">Ερώτηση 1 από 10</span>
+      <!-- CATEGORY 1 -->
+      <a href="quizzes_noisi.html" class="card category-card">
+        <div>
+          <span class="unit-tag">Ενεργό</span>
+          <h2 class="category-title">Νόηση και συνείδηση στα ζώα</h2>
+          <p class="category-desc">
+            Διαδραστικά κουίζ για τη νόηση, τη γνώση, τη συνείδηση και τους νοητικούς μηχανισμούς κατά την αλληλεπίδραση ανθρώπου-ζώων.
+          </p>
         </div>
-        <div class="progress-bar-container">
-          <div id="progressBar" class="progress-bar"></div>
+        <div>
+          <div class="category-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>7 Ενότητες + Γενικό Τεστ</span>
+          </div>
+          <div class="btn-action">Έναρξη Κουίζ</div>
         </div>
-      </div>
-      
-      <div id="questionContainer">
-        <h2 id="questionTitle" class="question-title">Φόρτωση ερώτησης...</h2>
-        <div id="optionsList" class="options-list">
-          <!-- Options will be populated by JS -->
+      </a>
+
+      <!-- CATEGORY 2 -->
+      <a href="quizzes_nomothesia.html" class="card category-card disabled-style">
+        <div>
+          <span class="unit-tag" style="background-color: rgba(148, 163, 184, 0.1); color: var(--text-muted);">Υπό Κατασκευή</span>
+          <h2 class="category-title" style="color: var(--text-muted);">Νομοθεσία και Ευζωία των ζώων</h2>
+          <p class="category-desc">
+            Κουίζ σχετικά με το νομικό πλαίσιο, τη νομοθεσία προστασίας και τους διεθνείς κανόνες ευζωίας των ζώων.
+          </p>
         </div>
-      </div>
-
-      <div class="action-row">
-        <button id="nextBtn" class="btn btn-primary" disabled>
-          Επόμενο
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- RESULTS SECTION -->
-    <section id="resultsSection" class="card results-card hidden">
-      <h1 id="resultsQuizTitle" class="results-quiz-title"></h1>
-      <div class="score-circle-wrapper">
-        <svg class="score-svg" viewBox="0 0 160 160">
-          <circle class="score-bg" cx="80" cy="80" r="70"></circle>
-          <circle id="scoreFill" class="score-fill" cx="80" cy="80" r="70"></circle>
-        </svg>
-        <div class="score-text-center">
-          <div id="scoreNumber" class="score-number">0%</div>
-          <div class="score-label">Σκορ</div>
+        <div>
+          <div class="category-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Σύντομα Διαθέσιμο</span>
+          </div>
+          <div class="btn-action">Μετάβαση</div>
         </div>
-      </div>
+      </a>
 
-      <h2 id="resultFeedbackTitle" class="result-feedback-title">Συγχαρητήρια!</h2>
-      <p id="resultFeedbackText" class="result-feedback-text">Ολοκληρώσατε το κουίζ. Δείτε τις απαντήσεις σας παρακάτω.</p>
-
-      <div class="button-group">
-        <button id="restartBtn" class="btn btn-primary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-          Επανάληψη
-        </button>
-        <button id="backBtn" class="btn btn-outline">Επιστροφή στα Κουίζ</button>
-        <button id="pdfBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          Αποθήκευση ως PDF
-        </button>
-      </div>
-
-      <!-- Review Section -->
-      <div class="review-section">
-        <h3 class="review-title-text">Αναλυτικά Αποτελέσματα</h3>
-        <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 15px; text-align: left; width: 100%;">
-          <!-- Review items populated by JS -->
+      <!-- CATEGORY 3 -->
+      <a href="quizzes_euzwia.html" class="card category-card disabled-style">
+        <div>
+          <span class="unit-tag" style="background-color: rgba(148, 163, 184, 0.1); color: var(--text-muted);">Υπό Κατασκευή</span>
+          <h2 class="category-title" style="color: var(--text-muted);">Εισαγωγή στην επιστήμη της ευζωίας των ζώων</h2>
+          <p class="category-desc">
+            Εισαγωγικά κουίζ στην επιστήμη της ευζωίας, τις ανάγκες, τη συμπεριφορά και την ποιότητα ζωής των ζώων.
+          </p>
         </div>
-      </div>
-    </section>
+        <div>
+          <div class="category-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Σύντομα Διαθέσιμο</span>
+          </div>
+          <div class="btn-action">Μετάβαση</div>
+        </div>
+      </a>
+
+    </div>
 
   </main>
 
-  <!-- Embedded Quiz Data & Core Script -->
-  <script>
-    const QUIZZES = [{"title": "Quiz Πρώτης Ενότητας: Εισαγωγή στη Φιλοσοφία της Νόησης", "filename": "Νόηση Quiz 1_5490d7e7-5ff4-418b-aac2-961964acad71.docx", "questions": [{"id": 1, "text": "Στη φιλοσοφία θεωρούμε ότι ο όρος «νοημοσύνη» (intelligence) περιγράφει κυρίως:", "options": ["Τη νοητική ικανότητα που είναι συνδεδεμένη με τη μάθηση και την κατανόηση των συνθηκών διαβίωσης", "Την ικανότητα ενός ζώου ή μιας μηχανής να σκέφτεται και να λαμβάνει αποφάσεις", "Την ικανότητα μιας βιολογικής ή τεχνητής οντότητας να επιτυγχάνει πολύπλοκους στόχους, η οποία είναι άρρηκτα συνδεδεμένη με την υπολογιστική λειτουργία", "Την ικανότητα κατανόησης των προβλημάτων και την επίλυσή τους μέσω μιας ορθολογικής διαδικασίας, ικανότητα που διαθέτουν μόνο οι άνθρωποι και τα ανώτερα θηλαστικά"], "correct_idx": 2}, {"id": 2, "text": "Οι γνωσιακές επιστήμες μελετούν:", "options": ["Τη συμπεριφορά", "Τις υπολογιστικές και γνωσιακές λειτουργίες", "Το I.Q.", "Τα εγκεφαλικά κύτταρα, δηλαδή τους νευρώνες, καθώς και τις συνάψεις τους"], "correct_idx": 1}, {"id": 3, "text": "Σε τι διαφέρουν τα επίπεδα περιγραφής συμπεριφοράς και υπολογιστικών και γνωσιακών λειτουργιών;", "options": ["Το επίπεδο περιγραφής της συμπεριφοράς έχει ως αντικείμενο τη λεκτική και σωματική απόκριση στα ερεθίσματα του περιβάλλοντος, ενώ το επίπεδο περιγραφής των γνωσιακών λειτουργιών έχει ως αντικείμενο τους μηχανισμούς που προκαλούν τις συμπεριφορές", "Το επίπεδο περιγραφής της συμπεριφοράς έχει ως αντικείμενο τη διαβίωση των ζώων στο φυσικό περιβάλλον, ενώ το επίπεδο περιγραφής των γνωσιακών λειτουργιών έχει ως αντικείμενο την μελέτη του τρόπου επικοινωνίας", "Το επίπεδο περιγραφής της συμπεριφοράς έχει ως αντικείμενο μόνο τη σωματική απόκριση στα ερεθίσματα, ενώ το επίπεδο περιγραφής των γνωσιακών λειτουργιών έχει ως αντικείμενο την συναισθηματική και διανοητική ανταπόκριση στα ερεθίσματα του περιβάλλοντος", "Τα δύο επίπεδα περιγραφής δεν διαφέρουν"], "correct_idx": 0}, {"id": 4, "text": "Ο συμπεριφορισμός μελετά:", "options": ["Τις νοητικές λειτουργίες ενός οργανισμού", "Τον μετασχηματισμό των πληροφοριών στον εγκέφαλο", "Τη λεκτική ή / και σωματική απόκριση ενός οργανισμού στα ερεθίσματα του περιβάλλοντος", "Τους καλούς τρόπους συμπεριφοράς"], "correct_idx": 2}, {"id": 5, "text": "Για την αναπαραστασιακή και υπολογιστική θεωρία του νου, η νόηση θεωρείται:", "options": ["Μια αναπαραστασιακή διαδικασία, που υλοποιείται στις ψηφιακές υπολογιστικές μηχανές", "Μια αναπαραστασιακή - υπολογιστική διαδικασία, που υλοποιείται στον εγκέφαλο ή σε κάποια άλλη υπολογιστική μηχανή", "Μια μηχανική διαδικασία, που βασίζεται αποκλειστικά στην εγκεφαλική δραστηριότητα χωρίς την ανάγκη αναπαραστάσεων ή υπολογισμών", "Μια διαδικασία που σχετίζεται με την άμεση εμπειρία και τα συναισθήματα, μόνο όταν συνδυάζονται με αναπαραστάσεις του κόσμου ή την επίλυση προβλημάτων"], "correct_idx": 1}, {"id": 6, "text": "Η έρευνα για τη νόηση των ζώων (animal cognition) συνήθως επικεντρώνεται σε ερωτήματα σχετικά με:", "options": ["Τη συμπεριφορά τους", "Τον τρόπο που λειτουργούν στο φυσικό περιβάλλον τους, όπως για παράδειγμα τον τρόπο που επιβιώνουν και επικοινωνούν μεταξύ τους", "Τους νευρολογικούς μηχανισμούς που αποδεικνύουν ότι τα ζώα έχουν νοημοσύνη", "Τους μηχανισμούς που εμπλέκονται σε συγκεκριμένες ικανότητες, όπως η μάθηση, η μνήμη, η αντίληψη ή η λήψη αποφάσεων"], "correct_idx": 3}, {"id": 7, "text": "Η ιστορία της δυτικής φιλοσοφίας αναδεικνύει μια σταθερή τάση να θεωρούνται τα ζώα ότι στερούνται «λόγου». Αυτή η παραδοχή οδήγησε τους φιλοσόφους να υποστηρίζουν ότι η «γλώσσα» και η «λογική» αποτελούν αποκλειστικά ανθρώπινες ιδιότητες. Ποια από τις παρακάτω προτάσεις ΔΕΝ είναι σωστή;", "options": ["Ο Θωμάς Ακινάτης πίστευε ότι τα ζώα στερούνται έλλογης φύσης επειδή δεν είναι ελεύθερα", "Ο Ντεκάρτ υπερασπίστηκε τη διάκριση μεταξύ ανθρώπων και ζώων θεωρώντας ότι η γλώσσα είναι αναγκαία προϋπόθεση για τον έλλογο νου και συνεπώς τα ζώα, χωρίς γλώσσα, δεν είναι παρά άψυχες μηχανές", "Ο Χιουμ ήταν εξαιρετικά επικριτικός απέναντι σε αυτούς που υποστήριζαν ότι τα ζώα έχουν νου, λέγοντας ότι τίποτα δεν είναι πιο γελοίο από το να λέμε ότι τα ζώα είναι προικισμένα με σκέψη και λογική, όπως και ο άνθρωπος", "Ο Λοκ υποστήριξε ότι τα ζώα δεν μπορούν να σκέφτονται, επειδή οι λέξεις είναι απαραίτητες για την κατανόηση των καθολικών εννοιών"], "correct_idx": 2}, {"id": 8, "text": "Σε τι διαφέρουν τα επίπεδα περιγραφής γνωσιακών λειτουργιών και νευρωνικών λειτουργιών;", "options": ["Το επίπεδο περιγραφής των γνωσιακών λειτουργιών ασχολείται με τη μελέτη μηχανισμών όπως η μάθηση, η μνήμη και η λήψη αποφάσεων, ενώ το επίπεδο περιγραφής των νευρωνικών λειτουργιών εστιάζει στις διεργασίες των εγκεφαλικών κυττάρων και στις συνάψεις τους.", "Το επίπεδο περιγραφής των γνωσιακών λειτουργιών εστιάζει αποκλειστικά στη σωματική απόκριση στα ερεθίσματα, ενώ το επίπεδο περιγραφής των νευρωνικών λειτουργιών εξετάζει τις αντιδράσεις του κεντρικού νευρικού συστήματος.", "Το επίπεδο περιγραφής των γνωσιακών λειτουργιών εξετάζει την επικοινωνία μεταξύ ζώων, ενώ το επίπεδο περιγραφής των νευρωνικών λειτουργιών εξετάζει τη νευρωνική δραστηριότητα που προκύπτει κατά τη διάρκεια αυτής της επικοινωνίας.", "Τα επίπεδα περιγραφής γνωσιακών και νευρωνικών λειτουργιών δεν διαφέρουν, καθώς και τα δύο μελετούν τις ίδιες φυσιολογικές διεργασίες."], "correct_idx": 0}, {"id": 9, "text": "Στη φιλοσοφία θεωρούμε ότι ο όρος «νόηση» (cognition) περιγράφει κυρίως:", "options": ["Την ικανότητα ενός οργανισμού να αντιλαμβάνεται, να μαθαίνει, να κατανοεί, να σκέφτεται, να προβαίνει σε αξιολογικές κρίσεις και να λαμβάνει αποφάσεις, να νοηματοδοτεί τον κόσμο του", "Την ικανότητα του ζώου να προσαρμόζεται στο φυσικό περιβάλλον του, να επικοινωνεί με τα άλλα ζώα και να καταφέρνει να επιβιώνει", "Τη νοημοσύνη των ζώων που αποδεικνύεται από την επίλυση σύνθετων προβλημάτων και την αυτοσυνειδησία", "Την ικανότητα ενός ζώου να επιτυγχάνει πολύπλοκους στόχους, μια ικανότητα που είναι άρρηκτα συνδεδεμένη με την υπολογιστική λειτουργία του εγκεφάλου και του κεντρικού νευρικού συστήματος"], "correct_idx": 0}, {"id": 10, "text": "Η φιλοσοφία της νόησης των ζώων θεωρείται:", "options": ["Ένα πεδίο χωρίς πρακτική σημασία, καθώς ασχολείται μόνο με ζητήματα που αφορούν αρχικές παραδοχές οι οποίες δεν μπορεί να αποδειχθούν", "Ένα πεδίο με πρακτική σημασία γιατί βοηθάει να καταλάβουμε τη συμπεριφορά των ζώων κατ’ αναλογία της συμπεριφοράς των ανθρώπων", "Ένα υπο-πεδίο της φιλοσοφίας της επιστήμης που θέτει μεθοδολογικά ερωτήματα σχετικά με τη νόηση και τη νοημοσύνη των ζώων", "Μια προέκταση της ηθικής φιλοσοφίας που αποδίδει στα σκεπτόμενα ζώα ηθικό στάτους"], "correct_idx": 2}]}, {"title": "Quiz Δεύτερης Ενότητας: Νόηση - γνώση - συνείδηση", "filename": "2. Quiz Δεύτερης Ενότητας_ Νόηση - γνώση - συνείδηση_137e753f-237a-4eca-ad82-46794a59d8da.pdf", "questions": [{"text": "Σύμφωνα με στοχαστές όπως οι Nagel, Chalmers, Blackmore, κ.α. ως συνείδηση (Consciousness) θα πρέπει να θεωρούμε:", "options": ["Την νοητική εκείνη κατάσταση που οδηγεί στην επίγνωση της ορθότητας μιας ηθικής πράξης", "Την νοητική κατάσταση που οδηγεί σε συμπεριφορές οι οποίες γίνονται εσκεμμένα – δεν ανήκουν δηλαδή στη σφαίρα του «ασυνείδητου»", "Την νοητική ικανότητα ενός οργανισμού να αναγνωρίζει τον εαυτό του στον καθρέφτη", "Την νοητική κατάσταση κατά την οποία ένας οργανισμός έχει την υποκειμενική εμπειρία του «πώς είναι να βρίσκεσαι σε αυτήν την νοητική κατάσταση» και κατ’ επέκταση την υποκειμενική εμπειρία του «πώς είναι να είσαι αυτός ο συγκεκριμένος οργανισμός»"], "correct_idx": 3}, {"text": "Ποιο είναι το δύσκολο πρόβλημα της συνείδησης σύμφωνα με τον Chalmers;", "options": ["Πώς μπορεί ο εγκέφαλος να δημιουργήσει υποκειμενικές εμπειρίες ή άρρητες υποκειμενικές ποιότητες;", "Πώς δημιουργούνται οι συνδέσεις μεταξύ αντίληψης, μνήμης και μάθησης;", "Ποιο είναι το κριτήριο για να αποδώσουμε σε ορισμένα ζώα συνείδηση;", "Αρκεί η αναγνώριση του εαυτού στον καθρέφτη για να πούμε ότι ένα ζώο έχει συνείδηση;"], "correct_idx": 0}, {"text": "Τι είναι τα qualia;", "options": ["Οι άρρητες υποκειμενικές ποιότητες της εμπειρίας, όπως η αίσθηση του κόκκινου χρώματος", "Οι βασικές αισθήσεις που δημιουργούν τις συνειδητές εμπειρίες, όπως η όραση και η ακοή", "Οι νευρολογικές διεργασίες που συνδέονται με τη δημιουργία των αισθητηριακών αντιλήψεων", "Οι έννοιες και οι κατηγορίες μέσω των οποίων κατανοούμε τον κόσμο"], "correct_idx": 0}, {"text": "Τι είναι τα φιλοσοφικά ζόμπι;", "options": ["Νοητές οντότητες που έχουν μόνο συνείδηση, αλλά στερούνται οποιασδήποτε φυσικής μορφής ή εγκεφαλικής λειτουργίας", "Υποθετικές οντότητες που είναι πανομοιότυπες με τους ανθρώπους σε μορφή, φυσιολογία και συμπεριφορά, αλλά δεν έχουν καθόλου συνειδητές - υποκειμενικές εμπειρίες", "Πλάσματα της φαντασίας που χρησιμοποιούνται ως σημεία αναφοράς ή παραδείγματα σε φιλοσοφικές αλληγορίες για να δείξουν την ανωτερότητα της ανθρώπινης λογικής ή να τονίσουν τα επιχειρήματα", "Οργανισμοί που συμπεριφέρονται αυτόματα, διατηρώντας «αθάνατες» νοητικές ικανότητες, όπως οι αιώνιες φιλοσοφικές ιδέες;"], "correct_idx": 1}, {"text": "Ποιο είναι το βασικό επιχείρημα του Thomas Nagel στην επιδραστική δημοσίευση «Πώς είναι να είσαι νυχτερίδα;»;", "options": ["Ότι η συνείδηση είναι μια απλή εγκεφαλική λειτουργία που εξηγείται πλήρως μέσω των νευρωνικών διεργασιών", "Ότι κάθε οργανισμός με συνείδηση βρίσκεται σε μια κατάσταση συνείδησης τέτοια, που το περιεχόμενό της εξισώνεται με το πώς «βιώνει» ο συγκεκριμένος οργανισμός το περιβάλλον του", "Ότι η μελέτη της συμπεριφοράς ενός οργανισμού παρέχει όλες τις απαραίτητες πληροφορίες για την κατανόηση των νοητικών του καταστάσεων", "Ότι η συνείδηση μπορεί να εξηγηθεί μέσω της απλής ανάλυσης των αισθήσεων και των ερεθισμάτων που λαμβάνει ένας οργανισμός από το περιβάλλον του"], "correct_idx": 1}, {"text": "Τι χρησιμοποιούν οι νυχτερίδες για να πλοηγηθούν στον αέρα και να πιάσουν την τροφή τους;", "options": ["Σύστημα Υπερήχων", "Ηλεκτρομαγνητικά κύματα", "Νυχτερινή Όραση", "Σύστημα ανίχνευσης θερμότητας"], "correct_idx": 0}, {"text": "Γιατί, σύμφωνα με τον Nagel, η μελέτη της συνείδησης αποκλειστικά στη νευρωνική βάση ή / και στη συμπεριφορά είναι ανεπαρκής;", "options": ["Επειδή αγνοεί τους μηχανισμούς μάθησης και μνήμης.", "Επειδή δεν λαμβάνει υπόψη την πολιτισμική εξέλιξη του οργανισμού.", "Επειδή απουσιάζει από αυτή τη μελέτη το βίωμα της υποκειμενικής εμπειρίας του συγκεκριμένου οργανισμού.", "Επειδή παραβλέπει τη σημασία της επικοινωνίας και της κοινωνικής αλληλεπίδρασης."], "correct_idx": 2}, {"text": "Τι καλούμε πρόβλημα των «άλλων νόων» (problem of other minds);", "options": ["Το ερώτημα σχετικά με το αν η συνείδηση μπορεί να ερμηνευτεί αποκλειστικά μέσω υλικών διεργασιών.", "Το ερώτημα για το πώς μπορούμε να γνωρίζουμε ή να τεκμηριώσουμε ότι άλλοι νοήμονες οργανισμοί σκέφτονται, έχουν συναισθήματα ή συνειδητές εμπειρίες.", "Το πρόβλημα της κατανόησης της συμπεριφοράς των άλλων νόων με βάση μόνο τις νευρολογικές λειτουργίες.", "Το ερώτημα αν οι νοητικές καταστάσεις των ζώων είναι ίδιες με αυτές των ανθρώπων."], "correct_idx": 1}, {"text": "Το αναλογικό επιχείρημα του Hume μπορεί να συνοψιστεί ως εξής:", "options": ["Η νόηση είναι ανάλογη με το μέγεθος του εγκεφάλου του ζώου", "Η συμπεριφορά των έμβιων οργανισμών προκύπτει κατ’ αναλογία από το περιβάλλον, την εμπειρία και την κληρονομικότητα", "Η σκέψη και η λογική στα ζώα είναι ανάλογη με τη λογική των ανθρώπων όταν βρίσκονται υπό συναισθηματική πίεση", "Αφού η συμπεριφορά των ζώων μοιάζει με την ανθρώπινη συμπεριφορά, μπορούμε να υποθέσουμε ότι η εσωτερική αιτία που προκαλεί αυτή τη συμπεριφορά σε ανθρώπους και ζώα είναι παρόμοια"], "correct_idx": 3}, {"text": "Η πρόταση «αν κάθε συνειδητή κατάσταση αντιστοιχεί σε έναν μοναδικό οργανισμό, τον οργανισμό δηλαδή εκείνον που βιώνει την συγκεκριμένη κατάσταση, η μελέτη των νοητικών καταστάσεων εν γένει καθίσταται επιστημολογικά αδύνατη, με την έννοια ότι δεν μπορεί να γνωσθεί»:", "options": ["Είναι ψευδής γιατί οι νευροεπιστήμες μπορούν να μελετήσουν τη συνείδηση και τις νοητικές καταστάσεις εν γένει γνωρίζοντας τους νευρολογικούς μηχανισμούς των ανθρώπων και των περισσότερων ζώων με ΚΝΣ", "Είναι αληθής γιατί η συνείδηση και οι νοητικές καταστάσεις εν γένει εξαρτώνται από την απόκριση στα ερεθίσματα, όμως η συμπεριφορική τους αξιολόγηση μπορεί να είναι παραπλανητική", "Είναι ψευδής γιατί οι γνωσιακές επιστήμες μπορούν να περιγράψουν με ακρίβεια τους μηχανισμούς της υποκειμενικής εμπειρίας και των νοητικών καταστάσεων εν γένει", "Είναι αληθής γιατί η υποκειμενική εμπειρία και οι νοητικές καταστάσεις εν γένει είναι άμεσα προσβάσιμες μόνο στο ίδιο το υποκείμενο και δεν μπορεί να γνωσθούν πλήρως από έναν εξωτερικό παρατηρητή"], "correct_idx": 3}]}, {"title": "Quiz Τρίτης Ενότητας: Πώς ο εγκέφαλος παράγει τον νου;", "filename": "3. Quiz Τρίτης Ενότητας_ Πώς ο εγκέφαλος παράγει τον νου;_c61b07d5-e2b7-4178-a87f-4200ca15dc6b.pdf", "questions": [{"text": "Ποια είναι η διάκριση που κάνει ο Descartes μεταξύ Res Cogitans και Res Extensa;", "options": ["Η Res Cogitans αναφέρεται στις νοητικές λειτουργίες που επιτελούνται από όλα τα έμβια όντα, ενώ η Res Extensa αφορά μόνο τα ζώα που έχουν την ικανότητα άμεσης αλληλεπίδρασης με το περιβάλλον τους", "Η Res Cogitans αφορά τη λογική και τη γλώσσα των ζώων, ενώ η Res Extensa αφορά τις αισθήσεις και την σωματική εμπειρία τους", "Η Res Cogitans είναι η ουσία που σχετίζεται με την ηθική συμπεριφορά, ενώ η Res Extensa σχετίζεται με τις φυσικές λειτουργίες του σώματος", "Η Res Cogitans είναι η νούσα ουσία που χαρακτηρίζει μόνο τον ανθρώπινο νου και την ψυχή, ενώ η Res Extensa είναι η υλική, εκτατή ουσία που χαρακτηρίζει τα υπόλοιπα όντα και τον φυσικό κόσμο"], "correct_idx": 3}, {"text": "Ποια είναι η βασική ιδέα της θέσης του Turing;", "options": ["Ότι τα νοητικά συστήματα πρέπει να είναι βιολογικά για να έχουν νοημοσύνη", "Ότι δύο νοητικά συστήματα (π.χ. ένας ανθρώπινος νους και ένας υπολογιστής) μπορούν να θεωρηθούν ισοδύναμα, αν με τις ίδιες εισροές παράγουν ισοδύναμες εκροές", "Ότι οι δυνατότητες των νοητικών συστημάτων καθορίζονται από το μέγεθος του εγκεφάλου ή του επεξεργαστή καθώς και την ικανότητα λήψης αισθητηριακών ερεθισμάτων από το εξωτερικό περιβάλλον", "Ότι μόνο τα συστήματα που διαθέτουν ή μιμούνται συναισθήματα μπορούν να θεωρηθούν νοητικά συστήματα"], "correct_idx": 1}, {"text": "Σύμφωνα με τον λειτουργισμό που εισηγήθηκε ο Hilary Putnam:", "options": ["Ο νους είναι σαν τον καπνό μιας ατμομηχανής", "Οι νοητικές λειτουργίες αποτελούν το αιτιακό ενδιάμεσο ανάμεσα στις εισροές (input) και στις εκροές (output) πληροφοριών", "Τα ζώα δεν έχουν ψυχή αλλά αποτελούν «αυτόματα» της φύσης", "Η νοούσα ουσία (res cogitans) καθορίζει τη λειτουργία της εκτατής ουσίας (res extensa)"], "correct_idx": 1}, {"text": "Τι είναι το «καρτεσιανό θέατρο» σύμφωνα με τον Dennett;", "options": ["Η ιδέα ότι οι νοητικές καταστάσεις εκφράζονται με τη μορφή θεατρικών εικόνων και συμβολικών αναπαραστάσεων που επεξεργάζονται οι αισθήσεις, καθώς οι εικόνες είναι ισχυρότερες από τη γλώσσα", "Η θέση ότι η νόηση είναι σαν τον κινηματογράφο ή το θέατρο που αποτελείται από μια σειρά διαδοχικών σκηνών οι οποίες προκύπτουν από την υποκειμενική αισθητηριακή εμπειρία", "Η θέση ότι ο νους αποτελεί μια εσωτερική στον εγκέφαλο σκηνή, στην οποία αναπαρίστανται όλες οι αισθητηριακές αντιλήψεις, ως αντικείμενο θέασης του «εγώ» ως εσωτερικού παρατηρητή", "Η θέση η νόηση αντανακλά την κοινωνική πραγματικότητα, δηλαδή, εξελίσσεται μέσω της μίμησης κοινωνικών και πολιτισμικών παραστάσεων, καθώς όλοι «παίζουν» ρόλους και με βάση αυτούς νοηματοδοτούν τον κόσμο"], "correct_idx": 2}, {"text": "Ο Putnam χρησιμοποίησε το νοητικό πείραμα του «εγκεφάλου στη γυάλα» (brain in a vat) ως:", "options": ["Ένα επιχείρημα που αποδεικνύει την απόλυτη αδυναμία πρόσβασης στην πραγματικότητα, καθώς το σύνολο της αντιληπτικής και αισθητηριακής εμπειρίας «δεσμεύεται» από τις αναπαραστάσεις στον ανθρώπινο νου, όπως υποστηρίζει ο εμπειρικός ιδεαλισμός", "Ένα τρόπο για να κατανοήσουμε ότι οι αισθήσεις μάς παρέχουν απόλυτη και αλάνθαστη πρόσβαση στην πραγματικότητα, καθώς δεν έχει σημασία η προέλευση των αισθητηριακών πληροφοριών, παρά μόνο οι ίδιες οι πληροφορίες που φτάνουν στον εγκέφαλο ή οποιαδήποτε άλλη μηχανή επεξεργασίας τους", "Ένα επιχείρημα που ενισχύει τη θέση της αυτονομίας του νοητικού, καθώς οι εγκέφαλοι, όπως όλες οι μηχανές επεξεργασίας συμβόλων, λειτουργούν ανεξάρτητα από το περιβάλλον και τις αισθητηριακές εμπειρίες τους", "Ένα επιχείρημα για να τονίσει ότι ο μεθοδολογικός καρτεσιανός σκεπτικισμός είναι είτε εσφαλμένος, είτε χωρίς νόημα, επειδή η έννοια της «πραγματικότητας» δεν μπορεί να διαχωριστεί από τη γλώσσα, το περιβάλλον και τη σωματικότητα του νοήμονος συστήματος"], "correct_idx": 3}, {"text": "Τι είναι ο δυισμός υπόστασης;", "options": ["Η θέση ότι ο άνθρωπος και πιθανόν ορισμένα πρωτεύοντα έμβια όντα αποτελούνται από δυο διαφορετικές υποστάσεις, τον άυλο νου και το υλικό σώμα", "Η θεωρία που υποστηρίζει ότι όλες οι νοητικές και σωματικές λειτουργίες έχουν κοινή υλική βάση και εξαρτώνται από τον εγκέφαλο και το ΚΝΣ", "Η θέση που αναγνωρίζει δύο διαφορετικούς τύπους εμπειριών, τις αισθητηριακές - σωματικές και τις διανοητικές, χωρίς όμως να διαχωρίζει τη μεταξύ τους σχέση και οντολογική διαφορά", "Η άποψη ότι ο νους και το σώμα αλληλεπιδρούν, αλλά πρόκειται για διαφορετικές όψεις της ίδιας ενιαίας υπόστασης"], "correct_idx": 0}, {"text": "Σε τι αναφέρεται το πρόβλημα νου - σώματος;", "options": ["Στο πρόβλημα της σχέσης μεταξύ των νοητικών συμβάντων (v) με το βιολογικό - υλικό υπόβαθρο (φ)", "Στην αδυναμία των σωματικών αισθήσεων να παρέχουν πλήρη κατανόηση των νοητικών συμβάντων (v)", "Στο πρόβλημα ερμηνείας των νοητικών συμβάντων (v) μέσα από τη βιολογική εξέλιξη", "Στη διαφορά μεταξύ του έμφυτου και του επίκτητου χαρακτήρα των γνωσιακών λειτουργιών και ειδικότερα των νοητικών συμβάντων (v)"], "correct_idx": 0}, {"text": "Τι είναι το κατά τον Gilbert Ryle «φάντασμα στη μηχανή»;", "options": ["Η ιδέα του Ryle ότι ο νους είναι μια αόρατη νοούσα ουσία που βρίσκεται μέσα στο σώμα, αλλά δεν μπορεί να αλληλεπιδράσει με αυτό", "Ο χαρακτηρισμός του Ryle για τον καρτεσιανό δυϊσμό, ο οποίος θεωρεί τον νου ως μια άυλη, νοητική οντότητα που ελέγχει το σώμα, σαν να είναι ένα «φάντασμα» μέσα σε μια μηχανή", "Η αντίληψη ότι οι νοητικές διεργασίες είναι αποτέλεσμα μεταφυσικών φαινομένων που δεν μπορούν να εξηγηθούν από τη φυσική επιστήμη", "Η θέση του Ryle ότι ο νους αποτελεί μια αλληγορία που χρησιμοποιείται για να περιγράψει τη μηχανική λειτουργία του εγκεφάλου"], "correct_idx": 1}, {"text": "Το επιχείρημα του «κινέζικου δωματίου» που εισηγήθηκε ο Searle μας δείχνει ότι:", "options": ["Η μελέτη της συμπεριφοράς που προκύπτει από τυπική επεξεργασία συμβόλων, αρκεί για να καταλάβουμε τους μηχανισμούς νόησης, σκέψης και αντίληψης των ζώων και άλλων νοήμονων συστημάτων", "Η ταύτιση της τυπικής υπολογιστικής διαδικασίας με τη νοήμονα συμπεριφορά είναι προφανής και αυταπόδεικτη αφού δυο συστήματα με ίδιες «εξόδους» μπορούν να θεωρούνται νοητικά ισοδύναμα", "Η τυπική επεξεργασία συμβόλων από ένα σύστημα, ακόμα και αν οδηγεί σε συμπεριφορά που αξιολογείται από έναν παρατηρητή ως ορθή, δεν αποδεικνύει ότι το σύστημα αυτό διαθέτει νόηση ή γνωρίζει το νόημα των «εξόδων» του", "Ο μόνος ασφαλής τρόπος απόδοσης νοητικού καθεστώτος σε ένα νοήμον σύστημα ή ζώο, είναι η αξιολόγηση της συμπεριφοράς ή των «εξόδων του από τους εξωτερικούς παρατηρητές"], "correct_idx": 2}, {"text": "Ποια από τα παρακάτω εκφράζει τη θέση του Rene Descartes σχετικά με τη νόηση των ζώων;", "options": ["Ότι τα ζώα έχουν ψυχή και νόηση παρόμοια με αυτή των ανθρώπων, αλλά δεν μπορούν να την εκφράσουν λόγω της έλλειψης γλώσσας", "Ότι τα ζώα είναι ζωντανοί οργανισμοί που έχουν μεν αισθήσεις, συναισθήματα και πόνο, αλλά αυτά εξαρτώνται από μια χαμηλότερης από την ανθρώπινη πνευματική ουσία", "Ότι τα ζώα διαθέτουν περιορισμένη νόηση, η οποία είναι αποτέλεσμα της εκτατής ουσίας", "Ότι τα ζώα δεν σκέφτονται και είναι κατά κάποιο τρόπο «αυτόματα» της φύσης, δηλαδή μηχανές που κινούνται ενστικτωδώς και μηχανικά, χωρίς σκέψη αφού δεν διαθέτουν πνευματική ουσία"], "correct_idx": 3}]}, {"title": "Quiz Τέταρτης Ενότητας: Η ταυτότητα νου - σώματος και το πρόβλημα της αναγωγής", "filename": "4. Quiz Τέταρτης Ενότητας_ Η ταυτότητα νου - σώματος και το πρόβλημα της αναγωγής_c2de4813-0992-4abd-b692-d008bb462d18.pdf", "questions": [{"text": "Σύμφωνα με τη θεωρία του εξαλειπτικού υλισμού:", "options": ["H ύλη δεν είναι σημαντική για τα συναισθήματα", "Υπάρχουν μόνο υλικές βιολογικές καταστάσεις (φ) που οδηγούν σε συμπεριφορές των οργανισμών. Κάθε αναφορά σε νοητικές καταστάσεις (ν) αποτελεί πλάνη της ψυχολογίας του κοινού νου, που συντηρεί εσφαλμένες θεωρίες του παρελθόντος", "Η εξάλειψη της ύλης μπορεί να οδηγήσει στην απόλυτη πνευματικότητα", "Οι ιδιότητες του ανώτερου επιπέδου περιγραφής, του νοητικού επιπέδου (ν), εξαλείφουν τις ιδιότητες του βασικότερου επιπέδου περιγραφής (φ) – δηλαδή των νευρώνων"], "correct_idx": 1}, {"text": "Ο Αριστοτέλης γράφει στο Μετά τα Φυσικά ότι για όσα έχουν πολλά μέρη, το όλο δεν είναι το σύνολο των μερών αλλά το όλο είναι κάτι περισσότερο από τα μέρη. Με ποια θεωρία συνδέεται αυτή η θέση;", "options": ["Δυισμό οντοτήτων", "Επιφαινομεναλισμό", "Αναδυτισμό", "Φυσικαλισμό Επιγένεσης"], "correct_idx": 2}, {"text": "Σύμφωνα με τη θεωρία της ανάδυσης ιδιοτήτων:", "options": ["Στα πολύπλοκα συστήματα προκύπτουν νέες ιδιότητες (properties) που -κατά κάποιον τρόπο- υπερβαίνουν τις ιδιότητες των συστατικών μερών τους. Αυτό έχει ως αποτέλεσμα, τα συστήματα αυτά να δρουν ή να συμπεριφέρονται με τρόπους που δεν μπορούν να προβλεφθούν από τους νόμους που διέπουν τα κατώτερα συστήματα οργάνωσης", "Οι ιδιότητες (properties) είναι χαρακτηριστικά γνωρίσματα του όντος (όπως για παράδειγμα το σχήμα, το μέγεθος, η υφή κτλ.), που μπορεί να προβλεφθούν με ακρίβεια όταν μελετάμε την υλική δομή ενός οργανισμού, ανεξάρτητα από το επίπεδο μελέτης της ύλης (αν μελετάμε δηλαδή την ύλη σε ατομικό, μοριακό, κυτταρικό ή άλλο επίπεδο περιγραφής)", "Οι ιδιότητες των πολύπλοκων συστημάτων είναι άμεσα προβλέψιμες από τη συμπεριφορά των μεμονωμένων στοιχείων τους, αφού οι νόμοι της φύσης λειτουργούν το ίδιο σε όλα τα επίπεδα οργάνωσης", "Οι αναδυόμενες ιδιότητες είναι ψευδαισθήσεις που δημιουργούνται από τη δομή του ανθρώπινου νου και δεν έχουν πραγματική ύπαρξη στα φυσικά συστήματα"], "correct_idx": 0}, {"text": "Σε τι συνίσταται το πρόβλημα της αναγωγής;", "options": ["Στο λογικό σφάλμα εξαγωγής γενικών συμπερασμάτων από περιορισμένα δεδομένα", "Στην αλληλεπίδραση μεταξύ φυσικών και μεταφυσικών φαινομένων που δεν μπορούν να εξηγηθούν μέσω των επιστημονικών μεθόδων", "Στη δυσκολία αποδοχής της ύπαρξης αφηρημένων εννοιών όπως η συνείδηση, η οποία δεν μπορεί να περιγραφεί με φυσικούς όρους", "Στη δυσκολία εξήγησης πολύπλοκων φαινομένων ανώτερου επιπέδου αποκλειστικά με όρους των απλούστερων, θεμελιωδών δομών τους"], "correct_idx": 3}, {"text": "Τι δείχνει το παράδειγμα με τους Υπερσπαρτιάτες του Putnam;", "options": ["Ότι οι ανθρώπινες κοινωνίες εξελίσσονται με τρόπο που εξαλείφει τις εκφράσεις των συναισθημάτων μέσω της πολιτισμικής προσαρμογής", "Ότι η συνείδηση είναι μια κοινωνική κατασκευή που εξαρτάται από τον τρόπο με τον οποίο εκφράζονται τα άτομα σε μια δεδομένη κοινωνία. Αλλιώς εκφράζονται στην Αθήνα, αλλιώς στη Σπάρτη", "Ότι η αλληλεπίδραση μεταξύ σώματος και νου μπορεί να γίνει κατανοητή μόνο μέσω της μελέτης των κοινωνικών και πολιτικών δομών που επιδρούν στη συμπεριφορά", "Ότι η νοητική κατάσταση δεν μπορεί να ταυτιστεί με τη συμπεριφορά, καθώς μπορεί να υπάρχουν όντα που βιώνουν πόνο αλλά δεν το εκφράζουν με κανέναν εξωτερικό τρόπο"], "correct_idx": 3}]}, {"title": "Quiz Πέμπτης Ενότητας: Μνήμη - Αναπαράσταση", "filename": "5. Quiz Πέμπτης Ενότητας_ Μνήμη - Αναπαράσταση_1014438e-ac8a-415c-93fa-40642607ece0.pdf", "questions": [{"text": "Τι απέδειξε ο Kandel μελετώντας το θαλάσσιο σαλιγκάρι;", "options": ["Ότι τα ζώα με κεντρικό νευρικό σύστημα έχουν ψυχή", "Ότι υπάρχει «περιεχόμενο» της μνήμης το οποίο αναπαριστά εντός των νευρώνων κάτι το οποίο υπάρχει εκτός του εγκεφάλου", "Ότι κατά τη διαδικασία μάθησης ή επαναλαμβανόμενης συμπεριφοράς τα εγκεφαλικά κύτταρα συνδέονται ισχυρότερα μεταξύ τους ή και αλλάζει ο τρόπος σύνδεσής τους", "Ότι η νοημοσύνη των απλών οργανισμών οφείλεται στην ταχύτητα των νευρικών παλμών και όχι στη συνδεσιμότητα των νευρώνων"], "correct_idx": 2}, {"text": "Ποιο είναι το κριτήριο που θέτει ο J.J. Gibson για την κατανόηση του περιβάλλοντος ενός ζώου;", "options": ["Θα πρέπει να εξετάζουμε το φυσικό περιβάλλον στο οποίο ζει το ζώο", "Θα πρέπει να καταλάβουμε το ιδανικό περιβάλλον για την ευζωία του ζώου", "Θα πρέπει να καταλάβουμε το πώς το ζώο κινείται, βλέπει, μυρίζει, κτλ.", "Θα πρέπει να καταλάβουμε τις κλιματολογικές συνθήκες που καθιστούν τη διαβίωση ευκολότερη"], "correct_idx": 2}, {"text": "Η μελέτη της οπτικής αντίληψης οδήγησε τον J.J. Gibson στο συμπέρασμα ότι για να μπορεί να νοήσει ένας οργανισμός θα πρέπει να έχει την ικανότητα να αντιλαμβάνεται το περιβάλλον του. Το περιβάλλον, σύμφωνα με τον Gibson, συνιστά καθοριστικό παράγοντα της νόησης καθώς:", "options": ["Ο οργανισμός αντιλαμβάνεται την αναπαράσταση του οπτικού ειδώλου εντός του εγκεφάλου του. Η αναπαράσταση αυτή «δεσμεύει» τελικά το νοητικό περιεχόμενο της αντίληψης", "Ο οργανισμός που αντιλαμβάνεται και το περιβάλλον βρίσκονται στο ίδιο δομικό σύστημα. Χωρίς περιβάλλον, ο οργανισμός δεν μπορεί να «ανακαλύψει» το «νόημα» του οπτικού ερεθίσματος", "Ο οργανισμός αντιλαμβάνεται το περιβάλλον με όλες τις αισθήσεις αδιακρίτως και η οπτική αντίληψη συνθέτει την αντιληπτική εμπειρία", "Το περιβάλλον επιτρέπει στους οργανισμούς να βιώσουν τον κόσμο εκτός ανθρωποκεντρικού πλαισίου επιβίωσης"], "correct_idx": 1}, {"text": "Σε τι συνίσταται η υπόθεση της αναπαράστασης του νοητικού περιεχομένου;", "options": ["Υποθέτουμε ότι υπάρχει κάτι (μια οντότητα) που έχει σημασιολογικό περιεχόμενο και αιτιακή ισχύ", "Υποθέτουμε ότι η μνήμη είναι σαν φωτογραφία που αναπαριστά τον εξωτερικό κόσμο και συμβάλλει στο σχέδιο επιβίωσης", "Υποθέτουμε ότι η γλώσσα αποτελεί το μοναδικό τεκμήριο για τη σημασιολογική αναπαράσταση του κόσμου εντός των νοήμονων όντων", "Υποθέτουμε ότι οι αναπαραστάσεις είναι ασύνδετες νευρωνικές διεργασίες που δεν φέρουν καμία πληροφοριακή ή λειτουργική αξία"], "correct_idx": 0}, {"text": "Επηρεασμένος από την εξελικτική θεωρία, ο William James αντιλαμβάνεται τον νου ως:", "options": ["Παθητικό δέκτη των ερεθισμάτων του περιβάλλοντος", "Κάτι που έχει αμιγώς υλική βάση και δεν σχετίζεται με όλα αυτά που αποκαλούμε συναισθηματικές καταστάσεις", "Μνήμη που χρησιμεύει για την αποθήκευση πληροφοριών", "Έναν προσαρμοστικό λειτουργικό μηχανισμό που συμβάλλει στην επιβίωση και στην εξέλιξη"], "correct_idx": 3}, {"text": "Πώς ορίζεται στις γνωσιακές επιστήμες η μνήμη;", "options": ["Η μνήμη ορίζεται ως η διαδικασία απόκρισης σε περιβαλλοντικά ερεθίσματα, χωρίς συνειδητή εμπλοκή", "Η μνήμη ορίζεται ως η ικανότητα του εγκεφάλου να επαναλαμβάνει αυθόρμητα μοτίβα συμπεριφοράς χωρίς νοητική επεξεργασία", "Η μνήμη ορίζεται ως η ικανότητα να αποκτούμε και να «αποθηκεύουμε» πληροφορίες – ή ως η ικανότητα να ανακαλούμε πληροφορίες, εικόνες ή καταστάσεις τις οποίες έχουμε βιώσει ή έχουμε αποκτήσει στο παρελθόν", "Η μνήμη ορίζεται ως η βιολογική λειτουργία του νευρικού συστήματος που συλλέγει και διατηρεί βραχυπρόθεσμα ερεθίσματα του περιβάλλοντος"], "correct_idx": 2}, {"text": "Τι απέδειξε ο Ebbinghaus σχετικά με τη μνήμη;", "options": ["Ότι η μνήμη λειτουργεί μόνο όταν οι πληροφορίες έχουν συναισθηματικό φορτίο", "Ότι η μακροπρόθεσμη μνήμη είναι ανεξάρτητη από την επανάληψη και εξαρτάται μόνο από τη δομή του υλικού", "Ότι όσο περισσότερες επαναλήψεις έκανε κανείς, τόσο μεγαλύτερη ήταν η διατήρηση της μνήμης", "Ότι η μνήμη είναι έμφυτη και δεν επηρεάζεται από την εμπειρία ή τη μάθηση"], "correct_idx": 2}, {"text": "Τι υποστηρίζει ο J.J. Gibson για την αντίληψη του περιβάλλοντος από το ζώο;", "options": ["Η αντίληψη του περιβάλλοντος δεν συνιστά υποκειμενική εμπειρία αλλά γνώση, τουλάχιστον για τους οργανισμούς του ίδιου είδους", "Η αντίληψη του περιβάλλοντος αποτελεί ένα λειτουργικό χαρακτηριστικό του νου με σημασιολογικό περιεχόμενο", "Η αντίληψη του περιβάλλοντος «δεσμεύεται» από τον εσωτερικό κόσμο του υποκειμένου που νοεί", "Η αντίληψη είναι ταυτόσημη με την αίσθηση"], "correct_idx": 0}, {"text": "Ποιο θεωρεί ο Damasio ως βασικότερο γνώρισμα της νόησης;", "options": ["Η ικανότητα να λύνει μαθηματικά προβλήματα και να επεξεργάζεται αφηρημένες έννοιες", "Η ικανότητα ενός οργανισμού να αποθηκεύει και να αναπαριστά πληροφορίες για το μέλλον", "Η ικανότητα του οργανισμού να αλληλεπιδρά με το περιβάλλον του κατά τρόπο που να επιτρέπει τη διαβίωσή του", "Η ικανότητα να διαχωρίζει τον εαυτό του από το περιβάλλον, ώστε να αποκτά αυτοσυνείδηση"], "correct_idx": 2}, {"text": "Τι εννοούμε με τον όρο «αναπαράσταση» στη γνωσιακή επιστήμη;", "options": ["Έναν τρόπο διασύνδεσης των νευρώνων", "Ένα λειτουργικό χαρακτηριστικό του νου με σημασιολογικό περιεχόμενο", "Μια σύνθετη νευρωνική «αρχιτεκτονική» που υλοποιεί ορισμένες μνημονικές διαδικασίες", "Αποτυπώσεις αισθητηριακών ερεθισμάτων χωρίς αιτιακό ρόλο στη νόηση"], "correct_idx": 1}]}, {"title": "Quiz Έκτης Ενότητας: Ενσώματη Νόηση και Παρεχόμενες Δυνατότητες", "filename": "6. Quiz Έκτης Ενότητας_ Ενσώματη Νόηση και Παρεχόμενες Δυνατότητες_8b7703a4-36da-4b96-b2ae-a69a087e321a.pdf", "questions": [{"text": "Οι παρεχόμενες δυνατότητες (affordances) μπορούν να εννοηθούν ως αναδυόμενες ιδιότητες ενός συστήματος που περιλαμβάνει:", "options": ["Τα αντικείμενα του περιβάλλοντος και το συνολικό περιβάλλον", "Τις σωματικές ικανότητες του ζώου και τους τρόπους επιβίωσής του εντός του περιβάλλοντός του", "Τα αντικείμενα του περιβάλλοντος και το ζώο χωριστά, αλλά και ως συνδυαστικές μεταβλητές του συστήματος", "Τα αντικείμενα του περιβάλλοντος ή τις ιδιότητές τους ή το ίδιο το περιβάλλον και το ζώο, τις σωματικές ικανότητές του και τους τρόπους που μπορεί να χρησιμοποιήσει τα αντικείμενα του περιβάλλοντος ή το ίδιο το περιβάλλον"], "correct_idx": 3}, {"text": "Με τον όρο «Ενσώματη Νόηση» (embodied cognition) εννοούμε ότι:", "options": ["Η νόηση βρίσκεται «ενσωματωμένη» στο DNA και αποτελεί κληρονομική ιδιότητα", "Ο τρόπος με τον οποίο νοεί ένας οργανισμός καθορίζεται από τη σωματική του μορφή και τον τρόπο που το σώμα του αλληλεπιδρά με το περιβάλλον", "Το σώμα «σκέφτεται»", "Η νόηση είναι απολύτως ανεξάρτητη από το σώμα και υλοποιείται αποκλειστικά στον εγκέφαλο ως υπολογιστική διαδικασία"], "correct_idx": 1}, {"text": "Ο όρος «παρεχόμενες δυνατότητες» (affordances) που εισηγήθηκε ο J.J. Gibson αναφέρεται:", "options": ["Σε δυνατότητες που παρέχει ο άνθρωπος σε ένα ζώο ώστε να είναι όσο το δυνατόν πιο κοντά στο φυσικό του περιβάλλον, επειδή το τεχνητό περιβάλλον (και ειδικά η κατάσταση αιχμαλωσίας) εμποδίζει τη νοητική ανάπτυξη του ζώου", "Σε δυνατότητες επιβίωσης που παρέχει το ίδιο το περιβάλλον σε κάθε ζώο", "Σε δυνατότητες για δράση που προκύπτουν ως ιδιότητες ενός συστήματος που περιλαμβάνει το περιβάλλον, τις σωματικές ικανότητες του ζώου και τους τρόπους με τους οποίους μπορεί να χρησιμοποιήσει το κάθε ζώο το περιβάλλον του", "Σε δυνατότητες αναπαράστασης του περιβάλλοντος μέσω της αντίληψης, όπως αυτές οργανώνονται από το κεντρικό νευρικό σύστημα"], "correct_idx": 2}, {"text": "Ποια από τα παρακάτω δεν αποτελεί αρχή της ενσώματης νόησης;", "options": ["Η νόηση είναι εγκατεστημένη σε ένα περιβάλλον", "Η νόηση εξαρτάται από το μέγεθος του εγκεφάλου και τον αριθμό των συνάψεων", "Η νόηση αποφορτίζεται στο περιβάλλον αποθέτοντας νοητικό έργο", "Το περιβάλλον αποτελεί μέρος του νοητικού συστήματος"], "correct_idx": 1}, {"text": "Ποιο από τα παρακάτω δεν αποτελεί ισχυρισμό των θεωριών της ενσώματης νόησης;", "options": ["Οι σωματικές ιδιότητες ενός οργανισμού περιορίζουν ή οριοθετούν τις έννοιες (και τον κόσμο) που ο οργανισμός αυτός μπορεί να συλλάβει", "Ο εγκέφαλος και οι αναπαραστάσεις του κόσμου εντός του εγκεφάλου αποτελούν τον βασικό τρόπο με τον οποίο ένας οργανισμός νοεί", "Η αλληλεπίδραση ενός οργανισμού με το περιβάλλον αντικαθιστά την ανάγκη αναπαραστασιακής διαδικασίας", "Το σώμα και ο κόσμος παίζουν «συστατικό» ρόλο (και όχι απλώς αιτιώδη ρόλο) στη νοητική διαδικασία"], "correct_idx": 1}, {"text": "Σύμφωνα με τον Πρωτόπαπα, το σώμα αποτελεί ένα νοητικό «εξάρτημα» που εκφράζεται στον νου:", "options": ["Ως μνήμη και αναπαράσταση", "Ως μια αναπαράσταση που εξαρτάται από τα αισθητήρια όργανα που έχει κάθε ζώο", "Ως εικόνα του σώματος και σχήμα του σώματος", "Ως βιωμένη εμπειρία"], "correct_idx": 2}, {"text": "Σύμφωνα με τον αμερικανικό νατουραλισμό και ειδικότερα τον John Dewey, η γνώση έχει «εργαλειακό» χαρακτήρα, είναι συνδεδεμένη με τη δράση και την εμπειρία και χρησιμεύει στον καθορισμό της μελλοντικής αλληλεπίδρασης ενός οργανισμού με το περιβάλλον του.", "options": ["Σωστό, γιατί η γνώση είναι θεωρητική αναπαράσταση της πραγματικότητας και δευτερευόντως τρόπος προσαρμογής και δράσης του οργανισμού μέσα στο περιβάλλον", "Λάθος, γιατί η γνώση είναι ουδέτερη και δεν σχετίζεται με τη βιολογική ή εμπειρική κατάσταση του υποκειμένου", "Σωστό, γιατί η γνώση είναι αποτέλεσμα της αλληλεπίδρασης εμπειρίας – πράξης – αναστοχασμού και χρησιμεύει στη ρύθμιση της μελλοντικής συμπεριφοράς", "Λάθος, γιατί ο Dewey θεωρούσε ότι η γνώση είναι ανεξάρτητη από το περιβάλλον και αφορά μόνο την εσωτερική νοητική δραστηριότητα του ανθρώπου"], "correct_idx": 2}, {"text": "Αναφερόμενος στον Gibson, ο Πρωτόπαπας σημειώνει:", "options": ["Ο σκοπός της οπτικής αντίληψης δεν είναι η κατηγοριοποίηση του αντικειμένου αλλά η άμεση αναγνώριση των επιδοχών που παρέχει κάθε στοιχείο του περιβάλλοντος", "Ο σκοπός της οπτικής αντίληψης είναι η κατηγοριοποίηση και η κατανόηση των ερεθισμάτων του περιβάλλοντος με σκοπό τον καθορισμό μελλοντικών δράσεων", "Ο σκοπός της οπτικής αντίληψης είναι η έμμεση εισροή όλων των πληροφοριών στον εγκέφαλο, όχι μόνο εκείνων που τραβούν την προσοχή", "Η οπτική αντίληψη δεν θα πρέπει να συγχέεται με τις παρεχόμενες δυνατότητες, οι οποίες είναι ανεξάρτητες από το νοούν υποκείμενο"], "correct_idx": 0}, {"text": "Ο Gibson διευκρινίζει ότι κάθε οργανισμός αντιλαμβάνεται τις παρεχόμενες δυνατότητες (affordances) όταν:", "options": ["Αντιλαμβάνεται την «αξία» τους ή το «νόημα» τους, δηλαδή τι μπορούν να του προσφέρουν σε σχέση με τις δυνατότητές του", "Έχει οπτική αντίληψη", "Ζει σε ένα φυσικό περιβάλλον", "Επιλογή 4Διαθέτει σώμα και αισθητήρια όργανα που του επιτρέπουν να αλληλεπιδρά λειτουργικά με το περιβάλλον"], "correct_idx": 0}, {"text": "Ποια από τα παρακάτω δεν εκφράζει τις θέσεις της ενσώματης νόησης;", "options": ["Η νόηση γίνεται με σκοπό τη δράση", "Στον άνθρωπο, η ενσώματη νόηση αποδεικνύεται μέσω της γλώσσας που μεταφέρει έννοιες σχετικές με τα χαρακτηριστικά του περιβάλλοντος και τη δράση του σώματος", "Η offline νόηση δεν βασίζεται στο περιβάλλον αλλά μόνο στο σώμα", "Η σχέση της νόησης με το περιβάλλον είναι αντίστοιχη με τη σχέση μιας κινηματογραφικής κάμερας και του σκηνικού που βιντεοσκοπείται"], "correct_idx": 3}]}, {"title": "Quiz Ενοτήτων 7 και 8: Νοητικοί Μηχανισμοί κατά την Αλληλεπίδραση Ανθρώπου-Ζώων", "filename": "quiz_enotites_7_8_markdown.md", "questions": [{"text": "Σε ποια παραδοχή βασίζεται το συμπεριφορικό κριτήριο νόησης;", "options": ["Μέτρηση χρώματος → αξιολόγηση δικαιωμάτων → θεραπεία.", "Παρατήρηση συμπεριφοράς → αξιολόγηση νοητικών δυνατοτήτων → απόδοση ηθικού καθεστώτος.", "Απόδοση ηθικού καθεστώτος → άρνηση συμπεριφοράς → άρνηση νόησης.", "Ιδιοκτησία ζώου → εξάλειψη κάθε νοητικής συζήτησης."], "correct_idx": 1}, {"text": "Πώς μπορεί να λειτουργεί ο Ανθρωπομορφισμός γνωσιολογικά;", "options": ["Μας απαγορεύει να προβλέπουμε συμπεριφορές.", "Μας κάνει να αισθανόμαστε ότι γνωρίζουμε και ελέγχουμε τον κόσμο αποδίδοντάς του ανθρώπινα χαρακτηριστικά.", "Λειτουργεί μόνο ως οικονομική πρακτική.", "Καταργεί την ανάγκη για κάθε κοινωνική σχέση."], "correct_idx": 1}, {"text": "Γιατί το attachment με κατοικίδια δεν οδηγεί πάντα σε Ευ Ζην;", "options": ["Επειδή τα κατοικίδια δεν μπορούν ποτέ να παρέχουν ασφάλεια.", "Επειδή μπορεί να λάβει μορφές anxious attachment και να συνδεθεί με στρες ή αρνητική συναισθηματικότητα.", "Επειδή κάθε σχέση με κατοικίδιο είναι αναγκαστικά βλαπτική.", "Επειδή το Ευ Ζην δεν σχετίζεται με συναισθήματα."], "correct_idx": 1}, {"text": "Τι είναι η Υποβοηθούμενη από Ζώα Θεραπεία (Animal-Assisted Therapy - AAT);", "options": ["Μια νομική διαδικασία ιδιοκτησίας κατοικιδίων.", "Η χρήση ζώων μόνο για φύλαξη θεραπευτικών χώρων.", "Θεραπευτικές παρεμβάσεις όπου επιστρατεύονται ζώα προς υποβοήθηση της θεραπευτικής διαδικασίας.", "Η αντικατάσταση όλων των θεραπευτών από ζώα."], "correct_idx": 2}, {"text": "Τι έδειξαν τα συμπεριφορικά πειράματα με παιδιά 1-3 ετών ως προς τη Βιοφιλία;", "options": ["Ότι τα παιδιά δείχνουν περισσότερο ενδιαφέρον και εντονότερες αντιδράσεις στα ζώα παρά σε αντικείμενα όπως παιχνίδια.", "Ότι η Βιοφιλία εμφανίζεται μόνο μετά την ενηλικίωση.", "Ότι τα παιδιά αλληλεπιδρούν περισσότερο με άψυχα αντικείμενα παρά με ζώα.", "Ότι τα παιδιά αδιαφορούν πλήρως για τα ζώα."], "correct_idx": 0}, {"text": "Ποιον ρόλο έχει η γλώσσα στον ανθρωπομορφισμό;", "options": ["Δεν έχει καμία επίδραση στη σκέψη μας για τα ζώα.", "Εξαλείφει κάθε ανθρωπομορφική εκφορά.", "Χρησιμοποιείται μόνο για νομικές συμβάσεις.", "Αποτελεί βασικό όχημα εκδήλωσης και διέγερσης της ροπής προς ανθρωπομορφισμό."], "correct_idx": 3}, {"text": "Ποιο μεθοδολογικό πρόβλημα έχουν πολλές έρευνες για την έκθεση παιδιών σε βία κατά ζώων;", "options": ["Πάντα αποδεικνύουν αιτιότητα χωρίς καμία αμφιβολία.", "Δεν περιλαμβάνουν ποτέ ανθρώπινους συμμετέχοντες.", "Συχνά βασίζονται σε self-report και είναι συσχετιστικές.", "Χρησιμοποιούν αποκλειστικά νευροαπεικονιστικές μεθόδους."], "correct_idx": 2}, {"text": "Τι είναι ο ειδισμός (speciesism);", "options": ["Η βιολογική διαδικασία δημιουργίας νέων ειδών.", "Η ουδέτερη μελέτη όλων των ειδών με ίδια κριτήρια.", "Η απόδοση ίσου ηθικού καθεστώτος σε κάθε οντότητα.", "Αδικαιολόγητη μεροληψία υπέρ του είδους μας."], "correct_idx": 3}, {"text": "Ποιος είναι ένας βασικός λόγος μελέτης της ΑΑΖ που αναφέρεται στην παρουσίαση;", "options": ["Να καταργηθεί η ανάγκη εμπειρικής έρευνας.", "Να αποδειχθεί εκ των προτέρων ότι όλα τα ζώα είναι άψυχα.", "Να αντικατασταθεί πλήρως η φιλοσοφική συζήτηση από τη ζωολογία.", "Να εντοπιστούν ψυχολογικές ροπές που μπορεί να λειτουργούν ως bias στο ζήτημα του ηθικού καθεστώτος των ζώων."], "correct_idx": 3}, {"text": "Γιατί οι αρνητικές ή μηδενικές συσχετίσεις στις έρευνες για κατοικίδια και Ευ Ζην χρειάζονται προσεκτική ερμηνεία;", "options": ["Επειδή όλες αποδεικνύουν ότι τα κατοικίδια βλάπτουν πάντα.", "Επειδή δεν υπάρχουν εξωτερικές μεταβλητές.", "Επειδή πολλές είναι συσχετιστικές και δεν δείχνουν αιτιότητα ή φορά αιτιότητας.", "Επειδή οι συσχετιστικές έρευνες αποδεικνύουν πάντα αιτιότητα."], "correct_idx": 2}, {"text": "Ποια υποδιάσταση της ενσυναίσθησης σχετίζεται με ενδιαφέρον για δικαιώματα και ευζωία των ζώων;", "options": ["Το Publication Bias.", "Το Retrospect Bias.", "Το Species Neutrality Requirement.", "Το Empathic Concern."], "correct_idx": 3}, {"text": "Τι έδειξαν πειράματα για το χάδι από άνθρωπο προς σκύλους;", "options": ["Ότι αυξάνει πάντα την αρτηριακή πίεση των σκύλων.", "Ότι οι σκύλοι δεν εμφανίζουν καμία φυσιολογική μεταβολή.", "Ότι μπορεί να ελαττώνει το heart rate των σκύλων.", "Ότι οι σκύλοι δεν επηρεάζονται ποτέ από ανθρώπινη παρουσία."], "correct_idx": 2}, {"text": "Στην εξελικτική προσέγγιση, γιατί θεωρείται σημαντικός ο φόβος προς ορισμένα ζώα;", "options": ["Επειδή μαθαίνεται αποκλειστικά από σχολικά εγχειρίδια.", "Επειδή μπορεί να λειτούργησε ως βιολογική προετοιμασία για αποφυγή απειλών.", "Επειδή δεν έχει καμία σχέση με την επιβίωση.", "Επειδή αποδεικνύει ότι όλα τα ζώα είναι επικίνδυνα."], "correct_idx": 1}, {"text": "Τι σημαίνει “treatment of animals as moral practice for humans”;", "options": ["Ότι η βία προς τα ζώα είναι πάντοτε θεραπευτική.", "Ότι η ηθική αφορά μόνο νομικές κυρώσεις.", "Ότι τα ζώα δεν μπορούν ποτέ να επηρεάσουν τον ανθρώπινο χαρακτήρα.", "Ότι η στάση μας προς τα ζώα μπορεί να λειτουργεί ως άσκηση του ήθους μας."], "correct_idx": 3}, {"text": "Ποιους ψυχολογικούς μηχανισμούς επιδιώκει να διεγείρει η AAT;", "options": ["Retrospect bias, publication bias και social desirability answering.", "Ανθρωπομορφισμό, ενσυναίσθηση και Βιοφιλία.", "Μόνο την αυστηρή απουσία συναισθημάτων.", "Απανθρωποποίηση, αποξένωση και φόβο χωρίς σχέση εμπιστοσύνης."], "correct_idx": 1}, {"text": "Τι είναι η μηχανιστική απανθρωποποίηση;", "options": ["Η παρομοίωση των μελών της εξω-ομάδας με ζώα.", "Η απόδοση συναισθημάτων σε φυτά.", "Η θεωρία ότι όλα τα ζώα είναι πρόσωπα.", "Η παρομοίωση των μελών της εξω-ομάδας με μηχανές."], "correct_idx": 3}, {"text": "Ποιο πρόβλημα έχει το κριτήριο της μνήμης για την προσωπική ταυτότητα;", "options": ["Οι μνήμες μπορεί να συγχέονται, να κατασκευάζονται ή να χάνονται με τον χρόνο.", "Η μνήμη είναι πάντα τέλεια και πλήρης.", "Η μνήμη δεν επηρεάζει ποτέ την ταυτότητα.", "Η μνήμη υπάρχει μόνο στα μη ανθρώπινα ζώα."], "correct_idx": 0}, {"text": "Σύμφωνα με τη Realistic Conflict Theory, οι συγκρούσεις ενδο-ομάδας και εξω-ομάδας οφείλονται κυρίως σε τι;", "options": ["Σε απουσία οποιασδήποτε ανάγκης για πόρους.", "Σε αντικρουόμενους στόχους και έλλειψη πόρων.", "Σε απόλυτη ομοφωνία αξιών.", "Σε καθαρά γλωσσικά λάθη χωρίς κοινωνική διάσταση."], "correct_idx": 1}, {"text": "Τι σημαίνει “οικολογική εγκυρότητα” στο πλαίσιο των μελλοντικών κατευθύνσεων έρευνας;", "options": ["Μελέτη του κατά πόσον οι μηχανισμοί που παρατηρούνται στο εργαστήριο ισχύουν και στην καθημερινή ζωή.", "Μέτρηση μόνο της ρύπανσης του περιβάλλοντος.", "Αποκλειστική χρήση θεωρητικών επιχειρημάτων χωρίς εμπειρική δοκιμή.", "Απόρριψη κάθε πολιτισμικής έρευνας."], "correct_idx": 0}, {"text": "Στην αναπτυξιακή προσέγγιση, πώς συμβάλλουν τα ζώα στην παιδική ηλικία;", "options": ["Καθορίζουν αποκλειστικά τη σχολική επίδοση των παιδιών.", "Βοηθούν τα παιδιά να μάθουν για τον κόσμο και να διαμορφώσουν πλευρές αυτοπροσδιορισμού.", "Λειτουργούν μόνο ως βιολογικά αντικείμενα χωρίς συμβολική σημασία.", "Εμποδίζουν κάθε μορφή μάθησης για τη ζωή και τον θάνατο."], "correct_idx": 1}, {"text": "Πώς συνδέεται η φιλογενετική και συμπεριφορική εγγύτητα ενός ζώου με το ενδιαφέρον των ανθρώπων;", "options": ["Η εγγύτητα μειώνει πάντοτε την ηθική μέριμνα.", "Δεν υπάρχει καμία σχέση με τη φιλογενετική εγγύτητα.", "Οι άνθρωποι δείχνουν μεγαλύτερο ενδιαφέρον και θετικά συναισθήματα για ζώα πιο κοντινά φιλογενετικά και συμπεριφορικά.", "Οι άνθρωποι ενδιαφέρονται μόνο για ζώα όσο πιο μακρινά είναι."], "correct_idx": 2}, {"text": "Τι είναι το self-expansion στο πλαίσιο της παρουσίασης;", "options": ["Η βιολογική αύξηση του μεγέθους του εγκεφάλου.", "Η απόλυτη άρνηση σχέσης με ζώα.", "Η τάση επέκτασης της αίσθησης του εαυτού μέσω πόρων, προοπτικών και ικανοτήτων.", "Η αδυναμία συμπερίληψης άλλων στην αίσθηση του εαυτού."], "correct_idx": 2}, {"text": "Ποια παρατήρηση γίνεται για Ζωομορφισμό και Ανθρωπομορφισμό;", "options": ["Ότι είναι ταυτόσημοι όροι.", "Ότι δεν σχετίζονται καθόλου με την ανθρώπινη νόηση.", "Ότι αφορούν μόνο τη νομική γλώσσα.", "Ότι είναι αντίρροπες ψυχολογικές ροπές που θολώνουν το όριο ανθρώπου-ζώου."], "correct_idx": 3}, {"text": "Τι είναι το attachment, όπως παρουσιάζεται στο μάθημα;", "options": ["Η βιολογική ταξινόμηση ενός είδους.", "Η αίσθηση ασφάλειας που παρέχει η προσκόλληση σε μια φιγούρα, άνθρωπο ή ζώο.", "Η μέθοδος μέτρησης της νοημοσύνης των ζώων.", "Η απόλυτη απουσία συναισθηματικού δεσμού."], "correct_idx": 1}, {"text": "Τι είναι το positive modeling στη στάση προς τα ζώα;", "options": ["Όταν αποκλείεται κάθε μάθηση μέσω παρατήρησης.", "Όταν τα ζώα αντιμετωπίζονται μόνο ως αντικείμενα παραγωγής.", "Όταν παιδιά βλέπουν σημαντικές φιγούρες να αγαπούν και να φροντίζουν ζώα και μαθαίνουν ανάλογες στάσεις.", "Όταν παιδιά εκτίθενται σε κακοποίηση ζώων και την επαναλαμβάνουν."], "correct_idx": 2}, {"text": "Τι μπορεί να συμβεί όταν τα ζώα αναπληρώνουν πλήρως την ανθρώπινη παρουσία;", "options": ["Μπορεί να προκύψουν εξάρτηση, anxious attachment και προβλήματα αυτονομίας/αγαθοποιίας.", "Εξαλείφεται κάθε πιθανότητα εξάρτησης.", "Δεν τίθεται ποτέ ζήτημα βάρους για τα ζώα.", "Αυξάνεται πάντα η ανθρώπινη κοινωνικότητα χωρίς εξαίρεση."], "correct_idx": 0}, {"text": "Ποιο κριτήριο ηθικού καθεστώτος συνδέεται με Kant, Calverley και Levy στην παρουσίαση;", "options": ["Το χρώμα του δέρματος ή του τριχώματος.", "Η κατοχή ανθρώπινου ιδιοκτήτη.", "Η αποκλειστική ικανότητα πέψης τροφής.", "Η συνείδηση της ύπαρξης και της διάκρισης εαυτού-κόσμου, καθώς και η σχέση με ελεύθερη βούληση."], "correct_idx": 3}, {"text": "Ποιο ρόλο μπορούν να έχουν τα ζώα στην AAT;", "options": ["Τον ρόλο απλών διακοσμητικών αντικειμένων.", "Τον ρόλο αποκλειστικών ιατρών με πλήρη ευθύνη θεραπείας.", "Τον ρόλο μη σχετιζόμενων εξωτερικών μεταβλητών.", "Τον ρόλο transitional objects και secure attachment figures."], "correct_idx": 3}, {"text": "Ποια επιφύλαξη υπάρχει στις έρευνες που συνδέουν δικαιώματα ζώων και ανθρώπων;", "options": ["Η ενσυναίσθηση δεν μπορεί να συνδέεται με καμία από τις δύο στάσεις.", "Η συσχέτιση αποδεικνύει πάντα ότι το ένα προκαλεί το άλλο.", "Δεν επιτρέπεται να συζητηθούν τρίτες μεταβλητές.", "Η συσχέτιση δεν αποδεικνύει αιτιότητα και μπορεί να υπάρχει τρίτος παράγοντας, όπως η ενσυναίσθηση."], "correct_idx": 3}, {"text": "Τι δείχνουν έρευνες για την αλληλεπίδραση ανθρώπων και σκύλων σε επίπεδο ορμονών;", "options": ["Μπορεί να αυξάνονται ωκυτοκίνη, ντοπαμίνη και ενδορφίνες.", "Αυξάνεται αποκλειστικά η αδρεναλίνη χωρίς καμία άλλη αλλαγή.", "Δεν μετράται ποτέ ορμονική αντίδραση.", "Μειώνονται πάντα όλες οι ορμόνες."], "correct_idx": 0}, {"text": "Πώς παρουσιάζεται η θέση του Kant για τη βάναυση συμπεριφορά προς τα ζώα;", "options": ["Ως ηθικώς επιλήψιμη επειδή πλήττει τις καλές ανθρώπινες ποιότητες που οφείλουμε να ασκούμε.", "Ως καθαρά βιολογική περιγραφή χωρίς ηθική διάσταση.", "Ως υποχρεωτική πράξη απέναντι σε κάθε ζώο.", "Ως αδιάφορη πράξη χωρίς συνέπειες για τον χαρακτήρα μας."], "correct_idx": 0}, {"text": "Τι τονίζει ο Michael Tooley ως κριτήριο;", "options": ["Την κατοχή γλώσσας χωρίς καμία σχέση με συνείδηση.", "Την επιθυμία για δικαιώματα, η οποία προϋποθέτει συνείδηση, κατανόηση και δυνατότητα υποφέρειν.", "Τη βιολογική ηλικία ως αποκλειστικό κριτήριο.", "Την απουσία κάθε επιθυμίας ως βάση δικαιωμάτων."], "correct_idx": 1}, {"text": "Τι είναι η ζωώδης απανθρωποποίηση;", "options": ["Η παρομοίωση των μελών της εξω-ομάδας με ζώα.", "Η παρομοίωση των μελών της εξω-ομάδας με μηχανές.", "Η απόδοση νομικής ευθύνης σε κατοικίδια.", "Η ενίσχυση του ανθρωπομορφισμού χωρίς αρνητικές συνέπειες."], "correct_idx": 0}, {"text": "Τι δείχνουν οι έρευνες για την ενσυναίσθηση των προ-εφήβων προς τα κατοικίδια;", "options": ["Ότι η ενσυναίσθηση μειώνεται αναγκαστικά με την ηλικία.", "Ότι οι προ-έφηβοι εμφανίζουν περισσότερη ενσυναίσθηση προς τα κατοικίδια από τα παιδιά πρώιμης παιδικής ηλικίας.", "Ότι η ενσυναίσθηση προς ζώα είναι μόνο γενετικό γνώρισμα και ποτέ μαθημένη.", "Ότι οι προ-έφηβοι δεν μπορούν να νιώσουν ενσυναίσθηση."], "correct_idx": 1}, {"text": "Πώς ορίζει η Mary Anne Warren τη συναισθηματικότητα ως κριτήριο ηθικού καθεστώτος;", "options": ["Η συναισθηματικότητα δεν σχετίζεται με moral patients.", "Ηθικό καθεστώς πρέπει να έχουν οντότητες που είναι φορείς συναισθημάτων.", "Η συναισθηματικότητα αφορά μόνο χημικές αντιδράσεις.", "Ηθικό καθεστώς έχουν μόνο οντότητες χωρίς συναισθήματα."], "correct_idx": 1}, {"text": "Τι δείχνουν έρευνες για τη σχέση βίας προς ζώα και βίας προς ανθρώπους;", "options": ["Έχει αποδειχθεί οριστικά μία μόνο φορά αιτιότητας σε όλες τις περιπτώσεις.", "Δεν υπάρχουν μεθοδολογικές δυσκολίες σε αυτό το πεδίο.", "Υπάρχει σύνδεση, αλλά η αιτιότητα και η φορά της παραμένουν αντικείμενο έρευνας και διαφωνίας.", "Έχει αποδειχθεί οριστικά ότι δεν υπάρχει καμία σχέση."], "correct_idx": 2}, {"text": "Πώς χρησιμοποιείται το Στοίχημα του Pascal στη συζήτηση για τα ζώα;", "options": ["Ως προτροπή να σκεφτούμε σοβαρά το ενδεχόμενο τα ζώα να χρειάζονται ηθικό καθεστώς και εμείς να το αγνοούμε.", "Ως μαθηματικό εργαλείο μέτρησης κορτιζόλης.", "Ως επιχείρημα κατά κάθε ζωοκεντρικής σκέψης.", "Ως απόδειξη ότι τα ζώα δεν μπορούν να έχουν καμία ηθική αξία."], "correct_idx": 0}, {"text": "Τι υποστηρίζει η Terror Management Theory στο πλαίσιο της σχέσης ανθρώπων-ζώων;", "options": ["Ότι το άγχος επιβίωσης και ο φόβος θανάτου μας οδηγούν να βλέπουμε το ανθρώπινο είδος ως ανώτερο και διακριτό από τη φύση.", "Ότι η θρησκεία δεν συνδέεται ποτέ με τη διάκριση ανθρώπου-ζώου.", "Ότι οι άνθρωποι δεν έχουν υπαρξιακό άγχος.", "Ότι ο φόβος θανάτου καταργεί κάθε ιεράρχηση ειδών."], "correct_idx": 0}, {"text": "Ποιο πρόβλημα έχει το σωματικό κριτήριο προσωπικής ταυτότητας;", "options": ["Το σώμα δεν αλλάζει ποτέ.", "Η σωματική συνέχεια απαντά χωρίς δυσκολίες σε όλα τα ερωτήματα.", "Δεν υπάρχει καμία σχέση σώματος και ταυτότητας.", "Το σώμα αλλάζει συνεχώς, άρα πρέπει να καθοριστεί ποιες αλλαγές είναι ουσιώδεις."], "correct_idx": 3}, {"text": "Ποιο εύρος συναισθημάτων μπορεί να περιλαμβάνει η Βιοφιλία απέναντι στα ζώα;", "options": ["Μόνο αδιαφορία και ουδετερότητα.", "Από θαυμασμό, στοργή και έλξη έως άγχος και φόβο.", "Μόνο θυμό και απέχθεια χωρίς θετικά συναισθήματα.", "Μόνο θαυμασμό και ποτέ φόβο."], "correct_idx": 1}, {"text": "Τι συμβαίνει όταν εστιάζουμε στις ομοιότητες μεταξύ ομάδων;", "options": ["Μειώνεται πάντα η συνεργασία.", "Ενισχύεται αναγκαστικά η απανθρωποποίηση.", "Καταργείται η δυνατότητα ενσυναίσθησης.", "Αυξάνονται η ανοχή, η συνεννόηση, η συνεργασία και το ενδιαφέρον για την εξω-ομάδα."], "correct_idx": 3}, {"text": "Ποια μεθοδολογικά προβλήματα πρέπει να αντιμετωπιστούν στις έρευνες ΑΑΖ-Ευ Ζην;", "options": ["Social desirability bias, retrospect bias, replicability bias, publication bias, οικολογική εγκυρότητα και συσχετιστική φύση.", "Καμία μεθοδολογική αδυναμία δεν αναφέρεται.", "Μόνο η ορθογραφία των ερωτηματολογίων.", "Αποκλειστικά το μέγεθος των κατοικιδίων."], "correct_idx": 0}, {"text": "Πώς μπορεί η γλώσσα να λειτουργήσει ως όχημα απανθρωποποίησης των ζώων;", "options": ["Με όρους όπως “δόλωμα”, “θήραμα”, “πόροι” ή “πειραματόζωα” που διευκολύνουν την εργαλειοποίηση.", "Με την απόδοση μοναδικών ονομάτων σε κάθε ζώο.", "Με την πλήρη αποφυγή κάθε κατηγορίας και ονομασίας.", "Με την αναγνώριση των ζώων ως προσώπων σε κάθε περίπτωση."], "correct_idx": 0}, {"text": "Τι δείχνουν τα ζώα ως πολιτισμικά ή εθνικά σύμβολα;", "options": ["Ότι μπορούν να αποτελούν εμβλήματα πολιτισμικής ταυτότητας.", "Ότι χρησιμοποιούνται μόνο σε εργαστηριακά πειράματα.", "Ότι χάνουν κάθε κοινωνική σημασία.", "Ότι δεν συνδέονται ποτέ με συλλογικές ταυτότητες."], "correct_idx": 0}, {"text": "Τι αναφέρεται για τις διαφορές φύλου ως προς την ενσυναίσθηση προς τα ζώα;", "options": ["Δεν έχει καταγραφεί ποτέ καμία διαφορά.", "Η ενσυναίσθηση δεν μπορεί να μετρηθεί ούτε με self-report ούτε με άλλο τρόπο.", "Οι γυναίκες παρουσιάζουν, σε σχετικές έρευνες, περισσότερη ενσυναίσθηση προς τα ζώα.", "Οι άνδρες παρουσιάζουν πάντα μεγαλύτερη ενσυναίσθηση σε όλες τις έρευνες."], "correct_idx": 2}, {"text": "Τι είναι η sentience/αισθητότητα στο πλαίσιο Bentham και Singer;", "options": ["Η κατοχή νομικού εγγράφου ταυτότητας.", "Η ικανότητα να μιλάς ανθρώπινη γλώσσα.", "Η ιδιότητα να αισθάνεσαι και κυρίως να μπορείς να βιώσεις πόνο.", "Η ένταξη σε συγκεκριμένη θρησκευτική κοινότητα."], "correct_idx": 2}, {"text": "Τι δείχνει η συνολική εικόνα των εμπειρικών ευρημάτων για κατοικίδια και ανθρώπινη υγεία;", "options": ["Ότι δεν έχει υπάρξει καμία έρευνα για το θέμα.", "Ότι τα ευρήματα δεν συντείνουν όλα στην ίδια πλευρά: υπάρχουν θετικές, μηδενικές και αρνητικές συσχετίσεις.", "Ότι όλα τα ευρήματα είναι απολύτως αρνητικά.", "Ότι όλα τα ευρήματα είναι απολύτως θετικά."], "correct_idx": 1}, {"text": "Ποιους μηχανισμούς μπορεί να αναπτύξουν κτηνίατροι, εργαζόμενοι σε φάρμες ή εργαστήρια με πειραματόζωα;", "options": ["Συναισθηματική αποκόλληση, απευαισθητοποίηση και εκλογίκευση.", "Μόνο αυξημένη θρησκευτικότητα.", "Αποκλειστικά ανθρωπομορφισμό και αυτοθυσία.", "Αδυναμία οποιασδήποτε επαγγελματικής προσαρμογής."], "correct_idx": 0}, {"text": "Τι τονίζει ο Joel Feinberg ως κριτήριο;", "options": ["Την αισθητική εμφάνιση ενός ζώου.", "Την υπαγωγή σε συγκεκριμένο επάγγελμα.", "Την επαρκή ικανότητα κατανόησης για νοηματοδότηση του κόσμου και των δράσεών μας.", "Την πλήρη απουσία κατανόησης ως προϋπόθεση ηθικού καθεστώτος."], "correct_idx": 2}, {"text": "Ποια φυσιολογικά οφέλη έχουν καταγραφεί από την παρουσία κατοικιδίων;", "options": ["Καμία επίδραση σε οποιαδήποτε σωματική παράμετρο.", "Αύξηση στρες σε κάθε περίπτωση.", "Βέβαιη θεραπεία όλων των ψυχικών νόσων.", "Ελάττωση αρτηριακής πίεσης, καρδιακών παλμών και στρες σε ορισμένες έρευνες."], "correct_idx": 3}, {"text": "Σύμφωνα με την παρουσίαση, τι μελετά η Ψυχολογία Αλληλεπίδρασης Ανθρώπων-Ζώων (ΑΑΖ);", "options": ["Τους ψυχολογικούς μηχανισμούς της αλληλεπίδρασης ανθρώπων-ζώων και τους παράγοντες που την επηρεάζουν.", "Αποκλειστικά τους νόμους για την προστασία των ζώων.", "Μόνο τη βιολογική ταξινόμηση των ειδών.", "Την ιστορία της κτηνοτροφίας χωρίς ψυχολογική διάσταση."], "correct_idx": 0}, {"text": "Γιατί ο ανθρωπομορφισμός μπορεί να θεωρηθεί ταυτόχρονα χρήσιμος και προβληματικός;", "options": ["Μπορεί να βοηθά θεραπευτικά, αλλά να λειτουργεί ως bias στην επιστημονική μελέτη του ηθικού καθεστώτος των ζώων.", "Δεν σχετίζεται με θεραπευτικές παρεμβάσεις.", "Είναι πάντα επιστημονικά ουδέτερος και ποτέ προβληματικός.", "Αποτελεί αποκλειστικά νομικό όρο χωρίς ψυχολογικό περιεχόμενο."], "correct_idx": 0}, {"text": "Τι είναι το άγχος αποχωρισμού στο ζωοκεντρικό πλαίσιο της παρουσίασης;", "options": ["Απόδειξη ότι τα ζώα δεν έχουν καμία σχέση με ανθρώπους.", "Μια μέθοδος μέτρησης βιοφιλίας σε φυτά.", "Ένδειξη ότι ζώα μπορούν να εμφανίζουν αντιδράσεις προσκόλλησης παρόμοιες με παιδιά.", "Καθαρά νομική έννοια ιδιοκτησίας."], "correct_idx": 2}, {"text": "Πώς μπορούν τα κατοικίδια να ενισχύσουν τις ανθρώπινες κοινωνικές σχέσεις;", "options": ["Μπορούν να διεγείρουν κοινωνική αλληλεπίδραση και να λειτουργήσουν ως “image makers”.", "Δεν τραβούν ποτέ την προσοχή άλλων ανθρώπων.", "Αποτρέπουν πάντα κάθε κοινωνική επαφή.", "Λειτουργούν μόνο ως αντικείμενα εσωτερικής διακόσμησης."], "correct_idx": 0}, {"text": "Τι επισημαίνεται για έρευνες που συσχετίζουν προτίμηση σκύλων/γατών με προσωπικότητα;", "options": ["Ότι αποδεικνύουν με βεβαιότητα αιτιότητα.", "Ότι δεν έχουν καμία σχέση με χαρακτηριστικά ταυτότητας.", "Ότι είναι συσχετιστικές και δεν αποδεικνύουν αιτιώδεις δεσμούς.", "Ότι ακυρώνουν την ανάγκη για ερμηνεία εξωτερικών μεταβλητών."], "correct_idx": 2}, {"text": "Πότε τα κατοικίδια μπορούν να αντιμετωπιστούν ως βάρος;", "options": ["Όταν η υγεία είναι πολύ εξασθενημένη ή υπάρχουν σοβαρά οικονομικά προβλήματα.", "Ποτέ, ανεξάρτητα από τις συνθήκες.", "Όταν υπάρχει καλή σωματική και οικονομική κατάσταση σε κάθε περίπτωση.", "Μόνο όταν είναι μικρόσωμα."], "correct_idx": 0}, {"text": "Ποια ζωοκεντρική διάσταση αναδεικνύεται στη συζήτηση για το attachment;", "options": ["Ότι και οι άνθρωποι μπορούν να λειτουργήσουν ως attachment figures για κατοικίδια.", "Ότι τα ζώα δεν μπορούν να βιώσουν καμία μορφή προσκόλλησης.", "Ότι η προσκόλληση είναι αποκλειστικά νομική έννοια.", "Ότι τα κατοικίδια δεν επηρεάζονται ποτέ από τη λήξη μιας σχέσης."], "correct_idx": 0}, {"text": "Ποιο είναι ένα βασικό πρόβλημα του συμπεριφορικού κριτηρίου;", "options": ["Συχνά βάζουμε τον πήχη ψηλά για μη ανθρώπινες οντότητες εξιδανικεύοντας την ανθρώπινη συμπεριφορά.", "Δεν χρειάζεται ποτέ ερμηνεία.", "Δεν εφαρμόζεται ποτέ σε μη ανθρώπινες οντότητες.", "Αποδεικνύει πάντοτε με βεβαιότητα νοητικές καταστάσεις."], "correct_idx": 0}, {"text": "Πώς ορίζεται η Βιοφιλία στην παρουσίαση;", "options": ["Ως έμφυτο ενδιαφέρον των ανθρώπων για τη ζωή και τις διαδικασίες της, συμπεριλαμβανομένων των ζώων.", "Ως άρνηση κάθε συναισθηματικής σχέσης με τη φύση.", "Ως αποκλειστικός φόβος απέναντι σε όλα τα ζώα.", "Ως νομικό δικαίωμα των ανθρώπων να κατέχουν ζώα."], "correct_idx": 0}, {"text": "Ποια ζωοκεντρική ερώτηση προκύπτει από τη χρήση ζώων στην AAT;", "options": ["Αν πρέπει να μας απασχολεί και η επίδραση της ΑΑΖ στο Ευ Ζην των ζώων.", "Αν η Βιοφιλία είναι αποκλειστικά νομικός όρος.", "Αν τα ζώα πρέπει να απαγορευτούν ως θέμα έρευνας.", "Αν η ανθρώπινη ευζωία είναι το μόνο πιθανό κριτήριο χωρίς καμία αμφισβήτηση."], "correct_idx": 0}, {"text": "Ποια στάση προτείνεται στο τέλος ως προς τις ηθικές αποφάσεις για τα ζώα;", "options": ["Απόλυτη βεβαιότητα υπέρ μίας μόνο απάντησης.", "Συγκράτηση και διαλλακτικότητα, λόγω προβλημάτων, αβεβαιότητας και έλλειψης λογικής αναγκαιότητας.", "Πλήρης αδιαφορία για ηθικές συνέπειες.", "Άρνηση κάθε ανάγκης περαιτέρω έρευνας."], "correct_idx": 1}, {"text": "Τι αναφέρεται για τους εργαζόμενους σε καταφύγια ζώων;", "options": ["Ότι απορρίπτουν πάντα την έννοια της ευζωίας.", "Ότι παρουσιάζουν μεγαλύτερη ευαισθησία για τα δικαιώματα των ζώων.", "Ότι αναγκαστικά εμφανίζουν μικρότερη ενσυναίσθηση.", "Ότι δεν επηρεάζονται από το εργασιακό περιβάλλον."], "correct_idx": 1}, {"text": "Τι είναι το publication bias, όπως αναφέρεται στις έρευνες Ευ Ζην;", "options": ["Η πλήρης απουσία κριτικής στις μεθόδους.", "Η τάση να δημοσιεύονται μόνο φιλοσοφικά κείμενα.", "Η απαγόρευση δημοσίευσης θετικών αποτελεσμάτων.", "Η πιθανότητα να δημοσιεύονται λιγότερο συχνά έρευνες με μηδενικές συσχετίσεις."], "correct_idx": 3}, {"text": "Τι είναι το Principle of Presumption of Status του Labossiere;", "options": ["Η νομική υποχρέωση καταδίκης κάθε μη ανθρώπινης οντότητας.", "Η αρχή ότι μόνο οι άνθρωποι έχουν προκαταβολικά ηθικό καθεστώς.", "Αν δεν γνωρίζουμε το ακριβές ηθικό καθεστώς μιας οντότητας, είναι προτιμότερο να της φερθούμε καλύτερα από όσο ίσως δικαιολογείται.", "Αν δεν γνωρίζουμε μια οντότητα, πρέπει να της φερθούμε χειρότερα."], "correct_idx": 2}, {"text": "Τι είναι η απανθρωποποίηση (dehumanization);", "options": ["Η απόδοση πλήρους ηθικού καθεστώτος σε κάθε οντότητα.", "Η αποκλειστική μελέτη του εγκεφάλου χωρίς κοινωνική διάσταση.", "Μερική ή ολική άρνηση της ιδιότητας της ανθρώπινης φύσης.", "Η προβολή ανθρώπινων χαρακτηριστικών στα ζώα."], "correct_idx": 2}, {"text": "Πώς σχετίζεται η υποστήριξη της Θεωρίας της Εξέλιξης με τα δικαιώματα των ζώων σύμφωνα με την παρουσίαση;", "options": ["Συσχετίζεται με πλήρη άρνηση κάθε συνέχειας.", "Δεν έχει καμία σχέση με την αντίληψη για τα ζώα.", "Συσχετίζεται με μεγαλύτερη υποστήριξη των δικαιωμάτων των ζώων, λόγω αντίληψης συνέχειας ζώων-ανθρώπου.", "Οδηγεί πάντα σε θρησκευτικά εκπορευόμενο ειδισμό."], "correct_idx": 2}, {"text": "Ποιο πεδίο μελετά γενικά τις αλληλεπιδράσεις και τις σχέσεις ανθρώπων και ζώων;", "options": ["Η Αστροβιολογία.", "Η Anthrozoology.", "Η Κλασική Λογική.", "Η Φωνολογία."], "correct_idx": 1}, {"text": "Ποιο ερώτημα εγείρουν οι νευροβιολογικές παρατηρήσεις για τα ζώα;", "options": ["Αν τα ζώα έχουν μόνο νομικές και όχι βιολογικές ιδιότητες.", "Αν η γλώσσα είναι πάντοτε περιττή στη φιλοσοφία.", "Αν η ομοιότητα στη νευροβιολογία συνεπάγεται αναγκαστικά ομοιότητα στις νοητικές καταστάσεις.", "Αν οι εγκέφαλοι δεν έχουν καμία σχέση με τη συμπεριφορά."], "correct_idx": 2}, {"text": "Τι είναι ο Ανθρωπομορφισμός;", "options": ["Η πλήρης άρνηση κάθε νοητικής κατάστασης.", "Η απόδοση ζωικών χαρακτηριστικών στους ανθρώπους.", "Η απόδοση ανθρώπινων χαρακτηριστικών σε μη ανθρώπινες οντότητες.", "Η βιολογική ταξινόμηση των θηλαστικών."], "correct_idx": 2}, {"text": "Τι περιγράφει το ELIZA Effect;", "options": ["Την τάση απόδοσης νοητικών καταστάσεων σε υπολογιστικά συστήματα και αντιμετώπισής τους ως προσώπων.", "Την αδυναμία των ανθρώπων να ανθρωπομορφίζουν μηχανές.", "Τη βιολογική εξέλιξη των κατοικιδίων.", "Την απόλυτη απουσία σχέσης ΤΝ και ηθικής."], "correct_idx": 0}, {"text": "Γιατί η πιθανή ύπαρξη Theory of Mind στα ζώα θεωρείται σημαντική;", "options": ["Επειδή ακυρώνει κάθε συζήτηση περί ηθικού καθεστώτος.", "Επειδή αποδεικνύει ότι τα ζώα δεν μπορούν να συνάψουν καμία σχέση.", "Επειδή αφορά μόνο υπολογιστικά συστήματα.", "Επειδή συνδέεται με νοητικές καταστάσεις, αυτοσυνειδησία, προθετικότητα και πιθανή αμοιβαιότητα σχέσεων."], "correct_idx": 3}, {"text": "Τι υποστηρίζει η σχεσιακή προσέγγιση ως προς το ηθικό καθεστώς;", "options": ["Ότι οι σχέσεις δεν παίζουν κανέναν ρόλο.", "Ότι τα ζώα δεν ενσωματώνονται ποτέ στην καθημερινή ζωή.", "Ότι το ηθικό καθεστώς καθορίζεται αποκλειστικά από το μέγεθος εγκεφάλου.", "Ότι η σχέση μας με μια οντότητα επηρεάζει τη στάση μας απέναντί της περισσότερο από τις επιμέρους ικανότητές της."], "correct_idx": 3}, {"text": "Ποια συσχέτιση αναφέρεται για τη θρησκευτική πίστη και την ασυνέχεια ανθρώπου-ζώων;", "options": ["Η θρησκεία δεν αναφέρεται καθόλου ως παράγοντας.", "Όσο ισχυρότερη η πίστη στον Θεό και στη μετά θάνατον ζωή, τόσο εντονότερη η αντίληψη ασυνέχειας ανθρώπου-ζώων.", "Η πίστη στη μετά θάνατον ζωή ταυτίζεται πάντα με ζωομορφισμό.", "Όσο ισχυρότερη η πίστη, τόσο λιγότερη κάθε ιεράρχηση."], "correct_idx": 1}, {"text": "Ποια χαρακτηριστικά αποδίδονται στους ακτιβιστές υπέρ των ζώων στην παρουσίαση;", "options": ["Απόλυτη άρνηση συναισθηματικότητας στα ζώα.", "Υποχρεωτικά υψηλότερη αποδοχή ιεραρχίας ειδών.", "Μηδενική moral sensitivity και πλήρης αποστασιοποίηση.", "Υψηλότερη έμφυτη αισιοδοξία και υψηλότερος ιδεαλισμός έναντι σχετικισμού."], "correct_idx": 3}, {"text": "Πώς συνδέεται η τοποθέτηση των ζώων στην εξω-ομάδα με τον ειδισμό;", "options": ["Τροφοδοτεί προκαταλήψεις, διακρίσεις και άρνηση δικαιωμάτων προς τα ζώα.", "Οδηγεί αναγκαστικά σε αύξηση των δικαιωμάτων τους.", "Καταργεί κάθε μορφή ιεράρχησης.", "Δεν έχει καμία σχέση με κοινωνικές ταυτότητες."], "correct_idx": 0}, {"text": "Τι απαιτεί το Species Neutrality Requirement;", "options": ["Το κριτήριο να είναι αποκλειστικά το “να είσαι άνθρωπος”.", "Να μην υπάρχει κανένα κριτήριο αξιολόγησης.", "Το κριτήριο ηθικού καθεστώτος να μην αποκλείει a priori κανένα υποψήφιο βιολογικό είδος.", "Να απορρίπτονται όλα τα μη ανθρώπινα είδη πριν την εξέταση."], "correct_idx": 2}, {"text": "Ποια είναι τα δύο παραδοσιακά κριτήρια διατήρησης προσωπικής ταυτότητας;", "options": ["Χρώμα σώματος και είδος κατοικιδίου.", "Γλωσσική συνέχεια και πολιτική συνέχεια μόνο.", "Σωματική συνέχεια και ψυχολογική συνέχεια.", "Θρησκευτική συνέχεια και οικονομική συνέχεια."], "correct_idx": 2}, {"text": "Πώς συνδέονται οι ιεραρχικές ιδεολογικές πεποιθήσεις με τη στάση προς τα ζώα;", "options": ["Συσχετίζονται πάντα με πλήρη ισότητα ανθρώπων και ζώων.", "Αφορούν μόνο την προτίμηση μεταξύ σκύλων και γατών.", "Δεν συνδέονται ποτέ με ειδισμό.", "Συσχετίζονται θετικά με εργαλειακή προσέγγιση των ζώων."], "correct_idx": 3}, {"text": "Τι είναι το negative modeling σε σχέση με τα ζώα;", "options": ["Η καλλιέργεια ενδιαφέροντος για την ευζωία των ζώων.", "Η αύξηση της ενσυναίσθησης μέσω φροντίδας.", "Η βιωματική μάθηση σε προγράμματα φιλοζωικής εκπαίδευσης.", "Η μάθηση βίαιων ή αρνητικών στάσεων μέσω έκθεσης σε κακοποίηση ζώων."], "correct_idx": 3}, {"text": "Ποια κριτήρια αναφέρονται για την απόδοση της ιδιότητας του προσώπου;", "options": ["Μόνο κατοχή ανθρώπινου ονόματος.", "Μόνο σωματικό βάρος και μέγεθος.", "Αποκλειστικά κοινωνική τάξη και επάγγελμα.", "Αυτοσυνειδησία, ελεύθερη βούληση/αποβλεπτικού τύπου ψυχικά γεγονότα και νόηση."], "correct_idx": 3}]}];
-
-    // State Variables
-    let currentQuizIndex = -1;
-    let currentQuestionIndex = 0;
-    let userAnswers = []; // Store indices of user's chosen options
-    let correctCount = 0;
-    let isAnswered = false;
-    let soundEnabled = false; // Default off, user can toggle on
-    let currentOrderType = 'original'; // 'original' or 'random'
-    let activeQuestions = []; // Array of active questions (original order or shuffled)
-    let selectedQuizIndexForOrder = -1;
-    let currentShuffleOptions = false;
-
-    // Sound Synthesis (Web Audio API)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function playSound(type) {
-      if (!soundEnabled) return;
-      
-      // Ensure audio context is running (browsers block autoplay until interaction)
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      
-      const now = audioCtx.currentTime;
-      
-      if (type === 'correct') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, now); // C5
-        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
-        gainNode.gain.setValueAtTime(0.001, now);
-        gainNode.gain.linearRampToValueAtTime(0.12, now + 0.05);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-        osc.start(now);
-        osc.stop(now + 0.35);
-      } else if (type === 'incorrect') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(146.83, now); // D3
-        osc.frequency.linearRampToValueAtTime(98.00, now + 0.25); // G2
-        gainNode.gain.setValueAtTime(0.001, now);
-        gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-        osc.start(now);
-        osc.stop(now + 0.3);
-      }
-    }
-
-    // Elements
-    const dashboardSection = document.getElementById('dashboardSection');
-    const quizSection = document.getElementById('quizSection');
-    const resultsSection = document.getElementById('resultsSection');
-    const orderSection = document.getElementById('orderSection');
-    const orderQuizTitle = document.getElementById('orderQuizTitle');
-    const originalOrderBtn = document.getElementById('originalOrderBtn');
-    const randomOrderBtn = document.getElementById('randomOrderBtn');
-    const orderBackBtn = document.getElementById('orderBackBtn');
-    const testConfigSection = document.getElementById('testConfigSection');
-    const toggleAllUnitsBtn = document.getElementById('toggleAllUnitsBtn');
-    const unitsSelectionList = document.getElementById('unitsSelectionList');
-    const startConfiguredTestBtn = document.getElementById('startConfiguredTestBtn');
-    const configBackBtn = document.getElementById('configBackBtn');
-    const shuffleOptionsUnitCheckbox = document.getElementById('shuffleOptionsUnitCheckbox');
-    const shuffleOptionsGeneralCheckbox = document.getElementById('shuffleOptionsGeneralCheckbox');
-    
-    const quizUnitText = document.getElementById('quizUnitText');
-    const progressText = document.getElementById('progressText');
-    const progressBar = document.getElementById('progressBar');
-    
-    const questionTitle = document.getElementById('questionTitle');
-    const optionsList = document.getElementById('optionsList');
-    const nextBtn = document.getElementById('nextBtn');
-    
-    const scoreNumber = document.getElementById('scoreNumber');
-    const scoreFill = document.getElementById('scoreFill');
-    const resultFeedbackTitle = document.getElementById('resultFeedbackTitle');
-    const resultFeedbackText = document.getElementById('resultFeedbackText');
-    const reviewContainer = document.getElementById('reviewContainer');
-    const resultsQuizTitle = document.getElementById('resultsQuizTitle');
-    
-    const restartBtn = document.getElementById('restartBtn');
-    const backBtn = document.getElementById('backBtn');
-    const pdfBtn = document.getElementById('pdfBtn');
-    const soundToggle = document.getElementById('soundToggle');
-    const soundOnIcon = document.getElementById('soundOnIcon');
-    const soundMutedIcon = document.getElementById('soundMutedIcon');
-
-    // Shuffle Helper (Fisher-Yates)
-    function shuffleArray(array) {
-      let shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
-    }
-
-    // Shuffle Options Helper
-    function shuffleQuestionOptions(question) {
-      let optionsWithIndices = question.options.map((opt, idx) => ({
-        text: opt,
-        isCorrect: (idx === question.correct_idx)
-      }));
-      let shuffled = shuffleArray(optionsWithIndices);
-      let newOptions = shuffled.map(item => item.text);
-      let newCorrectIdx = shuffled.findIndex(item => item.isCorrect);
-      return {
-        text: question.text,
-        options: newOptions,
-        correct_idx: newCorrectIdx
-      };
-    }
-
-    // Initialize Dashboard
-    function initDashboard() {
-      dashboardSection.innerHTML = '';
-      
-      // Render the 7 standard quizzes (indices 0 to 6)
-      QUIZZES.slice(0, 7).forEach((quiz, index) => {
-        const card = document.createElement('div');
-        card.className = 'card quiz-card';
-        card.addEventListener('click', () => promptOrderSelection(index));
-        
-        // Infer unit number
-        let unitText = `Ενότητα ${index + 1}`;
-        if (quiz.title.includes('Πρώτης')) unitText = 'Ενότητα 1';
-        else if (quiz.title.includes('Δεύτερης')) unitText = 'Ενότητα 2';
-        else if (quiz.title.includes('Τρίτης')) unitText = 'Ενότητα 3';
-        else if (quiz.title.includes('Τέταρτης')) unitText = 'Ενότητα 4';
-        else if (quiz.title.includes('Πέμπτης')) unitText = 'Ενότητα 5';
-        else if (quiz.title.includes('Έκτης')) unitText = 'Ενότητα 6';
-        else if (quiz.title.includes('7 και 8')) unitText = 'Ενότητες 7-8';
-        
-        card.innerHTML = `
-          <div>
-            <span class="unit-tag">${unitText}</span>
-            <h3 class="quiz-card-title">${quiz.title}</h3>
-          </div>
-          <div class="quiz-meta">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>${quiz.questions.length} Ερωτήσεις</span>
-          </div>
-        `;
-        dashboardSection.appendChild(card);
-      });
-
-      // Add General Test Card (takes index 7)
-      const card = document.createElement('div');
-      card.className = 'card quiz-card';
-      card.style.borderColor = 'var(--success)';
-      card.style.boxShadow = '0 10px 25px -5px rgba(16, 185, 129, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.3)';
-      card.addEventListener('click', () => promptTestConfiguration());
-      card.innerHTML = `
-        <div>
-          <span class="unit-tag" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">Γενικό Τεστ</span>
-          <h3 class="quiz-card-title">Γενικό Τεστ (30 τυχαίες ερωτήσεις)</h3>
-        </div>
-        <div class="quiz-meta">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          <span>Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τεστ</span>
-        </div>
-      `;
-      dashboardSection.appendChild(card);
-    }
-
-    // Sound toggle function
-    soundToggle.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      if (soundEnabled) {
-        soundToggle.classList.remove('muted');
-        soundOnIcon.classList.remove('hidden');
-        soundMutedIcon.classList.add('hidden');
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-      } else {
-        soundToggle.classList.add('muted');
-        soundOnIcon.classList.add('hidden');
-        soundMutedIcon.classList.remove('hidden');
-      }
-    });
-
-    // Order Selection Logic
-    function promptOrderSelection(quizIdx) {
-      selectedQuizIndexForOrder = quizIdx;
-      const quiz = QUIZZES[quizIdx];
-      orderQuizTitle.textContent = quiz.title;
-      
-      dashboardSection.classList.add('hidden');
-      resultsSection.classList.add('hidden');
-      quizSection.classList.add('hidden');
-      orderSection.classList.remove('hidden');
-    }
-
-    originalOrderBtn.addEventListener('click', () => {
-      orderSection.classList.add('hidden');
-      startQuiz(selectedQuizIndexForOrder, 'original');
-    });
-
-    randomOrderBtn.addEventListener('click', () => {
-      orderSection.classList.add('hidden');
-      startQuiz(selectedQuizIndexForOrder, 'random');
-    });
-
-    orderBackBtn.addEventListener('click', () => {
-      orderSection.classList.add('hidden');
-      dashboardSection.classList.remove('hidden');
-    });
-
-    // Custom General Test Configuration Selection
-    let selectedUnitsForTest = new Set([0, 1, 2, 3, 4, 5, 6]); // Default all selected
-    
-    function initUnitsSelectionList() {
-      const listContainer = document.getElementById('unitsSelectionList');
-      listContainer.innerHTML = '';
-      
-      QUIZZES.slice(0, 7).forEach((quiz, index) => {
-        const item = document.createElement('div');
-        item.className = 'unit-selection-item' + (selectedUnitsForTest.has(index) ? ' selected' : '');
-        
-        let unitName = `Ενότητα ${index + 1}`;
-        if (quiz.title.includes('Πρώτης')) unitName = 'Ενότητα 1';
-        else if (quiz.title.includes('Δεύτερης')) unitName = 'Ενότητα 2';
-        else if (quiz.title.includes('Τρίτης')) unitName = 'Ενότητα 3';
-        else if (quiz.title.includes('Τέταρτης')) unitName = 'Ενότητα 4';
-        else if (quiz.title.includes('Πέμπτης')) unitName = 'Ενότητα 5';
-        else if (quiz.title.includes('Έκτης')) unitName = 'Ενότητα 6';
-        else if (quiz.title.includes('7 και 8')) unitName = 'Ενότητες 7-8';
-
-        const shortTitle = quiz.title
-          .replace('Quiz Πρώτης Ενότητας: ', '')
-          .replace('Quiz Δεύτερης Ενότητας: ', '')
-          .replace('Quiz Τρίτης Ενότητας: ', '')
-          .replace('Quiz Τέταρτης Ενότητας: ', '')
-          .replace('Quiz Πέμπτης Ενότητας: ', '')
-          .replace('Quiz Έκτης Ενότητας: ', '')
-          .replace('Quiz Ενοτήτων 7 και 8: ', '');
-
-        item.innerHTML = `
-          <div>
-            <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-main); margin-bottom: 2px;">${unitName}</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); max-width: 480px; line-height: 1.4;">${shortTitle} (${quiz.questions.length} ερωτήσεις)</div>
-          </div>
-          <div class="checkbox-indicator">${selectedUnitsForTest.has(index) ? '✔' : ''}</div>
-        `;
-        
-        item.addEventListener('click', () => {
-          if (selectedUnitsForTest.has(index)) {
-            selectedUnitsForTest.delete(index);
-            item.classList.remove('selected');
-            item.querySelector('.checkbox-indicator').textContent = '';
-          } else {
-            selectedUnitsForTest.add(index);
-            item.classList.add('selected');
-            item.querySelector('.checkbox-indicator').textContent = '✔';
-          }
-          updateStartBtnState();
-        });
-        
-        listContainer.appendChild(item);
-      });
-      updateStartBtnState();
-    }
-    
-    function updateStartBtnState() {
-      startConfiguredTestBtn.disabled = (selectedUnitsForTest.size === 0);
-      
-      if (selectedUnitsForTest.size === 7) {
-        toggleAllUnitsBtn.textContent = 'Αποεπιλογή Όλων';
-        toggleAllUnitsBtn.style.color = 'var(--error)';
-      } else {
-        toggleAllUnitsBtn.textContent = 'Επιλογή Όλων';
-        toggleAllUnitsBtn.style.color = 'var(--primary)';
-      }
-    }
-    
-    toggleAllUnitsBtn.addEventListener('click', () => {
-      if (selectedUnitsForTest.size === 7) {
-        selectedUnitsForTest.clear();
-      } else {
-        selectedUnitsForTest = new Set([0, 1, 2, 3, 4, 5, 6]);
-      }
-      initUnitsSelectionList();
-    });
-
-    function promptTestConfiguration() {
-      initUnitsSelectionList();
-      dashboardSection.classList.add('hidden');
-      resultsSection.classList.add('hidden');
-      quizSection.classList.add('hidden');
-      orderSection.classList.add('hidden');
-      testConfigSection.classList.remove('hidden');
-    }
-
-    startConfiguredTestBtn.addEventListener('click', () => {
-      testConfigSection.classList.add('hidden');
-      startQuiz(7, 'random');
-    });
-
-    configBackBtn.addEventListener('click', () => {
-      testConfigSection.classList.add('hidden');
-      dashboardSection.classList.remove('hidden');
-    });
-
-    // Start Quiz
-    function startQuiz(quizIdx, orderType) {
-      currentOrderType = orderType;
-      const quiz = QUIZZES[quizIdx];
-
-      if (quizIdx === 7) {
-        currentShuffleOptions = shuffleOptionsGeneralCheckbox.checked;
-        
-        // Pool questions from selected units
-        let pool = [];
-        selectedUnitsForTest.forEach(idx => {
-          if (QUIZZES[idx]) {
-            pool = pool.concat(QUIZZES[idx].questions);
-          }
-        });
-        
-        const testSize = Math.min(30, pool.length);
-        let selectedQuestions = shuffleArray(pool).slice(0, testSize);
-        
-        // Shuffle options if checked
-        selectedQuestions = selectedQuestions.map(q => {
-          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
-        });
-
-        const selectedUnitsLabels = Array.from(selectedUnitsForTest)
-          .map(i => i === 6 ? "7-8" : (i + 1).toString())
-          .sort((a,b) => parseFloat(a) - parseFloat(b))
-          .join(', ');
-
-        QUIZZES[7] = {
-          title: `Γενικό Τεστ (${testSize} ερωτήσεις - Ενότητες: ${selectedUnitsLabels})`,
-          questions: selectedQuestions
-        };
-        
-        activeQuestions = selectedQuestions;
-      } else {
-        currentShuffleOptions = shuffleOptionsUnitCheckbox.checked;
-        
-        let tempQuestions = (orderType === 'random') ? shuffleArray(quiz.questions) : [...quiz.questions];
-        
-        // Shuffle options if checked
-        activeQuestions = tempQuestions.map(q => {
-          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
-        });
-      }
-
-      currentQuizIndex = quizIdx;
-      currentQuestionIndex = 0;
-      userAnswers = [];
-      correctCount = 0;
-      isAnswered = false;
-      
-      dashboardSection.classList.add('hidden');
-      resultsSection.classList.add('hidden');
-      quizSection.classList.remove('hidden');
-      
-      if (currentQuizIndex === 7) {
-        quizUnitText.textContent = "ΓΕΝΙΚΟ ΤΕΣΤ";
-      } else if (currentQuizIndex === 6) {
-        quizUnitText.textContent = "ΕΝΟΤΗΤΕΣ 7-8";
-      } else {
-        let unitNum = currentQuizIndex + 1;
-        quizUnitText.textContent = `ΕΝΟΤΗΤΑ ${unitNum}`;
-      }
-      
-      loadQuestion();
-    }
-
-    // Load Question
-    function loadQuestion() {
-      const quiz = QUIZZES[currentQuizIndex];
-      const q = activeQuestions[currentQuestionIndex];
-      isAnswered = false;
-      nextBtn.disabled = true;
-      
-      progressText.textContent = `Ερώτηση ${currentQuestionIndex + 1} από ${activeQuestions.length}`;
-      const progressPercent = (currentQuestionIndex / activeQuestions.length) * 100;
-      progressBar.style.width = `${progressPercent}%`;
-      
-      questionTitle.textContent = q.text;
-      optionsList.innerHTML = '';
-      
-      q.options.forEach((option, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        const markerChar = String.fromCharCode(65 + idx);
-        
-        btn.innerHTML = `
-          <span class="option-marker">${markerChar}</span>
-          <span>${option}</span>
-        `;
-        
-        btn.addEventListener('click', () => selectOption(idx, btn));
-        optionsList.appendChild(btn);
-      });
-    }
-
-    // Select Option
-    function selectOption(optionIdx, buttonEl) {
-      if (isAnswered) return;
-      isAnswered = true;
-      userAnswers.push(optionIdx);
-      
-      const quiz = QUIZZES[currentQuizIndex];
-      const q = activeQuestions[currentQuestionIndex];
-      const correctIdx = q.correct_idx;
-      const isCorrect = (optionIdx === correctIdx);
-      
-      if (isCorrect) {
-        correctCount++;
-        buttonEl.classList.add('selected-correct');
-        playSound('correct');
-      } else {
-        buttonEl.classList.add('selected-incorrect');
-        buttonEl.classList.add('shake');
-        playSound('incorrect');
-        
-        const correctBtn = optionsList.children[correctIdx];
-        if (correctBtn) {
-          correctBtn.classList.add('correct-reveal');
-        }
-      }
-      
-      Array.from(optionsList.children).forEach(btn => {
-        btn.disabled = true;
-      });
-      
-      nextBtn.disabled = false;
-    }
-
-    // Next Question Button Click
-    nextBtn.addEventListener('click', () => {
-      currentQuestionIndex++;
-      
-      if (currentQuestionIndex < activeQuestions.length) {
-        loadQuestion();
-      } else {
-        showResults();
-      }
-    });
-
-    // Show Results
-    function showResults() {
-      quizSection.classList.add('hidden');
-      resultsSection.classList.remove('hidden');
-      
-      const quiz = QUIZZES[currentQuizIndex];
-      
-      if (resultsQuizTitle) {
-        resultsQuizTitle.textContent = quiz.title;
-      }
-      
-      const totalQuestions = activeQuestions.length;
-      const scorePercent = Math.round((correctCount / totalQuestions) * 100);
-      
-      scoreNumber.textContent = `${scorePercent}%`;
-      
-      const strokeOffset = 440 - (440 * scorePercent) / 100;
-      setTimeout(() => {
-        scoreFill.style.strokeDashoffset = strokeOffset;
-      }, 100);
-      
-      if (scorePercent === 100) {
-        resultFeedbackTitle.textContent = "Άριστα! 🎉";
-        resultFeedbackText.textContent = "Απαντήσατε σωστά σε όλες τις ερωτήσεις! Έχετε κατανοήσει πλήρως την ενότητα αυτή.";
-      } else if (scorePercent >= 80) {
-        resultFeedbackTitle.textContent = "Εξαιρετική Προσπάθεια! ✨";
-        resultFeedbackText.textContent = `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Πολύ καλή γνώση του αντικειμένου!`;
-      } else if (scorePercent >= 50) {
-        resultFeedbackTitle.textContent = "Πολύ Καλά! 👍";
-        resultFeedbackText.textContent = `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Έχετε καλή βάση, αλλά μπορείτε να βελτιωθείτε.`;
-      } else {
-        resultFeedbackTitle.textContent = "Χρειάζεται Μελέτη! 📚";
-        resultFeedbackText.textContent = `Πετύχατε μόνο ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Σας προτείνουμε να ξαναδιαβάσετε τις σημειώσεις και να δοκιμάσετε ξανά.`;
-      }
-      
-      reviewContainer.innerHTML = '';
-      activeQuestions.forEach((q, idx) => {
-        const userChoiceIdx = userAnswers[idx];
-        const correctIdx = q.correct_idx;
-        const isUserCorrect = (userChoiceIdx === correctIdx);
-        
-        const reviewItem = document.createElement('div');
-        reviewItem.className = 'review-item';
-        
-        let optionsMarkup = '';
-        q.options.forEach((opt, optIdx) => {
-          const optMarker = String.fromCharCode(65 + optIdx);
-          let optClass = 'review-opt-neutral';
-          let statusIndicator = '';
-          
-          if (optIdx === correctIdx) {
-            optClass = 'review-opt-correct';
-            statusIndicator = ' (Σωστό)';
-          } else if (optIdx === userChoiceIdx && !isUserCorrect) {
-            optClass = 'review-opt-incorrect';
-            statusIndicator = ' (Η επιλογή σας)';
-          }
-          
-          optionsMarkup += `
-            <div class="review-opt ${optClass}">
-              <span class="review-opt-marker">${optMarker}.</span>
-              <span>${opt}${statusIndicator}</span>
-            </div>
-          `;
-        });
-        
-        reviewItem.innerHTML = `
-          <div class="review-item-q">${idx + 1}. ${q.text}</div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            ${optionsMarkup}
-          </div>
-        `;
-        reviewContainer.appendChild(reviewItem);
-      });
-    }
-
-    // Restart Quiz
-    restartBtn.addEventListener('click', () => {
-      startQuiz(currentQuizIndex, currentOrderType);
-    });
-
-    // Go Back to Dashboard
-    backBtn.addEventListener('click', () => {
-      resultsSection.classList.add('hidden');
-      quizSection.classList.add('hidden');
-      dashboardSection.classList.remove('hidden');
-      initDashboard();
-    });
-
-    // Save Results as PDF
-    pdfBtn.addEventListener('click', () => {
-      window.print();
-    });
-
-    // Initialize Page
-    initDashboard();
-  </script>
 </body>
 </html>
