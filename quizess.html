@@ -352,6 +352,15 @@
 
     </div>
 
+    <!-- PROGRESS HISTORY -->
+    <section id="historySection" class="card" style="margin-top: 40px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+        <h2 id="historySectionTitle" data-translate="historySectionTitle" style="font-family: var(--font-outfit); font-size: 1.5rem; font-weight: 700; color: var(--text-main);">Ιστορικό Προόδου</h2>
+        <button id="clearHistoryBtn" data-translate="clearHistoryBtn" style="padding: 8px 14px; background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Εκκαθάριση Ιστορικού</button>
+      </div>
+      <div id="historyList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </section>
+
   </main>
 
   <!-- Floating Control Buttons -->
@@ -408,7 +417,11 @@
         titleEuzwia: "Εισαγωγή στην επιστήμη της ευζωίας των ζώων",
         descEuzwia: "Εισαγωγικά κουίζ στην επιστήμη της ευζωίας, τις ανάγκες, τη συμπεριφορά και την ποιότητα ζωής των ζώων.",
         metaEuzwia: "2 Κουίζ + Γενικό Τεστ",
-        startBtn: "Έναρξη Κουίζ"
+        startBtn: "Έναρξη Κουίζ",
+        historySectionTitle: "Ιστορικό Προόδου",
+        clearHistoryBtn: "Εκκαθάριση Ιστορικού",
+        historyEmpty: "Δεν υπάρχει ιστορικό κουίζ ακόμη. Ολοκληρώστε ένα κουίζ για να εμφανιστούν τα αποτελέσματά σας εδώ.",
+        confirmClear: "Είστε σίγουροι ότι θέλετε να διαγράψετε όλο το ιστορικό κουίζ;"
       },
       en: {
         navHome: "Home",
@@ -425,7 +438,11 @@
         titleEuzwia: "Introduction to Animal Welfare Science",
         descEuzwia: "Introductory quizzes on welfare science, needs, behavior, and quality of life in animals.",
         metaEuzwia: "2 Quizzes + General Test",
-        startBtn: "Start Quiz"
+        startBtn: "Start Quiz",
+        historySectionTitle: "Progress History",
+        clearHistoryBtn: "Clear History",
+        historyEmpty: "No quiz history yet. Complete a quiz to see your results here.",
+        confirmClear: "Are you sure you want to delete all quiz history?"
       }
     };
 
@@ -443,11 +460,52 @@
 
     langToggleBtn.addEventListener('click', () => {
       applyLanguage(currentLang === 'el' ? 'en' : 'el');
+      renderProgressHistory();
+    });
+
+    // Progress History
+    const QUIZ_HISTORY_KEY = 'quizProgressHistory';
+    function loadQuizHistory() {
+      try { return JSON.parse(localStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function renderProgressHistory() {
+      const list = document.getElementById('historyList');
+      if (!list) return;
+      const t = TRANSLATIONS[currentLang];
+      const entries = loadQuizHistory();
+      if (!entries.length) {
+        list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.95rem; padding: 10px 0;">${t.historyEmpty}</div>`;
+        return;
+      }
+      entries.sort((a, b) => b.ts - a.ts);
+      const locale = currentLang === 'el' ? 'el-GR' : 'en-US';
+      list.innerHTML = entries.map(e => {
+        const dateStr = new Date(e.ts).toLocaleString(locale);
+        const topicTitle = currentLang === 'el' ? (e.topicTitleEl || '') : (e.topicTitleEn || e.topicTitleEl || '');
+        const quizTitle = currentLang === 'el' ? (e.quizTitleEl || '') : (e.quizTitleEn || e.quizTitleEl || '');
+        const scoreColor = e.scorePercent >= 80 ? 'var(--success)' : (e.scorePercent >= 50 ? 'var(--primary)' : 'var(--error)');
+        return `<div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 14px 18px; background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 10px; flex-wrap: wrap;">
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
+            <div style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${topicTitle}</div>
+            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">${quizTitle}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">${dateStr}</div>
+          </div>
+          <div style="font-size: 1.1rem; font-weight: 700; color: ${scoreColor}; white-space: nowrap;">${e.correctCount}/${e.totalQuestions} &middot; ${e.scorePercent}%</div>
+        </div>`;
+      }).join('');
+    }
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+      const t = TRANSLATIONS[currentLang];
+      if (confirm(t.confirmClear)) {
+        localStorage.removeItem(QUIZ_HISTORY_KEY);
+        renderProgressHistory();
+      }
     });
 
     // Initialize Theme and Language
     applyTheme(currentTheme);
     applyLanguage(currentLang);
+    renderProgressHistory();
   </script>
 </body>
 </html>

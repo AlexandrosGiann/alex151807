@@ -990,6 +990,10 @@
 
       <!-- Review Section -->
       <div class="review-section">
+        <div id="historyBlock" style="margin-top: 10px; margin-bottom: 30px; width: 100%; text-align: left;">
+          <h3 id="historyTitle" class="review-title-text" data-translate="historyTitle" style="margin-bottom: 12px;">Ιστορικό για αυτό το κουίζ</h3>
+          <div id="historyList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
         <h3 class="review-title-text" data-translate="resultsTitle">Αναλυτικά Αποτελέσματα</h3>
         <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 15px; text-align: left; width: 100%;">
           <!-- Review items populated by JS -->
@@ -1887,6 +1891,55 @@
         `;
         reviewContainer.appendChild(reviewItem);
       });
+
+      const attemptFp = currentQuizIndex + ':' + userAnswers.join(',') + ':' + correctCount + ':' + totalQuestions;
+      if (showResults._lastFp !== attemptFp) {
+        showResults._lastFp = attemptFp;
+        recordQuizAttempt({
+          ts: Date.now(),
+          topic: 'euzwia',
+          topicTitleEl: 'Εισαγωγή στην επιστήμη της ευζωίας των ζώων',
+          topicTitleEn: 'Introduction to Animal Welfare Science',
+          quizTitleEl: quiz.title,
+          quizTitleEn: (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title),
+          scorePercent: scorePercent,
+          correctCount: correctCount,
+          totalQuestions: totalQuestions
+        });
+      }
+      renderHistoryForCurrentQuiz();
+    }
+
+    const QUIZ_HISTORY_KEY = 'quizProgressHistory';
+    function loadQuizHistory() {
+      try { return JSON.parse(localStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function recordQuizAttempt(entry) {
+      const arr = loadQuizHistory();
+      arr.push(entry);
+      try { localStorage.setItem(QUIZ_HISTORY_KEY, JSON.stringify(arr)); } catch (e) {}
+    }
+    function renderHistoryForCurrentQuiz() {
+      const title = document.getElementById('historyTitle');
+      const list = document.getElementById('historyList');
+      if (!title || !list) return;
+      title.textContent = currentLang === 'el' ? 'Ιστορικό για αυτό το κουίζ' : 'History for this quiz';
+      const quiz = QUIZZES[currentQuizIndex];
+      if (!quiz) { list.innerHTML = ''; return; }
+      const entries = loadQuizHistory().filter(e => e.topic === 'euzwia' && e.quizTitleEl === quiz.title);
+      if (!entries.length) {
+        list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9rem;">${currentLang === 'el' ? 'Δεν υπάρχει ιστορικό ακόμη.' : 'No history yet.'}</div>`;
+        return;
+      }
+      entries.sort((a, b) => b.ts - a.ts);
+      const locale = currentLang === 'el' ? 'el-GR' : 'en-US';
+      list.innerHTML = entries.map(e => {
+        const dateStr = new Date(e.ts).toLocaleString(locale);
+        return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem;">
+          <span style="color: var(--text-muted);">${dateStr}</span>
+          <span style="font-weight: 600; color: var(--text-main);">${e.correctCount}/${e.totalQuestions} &middot; ${e.scorePercent}%</span>
+        </div>`;
+      }).join('');
     }
 
     // Google Form individual question report redirection
