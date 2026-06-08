@@ -864,6 +864,12 @@
         </div>
       </div>
 
+      <!-- Anti-Cheat Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="antiCheatUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
+
       <!-- Adjustable Size Option -->
       <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
         <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
@@ -907,6 +913,12 @@
           <span data-translate="lblMinutes">λεπτά</span>
         </div>
       </div>
+
+      <!-- Anti-Cheat Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="antiCheatGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
 
       <!-- Adjustable Size Option General -->
       <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
@@ -1045,6 +1057,12 @@
         btnRandom: "Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)",
         lblShuffleOptions: "Ανακάτεμα επιλογών απάντησης (A, B, C, D)",
         lblTimer: "Ενεργοποίηση Χρονομέτρου",
+        lblAntiCheat: "Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης (anti-cheat)",
+        cheatViolationTitle: "Ακυρώθηκε λόγω παραβίασης",
+        cheatReasonPrefix: "Λόγος: ",
+        cheatReasonTab: "Αλλαγή καρτέλας ή ελαχιστοποίηση παραθύρου",
+        cheatReasonBlur: "Απώλεια εστίασης παραθύρου",
+        cheatReasonFs: "Έξοδος από πλήρη οθόνη",
         lblMinutes: "λεπτά",
         lblQuestionsCount: "Αριθμός Ερωτήσεων:",
         btnBack: "Επιστροφή",
@@ -1071,6 +1089,12 @@
         btnRandom: "Random Order (Shuffled questions)",
         lblShuffleOptions: "Shuffle answer choices (A, B, C, D)",
         lblTimer: "Enable Timer",
+        lblAntiCheat: "Enable anti-cheat detection",
+        cheatViolationTitle: "Invalidated due to violation",
+        cheatReasonPrefix: "Reason: ",
+        cheatReasonTab: "Tab switch or window minimized",
+        cheatReasonBlur: "Window focus loss",
+        cheatReasonFs: "Exited fullscreen",
         lblMinutes: "minutes",
         lblQuestionsCount: "Number of Questions:",
         btnBack: "Back",
@@ -1591,6 +1615,53 @@
       dashboardSection.classList.remove('hidden');
     });
 
+    // === Anti-Cheat System ===
+    const antiCheatUnitCheckbox = document.getElementById('antiCheatUnitCheckbox');
+    const antiCheatGeneralCheckbox = document.getElementById('antiCheatGeneralCheckbox');
+    let antiCheatEnabled = false;
+    let antiCheatActive = false;
+    let cheatViolationReason = null;
+    function antiCheatOnVisibility() { if (document.hidden) triggerCheatViolation('tab'); }
+    function antiCheatOnBlur() { triggerCheatViolation('blur'); }
+    function antiCheatOnFs() { if (!document.fullscreenElement) triggerCheatViolation('fs'); }
+    function startAntiCheat() {
+      if (!antiCheatEnabled || antiCheatActive) return;
+      antiCheatActive = true;
+      cheatViolationReason = null;
+      document.addEventListener('visibilitychange', antiCheatOnVisibility);
+      window.addEventListener('blur', antiCheatOnBlur);
+      document.addEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+    function stopAntiCheat() {
+      if (!antiCheatActive) return;
+      antiCheatActive = false;
+      document.removeEventListener('visibilitychange', antiCheatOnVisibility);
+      window.removeEventListener('blur', antiCheatOnBlur);
+      document.removeEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    function triggerCheatViolation(reasonKey) {
+      if (!antiCheatActive || cheatViolationReason) return;
+      cheatViolationReason = reasonKey;
+      stopAntiCheat();
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      isTimerRunning = false;
+      correctCount = 0;
+      showResults();
+    }
+    function getCheatReasonText() {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      if (cheatViolationReason === 'tab') return t.cheatReasonTab;
+      if (cheatViolationReason === 'blur') return t.cheatReasonBlur;
+      if (cheatViolationReason === 'fs') return t.cheatReasonFs;
+      return '';
+    }
+
     // Start Quiz
     function startQuiz(quizIdx, orderType) {
       currentOrderType = orderType;
@@ -1659,11 +1730,16 @@
       userAnswers = [];
       correctCount = 0;
       isAnswered = false;
-      
+
+      cheatViolationReason = null;
+      antiCheatEnabled = (quizIdx === 11) ? antiCheatGeneralCheckbox.checked : antiCheatUnitCheckbox.checked;
+
       dashboardSection.classList.add('hidden');
       resultsSection.classList.add('hidden');
       quizSection.classList.remove('hidden');
-      
+
+      startAntiCheat();
+
       if (currentQuizIndex === 11) {
         quizUnitText.textContent = currentLang === 'el' ? "ΓΕΝΙΚΟ ΤΕΣΤ" : "GENERAL TEST";
       } else if (currentQuizIndex === 6) {
@@ -1815,20 +1891,23 @@
 
     // Show Results
     function showResults() {
+      stopAntiCheat();
       // Clear countdown interval
       if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
       }
       isTimerRunning = false;
-      
+
+      if (cheatViolationReason) { correctCount = 0; }
+
       quizSection.classList.add('hidden');
       resultsSection.classList.remove('hidden');
-      
-      const quiz = QUIZZES[currentQuizIndex];
-      
 
-      
+      const quiz = QUIZZES[currentQuizIndex];
+
+
+
       const totalQuestions = activeQuestions.length;
       const scorePercent = Math.round((correctCount / totalQuestions) * 100);
       
@@ -1842,7 +1921,11 @@
       const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
       resultsQuizTitle.textContent = displayTitle;
 
-      if (scorePercent === 100) {
+      if (cheatViolationReason) {
+        const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+        resultFeedbackTitle.textContent = t.cheatViolationTitle;
+        resultFeedbackText.textContent = t.cheatReasonPrefix + getCheatReasonText();
+      } else if (scorePercent === 100) {
         resultFeedbackTitle.textContent = currentLang === 'el' ? "Άριστα! 🎉" : "Perfect! 🎉";
         resultFeedbackText.textContent = currentLang === 'el' 
           ? "Απαντήσατε σωστά σε όλες τις ερωτήσεις! Έχετε κατανοήσει πλήρως την ενότητα αυτή."

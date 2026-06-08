@@ -123,6 +123,9 @@
       .categories-grid {
         grid-template-columns: 1fr 1fr 1fr;
       }
+      .study-tools-grid {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
     .category-card {
@@ -352,6 +355,45 @@
 
     </div>
 
+    <!-- STUDY TOOLS -->
+    <div class="categories-grid study-tools-grid" style="margin-top: 30px;">
+      <!-- MANUAL CARD -->
+      <div class="card category-card" style="cursor: default;">
+        <div>
+          <span class="unit-tag" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);" data-translate="tagStudy">Μελέτη</span>
+          <h2 class="category-title" data-translate="titleManual">Εγχειρίδιο Μελέτης</h2>
+          <p class="category-desc" data-translate="descManual">
+            Κατεβάστε ένα ολοκληρωμένο εγχειρίδιο μελέτης με βασικές έννοιες, συμβουλές και οδηγίες για όλες τις θεματικές ενότητες — διαθέσιμο στην επιλεγμένη γλώσσα.
+          </p>
+        </div>
+        <div>
+          <div class="category-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span data-translate="metaManual">HTML / εκτυπώσιμο σε PDF</span>
+          </div>
+          <button id="downloadManualBtn" class="btn-action" style="border: none; cursor: pointer; width: 100%;" data-translate="downloadManualBtn">Λήψη Εγχειριδίου</button>
+        </div>
+      </div>
+
+      <!-- AI ASSISTANT CARD -->
+      <a href="ai_assistant_pollinations.html" target="_blank" rel="noopener" class="card category-card">
+        <div>
+          <span class="unit-tag" style="background-color: rgba(124, 58, 237, 0.15); color: #a78bfa;" data-translate="tagAI">AI</span>
+          <h2 class="category-title" data-translate="titleAI">AI Βοηθός Μελέτης</h2>
+          <p class="category-desc" data-translate="descAI">
+            Συνομιλήστε με έναν AI βοηθό για να διευκρινίσετε έννοιες, να λάβετε επεξηγήσεις και να εξασκηθείτε στην ύλη πριν δώσετε τα κουίζ.
+          </p>
+        </div>
+        <div>
+          <div class="category-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span data-translate="metaAI">Βασισμένο στο Pollinations API</span>
+          </div>
+          <div class="btn-action" data-translate="openAIBtn">Άνοιγμα Βοηθού</div>
+        </div>
+      </a>
+    </div>
+
     <!-- PROGRESS HISTORY -->
     <section id="historySection" class="card" style="margin-top: 40px;">
       <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
@@ -421,7 +463,17 @@
         historySectionTitle: "Ιστορικό Προόδου",
         clearHistoryBtn: "Εκκαθάριση Ιστορικού",
         historyEmpty: "Δεν υπάρχει ιστορικό κουίζ ακόμη. Ολοκληρώστε ένα κουίζ για να εμφανιστούν τα αποτελέσματά σας εδώ.",
-        confirmClear: "Είστε σίγουροι ότι θέλετε να διαγράψετε όλο το ιστορικό κουίζ;"
+        confirmClear: "Είστε σίγουροι ότι θέλετε να διαγράψετε όλο το ιστορικό κουίζ;",
+        tagStudy: "Μελέτη",
+        tagAI: "AI",
+        titleManual: "Εγχειρίδιο Μελέτης",
+        descManual: "Κατεβάστε ένα ολοκληρωμένο εγχειρίδιο μελέτης με βασικές έννοιες, συμβουλές και οδηγίες για όλες τις θεματικές ενότητες — διαθέσιμο στην επιλεγμένη γλώσσα.",
+        metaManual: "HTML / εκτυπώσιμο σε PDF",
+        downloadManualBtn: "Λήψη Εγχειριδίου",
+        titleAI: "AI Βοηθός Μελέτης",
+        descAI: "Συνομιλήστε με έναν AI βοηθό για να διευκρινίσετε έννοιες, να λάβετε επεξηγήσεις και να εξασκηθείτε στην ύλη πριν δώσετε τα κουίζ.",
+        metaAI: "Βασισμένο στο Pollinations API",
+        openAIBtn: "Άνοιγμα Βοηθού"
       },
       en: {
         navHome: "Home",
@@ -442,7 +494,17 @@
         historySectionTitle: "Progress History",
         clearHistoryBtn: "Clear History",
         historyEmpty: "No quiz history yet. Complete a quiz to see your results here.",
-        confirmClear: "Are you sure you want to delete all quiz history?"
+        confirmClear: "Are you sure you want to delete all quiz history?",
+        tagStudy: "Study",
+        tagAI: "AI",
+        titleManual: "Study Manual",
+        descManual: "Download a complete study manual with key concepts, tips and guidance for all thematic units — available in the selected language.",
+        metaManual: "HTML / printable to PDF",
+        downloadManualBtn: "Download Manual",
+        titleAI: "AI Study Assistant",
+        descAI: "Chat with an AI assistant to clarify concepts, get explanations, and practice the material before taking the quizzes.",
+        metaAI: "Powered by the Pollinations API",
+        openAIBtn: "Open Assistant"
       }
     };
 
@@ -494,6 +556,216 @@
         </div>`;
       }).join('');
     }
+    // === Study Manual ===
+    const MANUAL_CONTENT = {
+      el: {
+        docTitle: "Εγχειρίδιο Μελέτης — Θεματικές Ενότητες",
+        intro: "Αυτό το εγχειρίδιο συνοψίζει τις βασικές έννοιες και προτείνει στρατηγικές μελέτης για τις τρεις θεματικές ενότητες της πλατφόρμας. Ανοίξτε το με τον περιηγητή σας και χρησιμοποιήστε την επιλογή \"Εκτύπωση → Αποθήκευση ως PDF\" αν θέλετε PDF αρχείο.",
+        howToUse: "Πώς να χρησιμοποιήσετε αυτό το εγχειρίδιο",
+        howToUseList: [
+          "Διαβάστε πρώτα την Επισκόπηση κάθε ενότητας για να αποκτήσετε γενική εικόνα.",
+          "Μελετήστε τις Βασικές Έννοιες και βεβαιωθείτε ότι μπορείτε να τις εξηγήσετε με δικά σας λόγια.",
+          "Εφαρμόστε τις Συμβουλές Μελέτης πριν ξεκινήσετε τα κουίζ.",
+          "Χρησιμοποιήστε τον AI Βοηθό για διευκρινίσεις και ερωτήσεις πρακτικής εξάσκησης.",
+          "Δοκιμάστε πρώτα τα κουίζ ανά ενότητα και έπειτα το Γενικό Τεστ."
+        ],
+        sections: [
+          {
+            title: "1. Νόηση και συνείδηση στα ζώα",
+            overview: "Η ενότητα εξετάζει πώς τα ζώα επεξεργάζονται πληροφορίες, μαθαίνουν, αισθάνονται και αλληλεπιδρούν με τον άνθρωπο. Συνδυάζει φιλοσοφία του νου, νευροεπιστήμη και συγκριτική ψυχολογία.",
+            concepts: [
+              "Φιλοσοφία της Νόησης — διάκριση νου, εγκεφάλου και συμπεριφοράς.",
+              "Νόηση, γνώση και συνείδηση — διαφορές και σχέσεις των τριών εννοιών.",
+              "Πώς ο εγκέφαλος παράγει νοητικές καταστάσεις και αναπαραστάσεις.",
+              "Ταυτότητα νου–σώματος και πρόβλημα της αναγωγής.",
+              "Μνήμη και αναπαράσταση πληροφοριών.",
+              "Ενσώματη Νόηση και Παρεχόμενες Δυνατότητες (affordances).",
+              "Νοητικοί μηχανισμοί κατά την αλληλεπίδραση ανθρώπου–ζώων.",
+              "Πώς μαθαίνουν τα ζώα (κλασική και συντελεστική μάθηση).",
+              "Αισθήσεις, επικοινωνία και συμπεριφορά.",
+              "Συναισθήματα στα ζώα — ενδείξεις και μετρήσεις.",
+              "Γνωσιακές προκαταλήψεις στα ζώα."
+            ],
+            tips: [
+              "Συγκρίνετε τις θεωρίες (π.χ. δυϊσμός vs. φυσιοκρατισμός) με παραδείγματα από τη ζωή.",
+              "Συσχετίστε κάθε νοητικό μηχανισμό με μια συγκεκριμένη συμπεριφορά ζώου.",
+              "Σχηματίστε διαγράμματα: εγκέφαλος → λειτουργία → συμπεριφορά."
+            ]
+          },
+          {
+            title: "2. Νομοθεσία και Ευζωία των ζώων",
+            overview: "Η ενότητα καλύπτει το νομικό πλαίσιο για την προστασία και την ευζωία των ζώων σε εθνικό, ευρωπαϊκό και διεθνές επίπεδο.",
+            concepts: [
+              "Βασικές αρχές του δικαίου των ζώων.",
+              "Εθνική νομοθεσία προστασίας ζώων (Ελλάδα).",
+              "Ευρωπαϊκές οδηγίες και κανονισμοί για την ευζωία.",
+              "Διεθνείς συμβάσεις και ο ρόλος του OIE/WOAH.",
+              "Διαφοροποίηση μεταξύ ζώων συντροφιάς, παραγωγικών και άγριων.",
+              "Διοικητικές και ποινικές κυρώσεις σε περιπτώσεις κακοποίησης.",
+              "Δικαιώματα και ευθύνες κατόχων ζώων."
+            ],
+            tips: [
+              "Μάθετε τα ονόματα και τους αριθμούς των βασικών νόμων/κανονισμών.",
+              "Διαχωρίστε σαφώς εθνικό, ευρωπαϊκό και διεθνές επίπεδο.",
+              "Επικεντρωθείτε σε πραγματικά παραδείγματα και υποθέσεις."
+            ]
+          },
+          {
+            title: "3. Εισαγωγή στην επιστήμη της ευζωίας των ζώων",
+            overview: "Η ενότητα παρουσιάζει τη σύγχρονη επιστήμη της ευζωίας: ορισμοί, ανάγκες των ζώων, μέθοδοι αξιολόγησης και πρακτικές βελτίωσης.",
+            concepts: [
+              "Ορισμός της ευζωίας — οι Πέντε Ελευθερίες και τα Πέντε Πεδία.",
+              "Φυσιολογικές και ψυχολογικές ανάγκες των ζώων.",
+              "Μέτρηση ευζωίας: φυσιολογικοί, συμπεριφορικοί, παραγωγικοί δείκτες.",
+              "Στρες και ευημερία — βιολογικοί μηχανισμοί.",
+              "Περιβαλλοντικός εμπλουτισμός.",
+              "Ευζωία σε παραγωγικά ζώα, ζώα συντροφιάς και εργαστηριακά ζώα."
+            ],
+            tips: [
+              "Απομνημονεύστε τις Πέντε Ελευθερίες και βρείτε παραδείγματα παραβίασης κάθε μίας.",
+              "Διασυνδέστε δείκτες μέτρησης με αντίστοιχες ανάγκες των ζώων.",
+              "Εξηγήστε με δικά σας λόγια τη διαφορά μεταξύ ευημερίας και απουσίας ασθένειας."
+            ]
+          }
+        ],
+        sectionLabels: { overview: "Επισκόπηση", concepts: "Βασικές Έννοιες", tips: "Συμβουλές Μελέτης" },
+        footer: "Καλή μελέτη! — Πλατφόρμα Κουίζ Αλέξανδρου Γιαννάκη"
+      },
+      en: {
+        docTitle: "Study Manual — Thematic Units",
+        intro: "This manual summarises the core concepts and suggests study strategies for the three thematic units of the platform. Open it with your browser and use \"Print → Save as PDF\" if you want a PDF file.",
+        howToUse: "How to use this manual",
+        howToUseList: [
+          "Read the Overview of each unit first to get the big picture.",
+          "Study the Key Concepts and make sure you can explain them in your own words.",
+          "Apply the Study Tips before attempting the quizzes.",
+          "Use the AI Assistant for clarifications and practice questions.",
+          "Try the unit quizzes first, then the General Test."
+        ],
+        sections: [
+          {
+            title: "1. Animal Cognition & Consciousness",
+            overview: "This unit examines how animals process information, learn, feel, and interact with humans. It combines philosophy of mind, neuroscience, and comparative psychology.",
+            concepts: [
+              "Philosophy of mind — distinguishing mind, brain, and behaviour.",
+              "Cognition, knowledge and consciousness — differences and relations.",
+              "How the brain produces mental states and representations.",
+              "Mind–body identity and the reduction problem.",
+              "Memory and representation of information.",
+              "Embodied cognition and affordances.",
+              "Mental mechanisms in human–animal interaction.",
+              "How animals learn (classical and operant conditioning).",
+              "Senses, communication and behaviour.",
+              "Emotions in animals — indicators and measurement.",
+              "Cognitive biases in animals."
+            ],
+            tips: [
+              "Compare theories (e.g. dualism vs. physicalism) using real-life examples.",
+              "Link each mental mechanism to a specific animal behaviour.",
+              "Draw diagrams: brain → function → behaviour."
+            ]
+          },
+          {
+            title: "2. Animal Legislation & Welfare",
+            overview: "This unit covers the legal framework for animal protection and welfare at national, European, and international level.",
+            concepts: [
+              "Basic principles of animal law.",
+              "National animal protection legislation (Greece).",
+              "European directives and regulations on animal welfare.",
+              "International conventions and the role of OIE/WOAH.",
+              "Distinction between companion, production, and wild animals.",
+              "Administrative and criminal sanctions for abuse.",
+              "Rights and responsibilities of animal owners."
+            ],
+            tips: [
+              "Learn the names and numbers of the key laws/regulations.",
+              "Keep national, European, and international levels clearly separated.",
+              "Focus on real cases and examples."
+            ]
+          },
+          {
+            title: "3. Introduction to Animal Welfare Science",
+            overview: "This unit introduces modern welfare science: definitions, animal needs, assessment methods, and practices for improvement.",
+            concepts: [
+              "Definition of welfare — the Five Freedoms and the Five Domains.",
+              "Physiological and psychological needs of animals.",
+              "Welfare measurement: physiological, behavioural, and production indicators.",
+              "Stress and well-being — biological mechanisms.",
+              "Environmental enrichment.",
+              "Welfare in farm animals, companion animals, and laboratory animals."
+            ],
+            tips: [
+              "Memorise the Five Freedoms and find examples of violations of each.",
+              "Link measurement indicators with the corresponding animal needs.",
+              "Explain in your own words the difference between well-being and absence of disease."
+            ]
+          }
+        ],
+        sectionLabels: { overview: "Overview", concepts: "Key Concepts", tips: "Study Tips" },
+        footer: "Happy studying! — Alexandros Giannakis Quiz Platform"
+      }
+    };
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+    }
+
+    function buildManualHTML(lang) {
+      const m = MANUAL_CONTENT[lang] || MANUAL_CONTENT.el;
+      const sectionsHtml = m.sections.map(sec => `
+        <section>
+          <h2>${escapeHtml(sec.title)}</h2>
+          <h3>${escapeHtml(m.sectionLabels.overview)}</h3>
+          <p>${escapeHtml(sec.overview)}</p>
+          <h3>${escapeHtml(m.sectionLabels.concepts)}</h3>
+          <ul>${sec.concepts.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
+          <h3>${escapeHtml(m.sectionLabels.tips)}</h3>
+          <ul>${sec.tips.map(t => `<li>${escapeHtml(t)}</li>`).join('')}</ul>
+        </section>
+      `).join('');
+      return `<!doctype html>
+<html lang="${lang}">
+<head>
+<meta charset="utf-8" />
+<title>${escapeHtml(m.docTitle)}</title>
+<style>
+  body { font-family: Georgia, 'Times New Roman', serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1f2937; line-height: 1.6; }
+  h1 { font-family: 'Helvetica Neue', Arial, sans-serif; color: #0b3d2e; border-bottom: 3px solid #10b981; padding-bottom: 10px; }
+  h2 { font-family: 'Helvetica Neue', Arial, sans-serif; color: #0b3d2e; margin-top: 40px; border-left: 4px solid #38bdf8; padding-left: 12px; }
+  h3 { font-family: 'Helvetica Neue', Arial, sans-serif; color: #334155; margin-top: 24px; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 10px 0; }
+  ul { padding-left: 22px; }
+  li { margin: 6px 0; }
+  .intro { background: #f0fdfa; border: 1px solid #99f6e4; padding: 14px 18px; border-radius: 8px; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 0.9rem; text-align: center; }
+  @media print { body { margin: 0; } }
+</style>
+</head>
+<body>
+  <h1>${escapeHtml(m.docTitle)}</h1>
+  <div class="intro"><p>${escapeHtml(m.intro)}</p></div>
+  <h2>${escapeHtml(m.howToUse)}</h2>
+  <ul>${m.howToUseList.map(li => `<li>${escapeHtml(li)}</li>`).join('')}</ul>
+  ${sectionsHtml}
+  <footer>${escapeHtml(m.footer)}</footer>
+</body>
+</html>`;
+    }
+
+    document.getElementById('downloadManualBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      const html = buildManualHTML(currentLang);
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentLang === 'el' ? 'egcheiridio_meletis.html' : 'study_manual.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
     document.getElementById('clearHistoryBtn').addEventListener('click', () => {
       const t = TRANSLATIONS[currentLang];
       if (confirm(t.confirmClear)) {
