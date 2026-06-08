@@ -218,17 +218,78 @@
       background: rgba(255, 255, 255, 0.1);
       color: var(--text-main);
     }
+
+    body.light-mode {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --card-hover: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.1);
+      --success: #059669;
+      --success-glow: rgba(5, 150, 105, 0.1);
+      --error: #dc2626;
+      --error-glow: rgba(220, 38, 38, 0.1);
+      --border-color: #cbd5e1;
+    }
+
+    /* Floating controls */
+    .floating-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .control-btn:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'dark';
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+      }
+    })();
+  </script>
 
   <header>
     <div class="nav-bar">
-      <a href="index.html" class="nav-link">Αρχική</a>
-      <a href="papers.html" class="nav-link">Έρευνες</a>
-      <a href="quizess.html" class="nav-link active">Κουίζ</a>
+      <a href="index.html" class="nav-link" data-translate="navHome">Αρχική</a>
+      <a href="papers.html" class="nav-link" data-translate="navPapers">Έρευνες</a>
+      <a href="quizess.html" class="nav-link active" data-translate="navQuizzes">Κουίζ</a>
     </div>
-    <h1 class="page-title">Θεματικές Ενότητες Κουίζ</h1>
+    <h1 class="page-title" data-translate="pageTitle">Θεματικές Ενότητες Κουίζ</h1>
   </header>
 
   <main class="container">
@@ -238,54 +299,54 @@
       <!-- CATEGORY 1 -->
       <a href="quizzes_noisi.html" class="card category-card">
         <div>
-          <span class="unit-tag">Ενεργό</span>
-          <h2 class="category-title">Νόηση και συνείδηση στα ζώα</h2>
-          <p class="category-desc">
+          <span class="unit-tag" data-translate="tagActive">Ενεργό</span>
+          <h2 class="category-title" data-translate="titleNoisi">Νόηση και συνείδηση στα ζώα</h2>
+          <p class="category-desc" data-translate="descNoisi">
             Διαδραστικά κουίζ για τη νόηση, τη γνώση, τη συνείδηση και τους νοητικούς μηχανισμούς κατά την αλληλεπίδραση ανθρώπου-ζώων.
           </p>
         </div>
         <div>
           <div class="category-meta">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>11 Κουίζ + Γενικό Τεστ</span>
+            <span data-translate="metaNoisi">11 Κουίζ + Γενικό Τεστ</span>
           </div>
-          <div class="btn-action">Έναρξη Κουίζ</div>
+          <div class="btn-action" data-translate="startBtn">Έναρξη Κουίζ</div>
         </div>
       </a>
 
       <!-- CATEGORY 2 -->
       <a href="quizzes_nomothesia.html" class="card category-card">
         <div>
-          <span class="unit-tag">Ενεργό</span>
-          <h2 class="category-title">Νομοθεσία και Ευζωία των ζώων</h2>
-          <p class="category-desc">
+          <span class="unit-tag" data-translate="tagActive">Ενεργό</span>
+          <h2 class="category-title" data-translate="titleNomothesia">Νομοθεσία και Ευζωία των ζώων</h2>
+          <p class="category-desc" data-translate="descNomothesia">
             Κουίζ σχετικά με το νομικό πλαίσιο, τη νομοθεσία προστασίας και τους διεθνείς κανόνες ευζωίας των ζώων.
           </p>
         </div>
         <div>
           <div class="category-meta">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>Κουίζ Δικαίου των Ζώων</span>
+            <span data-translate="metaNomothesia">Κουίζ Δικαίου των Ζώων</span>
           </div>
-          <div class="btn-action">Έναρξη Κουίζ</div>
+          <div class="btn-action" data-translate="startBtn">Έναρξη Κουίζ</div>
         </div>
       </a>
 
       <!-- CATEGORY 3 -->
       <a href="quizzes_euzwia.html" class="card category-card">
         <div>
-          <span class="unit-tag">Ενεργό</span>
-          <h2 class="category-title">Εισαγωγή στην επιστήμη της ευζωίας των ζώων</h2>
-          <p class="category-desc">
+          <span class="unit-tag" data-translate="tagActive">Ενεργό</span>
+          <h2 class="category-title" data-translate="titleEuzwia">Εισαγωγή στην επιστήμη της ευζωίας των ζώων</h2>
+          <p class="category-desc" data-translate="descEuzwia">
             Εισαγωγικά κουίζ στην επιστήμη της ευζωίας, τις ανάγκες, τη συμπεριφορά και την ποιότητα ζωής των ζώων.
           </p>
         </div>
         <div>
           <div class="category-meta">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>2 Κουίζ + Γενικό Τεστ</span>
+            <span data-translate="metaEuzwia">2 Κουίζ + Γενικό Τεστ</span>
           </div>
-          <div class="btn-action">Έναρξη Κουίζ</div>
+          <div class="btn-action" data-translate="startBtn">Έναρξη Κουίζ</div>
         </div>
       </a>
 
@@ -293,5 +354,100 @@
 
   </main>
 
+  <!-- Floating Control Buttons -->
+  <div class="floating-controls">
+    <button id="themeToggle" class="control-btn" title="Εναλλαγή Θέματος / Toggle Theme">
+      <svg id="themeSunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="themeMoonIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    <button id="langToggle" class="control-btn" title="Αλλαγή Γλώσσας / Switch Language">EN</button>
+  </div>
+
+  <script>
+    // Theme and Language State Management
+    let currentTheme = localStorage.getItem('theme') || 'dark';
+    let currentLang = localStorage.getItem('lang') || 'el';
+
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeSunIcon = document.getElementById('themeSunIcon');
+    const themeMoonIcon = document.getElementById('themeMoonIcon');
+    const langToggleBtn = document.getElementById('langToggle');
+
+    function applyTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        themeSunIcon.classList.add('hidden');
+        themeMoonIcon.classList.remove('hidden');
+      } else {
+        document.body.classList.remove('light-mode');
+        themeSunIcon.classList.remove('hidden');
+        themeMoonIcon.classList.add('hidden');
+      }
+      localStorage.setItem('theme', theme);
+      currentTheme = theme;
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Language configuration
+    const TRANSLATIONS = {
+      el: {
+        navHome: "Αρχική",
+        navPapers: "Έρευνες",
+        navQuizzes: "Κουίζ",
+        pageTitle: "Θεματικές Ενότητες Κουίζ",
+        tagActive: "Ενεργό",
+        titleNoisi: "Νόηση και συνείδηση στα ζώα",
+        descNoisi: "Διαδραστικά κουίζ για τη νόηση, τη γνώση, τη συνείδηση και τους νοητικούς μηχανισμούς κατά την αλληλεπίδραση ανθρώπου-ζώων.",
+        metaNoisi: "11 Κουίζ + Γενικό Τεστ",
+        titleNomothesia: "Νομοθεσία και Ευζωία των ζώων",
+        descNomothesia: "Κουίζ σχετικά με το νομικό πλαίσιο, τη νομοθεσία προστασίας και τους διεθνείς κανόνες ευζωίας των ζώων.",
+        metaNomothesia: "Κουίζ Δικαίου των Ζώων",
+        titleEuzwia: "Εισαγωγή στην επιστήμη της ευζωίας των ζώων",
+        descEuzwia: "Εισαγωγικά κουίζ στην επιστήμη της ευζωίας, τις ανάγκες, τη συμπεριφορά και την ποιότητα ζωής των ζώων.",
+        metaEuzwia: "2 Κουίζ + Γενικό Τεστ",
+        startBtn: "Έναρξη Κουίζ"
+      },
+      en: {
+        navHome: "Home",
+        navPapers: "Research",
+        navQuizzes: "Quizzes",
+        pageTitle: "Quiz Thematic Units",
+        tagActive: "Active",
+        titleNoisi: "Animal Cognition & Consciousness",
+        descNoisi: "Interactive quizzes on animal cognition, knowledge, consciousness, and mental mechanisms in human-animal interaction.",
+        metaNoisi: "11 Quizzes + General Test",
+        titleNomothesia: "Animal Legislation & Welfare",
+        descNomothesia: "Quizzes regarding the legal framework, protection legislation, and international rules of animal welfare.",
+        metaNomothesia: "Animal Law Quiz",
+        titleEuzwia: "Introduction to Animal Welfare Science",
+        descEuzwia: "Introductory quizzes on welfare science, needs, behavior, and quality of life in animals.",
+        metaEuzwia: "2 Quizzes + General Test",
+        startBtn: "Start Quiz"
+      }
+    };
+
+    function applyLanguage(lang) {
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          el.textContent = TRANSLATIONS[lang][key];
+        }
+      });
+      langToggleBtn.textContent = lang === 'el' ? 'EN' : 'EL';
+      localStorage.setItem('lang', lang);
+      currentLang = lang;
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      applyLanguage(currentLang === 'el' ? 'en' : 'el');
+    });
+
+    // Initialize Theme and Language
+    applyTheme(currentTheme);
+    applyLanguage(currentLang);
+  </script>
 </body>
 </html>
