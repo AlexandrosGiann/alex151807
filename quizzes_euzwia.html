@@ -49,7 +49,7 @@
     header {
       width: 100%;
       max-width: 960px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -98,7 +98,6 @@
       max-width: 960px;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 20px;
     }
 
@@ -107,43 +106,204 @@
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 50px 30px;
+      padding: 30px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-      max-width: 650px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       width: 100%;
-      text-align: center;
+    }
+
+    /* Dashboard styling centered for single card */
+    #dashboardSection {
+      max-width: 550px;
+      margin: 20px auto;
+      width: 100%;
+    }
+
+    .quiz-card {
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 25px;
-      margin-top: 20px;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 35px 30px;
     }
 
-    .placeholder-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: rgba(56, 189, 248, 0.1);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    .quiz-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.1), 0 10px 10px -5px rgba(56, 189, 248, 0.04);
+      background-color: var(--card-hover);
+      border-color: var(--primary);
     }
 
-    .placeholder-title {
+    .unit-tag {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      margin-bottom: 5px;
+    }
+
+    .quiz-card-title {
       font-family: var(--font-outfit);
-      font-size: 1.8rem;
+      font-size: 1.35rem;
       font-weight: 700;
+      line-height: 1.4;
       color: var(--text-main);
     }
 
-    .placeholder-desc {
-      font-size: 0.98rem;
+    .quiz-meta {
+      font-size: 0.88rem;
       color: var(--text-muted);
-      line-height: 1.6;
-      max-width: 450px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Active Quiz Screen */
+    .hidden {
+      display: none !important;
+    }
+
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8 0%, #10b981 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .question-title {
+      font-family: var(--font-outfit);
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 25px;
+      color: var(--text-main);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px 20px;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-marker {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      margin-top: 1px;
+    }
+
+    .option-btn:hover:not(:disabled) .option-marker {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* State Styles for Options */
+    .option-btn.selected-correct {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-correct .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect {
+      background-color: var(--error-glow);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect .option-marker {
+      background-color: var(--error);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.correct-reveal {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+    }
+
+    .option-btn.correct-reveal .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .action-row {
+      margin-top: 30px;
+      display: flex;
+      justify-content: flex-end;
     }
 
     .btn {
@@ -158,19 +318,365 @@
       align-items: center;
       gap: 8px;
       text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #000;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #7dd3fc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
       background-color: transparent;
       border: 1px solid var(--border-color);
       color: var(--text-main);
     }
 
-    .btn:hover {
+    .btn-outline:hover {
       background-color: rgba(255, 255, 255, 0.05);
       border-color: var(--text-main);
+    }
+
+    .order-option-btn {
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .order-option-btn:hover {
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    }
+    #randomOrderBtn:hover {
+      background-color: var(--success-glow) !important;
+      border-color: var(--success) !important;
+      color: white !important;
+    }
+    #originalOrderBtn:hover {
+      background-color: var(--primary-glow) !important;
+      border-color: var(--primary) !important;
+      color: white !important;
+    }
+
+    /* Shake animation for error state */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    .results-quiz-title {
+      font-family: var(--font-outfit);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    /* Circular Score Summary Styling */
+    .results-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .score-circle-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 15px 0;
+    }
+
+    .score-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .score-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 12;
+    }
+
+    .score-fill {
+      fill: none;
+      stroke: var(--success);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+
+    .score-text-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .score-number {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .result-feedback-title {
+      font-family: var(--font-outfit);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .result-feedback-text {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 500px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Review Area */
+    .review-section {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .review-title-text {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .review-item {
+      background-color: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .review-item-q {
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .review-opt {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .review-opt-correct {
+      background-color: rgba(16, 185, 129, 0.08);
+      border: 1px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .review-opt-incorrect {
+      background-color: rgba(239, 68, 68, 0.08);
+      border: 1px solid var(--error);
+      color: #fca5a5;
+    }
+
+    .review-opt-neutral {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .review-opt-marker {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 1px;
+    }
+
+    /* Custom audio control overlay */
+    .sound-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .sound-toggle:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .sound-toggle.muted {
+      opacity: 0.6;
+    }
+
+    /* Print styling to save beautifully as PDF */
+    @media print {
+      @page {
+        margin: 15mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection, #orderSection {
+        display: none !important;
+      }
+      .results-quiz-title {
+        color: #000000 !important;
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+      }
+      .score-label {
+        color: #475569 !important;
+      }
+      .results-card {
+        background-color: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+      .card {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      /* Ensure SVG scores look good in print */
+      .score-bg {
+        stroke: #f1f5f9 !important;
+      }
+      .score-fill {
+        stroke: #10b981 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .score-number {
+        color: #000000 !important;
+      }
+      .result-feedback-title {
+        color: #000000 !important;
+      }
+      .result-feedback-text {
+        color: #475569 !important;
+      }
+      .review-title-text {
+        color: #000000 !important;
+        border-bottom-color: #cbd5e1 !important;
+      }
+      .review-item {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .review-item-q {
+        color: #000000 !important;
+      }
+      .review-opt {
+        border-width: 1px !important;
+        border-style: solid !important;
+      }
+      .review-opt-correct {
+        background-color: #f0fdf4 !important;
+        border-color: #10b981 !important;
+        color: #14532d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-incorrect {
+        background-color: #fef2f2 !important;
+        border-color: #ef4444 !important;
+        color: #7f1d1d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-neutral {
+        background-color: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #475569 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- Background sound settings -->
+  <button id="soundToggle" class="sound-toggle" title="Ενεργοποίηση/Απενεργοποίηση Ήχου">
+    <svg id="soundOnIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+    <svg id="soundMutedIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+  </button>
 
   <header>
     <div class="nav-bar">
@@ -184,18 +690,481 @@
 
   <main class="container">
     
-    <div class="card">
-      <div class="placeholder-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-      </div>
-      <h2 class="placeholder-title">Σύντομα Διαθέσιμο</h2>
-      <p class="placeholder-desc">
-        Το περιεχόμενο και τα διαδραστικά κουίζ για τη θεματική ενότητα <strong>«Εισαγωγή στην επιστήμη της ευζωίας των ζώων»</strong> βρίσκονται υπό κατασκευή και θα προστεθούν σύντομα.
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection">
+      <!-- Cards will be populated by JS -->
+    </section>
+
+    <!-- ORDER SELECTION SECTION -->
+    <section id="orderSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 30px auto; align-items: center;">
+      <h2 id="orderQuizTitle" class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Όνομα Κουίζ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 420px; margin-bottom: 10px;">
+        Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:
       </p>
-      <a href="quizess.html" class="btn">Επιστροφή στα Κουίζ</a>
-    </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+        <button id="originalOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          Αρχική Σειρά (Όπως στο έγγραφο)
+        </button>
+        <button id="randomOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; border-color: var(--success); color: var(--success); width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+          Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)
+        </button>
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="shuffleOptionsUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span>Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+      
+      <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;">Επιστροφή</button>
+    </section>
+
+    <!-- ACTIVE QUIZ SECTION -->
+    <section id="quizSection" class="card hidden">
+      <div class="progress-section">
+        <div class="progress-header">
+          <span id="quizUnitText">ΤΕΣΤ ΑΠΟ SLIDO</span>
+          <span id="progressText">Ερώτηση 1 από 78</span>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+      
+      <div id="questionContainer">
+        <h2 id="questionTitle" class="question-title">Φόρτωση ερώτησης...</h2>
+        <div id="optionsList" class="options-list">
+          <!-- Options will be populated by JS -->
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="nextBtn" class="btn btn-primary" disabled>
+          Επόμενο
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section id="resultsSection" class="card results-card hidden">
+      <h1 id="resultsQuizTitle" class="results-quiz-title"></h1>
+      <div class="score-circle-wrapper">
+        <svg class="score-svg" viewBox="0 0 160 160">
+          <circle class="score-bg" cx="80" cy="80" r="70"></circle>
+          <circle id="scoreFill" class="score-fill" cx="80" cy="80" r="70"></circle>
+        </svg>
+        <div class="score-text-center">
+          <div id="scoreNumber" class="score-number">0%</div>
+          <div class="score-label">Σκορ</div>
+        </div>
+      </div>
+
+      <h2 id="resultFeedbackTitle" class="result-feedback-title">Συγχαρητήρια!</h2>
+      <p id="resultFeedbackText" class="result-feedback-text">Ολοκληρώσατε το κουίζ. Δείτε τις απαντήσεις σας παρακάτω.</p>
+
+      <div class="button-group">
+        <button id="restartBtn" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          Επανάληψη
+        </button>
+        <button id="backBtn" class="btn btn-outline">Επιστροφή στα Κουίζ</button>
+        <button id="pdfBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Αποθήκευση ως PDF
+        </button>
+      </div>
+
+      <!-- Review Section -->
+      <div class="review-section">
+        <h3 class="review-title-text">Αναλυτικά Αποτελέσματα</h3>
+        <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 15px; text-align: left; width: 100%;">
+          <!-- Review items populated by JS -->
+        </div>
+      </div>
+    </section>
 
   </main>
 
+  <!-- Embedded Quiz Data & Core Script -->
+  <script>
+    const QUIZZES = [{"title": "Τεστ από Slido", "filename": "slido_b_semester.docx", "questions": [{"text": "Πώς ορίζεται στην παρουσίαση ο ανθρωπομορφισμός;", "options": ["Η άρνηση ότι τα ζώα έχουν συναισθήματα", "Η απόδοση ανθρώπινων νοητικών ικανοτήτων σε μη ανθρώπινες οντότητες", "Η αποκλειστική μελέτη της συμπεριφοράς των ζώων στο φυσικό περιβάλλον", "Η νομική αναγνώριση των δικαιωμάτων των ζώων", "Η χρήση ζώων για θεραπευτικούς σκοπούς"], "correct_idx": 1, "correct_letter": "Β"}, {"text": "Ποια είναι μία πιθανή αρνητική συνέπεια του ανθρωπομορφισμού, σύμφωνα με την παρουσίαση;", "options": ["Καλύτερη κατανόηση όλων των αναγκών του ζώου", "Ακριβέστερη κλινική αξιολόγηση", "Αδυναμία αντίληψης των πραγματικών αναγκών του ζώου", "Πλήρης αποφυγή παχυσαρκίας", "Μείωση της συναισθηματικής εμπλοκής του ιδιοκτήτη"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Ποιο «δευτερεύον» συναίσθημα αναφέρεται ως παράδειγμα λανθασμένης ερμηνείας από ιδιοκτήτες σκύλων;", "options": ["Χαρά", "Θυμός", "Ενοχή", "Έκπληξη", "Ανακούφιση"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Σύμφωνα με την παρουσίαση, σε τι αντιδρούν οι σκύλοι με «ένοχη» συμπεριφορά;", "options": ["Στην πραγματική επίγνωση του παραπτώματος", "Στην επιβράβευση από τον ιδιοκτήτη", "Στην επιπληκτική στάση του ιδιοκτήτη", "Στην παρουσία άλλων σκύλων", "Στην έλλειψη τροφής"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Ποιο από τα παρακάτω αναφέρεται ως αρνητική επίδραση της υπερβολικής «αγάπης» προς τα ζώα;", "options": ["Αυξημένη φυσική δραστηριότητα", "Παχυσαρκία", "Καλύτερη κοινωνικοποίηση", "Βελτιωμένη προσαρμοστικότητα", "Μειωμένη εξάρτηση από τον ιδιοκτήτη"], "correct_idx": 1, "correct_letter": "Β"}, {"text": "Σύμφωνα με την παρουσίαση, η επιστήμη μπορεί να:", "options": ["Καθορίσει ποιο επίπεδο κινδύνου είναι ηθικά αποδεκτό", "Αντικαταστήσει πλήρως τις κοινωνικές αποφάσεις", "Καθορίσει το είδος και το εύρος του κινδύνου", "Καταργήσει τις πολιτισμικές διαφορές", "Επιβάλει από μόνη της αλλαγή στην κοινωνική αντίληψη"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Ποια από τις παρακάτω παραμέτρους είναι animal-based measure (ABM);", "options": ["Ο αριθμός των ταϊστρών", "Η ύπαρξη αμμοδόχου", "Η μέθοδος πρόληψης νοσημάτων", "Η παρατήρηση της συμπεριφοράς του ζώου", "Το πρωτόκολλο καθαρισμού του χώρου"], "correct_idx": 3, "correct_letter": "Δ"}, {"text": "Ποια από τις παρακάτω παραμέτρους είναι resource-based measure (RBM);", "options": ["Η κλινική εικόνα του ζώου", "Η παρουσία τραυμάτων", "Ο αριθμός των ποτιστρών", "Η αντίδραση σε ερέθισμα", "Η χρήση αναισθητικών ουσιών"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Ποια από τις παρακάτω παραμέτρους είναι management-based measure (MBM);", "options": ["Η σωματική κατάσταση του ζώου", "Η συμπεριφορά κατά την παρατήρηση", "Η στάση σώματος", "Οι μέθοδοι πρόληψης νοσημάτων", "Η παρουσία χωλότητας"], "correct_idx": 3, "correct_letter": "Δ"}, {"text": "Ποιο από τα παρακάτω αναφέρεται στην παρουσίαση ως βασικός τομέας εκτίμησης της ευζωίας;", "options": ["Εμπορική αξία του ζώου", "Γενεαλογική καθαρότητα", "Συναισθηματική κατάσταση", "Αριθμός απογόνων", "Εμφανισιακά χαρακτηριστικά"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Ποια είναι η σωστότερη θέση για τους φυσιολογικούς δείκτες στην εκτίμηση της ευζωίας;", "options": ["Αρκούν μόνοι τους για ασφαλή εκτίμηση", "Είναι χρήσιμοι μόνο σε χρόνια νοσήματα", "Πρέπει να ερμηνεύονται μαζί με συμπεριφορικά και κλινικά ευρήματα", "Είναι λιγότερο χρήσιμοι από τα ερωτηματολόγια"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιο από τα παρακάτω αποτελεί κυρίως δείκτη οξείας ενεργοποίησης του οργανισμού;", "options": ["Τρίχες με κορτιζόλη", "Καρδιακός ρυθμός και θερμοκρασία σώματος", "Νοσολογικός επιπολασμός", "Θρεπτική κατάσταση"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποιο βιολογικό υλικό μπορεί να δώσει πληροφορίες για μακροχρόνια έκθεση σε στρεσογόνες συνθήκες;", "options": ["Σίελο", "Αίμα", "Τρίχες", "Ορό αίματος μόνο άμεσα μετά το ερέθισμα"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιο είναι το βασικό μειονέκτημα της ερμηνείας της κορτιζόλης;", "options": ["Δεν μετριέται ποτέ αξιόπιστα", "Είναι ειδικός δείκτης μόνο για πόνο", "Δεν είναι ειδικός δείκτης ευζωίας και επηρεάζεται από πολλούς παράγοντες", "Χρησιμοποιείται μόνο σε γάτες"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιο από τα παρακάτω συνδέεται περισσότερο με μακροχρόνια κατάσταση ευζωίας;", "options": ["Απότομη αύξηση καρδιακού ρυθμού", "Ανοσολογική λειτουργία και νοσολογικός επιπολασμός", "Στιγμιαία διάταση κόρης", "Εφίδρωση πελμάτων"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποιο εύρημα παρουσιάζεται στην παρουσίαση ως πιο ειδικό για την ψυχολογική κατάσταση του ζώου;", "options": ["Υπερβολικό γάβγισμα", "Πολυδιψία", "Αυθόρμητο παιχνίδι", "Ανάπαυση"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Οι στερεοτυπικές συμπεριφορές σχετίζονται κυρίως με:", "options": ["Μόνο οξείες καταστάσεις", "Χρόνιες καταστάσεις και παρατεταμένη ακαταλληλότητα περιβάλλοντος", "Μόνο λοιμώδη νοσήματα", "Πάντα με επιθετικότητα προς τον άνθρωπο"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Τι εννοούμε με τον όρο «Συνδυασμός ευρημάτων» στην εκτίμηση της ευζωίας;", "options": ["Ότι η συμπεριφορά αρκεί από μόνη της", "Ότι τα εργαστηριακά δεδομένα είναι πάντα ανώτερα από κάθε άλλη πληροφορία", "Ότι συμπεριφορικά και εργαστηριακά ευρήματα μπορεί να μην συμφωνούν και χρειάζεται συνδυαστική ερμηνεία", "Ότι η κορτιζόλη δεν έχει καμία χρησιμότητα"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιο είναι το βασικό πλεονέκτημα των ζωικών δεικτών στην αξιολόγηση της ευζωίας;", "options": ["Είναι ευκολότεροι από όλους τους άλλους δείκτες", "Αποτυπώνουν άμεσα την κατάσταση του ζώου", "Αφορούν μόνο τη συμπεριφορά του προσωπικού", "Χρησιμοποιούνται μόνο σε ερευνητικά πρωτόκολλα"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποιο από τα παρακάτω αποτελεί παράδειγμα resource-based measure;", "options": ["Χωλότητα", "Δείκτης θρεπτικής κατάστασης", "Καθαρό και διαθέσιμο νερό", "Φόβος απέναντι στον άνθρωπο"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Σε ποια τρία επίπεδα γίνεται η αξιολόγηση σύμφωνα με τη λογική του πρωτοκόλλου;", "options": ["Δήμος, προσωπικό, ζώο", "Καταφύγιο, κελί/κατάλυμα, ζώο", "Κτηνίατρος, εθελοντής, ανάδοχος", "Τροφή, νερό, εμβολιασμός"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Σε μεγάλο καταφύγιο, γιατί χρησιμοποιείται δείγμα ζώων αντί για αξιολόγηση όλων των ζώων;", "options": ["Επειδή τα ζωικά δεδομένα δεν είναι απαραίτητα", "Επειδή η αξιολόγηση όλων των ζώων μπορεί να είναι πρακτικά αδύνατη", "Επειδή αξιολογούνται μόνο τα άρρωστα ζώα", "Επειδή η δειγματοληψία αντικαθιστά πλήρως την κλινική εξέταση"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποια ζώα, σύμφωνα με το υλικό, δεν περιλαμβάνονται συνήθως στο γενικό δείγμα αξιολόγησης;", "options": ["Ζώα άνω των 6 μηνών", "Ζώα που βρίσκονται στο καταφύγιο πάνω από 2 μήνες", "Νοσηλευόμενα ζώα", "Ζώα σε ομαδική στέγαση"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιος δείκτης σχετίζεται πιο άμεσα με την απουσία παρατεταμένης πείνας;", "options": ["Δείκτης θρεπτικής κατάστασης", "Φωνητικές εκδηλώσεις", "Ανοχή στη θερμοκρασία", "Κοινωνική στέγαση"], "correct_idx": 0, "correct_letter": "A"}, {"text": "Ποιο από τα παρακάτω αποτελεί μη φυσιολογική/στερεοτυπική συμπεριφορά;", "options": ["Ύπνος στον χώρο ανάπαυσης", "Φυσιολογική διερεύνηση του χώρου", "Επαναλαμβανόμενος βηματισμός σε σταθερό μοτίβο", "Κατανάλωση τροφής μετά τη σίτιση"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Τι δείχνει περισσότερο η παρουσία υψηλού ποσοστού σκύλων που αποφεύγουν την επαφή με τον αξιολογητή ή εμφανίζουν έντονο φόβο κατά την αξιολόγηση;", "options": ["Ότι τα ζώα δεν είναι κατάλληλα για υιοθεσία και δεν χρειάζεται περαιτέρω αξιολόγηση", "Ότι υπάρχει πιθανό πρόβλημα κοινωνικοποίησης, προηγούμενης εμπειρίας, χειρισμών ή καθημερινής αλληλεπίδρασης με ανθρώπους", "Ότι το καταφύγιο έχει απαραίτητα ανεπαρκή διατροφή", "Ότι η αξιολόγηση πρέπει να περιοριστεί μόνο στις εγκαταστάσεις και όχι στη συμπεριφορά των ζώων"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποια ερμηνεία είναι πιο σωστή όταν υπάρχουν επαρκείς πόροι αλλά κακοί ζωικοί δείκτες;", "options": ["Η ευζωία θεωρείται αυτόματα καλή", "Οι πόροι αρκούν για θετική αξιολόγηση", "Χρειάζεται διερεύνηση της διαχείρισης και της πραγματικής επίδρασης στα ζώα", "Η αξιολόγηση επαναλαμβάνεται μόνο μετά από έναν χρόνο"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιος είναι ο κύριος σκοπός ενός πρωτοκόλλου αξιολόγησης ευζωίας σε καταφύγιο;", "options": ["Να καταγράψει μόνο τις ελλείψεις του χώρου", "Να αντικαταστήσει την κτηνιατρική εξέταση", "Να υποστηρίξει τεκμηριωμένες παρεμβάσεις βελτίωσης της ευζωίας", "Να αξιολογήσει μόνο την καθαριότητα των κελιών"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιος είναι ο βασικός σκοπός του νέου ευρωπαϊκού πλαισίου για σκύλους και γάτες;", "options": ["Η θέσπιση ελάχιστων απαιτήσεων ευζωίας και ενισχυμένης ιχνηλασιμότητας", "Η απαγόρευση όλων των εκτροφείων", "Η ρύθμιση μόνο των αδέσποτων ζώων", "Η κατάργηση της εθνικής νομοθεσίας", "Η απαγόρευση των υιοθεσιών"], "correct_idx": 0, "correct_letter": "Α"}, {"text": "Ποιος από τους παρακάτω δεν αποτελεί έναν από τους πέντε τομείς ευζωίας;", "options": ["Διατροφή", "Φυσικό περιβάλλον", "Υγεία", "Οικονομική αξία του ζώου", "Ψυχική κατάσταση"], "correct_idx": 3, "correct_letter": "Δ"}, {"text": "Τι σημαίνει αναλογικότητα στις απαιτήσεις για τις εγκαταστάσεις;", "options": ["Όλες οι εγκαταστάσεις απαλλάσσονται από τις υποχρεώσεις", "Οι απαιτήσεις εφαρμόζονται μόνο στα μεγάλα καταφύγια", "Οι μικρές εγκαταστάσεις δεν ελέγχονται", "Οι κανόνες αφορούν μόνο τα pet shops", "Οι υποχρεώσεις προσαρμόζονται στο μέγεθος και στον κίνδυνο της εγκατάστασης"], "correct_idx": 4, "correct_letter": "Ε"}, {"text": "Γιατί οι εγκαταστάσεις πώλησης καλύπτονται ανεξάρτητα από τον αριθμό των ζώων;", "options": ["Επειδή λειτουργούν πάντα ως καταφύγια", "Επειδή η δραστηριότητά τους έχει εμπορικό χαρακτήρα", "Επειδή φιλοξενούν μόνο άρρωστα ζώα", "Επειδή δεν χρειάζονται ταυτοποίηση των ζώων", "Επειδή δεν υπόκεινται σε κανόνες ευζωίας"], "correct_idx": 1, "correct_letter": "Β"}, {"text": "Τι προβλέπεται για σκύλους άνω των 8 εβδομάδων ως προς την πρόσβαση σε εξωτερικό χώρο;", "options": ["Δεν απαιτείται εξωτερική πρόσβαση", "Αρκεί μία έξοδος την εβδομάδα", "Απαιτείται καθημερινή πρόσβαση ή βόλτα συνολικά τουλάχιστον μίας ώρας", "Απαιτείται μόνο για σκύλους μεγάλου μεγέθους", "Απαιτείται μόνο όταν το ζητήσει ο αγοραστής"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Πότε δεν επιτρέπεται να χωρίζονται μόνιμα τα κουτάβια από τη μητέρα τους;", "options": ["Πριν από την ηλικία των 8 εβδομάδων", "Πριν από την ηλικία των 4 εβδομάδων", "Πριν από την ηλικία των 5 εβδομάδων", "Πριν από την ηλικία των 6 εβδομάδων", "Πριν από την ηλικία των 16 εβδομάδων"], "correct_idx": 0, "correct_letter": "Α"}, {"text": "Ποια πρακτική επιτρέπεται μόνο όταν υπάρχει ιατρική ένδειξη;", "options": ["Η καθημερινή επιθεώρηση", "Η κοινωνικοποίηση", "Η παροχή εμπλουτισμού", "Η κοπή αυτιών ή ουράς", "Η παροχή νερού"], "correct_idx": 3, "correct_letter": "Δ"}, {"text": "Τι προβλέπεται για τη στείρωση σκύλων και γατών;", "options": ["Μπορεί να γίνεται χωρίς αναισθησία", "Γίνεται μόνο με αναισθησία και παρατεταμένη αναλγησία, κατά κανόνα από κτηνίατρο", "Μπορεί να γίνεται από οποιονδήποτε φροντιστή", "Απαγορεύεται πλήρως", "Επιτρέπεται μόνο σε καταφύγια"], "correct_idx": 1, "correct_letter": "Β"}, {"text": "Ποιος είναι ο βασικός σκοπός της ταυτοποίησης και καταχώρισης;", "options": ["Η αύξηση της εμπορικής αξίας του ζώου", "Η αντικατάσταση της κτηνιατρικής εξέτασης", "Η ιχνηλασιμότητα και η δυνατότητα απόδοσης ευθύνης", "Η κατάργηση των εμβολιασμών", "Η απαγόρευση μεταβίβασης ζώων"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Τι πρέπει να συνοδεύει τις διαδικτυακές αγγελίες για σκύλους και γάτες;", "options": ["Μόνο η φωτογραφία του ζώου", "Μόνο η τιμή", "Μόνο το όνομα του πωλητή", "Μόνο η φυλή του ζώου", "Προειδοποίηση για υπεύθυνη ιδιοκτησία και δυνατότητα επαλήθευσης των στοιχείων του ζώου"], "correct_idx": 4, "correct_letter": "Ε"}, {"text": "Ποιο είναι το βασικότερο κριτήριο για να αποφασιστεί αν μια ελεύθερα διαβιούσα γάτα είναι κατάλληλη για υιοθεσία ή για TNR;", "options": ["Το χρώμα και η φυλή της γάτας", "Ο βαθμός κοινωνικοποίησης με τον άνθρωπο", "Η παρουσία άλλων γατών στην περιοχή", "Η εποχή του έτους"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Τι σημαίνει TNR στη διαχείριση ελεύθερα διαβιουσών γατών;", "options": ["Θεραπεία – Νοσηλεία – Υιοθεσία", "Παγίδευση – Στείρωση – Επανατοποθέτηση", "Ταυτοποίηση – Νοσηλεία – Παρακολούθηση", "Μεταφορά – Φιλοξενία – Υιοθεσία"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποια γάτα είναι συνήθως λιγότερο κατάλληλη για μακροχρόνια παραμονή σε καταφύγιο με στόχο την υιοθεσία;", "options": ["Κοινωνικοποιημένη εγκαταλελειμμένη γάτα", "Νεαρό γατάκι σε περίοδο κοινωνικοποίησης", "Μη κοινωνικοποιημένη/feral γάτα με έντονο φόβο ανθρώπου", "Ενήλικη γάτα που αναζητά ανθρώπινη επαφή"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποια είναι η βασική διαφορά του μοντέλου Five Domains από τις 5 ελευθερίες;", "options": ["Αφορά μόνο τα παραγωγικά ζώα", "Εστιάζει μόνο στην απουσία νόσου", "Περιλαμβάνει και τη θετική ψυχική κατάσταση του ζώου", "Καταργεί την ανάγκη κλινικής εξέτασης"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Τι σημαίνει capacity for care σε ένα καταφύγιο γατών;", "options": ["Ο μέγιστος αριθμός κλωβών που χωρά στον διαθέσιμο χώρο", "Η δυνατότητα του καταφυγίου να παρέχει επαρκή φροντίδα στον πραγματικό αριθμό ζώων", "Ο αριθμός των εθελοντών που επισκέπτονται το καταφύγιο ανά μήνα", "Η συνολική έκταση του οικοπέδου του καταφυγίου"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποια από τις παρακάτω καταστάσεις αποτελεί πιθανή ένδειξη intercat tension σε ομαδική στέγαση γατών;", "options": ["Μία γάτα κοιμάται περισσότερες ώρες το μεσημέρι", "Μία γάτα αποφεύγει σταθερά την πρόσβαση στην τροφή ή στην αμμοδόχο", "Όλες οι γάτες χρησιμοποιούν διαφορετικά σημεία ανάπαυσης", "Μία γάτα κοιτάζει έξω από το παράθυρο"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποιο είναι το βασικό μειονέκτημα της τυχαίας ομαδικής στέγασης άγνωστων γατών;", "options": ["Αυξάνει πάντα το κόστος τροφής", "Μειώνει τη δυνατότητα καθαρισμού των χώρων", "Μπορεί να προκαλέσει κοινωνικό στρες, αποκλεισμό και συγκρούσεις", "Δεν επιτρέπει τον εμβολιασμό των ζώων"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Γιατί η συμπεριφορική αξιολόγηση της γάτας σε καταφύγιο δεν πρέπει να θεωρείται απλώς «υποκειμενική»;", "options": ["Επειδή αντικαθιστά πλήρως την κλινική εξέταση", "Επειδή μπορεί να αποτελέσει αξιόπιστο animal-based δείκτη όταν εφαρμόζεται με τυποποιημένο πρωτόκολλο", "Επειδή δεν επηρεάζεται από το περιβάλλον", "Επειδή γίνεται μόνο με εργαστηριακές εξετάσεις"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποια είναι η καταλληλότερη επιλογή για νεογνά ή γατάκια που χρειάζονται κοινωνικοποίηση και στενή παρακολούθηση;", "options": ["Άμεση επανατοποθέτηση στο πεδίο", "Μακροχρόνια παραμονή σε ομαδικό κατάλυμα", "Προσωρινή φιλοξενία σε foster care", "Αποκλειστικά ατομική μόνιμη στέγαση στο καταφύγιο"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποια είναι η ορθότερη προσέγγιση για την αξιολόγηση της ευζωίας γατών καταφυγίου;", "options": ["Μόνο μέτρηση διαθέσιμων τετραγωνικών μέτρων", "Μόνο παρατήρηση της συμπεριφοράς για λίγα λεπτά", "Συνδυασμός συμπεριφορικών, κλινικών, περιβαλλοντικών και διαχειριστικών δεικτών", "Μόνο εργαστηριακές εξετάσεις αίματος"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Σε ένα καταφύγιο υπάρχει ομάδα 8 ενήλικων γατών. Δεν παρατηρούνται εμφανείς καυγάδες, αλλά δύο γάτες είναι λιπόσαρκες, κρύβονται συχνά και χρησιμοποιούν σπάνια την αμμοδόχο. Ποια είναι η πιθανότερη ερμηνεία;", "options": ["Η ομαδική στέγαση είναι επιτυχής, αφού δεν υπάρχουν εμφανείς καυγάδες", "Οι δύο γάτες πιθανόν εμφανίζουν νόσο του ουροποιητικού ανεξάρτητη από το περιβάλλον", "Μπορεί να υπάρχει κοινωνική ένταση και αποκλεισμός από πόρους χωρίς εμφανή επιθετικότητα", "Το πρόβλημα λύνεται μόνο με αύξηση της ποσότητας τροφής"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Μια ενήλικη γάτα εισάγεται σε καταφύγιο, είναι κλινικά υγιής, αλλά εμφανίζει έντονο φόβο, αποφυγή ανθρώπου και αμυντική συμπεριφορά σε κάθε προσέγγιση. Ποια είναι η πιο ορθή αρχική προσέγγιση;", "options": ["Άμεση προώθηση για υιοθεσία, ώστε να μειωθεί ο χρόνος παραμονής", "Μακροχρόνια παραμονή σε ατομικό κλωβό μέχρι να κοινωνικοποιηθεί", "Αξιολόγηση βαθμού κοινωνικοποίησης, μείωση στρεσογόνων ερεθισμάτων και εξέταση πιθανότητας TNR/RTF εφόσον είναι ασφαλές", "Άμεση ένταξη σε ομάδα γατών για να κοινωνικοποιηθεί ταχύτερα"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Γιατί η απλή αύξηση του αριθμού των γατών που μπορεί να δεχθεί ένα καταφύγιο δεν σημαίνει απαραίτητα βελτίωση της διαχείρισης αδέσποτων;", "options": ["Επειδή οι γάτες δεν χρειάζονται ποτέ καταφύγιο", "Επειδή η ευζωία εξαρτάται από το capacity for care και όχι μόνο από τον αριθμό των διαθέσιμων θέσεων", "Επειδή η στείρωση δεν επηρεάζει τον πληθυσμό", "Επειδή όλες οι γάτες πρέπει να επιστρέφονται άμεσα στο πεδίο"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Σε ποια περίπτωση η συμπεριφορική αξιολόγηση μιας γάτας καταφυγίου είναι επιστημονικά πιο αξιόπιστη;", "options": ["Όταν βασίζεται στην εντύπωση ενός έμπειρου φροντιστή χωρίς πρωτόκολλο", "Όταν γίνεται μία φορά, αμέσως μετά την είσοδο στο καταφύγιο", "Όταν εφαρμόζεται με τυποποιημένο πρωτόκολλο, εκπαιδευμένους παρατηρητές και επαναλαμβανόμενες παρατηρήσεις", "Όταν αντικαθίσταται πλήρως από εργαστηριακές εξετάσεις"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποια από τις παρακάτω επιλογές δείχνει καλύτερα τη μετάβαση από τις «5 ελευθερίες» στο μοντέλο των Five Domains;", "options": ["Αξιολογείται μόνο αν η γάτα έχει τροφή, νερό και απουσία νόσου", "Αξιολογείται όχι μόνο η απουσία αρνητικών καταστάσεων, αλλά και η δυνατότητα θετικών εμπειριών, επιλογών και ελέγχου του περιβάλλοντος", "Η αξιολόγηση περιορίζεται αποκλειστικά σε περιβαλλοντικούς δείκτες", "Η ψυχική κατάσταση της γάτας δεν μπορεί να ληφθεί υπόψη στην εκτίμηση ευζωίας"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Σε ένα καταφύγιο, οι γάτες έχουν επαρκή τετραγωνικά μέτρα ανά ζώο, αλλά ο χρόνος καθαρισμού, παρατήρησης και κοινωνικοποίησης είναι ανεπαρκής λόγω έλλειψης προσωπικού. Ποια είναι η πιο σωστή αξιολόγηση;", "options": ["Η ευζωία θεωρείται επαρκής, αφού καλύπτεται ο χώρος ανά γάτα", "Το πρόβλημα αφορά μόνο τη λειτουργικότητα του καταφυγίου, όχι την ευζωία", "Υπάρχει πρόβλημα capacity for care, άρα ο διαθέσιμος χώρος από μόνος του δεν αρκεί", "Η λύση είναι αποκλειστικά η αύξηση των αμμοδόχων"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Μια γάτα βαθμολογείται με υψηλό Cat Stress Score την πρώτη ημέρα εισόδου στο καταφύγιο. Ποια ερμηνεία είναι πιο επιστημονικά ορθή;", "options": ["Η γάτα είναι οριστικά μη κοινωνικοποιημένη", "Η γάτα δεν είναι κατάλληλη για υιοθεσία", "Η βαθμολογία δείχνει αυξημένο στρες τη συγκεκριμένη χρονική στιγμή και χρειάζεται επαναξιολόγηση", "Η γάτα πρέπει να μεταφερθεί αμέσως σε ομαδική στέγαση"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Σε ομάδα γατών, μία γάτα έχει φυσιολογική κλινική εξέταση αλλά μειωμένη πρόσληψη τροφής, παραμονή σε κρυψώνα και απώλεια βάρους. Ποια διαχειριστική παρέμβαση είναι πιο λογική ως πρώτο βήμα;", "options": ["Αύξηση της συνολικής ποσότητας τροφής στο ίδιο σημείο", "Παρακολούθηση χωρίς αλλαγές, αφού η κλινική εξέταση είναι φυσιολογική", "Έλεγχος πρόσβασης στους πόρους και πιθανή προσωρινή απομάκρυνση ή αναδιοργάνωση της ομάδας", "Διακοπή όλων των κρυψώνων για να κινείται περισσότερο"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Γιατί η μακροχρόνια παραμονή μη κοινωνικοποιημένων γατών σε ατομικούς κλωβούς μπορεί να θεωρηθεί προβληματική από άποψη ευζωίας;", "options": ["Επειδή οι γάτες δεν χρειάζονται ποτέ ατομική στέγαση", "Επειδή μπορεί να παρατείνει το στρες χωρίς ρεαλιστική προοπτική υιοθεσίας ή βελτίωσης", "Επειδή η ατομική στέγαση αυξάνει πάντα τη μετάδοση νοσημάτων", "Επειδή όλες οι μη κοινωνικοποιημένες γάτες γίνονται κοινωνικές σε λίγες ημέρες"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Ποια απόφαση δείχνει πιο ώριμη εφαρμογή του μοντέλου Five Domains σε γάτες καταφυγίου;", "options": ["Παροχή τροφής και νερού, χωρίς περαιτέρω αξιολόγηση", "Καθημερινός καθαρισμός, αλλά χωρίς κρυψώνες για να είναι ορατές οι γάτες", "Διαμόρφωση χώρου που επιτρέπει απόκρυψη, κάθετη κίνηση, επιλογή επαφής και ήρεμη απομάκρυνση από ερεθίσματα", "Έμφαση μόνο στον εμβολιασμό και στην αποπαρασίτωση"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποιος είναι ένας βασικός ρόλος των σύγχρονων ζωολογικών κήπων;", "options": ["Η απλή έκθεση σπάνιων ζώων στο κοινό", "Η αντικατάσταση των φυσικών οικοσυστημάτων", "Η εμπορική αναπαραγωγή άγριων ζώων", "Η εκπαίδευση, η διατήρηση ειδών και η έρευνα", "Η απομόνωση των ζώων από το φυσικό περιβάλλον"], "correct_idx": 3, "correct_letter": "Δ"}, {"text": "Ποια είναι η βασική διαφορά ανάμεσα σε «κλουβί» και «ενδιαίτημα»;", "options": ["Το ενδιαίτημα προσπαθεί να καλύψει βιολογικές και συμπεριφορικές ανάγκες του ζώου", "Το κλουβί είναι πάντοτε μεγαλύτερο από το ενδιαίτημα", "Το ενδιαίτημα χρησιμοποιείται μόνο για φυτοφάγα ζώα", "Το κλουβί προσφέρει πάντα καλύτερη ευζωία", "Δεν υπάρχει ουσιαστική διαφορά"], "correct_idx": 0, "correct_letter": "Α"}, {"text": "Ποιο από τα παρακάτω μπορεί να εμφανιστεί όταν ένα ζώο δεν έχει δυνατότητα φυσιολογικής συμπεριφοράς;", "options": ["Μείωση της ανάγκης για εμπλουτισμό", "Αύξηση της κοινωνικής προσαρμογής σε όλα τα είδη", "Πλήρης εξαφάνιση του στρες", "Βελτίωση της αναπαραγωγικής ικανότητας", "Στερεοτυπικές συμπεριφορές και απάθεια"], "correct_idx": 4, "correct_letter": "Ε"}, {"text": "Ποια είναι η βασική λογική των τεχνητών ενδιαιτημάτων;", "options": ["Να περιορίζουν τις επιλογές του ζώου", "Να προσφέρουν ερεθίσματα, επιλογές και κάποιο βαθμό ελέγχου", "Να αποφεύγεται η παρατήρηση των ζώων", "Να μειώνεται η ανάγκη για προσωπικό", "Να αντικαθιστούν πλήρως την άγρια φύση"], "correct_idx": 1, "correct_letter": "Β"}, {"text": "Ποιο στοιχείο χαρακτηρίζει έναν «καλό» ζωολογικό κήπο;", "options": ["Η ύπαρξη πολλών ειδών ανεξάρτητα από τις συνθήκες", "Η έμφαση μόνο στην αναψυχή των επισκεπτών", "Η απουσία ερευνητικής δραστηριότητας", "Η τεκμηριωμένη φροντίδα, η εκπαίδευση, η διατήρηση και η διαπίστευση", "Η ελάχιστη αλληλεπίδραση με την κοινωνία"], "correct_idx": 3, "correct_letter": "Δ"}, {"text": "Τι σημαίνει πρακτικά η συμπεριφορική διαχείριση;", "options": ["Παρατήρηση, καταγραφή, ανάλυση και προσαρμογή της φροντίδας στις ανάγκες του ζώου", "Εκπαίδευση των ζώων μόνο για ψυχαγωγικούς σκοπούς", "Περιορισμός κάθε αλληλεπίδρασης με το προσωπικό", "Χρήση πίεσης για γρήγορη εκμάθηση", "Αξιολόγηση μόνο της εξωτερικής εμφάνισης του ζώου"], "correct_idx": 0, "correct_letter": "Α"}, {"text": "Ποιο είναι μειονέκτημα των χρονοκατανομών ως μεθόδου αξιολόγησης ευζωίας;", "options": ["Δεν μπορούν να εφαρμοστούν σε θηλαστικά", "Απαιτούν πάντοτε αιμοληψίες", "Εστιάζουν κυρίως στη συμπεριφορά και όχι απαραίτητα στην υγεία ή τη φυσική κατάσταση", "Δεν παρέχουν καμία πληροφορία για τη συμπεριφορά", "Χρησιμοποιούνται μόνο σε παραγωγικά ζώα"], "correct_idx": 2, "correct_letter": "Γ"}, {"text": "Ποια είναι η βασική χρησιμότητα των αξιολογήσεων από τους φροντιστές;", "options": ["Αντικαθιστούν πλήρως την κτηνιατρική παρακολούθηση", "Εξαλείφουν κάθε πιθανότητα υποκειμενικότητας", "Είναι κατάλληλες μόνο για ερπετά και αμφίβια", "Καταγράφουν αποκλειστικά τη διατροφή", "Παρέχουν πρακτική εικόνα για τη συμπεριφορά και τη διάθεση των ζώων"], "correct_idx": 4, "correct_letter": "Ε"}, {"text": "Τι αξιολογούν κυρίως οι δοκιμές γνωστικής προκατάληψης;", "options": ["Την ηλικία του ζώου", "Τη συναισθηματική κατάσταση και τον τρόπο επεξεργασίας πληροφοριών", "Τη γενετική συγγένεια των ζώων", "Την ταχύτητα μετακίνησης στο ενδιαίτημα", "Την ποσότητα τροφής που καταναλώνεται"], "correct_idx": 1, "correct_letter": "Β"}, {"text": "Ποιο είναι κεντρικό μήνυμα για τον ρόλο του προσωπικού σε έναν σύγχρονο ζωολογικό κήπο;", "options": ["Το προσωπικό περιορίζεται κυρίως στον καθαρισμό", "Η παρατήρηση των ζώων δεν έχει ιδιαίτερη σημασία", "Η εκπαίδευση των ζώων γίνεται κυρίως με πίεση", "Το προσωπικό συμβάλλει στην παρατήρηση, καταγραφή, εμπλουτισμό, ασφάλεια, υγεία και εκπαίδευση", "Η φροντίδα των ζώων δεν σχετίζεται με την έρευνα"], "correct_idx": 3, "correct_letter": "Δ"}, {"text": "Ποιο από τα παρακάτω περιγράφει καλύτερα τον σωστό στόχο ενός προγράμματος εμπλουτισμού σε καταφύγιο;", "options": ["Να αυξάνεται συνεχώς ο αριθμός των διαθέσιμων παιχνιδιών", "Να απασχολούνται τα ζώα ώστε να είναι πιο ήσυχα", "Να παρέχονται ερεθίσματα που επιτρέπουν φυσιολογικές συμπεριφορές, επιλογές και καλύτερο έλεγχο του περιβάλλοντος", "Να αντικαθίσταται η ανάγκη κοινωνικής επαφής με αντικείμενα", "Να εφαρμόζεται το ίδιο πρόγραμμα σε όλα τα ζώα για λόγους ομοιομορφίας"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποια είναι η σημαντικότερη αδυναμία ενός προγράμματος εμπλουτισμού που εφαρμόζεται χωρίς προηγούμενη αξιολόγηση του ζώου;", "options": ["Μπορεί να αυξήσει το κόστος λειτουργίας του καταφυγίου", "Μπορεί να είναι αδιάφορο ή ακόμη και στρεσογόνο για συγκεκριμένα ζώα", "Μπορεί να μειώσει την ανάγκη για ανθρώπινη φροντίδα", "Μπορεί να κάνει το ζώο υπερβολικά εξαρτημένο από το παιχνίδι", "Μπορεί να αυξήσει αποκλειστικά τη σωματική δραστηριότητα"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Σε φοβικό σκύλο που αποφεύγει την ανθρώπινη επαφή, ποια προσέγγιση είναι καταλληλότερη;", "options": ["Παρατεταμένη καθημερινή επαφή μέχρι να συνηθίσει", "Άμεση ένταξη σε ομάδα παιχνιδιού με άλλα σκυλιά", "Συνεχής παρουσία ανθρώπου μέσα στον χώρο του ζώου", "Σύντομες, ήπιες και επαναλαμβανόμενες αλληλεπιδράσεις με θετική ενίσχυση", "Απομόνωση χωρίς κανένα ερέθισμα μέχρι να μειωθεί ο φόβος"], "correct_idx": 3, "correct_letter": "D"}, {"text": "Ποια από τις παρακάτω πρακτικές μπορεί να είναι προβληματική κατά τον καθαρισμό χώρου φιλοξενίας, όταν στόχος είναι και η διατήρηση οικείων οσφρητικών ερεθισμάτων;", "options": ["Η απομάκρυνση έντονα λερωμένων υλικών όταν υπάρχει κίνδυνος για την υγιεινή", "Η διατήρηση καθαρών οικείων αντικειμένων, όπως κουβέρτες ή παιχνίδια, όταν είναι ασφαλές", "Η σταδιακή εισαγωγή νέων οσμών σε σημεία διερεύνησης", "Η χρήση πολύ έντονων απορρυπαντικών ή αποσμητικών σε κάθε καθαρισμό, ώστε να εξαφανίζεται πλήρως κάθε οικεία οσμή του ζώου", "Η παρατήρηση της αντίδρασης του ζώου μετά την αλλαγή ή τον καθαρισμό του χώρου"], "correct_idx": 3, "correct_letter": "D"}, {"text": "Ποιο στοιχείο δείχνει ότι ένας εμπλουτισμός πιθανώς λειτουργεί θετικά;", "options": ["Το ζώο αποφεύγει συστηματικά το νέο ερέθισμα", "Το ζώο αυξάνει τις επαναλαμβανόμενες στερεοτυπικές συμπεριφορές", "Το ζώο εμφανίζει υπερδιέγερση και αδυναμία ηρεμίας", "Το ζώο διερευνά, παίζει, αναπαύεται ήρεμα και χρησιμοποιεί ενεργά τον χώρο του", "Το ζώο μένει συνεχώς κρυμμένο μετά την εισαγωγή του ερεθίσματος"], "correct_idx": 3, "correct_letter": "D"}, {"text": "Πότε η κοινωνική επαφή με ομοειδή δεν θεωρείται κατάλληλος εμπλουτισμός;", "options": ["Όταν το ζώο είναι καλά κοινωνικοποιημένο", "Όταν υπάρχει δυνατότητα επίβλεψης", "Όταν τα ζώα έχουν παρόμοιο μέγεθος και συμβατή συμπεριφορά", "Όταν η επαφή γίνεται σταδιακά", "Όταν το ζώο δείχνει φόβο, επιθετικότητα ή αδυναμία απομάκρυνσης από την αλληλεπίδραση"], "correct_idx": 4, "correct_letter": "E"}, {"text": "Ποιο από τα παρακάτω είναι το πιο σωστό για την άσκηση των σκύλων σε καταφύγιο;", "options": ["Η διάρκεια της άσκησης είναι ίδια για όλους τους σκύλους", "Η βόλτα καλύπτει μόνο την ανάγκη για σωματική κόπωση", "Η άσκηση προσαρμόζεται στην ηλικία, την υγεία, τη φυσική κατάσταση, τη φυλή και το επίπεδο στρες", "Η έντονη άσκηση είναι πάντα προτιμότερη από την ήπια άσκηση", "Η άσκηση μπορεί να αντικαταστήσει τον γνωστικό εμπλουτισμό"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Γιατί η απλή παροχή παιχνιδιών δεν αρκεί για να θεωρηθεί ότι υπάρχει ολοκληρωμένο πρόγραμμα εμπλουτισμού;", "options": ["Επειδή τα παιχνίδια είναι κατάλληλα μόνο για κουτάβια", "Επειδή ο εμπλουτισμός χρειάζεται στόχο, παρατήρηση, αξιολόγηση, εναλλαγή και προσαρμογή", "Επειδή ο εμπλουτισμός αφορά μόνο την τροφή", "Επειδή τα παιχνίδια αυξάνουν πάντα την επιθετικότητα", "Επειδή τα ζώα καταφυγίου δεν ανταποκρίνονται σε αντικείμενα"], "correct_idx": 1, "correct_letter": "B"}, {"text": "Όταν ένα ζώο καταφυγίου δεν δείχνει ενδιαφέρον για παιχνίδι, ποια είναι η πιο σωστή πρώτη προσέγγιση;", "options": ["Να θεωρηθεί ότι το ζώο δεν χρειάζεται εμπλουτισμό", "Να αυξηθεί αμέσως η ένταση των ερεθισμάτων", "Να αξιολογηθεί πρώτα η υγεία, ο φόβος, το στρες και η προσαρμογή του ζώου στο περιβάλλον", "Να τοποθετηθεί υποχρεωτικά σε ομάδα με άλλα ζώα", "Να περιοριστεί η παροχή ερεθισμάτων μέχρι να αρχίσει να παίζει μόνο του"], "correct_idx": 2, "correct_letter": "C"}, {"text": "Ποια είναι η καταλληλότερη σειρά ενεργειών για την εφαρμογή εμπλουτισμού σε επίπεδο καταφυγίου;", "options": ["Αγορά υλικών – εφαρμογή – φωτογράφηση – δημοσιοποίηση", "Επιλογή παιχνιδιών – καθημερινή χρήση – αντικατάσταση όταν φθαρούν", "Παρατήρηση – καταγραφή – αξιολόγηση – προσαρμογή", "Καθαρισμός – σίτιση – άσκηση – ξεκούραση", "Ομαδική εφαρμογή – μείωση προσωπικού – περιορισμός χειρισμών"], "correct_idx": 2, "correct_letter": "C"}]}];
+
+    // State Variables
+    let currentQuizIndex = -1;
+    let currentQuestionIndex = 0;
+    let userAnswers = []; // Store indices of user's chosen options
+    let correctCount = 0;
+    let isAnswered = false;
+    let soundEnabled = false; // Default off, user can toggle on
+    let currentOrderType = 'original'; // 'original' or 'random'
+    let activeQuestions = []; // Array of active questions (original order or shuffled)
+    let selectedQuizIndexForOrder = -1;
+    let currentShuffleOptions = false;
+
+    // Sound Synthesis (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      if (!soundEnabled) return;
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      const now = audioCtx.currentTime;
+      
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.12, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === 'incorrect') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(146.83, now); // D3
+        osc.frequency.linearRampToValueAtTime(98.00, now + 0.25); // G2
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    }
+
+    // Elements
+    const dashboardSection = document.getElementById('dashboardSection');
+    const quizSection = document.getElementById('quizSection');
+    const resultsSection = document.getElementById('resultsSection');
+    const orderSection = document.getElementById('orderSection');
+    const orderQuizTitle = document.getElementById('orderQuizTitle');
+    const originalOrderBtn = document.getElementById('originalOrderBtn');
+    const randomOrderBtn = document.getElementById('randomOrderBtn');
+    const orderBackBtn = document.getElementById('orderBackBtn');
+    const shuffleOptionsUnitCheckbox = document.getElementById('shuffleOptionsUnitCheckbox');
+    
+    const quizUnitText = document.getElementById('quizUnitText');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    
+    const questionTitle = document.getElementById('questionTitle');
+    const optionsList = document.getElementById('optionsList');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    const scoreNumber = document.getElementById('scoreNumber');
+    const scoreFill = document.getElementById('scoreFill');
+    const resultFeedbackTitle = document.getElementById('resultFeedbackTitle');
+    const resultFeedbackText = document.getElementById('resultFeedbackText');
+    const reviewContainer = document.getElementById('reviewContainer');
+    const resultsQuizTitle = document.getElementById('resultsQuizTitle');
+    
+    const restartBtn = document.getElementById('restartBtn');
+    const backBtn = document.getElementById('backBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
+    const soundToggle = document.getElementById('soundToggle');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundMutedIcon = document.getElementById('soundMutedIcon');
+
+    // Shuffle Helper (Fisher-Yates)
+    function shuffleArray(array) {
+      let shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Shuffle Options Helper
+    function shuffleQuestionOptions(question) {
+      let optionsWithIndices = question.options.map((opt, idx) => ({
+        text: opt,
+        isCorrect: (idx === question.correct_idx)
+      }));
+      let shuffled = shuffleArray(optionsWithIndices);
+      let newOptions = shuffled.map(item => item.text);
+      let newCorrectIdx = shuffled.findIndex(item => item.isCorrect);
+      return {
+        text: question.text,
+        options: newOptions,
+        correct_idx: newCorrectIdx
+      };
+    }
+
+    // Initialize Dashboard
+    function initDashboard() {
+      dashboardSection.innerHTML = '';
+      
+      QUIZZES.forEach((quiz, index) => {
+        const card = document.createElement('div');
+        card.className = 'card quiz-card';
+        card.addEventListener('click', () => promptOrderSelection(index));
+        
+        card.innerHTML = `
+          <div>
+            <span class="unit-tag">Ενεργό</span>
+            <h3 class="quiz-card-title">${quiz.title}</h3>
+          </div>
+          <div class="quiz-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>${quiz.questions.length} Ερωτήσεις</span>
+          </div>
+        `;
+        dashboardSection.appendChild(card);
+      });
+    }
+
+    // Sound toggle function
+    soundToggle.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) {
+        soundToggle.classList.remove('muted');
+        soundOnIcon.classList.remove('hidden');
+        soundMutedIcon.classList.add('hidden');
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } else {
+        soundToggle.classList.add('muted');
+        soundOnIcon.classList.add('hidden');
+        soundMutedIcon.classList.remove('hidden');
+      }
+    });
+
+    // Order Selection Logic
+    function promptOrderSelection(quizIdx) {
+      selectedQuizIndexForOrder = quizIdx;
+      const quiz = QUIZZES[quizIdx];
+      orderQuizTitle.textContent = quiz.title;
+      
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.remove('hidden');
+    }
+
+    originalOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'original');
+    });
+
+    randomOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'random');
+    });
+
+    orderBackBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // Start Quiz
+    function startQuiz(quizIdx, orderType) {
+      currentOrderType = orderType;
+      const quiz = QUIZZES[quizIdx];
+
+      currentShuffleOptions = shuffleOptionsUnitCheckbox.checked;
+      
+      let tempQuestions = (orderType === 'random') ? shuffleArray(quiz.questions) : [...quiz.questions];
+      
+      // Shuffle options if checked
+      activeQuestions = tempQuestions.map(q => {
+        return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+      });
+
+      currentQuizIndex = quizIdx;
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      correctCount = 0;
+      isAnswered = false;
+      
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      
+      quizUnitText.textContent = "ΤΕΣΤ ΑΠΟ SLIDO";
+      
+      loadQuestion();
+    }
+
+    // Load Question
+    function loadQuestion() {
+      const q = activeQuestions[currentQuestionIndex];
+      isAnswered = false;
+      nextBtn.disabled = true;
+      
+      progressText.textContent = `Ερώτηση ${currentQuestionIndex + 1} από ${activeQuestions.length}`;
+      const progressPercent = (currentQuestionIndex / activeQuestions.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+      
+      questionTitle.textContent = q.text;
+      optionsList.innerHTML = '';
+      
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        const markerChar = String.fromCharCode(65 + idx);
+        
+        btn.innerHTML = `
+          <span class="option-marker">${markerChar}</span>
+          <span>${option}</span>
+        `;
+        
+        btn.addEventListener('click', () => selectOption(idx, btn));
+        optionsList.appendChild(btn);
+      });
+    }
+
+    // Select Option
+    function selectOption(optionIdx, buttonEl) {
+      if (isAnswered) return;
+      isAnswered = true;
+      userAnswers.push(optionIdx);
+      
+      const q = activeQuestions[currentQuestionIndex];
+      const correctIdx = q.correct_idx;
+      const isCorrect = (optionIdx === correctIdx);
+      
+      if (isCorrect) {
+        correctCount++;
+        buttonEl.classList.add('selected-correct');
+        playSound('correct');
+      } else {
+        buttonEl.classList.add('selected-incorrect');
+        buttonEl.classList.add('shake');
+        playSound('incorrect');
+        
+        const correctBtn = optionsList.children[correctIdx];
+        if (correctBtn) {
+          correctBtn.classList.add('correct-reveal');
+        }
+      }
+      
+      Array.from(optionsList.children).forEach(btn => {
+        btn.disabled = true;
+      });
+      
+      nextBtn.disabled = false;
+    }
+
+    // Next Question Button Click
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      
+      if (currentQuestionIndex < activeQuestions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    // Show Results
+    function showResults() {
+      quizSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+      
+      const quiz = QUIZZES[currentQuizIndex];
+      
+      if (resultsQuizTitle) {
+        resultsQuizTitle.textContent = quiz.title;
+      }
+      
+      const totalQuestions = activeQuestions.length;
+      const scorePercent = Math.round((correctCount / totalQuestions) * 100);
+      
+      scoreNumber.textContent = `${scorePercent}%`;
+      
+      const strokeOffset = 440 - (440 * scorePercent) / 100;
+      setTimeout(() => {
+        scoreFill.style.strokeDashoffset = strokeOffset;
+      }, 100);
+      
+      if (scorePercent === 100) {
+        resultFeedbackTitle.textContent = "Άριστα! 🎉";
+        resultFeedbackText.textContent = "Απαντήσατε σωστά σε όλες τις ερωτήσεις! Έχετε κατανοήσει πλήρως την ύλη.";
+      } else if (scorePercent >= 80) {
+        resultFeedbackTitle.textContent = "Εξαιρετική Προσπάθεια! ✨";
+        resultFeedbackText.textContent = `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Πολύ καλή γνώση του αντικειμένου!`;
+      } else if (scorePercent >= 50) {
+        resultFeedbackTitle.textContent = "Πολύ Καλά! 👍";
+        resultFeedbackText.textContent = `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Έχετε καλή βάση, αλλά μπορείτε να βελτιωθείτε.`;
+      } else {
+        resultFeedbackTitle.textContent = "Χρειάζεται Μελέτη! 📚";
+        resultFeedbackText.textContent = `Πετύχατε μόνο ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Σας προτείνουμε να ξαναδιαβάσετε τις σημειώσεις και να δοκιμάσετε ξανά.`;
+      }
+      
+      reviewContainer.innerHTML = '';
+      activeQuestions.forEach((q, idx) => {
+        const userChoiceIdx = userAnswers[idx];
+        const correctIdx = q.correct_idx;
+        const isUserCorrect = (userChoiceIdx === correctIdx);
+        
+        const reviewItem = document.createElement('div');
+        reviewItem.className = 'review-item';
+        
+        let optionsMarkup = '';
+        q.options.forEach((opt, optIdx) => {
+          const optMarker = String.fromCharCode(65 + optIdx);
+          let optClass = 'review-opt-neutral';
+          let statusIndicator = '';
+          
+          if (optIdx === correctIdx) {
+            optClass = 'review-opt-correct';
+            statusIndicator = ' (Σωστό)';
+          } else if (optIdx === userChoiceIdx && !isUserCorrect) {
+            optClass = 'review-opt-incorrect';
+            statusIndicator = ' (Η επιλογή σας)';
+          }
+          
+          optionsMarkup += `
+            <div class="review-opt ${optClass}">
+              <span class="review-opt-marker">${optMarker}.</span>
+              <span>${opt}${statusIndicator}</span>
+            </div>
+          `;
+        });
+        
+        reviewItem.innerHTML = `
+          <div class="review-item-q">${idx + 1}. ${q.text}</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${optionsMarkup}
+          </div>
+        `;
+        reviewContainer.appendChild(reviewItem);
+      });
+    }
+
+    // Restart Quiz
+    restartBtn.addEventListener('click', () => {
+      startQuiz(currentQuizIndex, currentOrderType);
+    });
+
+    // Go Back to Dashboard
+    backBtn.addEventListener('click', () => {
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+      initDashboard();
+    });
+
+    // Save Results as PDF
+    pdfBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Initialize Page
+    initDashboard();
+  </script>
 </body>
 </html>
