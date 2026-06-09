@@ -806,6 +806,12 @@
     @media (max-width: 600px) {
       .question-image-container img { max-height: 220px; }
     }
+
+    /* Glossary highlight in results review */
+    .glossary-term {
+      color: var(--primary);
+      font-weight: 600;
+    }
   </style>
 
 </head>
@@ -899,6 +905,12 @@
         <span data-translate="lblImages">Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)</span>
       </label>
 
+      <!-- Glossary Highlight Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="glossaryUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
+      </label>
+
       <!-- Adjustable Size Option -->
       <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
         <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
@@ -953,6 +965,12 @@
       <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
         <input type="checkbox" id="imagesGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
         <span data-translate="lblImages">Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)</span>
+      </label>
+
+      <!-- Glossary Highlight Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="glossaryGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
       </label>
 
       <!-- Adjustable Size Option General -->
@@ -1095,6 +1113,7 @@
         lblTimer: "Ενεργοποίηση Χρονομέτρου",
         lblAntiCheat: "Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης (anti-cheat)",
         lblImages: "Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)",
+        lblGlossary: "Χρωματισμός όρων-κλειδιών στα αποτελέσματα",
         cheatViolationTitle: "Ακυρώθηκε λόγω παραβίασης",
         cheatReasonPrefix: "Λόγος: ",
         cheatReasonTab: "Αλλαγή καρτέλας ή ελαχιστοποίηση παραθύρου",
@@ -1128,6 +1147,7 @@
         lblTimer: "Enable Timer",
         lblAntiCheat: "Enable anti-cheat detection",
         lblImages: "Show question images (Wikimedia Commons)",
+        lblGlossary: "Highlight key terms in results",
         cheatViolationTitle: "Invalidated due to violation",
         cheatReasonPrefix: "Reason: ",
         cheatReasonTab: "Tab switch or window minimized",
@@ -1772,6 +1792,7 @@
       cheatViolationReason = null;
       antiCheatEnabled = (quizIdx === 11) ? antiCheatGeneralCheckbox.checked : antiCheatUnitCheckbox.checked;
       imagesEnabled = (quizIdx === 11) ? imagesGeneralCheckbox.checked : imagesUnitCheckbox.checked;
+      glossaryEnabled = (quizIdx === 11) ? glossaryGeneralCheckbox.checked : glossaryUnitCheckbox.checked;
 
       dashboardSection.classList.add('hidden');
       resultsSection.classList.add('hidden');
@@ -2085,6 +2106,34 @@
       }
     });
 
+    // === Glossary highlighting in results review ===
+    const glossaryUnitCheckbox = document.getElementById('glossaryUnitCheckbox');
+    const glossaryGeneralCheckbox = document.getElementById('glossaryGeneralCheckbox');
+    let glossaryEnabled = false;
+    const GLOSSARY = {
+      el: ['νόηση','συνείδηση','γνώση','αντίληψη','μνήμη','εγκέφαλος','νευρώνες','νευρώνας','νευρωνικός','νευρωνικά κυκλώματα','ζώο','ζώα','συμπεριφορά','ενσώματη νόηση','αναπαράσταση','αναπαραστάσεις','μάθηση','κλασική εξάρτηση','συντελεστική εξάρτηση','κλασική εξαρτημένη μάθηση','συντελεστική εξαρτημένη μάθηση','ενσυναίσθηση','συναίσθημα','συναισθήματα','ερέθισμα','ερεθίσματα','νοητικός μηχανισμός','νοητική κατάσταση','νοητικές καταστάσεις','υποκειμενική εμπειρία','qualia','ηχοεντοπισμός','εχολοκατοποίηση','υπερήχοι','πρόβλημα νου-σώματος','δυϊσμός','υλισμός','λειτουργιοκρατία','αναγωγή','αναγωγισμός','γνωσιακή προκατάληψη','προκατάληψη','κοινωνική νόηση','κατοπτρικοί νευρώνες','Θεωρία του Νου','παρεχόμενες δυνατότητες','affordance','affordances','φιλοσοφία της νόησης','ιππόκαμπος','αμυγδαλή','νοημοσύνη','γνωσιακές επιστήμες','υπολογιστική λειτουργία'],
+      en: ['cognition','consciousness','perception','memory','brain','neuron','neurons','neural','neural circuit','neural circuits','animal','animals','behavior','behaviour','embodied cognition','representation','representations','learning','classical conditioning','operant conditioning','empathy','emotion','emotions','stimulus','stimuli','mental state','mental states','mental mechanism','qualia','subjective experience','echolocation','ultrasound','mind-body problem','dualism','physicalism','materialism','functionalism','reductionism','reduction','cognitive bias','cognitive biases','social cognition','mirror neurons','theory of mind','affordance','affordances','philosophy of mind','hippocampus','amygdala','intelligence','cognitive sciences']
+    };
+    function _escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function highlightGlossary(text, lang) {
+      if (!text || !glossaryEnabled) return text;
+      const terms = (GLOSSARY[lang] || []);
+      if (!terms.length) return text;
+      // Longest-first so multi-word phrases match before their constituent words
+      const sorted = [...terms].sort((a, b) => b.length - a.length);
+      const pattern = sorted.map(_escapeRegex).join('|');
+      // Word boundaries that work across Greek + Latin: a letter/digit MUST NOT
+      // sit immediately before or after the match (Unicode-aware via \p{L}\p{N}).
+      let re;
+      try {
+        re = new RegExp('(?<![\\p{L}\\p{N}])(' + pattern + ')(?![\\p{L}\\p{N}])', 'giu');
+      } catch (e) {
+        // Fallback for older engines without lookbehind/property escapes
+        re = new RegExp('\\b(' + pattern + ')\\b', 'gi');
+      }
+      return text.replace(re, '<span class="glossary-term">$1</span>');
+    }
+
     // Show Results
     function showResults() {
       stopAntiCheat();
@@ -2172,7 +2221,7 @@
           optionsMarkup += `
             <div class="review-opt ${optClass}">
               <span class="review-opt-marker">${optMarker}.</span>
-              <span>${optText}${statusIndicator}</span>
+              <span>${highlightGlossary(optText, currentLang)}${statusIndicator}</span>
             </div>
           `;
         });
@@ -2190,7 +2239,7 @@
         const reportBtnText = currentLang === 'el' ? 'Αναφορά' : 'Report';
         reviewItem.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;">
-            <div class="review-item-q">${idx + 1}. ${qText}${qStatusText}</div>
+            <div class="review-item-q">${idx + 1}. ${highlightGlossary(qText, currentLang)}${qStatusText}</div>
             <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="reportQuestion('${escapedTitle}', '${idx + 1}', '${escapedQText}')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               <span>${reportBtnText}</span>

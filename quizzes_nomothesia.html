@@ -754,6 +754,12 @@
     @media (max-width: 600px) {
       .question-image-container img { max-height: 220px; }
     }
+
+    /* Glossary highlight in results review */
+    .glossary-term {
+      color: var(--primary);
+      font-weight: 600;
+    }
   </style>
 
 </head>
@@ -845,6 +851,12 @@
       <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
         <input type="checkbox" id="imagesUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
         <span data-translate="lblImages">Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)</span>
+      </label>
+
+      <!-- Glossary Highlight Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="glossaryUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
       </label>
 
       <!-- Adjustable Size Option -->
@@ -981,6 +993,7 @@
         lblTimer: "Ενεργοποίηση Χρονομέτρου",
         lblAntiCheat: "Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης (anti-cheat)",
         lblImages: "Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)",
+        lblGlossary: "Χρωματισμός όρων-κλειδιών στα αποτελέσματα",
         cheatViolationTitle: "Ακυρώθηκε λόγω παραβίασης",
         cheatReasonPrefix: "Λόγος: ",
         cheatReasonTab: "Αλλαγή καρτέλας ή ελαχιστοποίηση παραθύρου",
@@ -1009,6 +1022,7 @@
         lblTimer: "Enable Timer",
         lblAntiCheat: "Enable anti-cheat detection",
         lblImages: "Show question images (Wikimedia Commons)",
+        lblGlossary: "Highlight key terms in results",
         cheatViolationTitle: "Invalidated due to violation",
         cheatReasonPrefix: "Reason: ",
         cheatReasonTab: "Tab switch or window minimized",
@@ -1399,6 +1413,7 @@
       cheatViolationReason = null;
       antiCheatEnabled = antiCheatUnitCheckbox.checked;
       imagesEnabled = imagesUnitCheckbox.checked;
+      glossaryEnabled = glossaryUnitCheckbox.checked;
 
       dashboardSection.classList.add('hidden');
       resultsSection.classList.add('hidden');
@@ -1697,6 +1712,29 @@
       }
     });
 
+    // === Glossary highlighting in results review ===
+    const glossaryUnitCheckbox = document.getElementById('glossaryUnitCheckbox');
+    let glossaryEnabled = false;
+    const GLOSSARY = {
+      el: ['νομοθεσία','νόμος','νόμοι','ευζωία','προστασία','δίκαιο','κατοχή','ιδιοκτησία','σύμβαση','οδηγία','κανονισμός','κράτος','ποινή','ποινές','κύρωση','κυρώσεις','διοικητική κύρωση','ποινική κύρωση','υποχρέωση','υποχρεώσεις','ευθύνη','ευθύνες','δικαίωμα','δικαιώματα','παράβαση','κακοποίηση','κακή μεταχείριση','εγκατάλειψη','σφαγή','μεταφορά','ζώα συντροφιάς','παραγωγικά ζώα','άγρια ζώα','δεσποζόμενα ζώα','αδέσποτα ζώα','υπεύθυνη κατοχή','στείρωση','ταυτοποίηση','microchip','μικροτσίπ','ηλεκτρονική ταυτοποίηση','Παγκόσμιος Οργανισμός Υγείας Ζώων','πρόστιμο','ποινική δίωξη','αστυνομική αρχή','δημόσια αρχή','Ευρωπαϊκή Ένωση','κτηνίατρος','κτηνιατρική','πιστοποιητικό','άδεια','βιβλιάριο υγείας','κτηνιατρικό βιβλιάριο'],
+      en: ['legislation','law','laws','welfare','protection','ownership','possession','convention','directive','regulation','sanction','sanctions','penalty','penalties','criminal sanction','administrative sanction','obligation','obligations','responsibility','rights','right','abuse','mistreatment','abandonment','slaughter','transport','companion animals','production animals','wild animals','stray animals','responsible ownership','neutering','sterilisation','identification','microchip','electronic identification','World Organisation for Animal Health','WOAH','OIE','EU directive','national law','fine','prosecution','authority','public authority','European Union','veterinarian','veterinary','certificate','permit','licence','health book']
+    };
+    function _escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function highlightGlossary(text, lang) {
+      if (!text || !glossaryEnabled) return text;
+      const terms = (GLOSSARY[lang] || []);
+      if (!terms.length) return text;
+      const sorted = [...terms].sort((a, b) => b.length - a.length);
+      const pattern = sorted.map(_escapeRegex).join('|');
+      let re;
+      try {
+        re = new RegExp('(?<![\\p{L}\\p{N}])(' + pattern + ')(?![\\p{L}\\p{N}])', 'giu');
+      } catch (e) {
+        re = new RegExp('\\b(' + pattern + ')\\b', 'gi');
+      }
+      return text.replace(re, '<span class="glossary-term">$1</span>');
+    }
+
     // Show Results
     function showResults() {
       stopAntiCheat();
@@ -1784,7 +1822,7 @@
           optionsMarkup += `
             <div class="review-opt ${optClass}">
               <span class="review-opt-marker">${optMarker}.</span>
-              <span>${optText}${statusIndicator}</span>
+              <span>${highlightGlossary(optText, currentLang)}${statusIndicator}</span>
             </div>
           `;
         });
@@ -1802,7 +1840,7 @@
         const reportBtnText = currentLang === 'el' ? 'Αναφορά' : 'Report';
         reviewItem.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;">
-            <div class="review-item-q">${idx + 1}. ${qText}${qStatusText}</div>
+            <div class="review-item-q">${idx + 1}. ${highlightGlossary(qText, currentLang)}${qStatusText}</div>
             <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="reportQuestion('${escapedTitle}', '${idx + 1}', '${escapedQText}')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               <span>${reportBtnText}</span>
