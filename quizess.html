@@ -276,6 +276,106 @@
       display: none !important;
     }
 
+    /* Quiz search */
+    .search-section {
+      margin-top: 24px;
+    }
+    .search-input-wrap {
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 44px 14px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 1rem;
+      font-family: var(--font-inter);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      display: none;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    .search-clear-btn:hover { color: var(--text-main); }
+    .search-status {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .search-results {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .search-result {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .search-result-topic {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+    }
+    .search-result-q {
+      color: var(--text-main);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    .search-result-a {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+    .search-result-a strong { color: var(--success); font-weight: 600; }
+    .search-result-link {
+      align-self: flex-start;
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .search-result-link:hover { text-decoration: underline; }
+    .search-result mark {
+      background: var(--primary-glow);
+      color: var(--primary);
+      padding: 0 3px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+    .search-more {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 8px 0;
+    }
+
     /* Manual preview modal */
     .modal-overlay {
       position: fixed;
@@ -399,7 +499,27 @@
   </header>
 
   <main class="container">
-    
+
+    <!-- QUIZ SEARCH -->
+    <section class="search-section">
+      <div class="search-input-wrap">
+        <input
+          id="quizSearchInput"
+          class="search-input"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          maxlength="120"
+          aria-label="Search questions"
+          data-translate-attr="placeholder:searchPlaceholder"
+          placeholder="Αναζήτηση σε ερωτήσεις και σωστές απαντήσεις…"
+        />
+        <button id="quizSearchClear" class="search-clear-btn" type="button" aria-label="Clear search">×</button>
+      </div>
+      <div id="quizSearchStatus" class="search-status" data-translate="searchHint">Η αναζήτηση γίνεται σε ερωτήσεις και σωστές απαντήσεις. Παραμένει εξ ολοκλήρου στον περιηγητή σας.</div>
+      <div id="quizSearchResults" class="search-results" aria-live="polite"></div>
+    </section>
+
     <div class="categories-grid">
       
       <!-- CATEGORY 1 -->
@@ -570,7 +690,19 @@
         metaManual: "HTML / εκτυπώσιμο σε PDF",
         viewManualBtn: "Προβολή Εγχειριδίου",
         downloadManualBtn: "Λήψη",
-        closeBtn: "Κλείσιμο"
+        closeBtn: "Κλείσιμο",
+        searchPlaceholder: "Αναζήτηση σε ερωτήσεις και σωστές απαντήσεις…",
+        searchHint: "Η αναζήτηση γίνεται σε ερωτήσεις και σωστές απαντήσεις. Παραμένει εξ ολοκλήρου στον περιηγητή σας.",
+        searchLoading: "Φόρτωση ερωτήσεων…",
+        searchLoadError: "Δεν ήταν δυνατή η φόρτωση των ερωτήσεων.",
+        searchFileMode: "Η αναζήτηση δεν λειτουργεί όταν η σελίδα ανοίγει απευθείας ως αρχείο (file://). Χρειάζεται web server — π.χ. ανεβάστε τη στο GitHub Pages ή τρέξτε τοπικά «python -m http.server» στον φάκελο.",
+        searchEmpty: "Καμία ερώτηση δεν ταιριάζει.",
+        searchAnswer: "Σωστή απάντηση:",
+        searchOpenQuiz: "Άνοιγμα ενότητας →",
+        searchMore: "και {n} ακόμη αποτελέσματα…",
+        topicNoisi: "Νόηση & Συνείδηση",
+        topicNomothesia: "Νομοθεσία & Ευζωία",
+        topicEuzwia: "Επιστήμη Ευζωίας"
       },
       en: {
         navHome: "Home",
@@ -598,7 +730,19 @@
         metaManual: "HTML / printable to PDF",
         viewManualBtn: "View Manual",
         downloadManualBtn: "Download",
-        closeBtn: "Close"
+        closeBtn: "Close",
+        searchPlaceholder: "Search across questions and correct answers…",
+        searchHint: "Search runs across questions and correct answers. Everything stays in your browser.",
+        searchLoading: "Loading questions…",
+        searchLoadError: "Could not load questions.",
+        searchFileMode: "Search doesn't work when this page is opened directly as a file (file://). It needs a web server — e.g. publish to GitHub Pages, or locally run \"python -m http.server\" in the folder.",
+        searchEmpty: "No matching questions.",
+        searchAnswer: "Correct answer:",
+        searchOpenQuiz: "Open unit →",
+        searchMore: "and {n} more results…",
+        topicNoisi: "Cognition & Consciousness",
+        topicNomothesia: "Legislation & Welfare",
+        topicEuzwia: "Welfare Science"
       }
     };
 
@@ -609,9 +753,24 @@
           el.textContent = TRANSLATIONS[lang][key];
         }
       });
+      // data-translate-attr="placeholder:searchPlaceholder" → set attribute
+      document.querySelectorAll('[data-translate-attr]').forEach(el => {
+        const spec = el.getAttribute('data-translate-attr');
+        if (!spec) return;
+        const [attr, key] = spec.split(':');
+        if (attr && key && TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          el.setAttribute(attr, TRANSLATIONS[lang][key]);
+        }
+      });
       langToggleBtn.textContent = lang === 'el' ? 'EN' : 'EL';
       localStorage.setItem('lang', lang);
       currentLang = lang;
+      // Re-run the search render so result-card labels / topic names / "no results"
+      // text follow the new language. Safe to call when input is empty.
+      try {
+        const input = document.getElementById('quizSearchInput');
+        if (input) _searchPerform(input.value);
+      } catch (e) {}
     }
 
     langToggleBtn.addEventListener('click', () => {
@@ -650,6 +809,302 @@
         </div>`;
       }).join('');
     }
+    // === Quiz Search ===
+    // Sources to search. Files live in the same directory; we fetch them on
+    // first interaction, extract their QUIZZES array, then search in memory.
+    const SEARCH_SOURCES = [
+      { topicKey: 'noisi',      file: 'quizzes_noisi.html',      labelKey: 'topicNoisi' },
+      { topicKey: 'nomothesia', file: 'quizzes_nomothesia.html', labelKey: 'topicNomothesia' },
+      { topicKey: 'euzwia',     file: 'quizzes_euzwia.html',     labelKey: 'topicEuzwia' }
+    ];
+    const SEARCH_MAX_RESULTS = 30;
+    let SEARCH_INDEX = null;          // built lazily
+    let SEARCH_INDEX_PROMISE = null;  // in-flight load
+    let SEARCH_DEBOUNCE_TIMER = null;
+
+    function _searchEscapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      })[c]);
+    }
+    function _searchEscapeRegex(s) {
+      return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    // Same-length char map. Keeps indices aligned so we can slice the original
+    // string by positions found in the stripped one — critical for highlighting.
+    const _SEARCH_ACCENT_MAP = (() => {
+      const pairs = {
+        'ά':'α','έ':'ε','ή':'η','ί':'ι','ό':'ο','ύ':'υ','ώ':'ω',
+        'ϊ':'ι','ϋ':'υ','ΐ':'ι','ΰ':'υ',
+        'Ά':'Α','Έ':'Ε','Ή':'Η','Ί':'Ι','Ό':'Ο','Ύ':'Υ','Ώ':'Ω',
+        'Ϊ':'Ι','Ϋ':'Υ',
+        'á':'a','à':'a','â':'a','ä':'a','ã':'a','å':'a','ā':'a',
+        'é':'e','è':'e','ê':'e','ë':'e','ē':'e',
+        'í':'i','ì':'i','î':'i','ï':'i','ī':'i',
+        'ó':'o','ò':'o','ô':'o','ö':'o','õ':'o','ō':'o',
+        'ú':'u','ù':'u','û':'u','ü':'u','ū':'u',
+        'ç':'c','ñ':'n','ß':'s',
+        'Á':'A','À':'A','Â':'A','Ä':'A','Ã':'A','Å':'A',
+        'É':'E','È':'E','Ê':'E','Ë':'E',
+        'Í':'I','Ì':'I','Î':'I','Ï':'I',
+        'Ó':'O','Ò':'O','Ô':'O','Ö':'O','Õ':'O',
+        'Ú':'U','Ù':'U','Û':'U','Ü':'U',
+        'Ç':'C','Ñ':'N'
+      };
+      return pairs;
+    })();
+    function _searchStripAccents(s) {
+      const str = String(s);
+      let out = '';
+      for (let i = 0; i < str.length; i++) {
+        const ch = str[i];
+        out += _SEARCH_ACCENT_MAP[ch] || ch;
+      }
+      return out;
+    }
+
+    // Split a query into word tokens, accent-stripped + lowercased. Tokens
+    // shorter than 2 chars are dropped (won't survive any reasonable filter).
+    function _searchTokenize(query) {
+      const cleaned = _searchStripAccents(String(query || '').toLowerCase())
+        .replace(/[^\p{L}\p{N}]+/gu, ' ');
+      const seen = new Set();
+      const out = [];
+      for (const t of cleaned.split(/\s+/)) {
+        if (t.length < 2 || seen.has(t)) continue;
+        seen.add(t);
+        out.push(t);
+      }
+      return out;
+    }
+
+    // Parse `const QUIZZES = [ ... ];` out of a quiz page's HTML by scanning
+    // for balanced brackets while respecting string literals + escapes.
+    // Returns the parsed JS array, or null on any failure. Untrusted input is
+    // never executed: we json-parse a sliced substring, not eval.
+    function _searchExtractQuizzes(html) {
+      const marker = 'const QUIZZES = ';
+      const start = html.indexOf(marker);
+      if (start < 0) return null;
+      const i0 = start + marker.length;
+      let depth = 0, inString = false, q = null, escape = false;
+      for (let i = i0; i < html.length; i++) {
+        const c = html[i];
+        if (escape) { escape = false; continue; }
+        if (inString) {
+          if (c === '\\') { escape = true; continue; }
+          if (c === q) { inString = false; q = null; }
+          continue;
+        }
+        if (c === '"' || c === "'") { inString = true; q = c; continue; }
+        if (c === '[' || c === '{') depth++;
+        else if (c === ']' || c === '}') {
+          depth--;
+          if (depth === 0) {
+            const slice = html.slice(i0, i + 1);
+            try { return JSON.parse(slice); } catch (e) { return null; }
+          }
+        }
+      }
+      return null;
+    }
+
+    async function _searchLoadIndex() {
+      if (SEARCH_INDEX) return SEARCH_INDEX;
+      if (SEARCH_INDEX_PROMISE) return SEARCH_INDEX_PROMISE;
+      SEARCH_INDEX_PROMISE = (async () => {
+        const entries = [];
+        for (const src of SEARCH_SOURCES) {
+          try {
+            const res = await fetch(src.file);
+            if (!res.ok) continue;
+            const html = await res.text();
+            const quizzes = _searchExtractQuizzes(html);
+            if (!Array.isArray(quizzes)) continue;
+            for (const quiz of quizzes) {
+              const qs = quiz && quiz.questions;
+              if (!Array.isArray(qs)) continue;
+              for (const q of qs) {
+                if (!q) continue;
+                const ci = (typeof q.correct_idx === 'number') ? q.correct_idx : -1;
+                const correctEl = (Array.isArray(q.options) && ci >= 0) ? (q.options[ci] || '') : '';
+                const correctEn = (Array.isArray(q.options_en) && ci >= 0) ? (q.options_en[ci] || '') : '';
+                const textEl = q.text || '';
+                const textEn = q.text_en || '';
+                entries.push({
+                  topicKey: src.topicKey,
+                  labelKey: src.labelKey,
+                  file: src.file,
+                  textEl: textEl,
+                  textEn: textEn,
+                  correctEl: correctEl,
+                  correctEn: correctEn,
+                  // Precomputed accent-stripped lowercase haystack covers both
+                  // languages so a query in either matches.
+                  haystack: _searchStripAccents((textEl + ' ¶ ' + textEn + ' ¶ ' + correctEl + ' ¶ ' + correctEn).toLowerCase())
+                });
+              }
+            }
+          } catch (e) { /* ignore individual source failures */ }
+        }
+        SEARCH_INDEX = entries;
+        return entries;
+      })();
+      return SEARCH_INDEX_PROMISE;
+    }
+
+    function _searchHighlight(text, tokens) {
+      // Always escape first; then wrap each token match in <mark>. Tokens are
+      // already accent-stripped + lowercased; we search in an accent-stripped
+      // mirror of `safe` whose indices are guaranteed equal to `safe`'s
+      // because _searchStripAccents is a same-length char map.
+      const safe = _searchEscapeHtml(text || '');
+      if (!tokens || !tokens.length) return safe;
+      const mirror = _searchStripAccents(safe).toLowerCase();
+      const ranges = [];
+      for (const tok of tokens) {
+        if (!tok) continue;
+        let from = 0;
+        while (true) {
+          const idx = mirror.indexOf(tok, from);
+          if (idx < 0) break;
+          ranges.push([idx, idx + tok.length]);
+          from = idx + tok.length;
+          if (ranges.length > 200) break;
+        }
+      }
+      if (!ranges.length) return safe;
+      // Merge overlapping/adjacent ranges so two tokens that touch produce a
+      // single <mark>, not nested ones.
+      ranges.sort((a, b) => a[0] - b[0]);
+      const merged = [];
+      for (const r of ranges) {
+        if (merged.length && r[0] <= merged[merged.length-1][1]) {
+          merged[merged.length-1][1] = Math.max(merged[merged.length-1][1], r[1]);
+        } else {
+          merged.push([r[0], r[1]]);
+        }
+      }
+      let out = '';
+      let cursor = 0;
+      for (const [a, b] of merged) {
+        out += safe.slice(cursor, a);
+        out += '<mark>' + safe.slice(a, b) + '</mark>';
+        cursor = b;
+      }
+      out += safe.slice(cursor);
+      return out;
+    }
+
+    function _searchPerform(query) {
+      const resultsEl = document.getElementById('quizSearchResults');
+      const statusEl = document.getElementById('quizSearchStatus');
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      const q = String(query || '').trim();
+      if (!q) {
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        statusEl.textContent = t.searchHint;
+        return;
+      }
+      if (!SEARCH_INDEX) {
+        statusEl.textContent = t.searchLoading;
+        return;
+      }
+      if (SEARCH_INDEX.length === 0) {
+        // Most common cause: file:// CORS blocks the sibling-file fetch.
+        statusEl.textContent = (location.protocol === 'file:')
+          ? t.searchFileMode
+          : t.searchLoadError;
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        return;
+      }
+      const tokens = _searchTokenize(q);
+      if (!tokens.length) {
+        // Pure punctuation or all tokens too short — nothing meaningful to look for
+        statusEl.textContent = t.searchHint;
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        return;
+      }
+      // Score each entry by how many distinct tokens appear in its haystack.
+      // Entries with zero matches are excluded; the rest are ranked by score.
+      const scored = [];
+      for (const e of SEARCH_INDEX) {
+        let score = 0;
+        for (const tok of tokens) {
+          if (e.haystack.indexOf(tok) >= 0) score++;
+        }
+        if (score > 0) scored.push({ e, score });
+      }
+      if (!scored.length) {
+        statusEl.textContent = t.searchEmpty;
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        return;
+      }
+      scored.sort((a, b) => b.score - a.score);
+      const shown = scored.slice(0, SEARCH_MAX_RESULTS).map(s => s.e);
+      const overflow = scored.length - shown.length;
+      const html = shown.map(e => {
+        const text = (currentLang === 'el' ? e.textEl : (e.textEn || e.textEl)) || '';
+        const correct = (currentLang === 'el' ? e.correctEl : (e.correctEn || e.correctEl)) || '';
+        const topicLabel = t[e.labelKey] || e.topicKey;
+        // Interpolations below come exclusively from _searchHighlight (which
+        // escapes its input first) or _searchEscapeHtml. The href is hard-coded
+        // file name from SEARCH_SOURCES, not user-supplied.
+        return '<div class="search-result">'
+          + '<div class="search-result-topic">' + _searchEscapeHtml(topicLabel) + '</div>'
+          + '<div class="search-result-q">' + _searchHighlight(text, tokens) + '</div>'
+          + '<div class="search-result-a">'
+          +   '<strong>' + _searchEscapeHtml(t.searchAnswer) + '</strong> '
+          +   _searchHighlight(correct, tokens)
+          + '</div>'
+          + '<a class="search-result-link" href="' + _searchEscapeHtml(e.file) + '">'
+          +   _searchEscapeHtml(t.searchOpenQuiz)
+          + '</a>'
+          + '</div>';
+      }).join('');
+      const overflowHtml = overflow > 0
+        ? '<div class="search-more">' + _searchEscapeHtml(t.searchMore.replace('{n}', String(overflow))) + '</div>'
+        : '';
+      resultsEl.innerHTML = html + overflowHtml;
+      resultsEl.style.display = 'flex';
+      statusEl.textContent = '';
+    }
+
+    (function _searchInit() {
+      const input = document.getElementById('quizSearchInput');
+      const clearBtn = document.getElementById('quizSearchClear');
+      const statusEl = document.getElementById('quizSearchStatus');
+      if (!input) return;
+
+      async function trigger() {
+        const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+        const val = input.value;
+        clearBtn.style.display = val ? 'block' : 'none';
+        if (!val.trim()) { _searchPerform(''); return; }
+        if (!SEARCH_INDEX) {
+          statusEl.textContent = t.searchLoading;
+          try { await _searchLoadIndex(); }
+          catch (e) { statusEl.textContent = t.searchLoadError; return; }
+        }
+        _searchPerform(input.value);
+      }
+
+      input.addEventListener('input', () => {
+        if (SEARCH_DEBOUNCE_TIMER) clearTimeout(SEARCH_DEBOUNCE_TIMER);
+        SEARCH_DEBOUNCE_TIMER = setTimeout(trigger, 160);
+      });
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        clearBtn.style.display = 'none';
+        _searchPerform('');
+        input.focus();
+      });
+    })();
+
     // === Study Manual ===
     const MANUAL_CONTENT = {
       el: {
