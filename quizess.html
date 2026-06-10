@@ -376,6 +376,216 @@
       padding: 8px 0;
     }
 
+    /* Study bot (floating chat) */
+    .chat-fab {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #0b0f19;
+      border: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .chat-fab:hover { transform: scale(1.07); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); }
+    .chat-fab svg { width: 24px; height: 24px; }
+    .chat-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 380px;
+      max-width: calc(100vw - 40px);
+      height: 560px;
+      max-height: calc(100vh - 40px);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      z-index: 1001;
+      overflow: hidden;
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .chat-title {
+      flex: 1;
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.98rem;
+    }
+    .chat-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .chat-icon-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-msg {
+      max-width: 88%;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      background: var(--primary-glow);
+      color: var(--text-main);
+      border: 1px solid var(--primary);
+    }
+    .chat-msg.bot { align-self: flex-start; background: var(--card-hover); color: var(--text-main); }
+    .chat-msg.bot mark { background: var(--primary-glow); color: var(--primary); padding: 0 3px; border-radius: 3px; }
+    .chat-wiki {
+      align-self: flex-start;
+      width: 100%;
+      background: var(--card-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+    .chat-lexicon {
+      align-self: flex-start;
+      width: 100%;
+      background: var(--success-glow);
+      border: 1px solid var(--success);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+    .chat-lexicon-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--success);
+      margin-bottom: 4px;
+    }
+    .chat-lexicon-term { font-weight: 700; font-family: var(--font-outfit); color: var(--success); margin-bottom: 2px; }
+    .chat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-self: flex-start;
+      max-width: 95%;
+      margin-top: 2px;
+    }
+    .chat-chip {
+      background: var(--card-hover);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: var(--font-inter);
+      transition: border-color 0.18s, color 0.18s;
+    }
+    .chat-chip:hover { border-color: var(--primary); color: var(--primary); }
+    .chat-wiki-title { font-weight: 700; font-family: var(--font-outfit); margin-bottom: 4px; color: var(--primary); }
+    .chat-wiki-link { display: inline-block; margin-top: 6px; font-size: 0.8rem; color: var(--primary); text-decoration: none; }
+    .chat-wiki-link:hover { text-decoration: underline; }
+    .chat-quiz-list { display: flex; flex-direction: column; gap: 6px; width: 100%; align-self: flex-start; }
+    .chat-quiz {
+      background: var(--card-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+    .chat-quiz-topic { font-size: 0.7rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.04em; }
+    .chat-quiz-q { margin: 3px 0; line-height: 1.35; }
+    .chat-quiz-a { color: var(--success); font-size: 0.82rem; }
+    .chat-quiz-a strong { font-weight: 600; }
+    .chat-quiz mark, .chat-wiki mark { background: var(--primary-glow); color: var(--primary); padding: 0 3px; border-radius: 3px; }
+    .chat-quiz-helpful {
+      margin-top: 6px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .chat-quiz-helpful:hover { color: var(--text-main); border-color: var(--primary); }
+    .chat-quiz-helpful.was-clicked { color: var(--success); border-color: var(--success); cursor: default; }
+    .chat-form {
+      display: flex;
+      gap: 6px;
+      padding: 10px;
+      border-top: 1px solid var(--border-color);
+    }
+    .chat-form input {
+      flex: 1;
+      background: var(--card-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-family: var(--font-inter);
+      outline: none;
+    }
+    .chat-form input:focus { border-color: var(--primary); }
+    .chat-form button {
+      background: var(--primary);
+      color: #0b0f19;
+      border: none;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .chat-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .chat-typing { display: flex; gap: 4px; padding: 8px 0; align-self: flex-start; }
+    .chat-typing span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-muted); opacity: 0.5;
+      animation: chatBlink 1.2s infinite both;
+    }
+    .chat-typing span:nth-child(2) { animation-delay: 0.15s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes chatBlink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+    @media (max-width: 480px) {
+      .chat-panel { width: calc(100vw - 24px); left: 12px; height: calc(100vh - 80px); }
+      .chat-fab { left: 12px; bottom: 12px; }
+    }
+
     /* Manual preview modal */
     .modal-overlay {
       position: fixed;
@@ -700,7 +910,22 @@
         searchMore: "και {n} ακόμη αποτελέσματα…",
         topicNoisi: "Νόηση & Συνείδηση",
         topicNomothesia: "Νομοθεσία & Ευζωία",
-        topicEuzwia: "Επιστήμη Ευζωίας"
+        topicEuzwia: "Επιστήμη Ευζωίας",
+        chatTitle: "Σύμβουλος Μελέτης",
+        chatPlaceholder: "Ρώτησέ με κάτι για τη μελέτη σου…",
+        chatGreeting: "Γεια! Ρώτησέ με για κάποιο θέμα και θα ψάξω στο υλικό σου και στη Wikipedia.",
+        chatNoResults: "Δεν βρήκα κάτι σχετικό. Δοκίμασε άλλες λέξεις-κλειδιά.",
+        chatModelLoading: "Φορτώνω το γλωσσικό μοντέλο για πρώτη φορά (~120 MB). Στις επόμενες ερωτήσεις θα είναι άμεσο.",
+        chatModelFailed: "Δεν φόρτωσε το γλωσσικό μοντέλο — συνεχίζω με απλή αναζήτηση.",
+        chatClarify: "Σε ποιο από τα παρακάτω αναφέρεσαι;",
+        chatLexiconLabel: "Λεξικό",
+        chatWikiLeadLexicon: "Διάβασε περισσότερα στη Wikipedia →",
+        chatHelpful: "👍 Χρήσιμο",
+        chatHelpfulDone: "✓ Καταγράφηκε",
+        chatResetTitle: "Επαναφορά μνήμης",
+        chatResetConfirm: "Να διαγραφεί η μνήμη του βοηθού;",
+        chatResetDone: "Η μνήμη μηδενίστηκε.",
+        chatWikiLead: "Διάβασε στη Wikipedia →"
       },
       en: {
         navHome: "Home",
@@ -739,7 +964,22 @@
         searchMore: "and {n} more results…",
         topicNoisi: "Cognition & Consciousness",
         topicNomothesia: "Legislation & Welfare",
-        topicEuzwia: "Welfare Science"
+        topicEuzwia: "Welfare Science",
+        chatTitle: "Study Bot",
+        chatPlaceholder: "Ask me about your study material…",
+        chatGreeting: "Hi! Ask me about a topic and I'll search your material and Wikipedia.",
+        chatNoResults: "I couldn't find anything relevant. Try different keywords.",
+        chatModelLoading: "Loading the language model for the first time (~120 MB). It will be instant on subsequent questions.",
+        chatModelFailed: "Language model failed to load — falling back to keyword search.",
+        chatClarify: "Which of these did you mean?",
+        chatLexiconLabel: "Lexicon",
+        chatWikiLeadLexicon: "Read more on Wikipedia →",
+        chatHelpful: "👍 Helpful",
+        chatHelpfulDone: "✓ Noted",
+        chatResetTitle: "Reset memory",
+        chatResetConfirm: "Clear the bot's memory?",
+        chatResetDone: "Memory cleared.",
+        chatWikiLead: "Read on Wikipedia →"
       }
     };
 
@@ -1378,6 +1618,869 @@
     applyTheme(currentTheme);
     applyLanguage(currentLang);
     renderProgressHistory();
+  </script>
+
+  <!-- STUDY BOT -->
+  <button id="chatFab" class="chat-fab" type="button" aria-label="Open study bot" title="Σύμβουλος Μελέτης / Study Bot">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+    </svg>
+  </button>
+  <div id="chatPanel" class="chat-panel hidden" role="dialog" aria-modal="false">
+    <div class="chat-header">
+      <div class="chat-title" data-translate="chatTitle">Σύμβουλος Μελέτης</div>
+      <button id="chatReset" class="chat-icon-btn" type="button" data-translate-attr="title:chatResetTitle" title="Επαναφορά μνήμης">↺</button>
+      <button id="chatClose" class="chat-icon-btn" type="button" data-translate-attr="title:closeBtn" title="Κλείσιμο">×</button>
+    </div>
+    <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+    <form id="chatForm" class="chat-form" autocomplete="off">
+      <input id="chatInput" type="text" maxlength="200" spellcheck="false"
+             data-translate-attr="placeholder:chatPlaceholder"
+             placeholder="Ρώτησέ με κάτι…" aria-label="Chat input" />
+      <button id="chatSubmit" type="submit" aria-label="Send">→</button>
+    </form>
+  </div>
+
+  <script>
+    // === Study Bot ===
+    // Tiny retrieval+memory bot: SparkA2020A40-style symbolic memory layered on
+    // top of the existing quiz-DB search and the Wikipedia opensearch+summary
+    // chain used by the image fetcher. No text generation, no remote LLM.
+
+    const BITTREE_KEY = 'bittreelm_v1';
+    const BITTREE_MAX_ITEMS = 110;
+    const BITTREE_LOCKED_TOKEN = '<UNK>';
+    const BITTREE_DEFAULT_TAGS = ['general', 'question', 'greeting', 'topic', 'concept'];
+
+    function _bitTotalItems(m) { return Object.keys(m.tokens).length + Object.keys(m.tags).length; }
+    function _bitToBinaryId(n) { return n.toString(2).padStart(7, '0'); }
+
+    function _bitAddTag(m, tag) {
+      if (m.tags[tag]) return m.tags[tag];
+      if (_bitTotalItems(m) >= BITTREE_MAX_ITEMS) return null;
+      m.tags[tag] = _bitToBinaryId(m.next_id++);
+      return m.tags[tag];
+    }
+
+    function _bitAddToken(m, token) {
+      if (m.tokens[token]) return m.tokens[token];
+      if (_bitTotalItems(m) >= BITTREE_MAX_ITEMS) return m.tokens[BITTREE_LOCKED_TOKEN] || null;
+      m.tokens[token] = {
+        id: _bitToBinaryId(m.next_id++),
+        tags: [],
+        commonality: 0,
+        relations: {}
+      };
+      return m.tokens[token];
+    }
+
+    function _bitEmptyModel() {
+      const m = {
+        tokens: {},
+        tags: {},
+        next_id: 0,
+        meta: { name: 'BitTreeLM', max_total_items: BITTREE_MAX_ITEMS }
+      };
+      for (const tag of BITTREE_DEFAULT_TAGS) _bitAddTag(m, tag);
+      _bitAddToken(m, BITTREE_LOCKED_TOKEN);
+      return m;
+    }
+
+    function _bitLoadModel() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(BITTREE_KEY) || 'null');
+        if (stored && stored.tokens && stored.tags && typeof stored.next_id === 'number') return stored;
+      } catch (e) {}
+      return _bitEmptyModel();
+    }
+
+    function _bitSaveModel(m) {
+      try { localStorage.setItem(BITTREE_KEY, JSON.stringify(m)); } catch (e) {}
+    }
+
+    function _bitHit(m, token, amount = 1) {
+      if (token === BITTREE_LOCKED_TOKEN) return;
+      if (!m.tokens[token]) _bitAddToken(m, token);
+      if (m.tokens[token]) m.tokens[token].commonality += amount;
+    }
+
+    function _bitAddRelation(m, src, tgt, amount = 1) {
+      if (src === BITTREE_LOCKED_TOKEN || tgt === BITTREE_LOCKED_TOKEN) return;
+      _bitAddToken(m, src);
+      _bitAddToken(m, tgt);
+      if (!m.tokens[src]) return;
+      const r = m.tokens[src].relations;
+      r[tgt] = (r[tgt] || 0) + amount;
+    }
+
+    function _bitGuessTags(text) {
+      const low = String(text || '').toLowerCase();
+      const tags = ['general'];
+      if (low.includes('?') || low.includes(';')) tags.push('question');
+      if (/(hi|hello|hey|γεια|καλημέρα)/.test(low)) tags.push('greeting');
+      if (/(noisi|νόηση|cognition|consciousness|qualia|brain|neuron)/.test(low)) tags.push('topic');
+      if (/(νομοθεσία|legislation|law|welfare|ευζωία|directive|regulation)/.test(low)) tags.push('topic');
+      if (/(animal|ζώο|ζώα|species)/.test(low)) tags.push('concept');
+      return Array.from(new Set(tags));
+    }
+
+    function _bitLearnFromTurn(m, prompt) {
+      const toks = _searchTokenize(prompt);
+      const tags = _bitGuessTags(prompt);
+      for (const t of toks) {
+        _bitAddToken(m, t);
+        _bitHit(m, t, 1);
+        const td = m.tokens[t];
+        if (!td) continue;
+        for (const tag of tags) {
+          _bitAddTag(m, tag);
+          if (m.tags[tag] && !td.tags.includes(tag)) td.tags.push(tag);
+        }
+      }
+      for (let i = 0; i < toks.length - 1; i++) _bitAddRelation(m, toks[i], toks[i + 1], 1);
+      return toks;
+    }
+
+    function _bitBoostHelpful(m, queryTokens, resultTokens) {
+      const rt = (resultTokens || []).slice(0, 12);
+      for (const qt of queryTokens) for (const r of rt) _bitAddRelation(m, qt, r, 3);
+    }
+
+    // Rerank a quiz-DB entry: base score is the substring overlap (search-engine
+    // logic), and the bot's memory adds a small boost based on commonality and
+    // learned relations from prior helpful clicks.
+    function _bitRerankEntry(m, queryTokens, entry) {
+      let base = 0;
+      for (const t of queryTokens) if (entry.haystack.indexOf(t) >= 0) base++;
+      if (base === 0) return 0;
+      let boost = 0;
+      for (const qt of queryTokens) {
+        const td = m.tokens[qt];
+        if (!td) continue;
+        boost += Math.min(td.commonality / 5, 4);
+        for (const target in td.relations) {
+          if (entry.haystack.indexOf(target) >= 0) {
+            boost += Math.min(td.relations[target], 8);
+          }
+        }
+      }
+      return base * 100 + boost;
+    }
+
+    // Pick the right Wikipedia by detecting Greek script in the original prompt.
+    function _chatDetectLang(text) {
+      return /[Ͱ-Ͽἀ-῿]/.test(String(text || '')) ? 'el' : 'en';
+    }
+
+    // Stop-word skip list used when scoring article titles. Anything in here is
+    // ignored so a title like "Who Was Who" doesn't beat "Heraclitus" on the
+    // strength of three matches of "who" + "was". Length >= 4 is the secondary
+    // filter; this set catches the long-ish stop-words like "where"/"ποιος".
+    const _CHAT_TITLE_STOPS = new Set([
+      'who','what','where','when','why','how','this','that','these','those','with','from','into','about','were','have','been','their','which','will','would','could','should',
+      'ποιος','ποια','ποιο','ποιοι','ποιες','ποτε','πότε','που','πώς','πως','ποτε','τι','είναι','ειναι','ηταν','ήταν','αυτή','αυτή','αυτος','αυτός','αυτο','αυτό','αυτοί','αυτές','αυτά','όλος','όλη','όλο','αυτές','όπως','κάθε'
+    ]);
+
+    // Words to strip when building the search expression: pure filler that hurts
+    // Wikipedia opensearch precision. Stays out of the scoring stop list because
+    // we still want presence in titles (e.g. "of" in "Of Mice and Men") not to
+    // count as a useful signal either way — but for the *query* it just noises.
+    const _CHAT_FILLER_IN_QUERY = new Set([
+      'του','της','των','τον','την','τα','το','οι','η','ο','τις','τους','στο','στα','στη','στην','στις','στους','στον','με','σε','απο','και','ή','αν',
+      'the','a','an','of','to','in','on','at','for','with','and','or','as','by','from'
+    ]);
+    const _CHAT_QUESTION_WORDS = new Set([
+      'τι','ποιος','ποια','ποιο','ποιοι','ποιες','πότε','ποτε','πού','που','πώς','πως','γιατί','γιατι',
+      'what','who','whose','whom','where','when','why','how','which'
+    ]);
+    const _CHAT_LINKING = new Set([
+      'είναι','ειναι','ήταν','ηταν','σημαίνει','σημαινει',
+      'is','are','was','were','be','been','being','means','mean'
+    ]);
+
+    function _chatCommonPrefix(a, b) {
+      const n = Math.min(a.length, b.length);
+      let i = 0;
+      while (i < n && a[i] === b[i]) i++;
+      return i;
+    }
+
+    // Compute a per-token weight: length-based, plus a small bonus for tokens
+    // that appear later in the prompt. "What is X" / "Ποιος είναι ο X" patterns
+    // put the actual subject at the end, so we boost it.
+    function _chatTokenWeights(queryTokens) {
+      const weights = {};
+      const n = Math.max(queryTokens.length, 1);
+      queryTokens.forEach((t, i) => {
+        if (t.length < 4) { weights[t] = 0; return; }
+        if (_CHAT_TITLE_STOPS.has(t) || _CHAT_FILLER_IN_QUERY.has(t)
+            || _CHAT_QUESTION_WORDS.has(t) || _CHAT_LINKING.has(t)) {
+          weights[t] = 0; return;
+        }
+        let w = t.length;
+        w += (i / n) * 4; // later tokens slightly more important
+        weights[t] = w;
+      });
+      return weights;
+    }
+
+    function _chatScoreTitle(title, queryTokens, tokenWeights) {
+      const titleTokens = _searchTokenize(title);
+      const seen = new Set();
+      let score = 0;
+      let unmatchedSubjects = 0;
+      for (const t of titleTokens) {
+        if (seen.has(t)) continue;
+        seen.add(t);
+        if (t.length < 4 || _CHAT_TITLE_STOPS.has(t)) continue;
+        // A title token of length ≥ 5 that doesn't match the query is treated as
+        // a "subject" — it likely shifts the article's topic away from what the
+        // user asked. Track these for a post-loop penalty. (Lowered from 6 to 5
+        // because words like "χάους"/"Χάους" are real noun subjects too.)
+        const isSubject = t.length >= 5;
+
+        const direct = tokenWeights[t] || 0;
+        if (direct > 0) { score += direct; continue; }
+
+        // Partial: common-prefix match for Greek inflection / English derivation.
+        // E.g. "οντος" ↔ "οντολογια" share "οντ"; require ≥3-char prefix and
+        // both tokens length ≥ 5 to avoid noise.
+        let best = 0;
+        for (const qt in tokenWeights) {
+          if (!tokenWeights[qt]) continue;
+          if (qt.length < 5 || t.length < 5) continue;
+          const cp = _chatCommonPrefix(qt, t);
+          if (cp < 3) continue;
+          const partial = tokenWeights[qt] * (cp / Math.max(qt.length, t.length));
+          if (partial > best) best = partial;
+        }
+        if (best > 0) { score += best; continue; }
+
+        if (isSubject) unmatchedSubjects++;
+      }
+      // Penalty: each unmatched ≥6-char title token deflates the score by 8.
+      // This kills "Θεωρία του ντόμινο" / "Θεωρία υπολογισιμότητας" as answers
+      // to "θεωρία του όντος" — the new specific noun in the title that the
+      // user didn't mention is a strong "wrong topic" signal.
+      score -= unmatchedSubjects * 8;
+      return score;
+    }
+
+    // === Curated lexicon — bot-authoritative canonical answers ===
+    // A small bilingual dictionary of terms the quiz material actually covers.
+    // Each entry: { topic, el:{term,aliases,definition}, en:{...}, wiki_el, wiki_en }.
+    // Looked up before the Wikipedia search; on an unambiguous hit we use the
+    // curated definition *and* fetch the linked Wikipedia article directly.
+    const CHAT_LEXICON = [
+      // Philosophy of mind & cognition
+      { topic: 'noisi',
+        el: { term: 'οντολογία', aliases: ['θεωρία του όντος','φιλοσοφία του όντος','όντος','περί του όντος'], definition: 'Η οντολογία είναι ο κλάδος της φιλοσοφίας που μελετά τη φύση του Όντος, το τι υπάρχει και πώς υπάρχει. Συνδέεται στενά με τη μεταφυσική.' },
+        en: { term: 'ontology', aliases: ['theory of being','study of being','metaphysics of being'], definition: 'Ontology is the branch of philosophy that studies being, existence and what categories of things exist and how they relate.' },
+        wiki_el: 'Οντολογία', wiki_en: 'Ontology' },
+      { topic: 'noisi',
+        el: { term: 'qualia', aliases: ['υποκειμενική εμπειρία','φαινομενικές ποιότητες','ποιότητες συνείδησης'], definition: 'Τα qualia είναι οι υποκειμενικές, φαινομενικές ποιότητες της συνείδησης — π.χ. η αίσθηση του κόκκινου ή του πόνου. Κεντρικό πρόβλημα στη φιλοσοφία της νόησης.' },
+        en: { term: 'qualia', aliases: ['phenomenal qualities','subjective experience'], definition: 'Qualia are the subjective, phenomenal qualities of conscious experience — the redness of red, the painfulness of pain. Central to the philosophy of mind.' },
+        wiki_el: 'Qualia', wiki_en: 'Qualia' },
+      { topic: 'noisi',
+        el: { term: 'δυϊσμός', aliases: ['καρτεσιανός δυϊσμός','δυϊσμός νου σώματος'], definition: 'Ο δυϊσμός είναι η φιλοσοφική θέση ότι ο νους και το σώμα είναι δύο διαφορετικές ουσίες. Κλασικός εκπρόσωπος ο Descartes.' },
+        en: { term: 'dualism', aliases: ['cartesian dualism','mind-body dualism'], definition: 'Dualism is the philosophical view that mind and body are two distinct substances. Most associated with Descartes.' },
+        wiki_el: 'Δυϊσμός', wiki_en: 'Mind–body dualism' },
+      { topic: 'noisi',
+        el: { term: 'υλισμός', aliases: ['φυσιοκρατία','φυσικαλισμός'], definition: 'Ο υλισμός (ή φυσικαλισμός) υποστηρίζει ότι τα πάντα — και ο νους — αποτελούνται από ύλη και υπακούν σε φυσικούς νόμους.' },
+        en: { term: 'physicalism', aliases: ['materialism'], definition: 'Physicalism (materialism) holds that everything, including the mind, is composed of matter and governed by physical laws.' },
+        wiki_el: 'Υλισμός', wiki_en: 'Physicalism' },
+      { topic: 'noisi',
+        el: { term: 'πρόβλημα νου σώματος', aliases: ['σχέση νου σώματος','πρόβλημα νου-σώματος'], definition: 'Το πρόβλημα νου-σώματος αφορά τη σχέση μεταξύ νοητικών καταστάσεων και του εγκεφάλου: πώς συνδέονται και αν είναι η ίδια οντότητα.' },
+        en: { term: 'mind-body problem', aliases: ['mind body problem','mind-brain problem'], definition: 'The mind-body problem concerns the relationship between mental states and the brain: how they connect and whether they are the same thing.' },
+        wiki_el: 'Πρόβλημα νου-σώματος', wiki_en: 'Mind–body problem' },
+      { topic: 'noisi',
+        el: { term: 'ενσώματη νόηση', aliases: ['ενσώματη γνώση'], definition: 'Η ενσώματη νόηση υποστηρίζει ότι η σκέψη και η συνείδηση εξαρτώνται από το σώμα και τις αλληλεπιδράσεις του με το περιβάλλον.' },
+        en: { term: 'embodied cognition', aliases: ['embodied mind'], definition: 'Embodied cognition holds that thinking and consciousness depend on the body and its interactions with the environment.' },
+        wiki_el: 'Ενσώματη νόηση', wiki_en: 'Embodied cognition' },
+      { topic: 'noisi',
+        el: { term: 'ηχοεντοπισμός', aliases: ['εχολοκατοποίηση','βιοσόναρ'], definition: 'Ο ηχοεντοπισμός είναι η ικανότητα ζώων όπως οι νυχτερίδες και τα δελφίνια να εντοπίζουν αντικείμενα εκπέμποντας ήχους και ακούγοντας τις ανακλάσεις τους.' },
+        en: { term: 'echolocation', aliases: ['biosonar'], definition: 'Echolocation is the ability of animals like bats and dolphins to locate objects by emitting sounds and listening to the reflections.' },
+        wiki_el: 'Ηχοεντοπισμός', wiki_en: 'Animal echolocation' },
+      { topic: 'noisi',
+        el: { term: 'θεωρία του νου', aliases: ['theory of mind','ToM'], definition: 'Η θεωρία του νου είναι η ικανότητα να αποδίδουμε νοητικές καταστάσεις σε άλλους και να καταλαβαίνουμε ότι μπορεί να έχουν διαφορετική οπτική.' },
+        en: { term: 'theory of mind', aliases: ['ToM','mind reading'], definition: 'Theory of mind is the ability to attribute mental states — beliefs, desires — to others and to understand they may have different perspectives.' },
+        wiki_el: 'Θεωρία του νου', wiki_en: 'Theory of mind' },
+      { topic: 'noisi',
+        el: { term: 'Ηράκλειτος', aliases: ['ηράκλειτος ο εφέσιος','σκοτεινός φιλόσοφος'], definition: 'Ο Ηράκλειτος ο Εφέσιος ήταν προσωκρατικός Έλληνας φιλόσοφος του 6ου–5ου π.Χ. αιώνα, γνωστός για τη φιλοσοφία του «τα πάντα ρει» και τη θεωρία του ως αρχής του γίγνεσθαι.' },
+        en: { term: 'Heraclitus', aliases: ['heraclitus of ephesus'], definition: 'Heraclitus of Ephesus (c. 6th–5th century BC) was a pre-Socratic Greek philosopher, famous for "everything flows" and his doctrine of fire as the principle of change.' },
+        wiki_el: 'Ηράκλειτος', wiki_en: 'Heraclitus' },
+      { topic: 'noisi',
+        el: { term: 'Παρμενίδης', aliases: ['παρμενίδης ο ελεάτης'], definition: 'Ο Παρμενίδης ο Ελεάτης ήταν προσωκρατικός Έλληνας φιλόσοφος του 5ου π.Χ. αιώνα. Υποστήριξε ότι το Ον είναι ένα, αμετάβλητο και αιώνιο, και ότι η αλλαγή είναι απάτη των αισθήσεων.' },
+        en: { term: 'Parmenides', aliases: ['parmenides of elea'], definition: 'Parmenides of Elea (5th century BC) was a pre-Socratic Greek philosopher who held that Being is one, unchanging and eternal, and change is an illusion of the senses.' },
+        wiki_el: 'Παρμενίδης', wiki_en: 'Parmenides' },
+
+      // Animal welfare science
+      { topic: 'euzwia',
+        el: { term: 'ευζωία', aliases: ['ευημερία ζώων','καλή διαβίωση','ευημερία'], definition: 'Η ευζωία περιγράφει την κατάσταση ενός ζώου σε σχέση με τις προσπάθειές του να αντεπεξέλθει στο περιβάλλον — σωματική υγεία, ψυχική κατάσταση, φυσιολογική συμπεριφορά.' },
+        en: { term: 'animal welfare', aliases: ['well-being','animal well-being'], definition: 'Animal welfare describes how an animal copes with the conditions in which it lives — covering physical health, mental state and natural behaviour.' },
+        wiki_el: 'Ευζωία των ζώων', wiki_en: 'Animal welfare' },
+      { topic: 'euzwia',
+        el: { term: 'πέντε ελευθερίες', aliases: ['πέντε ελευθερίες ευζωίας'], definition: 'Οι Πέντε Ελευθερίες είναι ένα διεθνώς αναγνωρισμένο πλαίσιο ευζωίας: ελευθερία από πείνα/δίψα, από δυσφορία, από πόνο και ασθένεια, να εκφράζουν φυσιολογική συμπεριφορά, και από φόβο/άγχος.' },
+        en: { term: 'five freedoms', aliases: ['five welfare freedoms'], definition: 'The Five Freedoms are a global welfare framework: freedom from hunger/thirst, from discomfort, from pain/disease, to express normal behaviour, and from fear/distress.' },
+        wiki_el: 'Πέντε ελευθερίες', wiki_en: 'Five freedoms' },
+      { topic: 'euzwia',
+        el: { term: 'περιβαλλοντικός εμπλουτισμός', aliases: ['εμπλουτισμός περιβάλλοντος'], definition: 'Ο περιβαλλοντικός εμπλουτισμός είναι η σχεδιασμένη βελτίωση του περιβάλλοντος των ζώων με ερεθίσματα και ευκαιρίες που υποστηρίζουν τη φυσική συμπεριφορά και ψυχική ευημερία.' },
+        en: { term: 'environmental enrichment', aliases: ['enrichment'], definition: 'Environmental enrichment is the designed improvement of animals\' environments with stimuli, objects, or opportunities that support natural behaviour and mental well-being.' },
+        wiki_el: 'Περιβαλλοντικός εμπλουτισμός', wiki_en: 'Environmental enrichment' },
+      { topic: 'euzwia',
+        el: { term: 'στρες', aliases: ['κορτιζόλη','άγχος ζώων'], definition: 'Το στρες είναι η βιολογική απόκριση του οργανισμού σε δυσμενείς συνθήκες, μεσολαβούμενη από κορτιζόλη και άλλες ορμόνες. Σε χρόνια μορφή υποβαθμίζει την ευζωία.' },
+        en: { term: 'stress', aliases: ['cortisol','distress'], definition: 'Stress is the biological response to adverse conditions, mediated by cortisol and other hormones. Chronic stress degrades welfare.' },
+        wiki_el: 'Στρες', wiki_en: 'Stress (biology)' },
+
+      // Animal law & legislation
+      { topic: 'nomothesia',
+        el: { term: 'ζώα συντροφιάς', aliases: ['κατοικίδια','δεσποζόμενα ζώα'], definition: 'Τα ζώα συντροφιάς είναι ζώα που διατηρούνται κυρίως για συντροφιά (σκύλοι, γάτες κ.λπ.). Ο ν. 4830/2021 ρυθμίζει την προστασία και την ευζωία τους στην Ελλάδα.' },
+        en: { term: 'companion animals', aliases: ['pets','domestic animals'], definition: 'Companion animals are kept primarily for companionship — dogs, cats, etc. In Greece law 4830/2021 regulates their protection and welfare.' },
+        wiki_el: 'Κατοικίδιο ζώο', wiki_en: 'Pet' },
+      { topic: 'nomothesia',
+        el: { term: 'WOAH', aliases: ['OIE','παγκόσμιος οργανισμός υγείας ζώων'], definition: 'Ο WOAH (πρώην OIE) είναι ο διεθνής οργανισμός που θέτει πρότυπα για την υγεία και την ευζωία των ζώων.' },
+        en: { term: 'WOAH', aliases: ['OIE','world organisation for animal health'], definition: 'WOAH (formerly OIE) is the intergovernmental body that sets international standards for animal health and welfare.' },
+        wiki_el: 'Παγκόσμιος Οργανισμός για την Υγεία των Ζώων', wiki_en: 'World Organisation for Animal Health' },
+      { topic: 'nomothesia',
+        el: { term: 'οδηγία της ΕΕ', aliases: ['ευρωπαϊκή οδηγία'], definition: 'Μια ευρωπαϊκή οδηγία είναι νομοθετική πράξη της ΕΕ που θέτει στόχο τον οποίο τα κράτη μέλη πρέπει να επιτύχουν, αφήνοντάς τους ελευθερία στα μέσα.' },
+        en: { term: 'EU directive', aliases: ['european directive','directive'], definition: 'An EU directive sets a result that member states must achieve, leaving each to choose the means in national law.' },
+        wiki_el: 'Ευρωπαϊκή οδηγία', wiki_en: 'Directive (European Union)' }
+    ];
+
+    // Lexicon lookup: substring match on the prompt, then token-overlap match on
+    // each entry's term + aliases. Returns scored candidates ordered by relevance.
+    function _chatLexiconMatch(promptRaw, queryTokens) {
+      const lang = _chatDetectLang(promptRaw);
+      const promptStripped = _searchStripAccents(String(promptRaw || '').toLowerCase());
+      const querySet = new Set(queryTokens);
+      const matches = [];
+      for (const entry of CHAT_LEXICON) {
+        const e = entry[lang] || entry.en || entry.el;
+        if (!e) continue;
+        const cands = [e.term].concat(e.aliases || []);
+        let best = 0;
+        let via = '';
+        for (const c of cands) {
+          const cStripped = _searchStripAccents(c.toLowerCase());
+          // (1) direct substring in the user's prompt — strongest signal
+          if (promptStripped.indexOf(cStripped) >= 0) {
+            const s = cStripped.length * 3;
+            if (s > best) { best = s; via = c; }
+            continue;
+          }
+          // (2) token overlap: require either ≥2 tokens or full coverage for 1-token aliases
+          const cTokens = _searchTokenize(c);
+          if (!cTokens.length) continue;
+          let ov = 0;
+          for (const ct of cTokens) if (querySet.has(ct)) ov++;
+          const ratio = ov / cTokens.length;
+          if ((ov >= 2 && ratio >= 0.5) || (ov === 1 && cTokens.length === 1 && cTokens[0].length >= 5)) {
+            const s = ov * 6;
+            if (s > best) { best = s; via = c; }
+          }
+        }
+        if (best > 0) matches.push({ entry, lang, score: best, via });
+      }
+      matches.sort((a, b) => b.score - a.score);
+      return matches;
+    }
+
+    // Fetch a Wikipedia summary by exact title (used when lexicon already knows
+    // the canonical page — no opensearch / CirrusSearch round-trip needed).
+    async function _chatFetchWikiByTitle(title, lang) {
+      const host = (lang === 'el' ? 'el' : 'en') + '.wikipedia.org';
+      try {
+        const sumUrl = 'https://' + host + '/api/rest_v1/page/summary/' + encodeURIComponent(title);
+        const res = await fetch(sumUrl);
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data.type === 'disambiguation') return null;
+        const extract = data.extract || '';
+        if (!extract) return null;
+        return {
+          title: data.title || title,
+          extract: extract,
+          url: (data.content_urls && data.content_urls.desktop && data.content_urls.desktop.page)
+            || ('https://' + host + '/wiki/' + encodeURIComponent(title))
+        };
+      } catch (e) { return null; }
+    }
+
+    // === Semantic reranker (Transformers.js + multilingual MiniLM) ===
+    // Lazy ES-module load on first chat use. Model weights (~120 MB total: ONNX
+    // model + tokenizer + WASM runtime) auto-cache in IndexedDB so subsequent
+    // visits skip the download. If the import or model load fails (offline,
+    // file://, CDN block), we silently fall back to the heuristic scorer below.
+    let _chatTransformer = null;
+    let _chatTransformerPromise = null;
+    let _chatTransformerFailed = false;
+    let _chatEmbedCache = new Map(); // text -> Float32Array, per-session
+    let _chatModelLoadNoticed = false;
+
+    function _chatLoadStarting() { return _chatTransformerPromise && !_chatTransformer && !_chatTransformerFailed; }
+
+    async function _chatGetTransformer() {
+      if (_chatTransformer) return _chatTransformer;
+      if (_chatTransformerFailed) return null;
+      if (_chatTransformerPromise) return _chatTransformerPromise;
+      _chatTransformerPromise = (async () => {
+        try {
+          const mod = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+          // Use the multilingual model so Greek + English queries both work
+          const pipe = await mod.pipeline(
+            'feature-extraction',
+            'Xenova/paraphrase-multilingual-MiniLM-L12-v2'
+          );
+          _chatTransformer = pipe;
+          return pipe;
+        } catch (e) {
+          _chatTransformerFailed = true;
+          return null;
+        }
+      })();
+      return _chatTransformerPromise;
+    }
+
+    async function _chatEmbed(text) {
+      const key = String(text || '').trim();
+      if (!key) return null;
+      if (_chatEmbedCache.has(key)) return _chatEmbedCache.get(key);
+      const pipe = await _chatGetTransformer();
+      if (!pipe) return null;
+      try {
+        const out = await pipe(key, { pooling: 'mean', normalize: true });
+        const vec = out.data;
+        _chatEmbedCache.set(key, vec);
+        return vec;
+      } catch (e) { return null; }
+    }
+
+    function _chatCosine(a, b) {
+      if (!a || !b || a.length !== b.length) return 0;
+      let s = 0;
+      for (let i = 0; i < a.length; i++) s += a[i] * b[i];
+      return s; // both already L2-normalized → dot product = cosine similarity
+    }
+
+    // Wikipedia CirrusSearch full-text + REST summary, semantically reranked.
+    // Language: el.wikipedia.org for Greek-script prompts, en otherwise.
+    // Strategy: build several search-term variants ordered by precision-likelihood,
+    // gather candidates from each via list=search, score them heuristically, take
+    // the top N, then rerank that shortlist by sentence-embedding cosine to the
+    // original prompt. If the semantic model isn't ready, fall back to the
+    // heuristic top with the minimum-score gate.
+    async function _chatFetchWiki(queryTokens, origText) {
+      if (!queryTokens || !queryTokens.length) return null;
+      const lang = _chatDetectLang(origText || '');
+      const host = lang + '.wikipedia.org';
+      const weights = _chatTokenWeights(queryTokens);
+
+      // Subject phrase = drop leading question/linking words (keep ≥1 token)
+      let subject = queryTokens.slice();
+      while (subject.length > 1 && (_CHAT_QUESTION_WORDS.has(subject[0]) || _CHAT_LINKING.has(subject[0]))) {
+        subject = subject.slice(1);
+      }
+      // Meaningful tokens = anything we'd score > 0 on
+      const meaningful = queryTokens.filter(t => (weights[t] || 0) > 0);
+      const sortedByLen = [...meaningful].sort((a, b) => b.length - a.length);
+
+      const attempts = [];
+      const pushAttempt = (terms) => {
+        if (!terms || !terms.length) return;
+        // Drop filler when building the search string, but keep meaningful tokens
+        const cleaned = terms.filter(t => !_CHAT_FILLER_IN_QUERY.has(t));
+        if (!cleaned.length) return;
+        const key = cleaned.join(' ');
+        if (!attempts.some(a => a.join(' ') === key)) attempts.push(cleaned);
+      };
+      // Try subject phrase first (truncated to 4 tokens), then progressively narrow.
+      pushAttempt(subject.slice(0, 4));
+      pushAttempt(queryTokens.slice(0, 4));
+      if (meaningful.length >= 2) pushAttempt(meaningful.slice(-2));
+      if (sortedByLen[0]) pushAttempt([sortedByLen[0]]);
+      if (meaningful.length) pushAttempt([meaningful[meaningful.length - 1]]);
+
+      // Collect candidates across all attempts and rank globally.
+      // We use CirrusSearch full-text (action=query&list=search) instead of the
+      // opensearch autocomplete: the former searches article *content*, the
+      // latter only matches title prefixes. That's why "θεωρία του X" titles
+      // were dominating — they were autocomplete hits, not topic matches.
+      // The snippet field comes pre-marked with <span class="searchmatch">
+      // around matched terms, giving us a free content-signal hit count.
+      const candidates = [];
+      const seenTitles = new Set();
+      for (const terms of attempts) {
+        const search = terms.join(' ');
+        try {
+          const apiUrl = 'https://' + host + '/w/api.php?action=query&list=search&format=json&origin=*'
+            + '&srsearch=' + encodeURIComponent(search)
+            + '&srlimit=8&srprop=snippet%7Ctitlesnippet&srinfo=&srnamespace=0';
+          const apiRes = await fetch(apiUrl);
+          if (!apiRes.ok) continue;
+          const apiData = await apiRes.json();
+          const results = (apiData.query && apiData.query.search) || [];
+          results.forEach((r, idx) => {
+            const title = r.title || '';
+            if (!title || seenTitles.has(title)) return;
+            seenTitles.add(title);
+            const titleScore = _chatScoreTitle(title, queryTokens, weights);
+            // Count <span class="searchmatch"> in the snippet — each marks one
+            // matched query term inside the article body.
+            const snippetRaw = r.snippet || '';
+            const snippetHits = (snippetRaw.match(/<span class="searchmatch">/g) || []).length;
+            const total = titleScore + snippetHits * 1.5;
+            // Cleaned, plain-text snippet for semantic embedding context.
+            const snippetClean = snippetRaw
+              .replace(/<[^>]+>/g, '')
+              .replace(/&[a-z]+;/gi, ' ')
+              .replace(/\s+/g, ' ')
+              .trim()
+              .slice(0, 240);
+            if (total > 0) candidates.push({ title, snippet: snippetClean, score: total, rank: idx });
+          });
+        } catch (e) {}
+      }
+      if (!candidates.length) return null;
+
+      // --- IDF (corpus rarity) + user-commonality refinement ---
+      // For each query token, compute document frequency in the candidate pool;
+      // rare-in-pool tokens carry more meaning, so we boost candidates that
+      // contain them. User commonality (SparkA2020A40 memory) layers on top:
+      // if a token has high commonality in the BitTreeLM, the user keeps
+      // asking about it, so candidates that mention it get a small bias.
+      const _docTexts = candidates.map(c =>
+        _searchStripAccents(((c.title || '') + ' ' + (c.snippet || '')).toLowerCase())
+      );
+      const N = candidates.length;
+      const idf = {};
+      for (const qt of queryTokens) {
+        let df = 0;
+        for (const dt of _docTexts) if (dt.indexOf(qt) >= 0) df++;
+        // Smoothed log-IDF; minimum 1.0 so present-everywhere tokens don't zero out
+        idf[qt] = Math.log((N + 1) / (df + 1)) + 1;
+      }
+      // Pre-collect tokens the user has used a lot, so the per-candidate boost
+      // loop stays small even with a full 110-item BitTreeLM.
+      const userPriorityTokens = [];
+      if (CHAT_MODEL && CHAT_MODEL.tokens) {
+        for (const tk in CHAT_MODEL.tokens) {
+          if (tk === BITTREE_LOCKED_TOKEN) continue;
+          const td = CHAT_MODEL.tokens[tk];
+          if (td && td.commonality >= 2) userPriorityTokens.push({ tk, c: td.commonality });
+        }
+      }
+      candidates.forEach((c, i) => {
+        const dt = _docTexts[i];
+        // IDF boost: re-credit each present query token weighted by its rarity
+        let idfBoost = 0;
+        for (const qt of queryTokens) {
+          if (dt.indexOf(qt) >= 0) idfBoost += (idf[qt] || 1);
+        }
+        // User-commonality boost: small bias toward candidates that mention
+        // tokens this user has been studying recently.
+        let userBoost = 0;
+        for (const ut of userPriorityTokens) {
+          if (dt.indexOf(ut.tk) >= 0) userBoost += Math.min(ut.c / 5, 3);
+        }
+        c.score += idfBoost + userBoost;
+      });
+
+      candidates.sort((a, b) => b.score - a.score || a.rank - b.rank);
+
+      // Take the heuristic top-N for semantic rerank. 8 keeps the embedding
+      // budget bounded — at ~100 ms per embed on a typical laptop, this adds
+      // ~1 s end-to-end. Increase later if the model proves fast enough.
+      const SHORTLIST = candidates.slice(0, 8);
+
+      // Try the semantic reranker. If the model hasn't loaded yet we kick it
+      // off here; if it eventually returns, future questions will use it. For
+      // *this* question we still want to answer something useful, so we wait
+      // briefly and fall back to the heuristic top if the model isn't ready.
+      let ranked = SHORTLIST;
+      let usingSemantic = false;
+      try {
+        const queryEmbed = await _chatEmbed(origText || queryTokens.join(' '));
+        if (queryEmbed) {
+          usingSemantic = true;
+          const scored = [];
+          for (const c of SHORTLIST) {
+            // Embed title + snippet so the model sees article context, not just
+            // a 2-word title. "Ηράκλειτος (μυθογράφος)" + its snippet about
+            // mythography clearly separates from the philosopher article whose
+            // snippet talks about Ephesus, pre-Socratic philosophy, etc.
+            const ctx = c.snippet ? (c.title + '. ' + c.snippet) : c.title;
+            const candEmbed = await _chatEmbed(ctx);
+            const sim = candEmbed ? _chatCosine(queryEmbed, candEmbed) : 0;
+            scored.push(Object.assign({}, c, { semSim: sim }));
+          }
+          scored.sort((a, b) => (b.semSim - a.semSim) || (b.score - a.score) || (a.rank - b.rank));
+          ranked = scored;
+        }
+      } catch (e) { /* fall back */ }
+
+      // Acceptance threshold:
+      //   - Semantic mode: cosine ≥ 0.35 (well above random for L2-normalized
+      //     MiniLM embeddings of related-vs-unrelated text).
+      //   - Heuristic mode: original MIN_SCORE = 5 gate.
+      const MIN_HEURISTIC = 5;
+      const MIN_SEMANTIC = 0.35;
+
+      for (const c of ranked) {
+        if (usingSemantic) {
+          if ((c.semSim || 0) < MIN_SEMANTIC) break;
+        } else {
+          if ((c.score || 0) < MIN_HEURISTIC) break;
+        }
+        try {
+          const sumUrl = 'https://' + host + '/api/rest_v1/page/summary/' + encodeURIComponent(c.title);
+          const sumRes = await fetch(sumUrl);
+          if (!sumRes.ok) continue;
+          const sumData = await sumRes.json();
+          if (sumData.type === 'disambiguation') continue;
+          const extract = sumData.extract || '';
+          if (!extract) continue;
+          return {
+            title: sumData.title || c.title,
+            extract: extract,
+            url: (sumData.content_urls && sumData.content_urls.desktop && sumData.content_urls.desktop.page)
+              || ('https://' + host + '/wiki/' + encodeURIComponent(c.title))
+          };
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    // ----- UI wiring -----
+    let CHAT_MODEL = null;
+    const _chatFab = document.getElementById('chatFab');
+    const _chatPanel = document.getElementById('chatPanel');
+    const _chatMessages = document.getElementById('chatMessages');
+    const _chatForm = document.getElementById('chatForm');
+    const _chatInput = document.getElementById('chatInput');
+    const _chatSubmit = document.getElementById('chatSubmit');
+    const _chatClose = document.getElementById('chatClose');
+    const _chatReset = document.getElementById('chatReset');
+
+    function _chatAppendBubble(cls, htmlContent) {
+      const div = document.createElement('div');
+      div.className = 'chat-msg ' + cls;
+      div.innerHTML = htmlContent;
+      _chatMessages.appendChild(div);
+      _chatMessages.scrollTop = _chatMessages.scrollHeight;
+      return div;
+    }
+    function _chatAppendRaw(node) {
+      _chatMessages.appendChild(node);
+      _chatMessages.scrollTop = _chatMessages.scrollHeight;
+    }
+    function _chatTyping() {
+      const div = document.createElement('div');
+      div.className = 'chat-typing';
+      div.innerHTML = '<span></span><span></span><span></span>';
+      _chatAppendRaw(div);
+      return div;
+    }
+    function _chatGreet() {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      _chatMessages.innerHTML = '';
+      _chatAppendBubble('bot', _searchEscapeHtml(t.chatGreeting));
+    }
+
+    function _chatOpen() {
+      _chatPanel.classList.remove('hidden');
+      _chatFab.style.display = 'none';
+      if (!_chatMessages.children.length) _chatGreet();
+      setTimeout(() => _chatInput.focus(), 50);
+    }
+    function _chatClosePanel() {
+      _chatPanel.classList.add('hidden');
+      _chatFab.style.display = '';
+    }
+
+    _chatFab.addEventListener('click', _chatOpen);
+    _chatClose.addEventListener('click', _chatClosePanel);
+    _chatReset.addEventListener('click', () => {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      if (!confirm(t.chatResetConfirm)) return;
+      localStorage.removeItem(BITTREE_KEY);
+      CHAT_MODEL = _bitEmptyModel();
+      _bitSaveModel(CHAT_MODEL);
+      _chatGreet();
+      _chatAppendBubble('bot', _searchEscapeHtml(t.chatResetDone));
+    });
+
+    async function _chatHandleSubmit(prompt) {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      // Show user bubble
+      _chatAppendBubble('user', _searchEscapeHtml(prompt));
+      // Learn from this turn
+      if (!CHAT_MODEL) CHAT_MODEL = _bitLoadModel();
+      const queryTokens = _bitLearnFromTurn(CHAT_MODEL, prompt);
+      _bitSaveModel(CHAT_MODEL);
+
+      // First-visit notice: tell the user the model is downloading. Fire-and-forget
+      // the transformer load so it makes progress in the background; we still go
+      // ahead with this turn — if the model isn't ready in time, the heuristic
+      // path handles it, and the next question gets the real semantic rerank.
+      if (!_chatTransformer && !_chatTransformerFailed && !_chatModelLoadNoticed) {
+        _chatModelLoadNoticed = true;
+        _chatAppendBubble('bot', _searchEscapeHtml(t.chatModelLoading));
+        _chatGetTransformer().then(pipe => {
+          if (!pipe && !_chatTransformerFailed) {
+            _chatAppendBubble('bot', _searchEscapeHtml(t.chatModelFailed));
+          }
+        });
+      }
+
+      const typing = _chatTyping();
+      _chatSubmit.disabled = true;
+
+      // Ensure search index is loaded
+      if (!SEARCH_INDEX) {
+        try { await _searchLoadIndex(); } catch (e) {}
+      }
+
+      // === Lexicon: curated bot-authoritative answers ===
+      // Check the lexicon BEFORE the Wikipedia path. An unambiguous hit gives
+      // us the right canonical Wikipedia title for free (no opensearch noise),
+      // and the curated definition appears as a green-tinted "Lexicon" card.
+      // Ambiguous hits (two or more entries with close scores) fire a
+      // clarifying question: the bot shows clickable chips and stops here.
+      const promptLang = _chatDetectLang(prompt);
+      const lexMatches = _chatLexiconMatch(prompt, queryTokens);
+      let lexicon = null;
+      if (lexMatches.length >= 2 && (lexMatches[0].score - lexMatches[1].score) < 4) {
+        // Ambiguous — ask the user to pick instead of guessing.
+        typing.remove();
+        const heading = document.createElement('div');
+        heading.className = 'chat-msg bot';
+        heading.textContent = t.chatClarify;
+        _chatAppendRaw(heading);
+        const chipWrap = document.createElement('div');
+        chipWrap.className = 'chat-chips';
+        const top = lexMatches.slice(0, 4);
+        top.forEach(m => {
+          const e = m.entry[promptLang] || m.entry.en || m.entry.el;
+          const label = (e && e.term) || '';
+          if (!label) return;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'chat-chip';
+          btn.textContent = label;
+          btn.addEventListener('click', () => {
+            _chatInput.value = label;
+            _chatHandleSubmit(label);
+          });
+          chipWrap.appendChild(btn);
+        });
+        _chatAppendRaw(chipWrap);
+        _chatSubmit.disabled = false;
+        _chatInput.focus();
+        return;
+      }
+      if (lexMatches.length >= 1) lexicon = lexMatches[0].entry;
+
+      let dbResults = [];
+      if (SEARCH_INDEX && SEARCH_INDEX.length && queryTokens.length) {
+        const scored = [];
+        for (const e of SEARCH_INDEX) {
+          const s = _bitRerankEntry(CHAT_MODEL, queryTokens, e);
+          if (s > 0) scored.push({ e, s });
+        }
+        scored.sort((a, b) => b.s - a.s);
+        dbResults = scored.slice(0, 4).map(x => x.e);
+      }
+
+      // Wikipedia: if lexicon already knows the canonical title, fetch it
+      // directly. Otherwise fall back to the full CirrusSearch+rerank flow.
+      let wiki;
+      if (lexicon) {
+        const wikiTitle = lexicon['wiki_' + promptLang] || lexicon.wiki_en || lexicon.wiki_el;
+        wiki = wikiTitle ? await _chatFetchWikiByTitle(wikiTitle, promptLang) : null;
+      } else {
+        wiki = await _chatFetchWiki(queryTokens, prompt);
+      }
+
+      typing.remove();
+
+      if (!lexicon && !wiki && !dbResults.length) {
+        if (SEARCH_INDEX && SEARCH_INDEX.length === 0 && location.protocol === 'file:') {
+          _chatAppendBubble('bot', _searchEscapeHtml(t.searchFileMode));
+        } else {
+          _chatAppendBubble('bot', _searchEscapeHtml(t.chatNoResults));
+        }
+        _chatSubmit.disabled = false;
+        return;
+      }
+
+      // Render Lexicon card first (highest authority)
+      if (lexicon) {
+        const e = lexicon[promptLang] || lexicon.en || lexicon.el;
+        if (e) {
+          const card = document.createElement('div');
+          card.className = 'chat-lexicon';
+          card.innerHTML =
+            '<div class="chat-lexicon-tag">' + _searchEscapeHtml(t.chatLexiconLabel) + '</div>'
+            + '<div class="chat-lexicon-term">' + _searchEscapeHtml(e.term) + '</div>'
+            + '<div>' + _searchHighlight(e.definition, queryTokens) + '</div>';
+          _chatAppendRaw(card);
+        }
+      }
+
+      // Render Wikipedia card
+      if (wiki) {
+        const card = document.createElement('div');
+        card.className = 'chat-wiki';
+        const lead = _searchEscapeHtml(t.chatWikiLead);
+        card.innerHTML =
+          '<div class="chat-wiki-title">' + _searchEscapeHtml(wiki.title) + '</div>'
+          + '<div>' + _searchHighlight(wiki.extract, queryTokens) + '</div>'
+          + '<a class="chat-wiki-link" href="' + _searchEscapeHtml(wiki.url) + '" target="_blank" rel="noopener">' + lead + '</a>';
+        _chatAppendRaw(card);
+      }
+
+      // Render quiz cards
+      if (dbResults.length) {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-quiz-list';
+        wrap.innerHTML = dbResults.map((e, idx) => {
+          const text = (currentLang === 'el' ? e.textEl : (e.textEn || e.textEl)) || '';
+          const correct = (currentLang === 'el' ? e.correctEl : (e.correctEn || e.correctEl)) || '';
+          const topicLabel = t[e.labelKey] || e.topicKey;
+          return '<div class="chat-quiz" data-idx="' + idx + '">'
+            + '<div class="chat-quiz-topic">' + _searchEscapeHtml(topicLabel) + '</div>'
+            + '<div class="chat-quiz-q">' + _searchHighlight(text, queryTokens) + '</div>'
+            + '<div class="chat-quiz-a"><strong>' + _searchEscapeHtml(t.searchAnswer) + '</strong> ' + _searchHighlight(correct, queryTokens) + '</div>'
+            + '<button type="button" class="chat-quiz-helpful">' + _searchEscapeHtml(t.chatHelpful) + '</button>'
+            + '</div>';
+        }).join('');
+        _chatAppendRaw(wrap);
+        // Wire up the helpful buttons — each click boosts learned relations
+        wrap.querySelectorAll('.chat-quiz-helpful').forEach((btn, idx) => {
+          btn.addEventListener('click', () => {
+            if (btn.classList.contains('was-clicked')) return;
+            const entry = dbResults[idx];
+            if (!entry) return;
+            const resultTokens = _searchTokenize((entry.textEn || entry.textEl) + ' ' + (entry.correctEn || entry.correctEl));
+            _bitBoostHelpful(CHAT_MODEL, queryTokens, resultTokens);
+            _bitSaveModel(CHAT_MODEL);
+            btn.classList.add('was-clicked');
+            btn.textContent = t.chatHelpfulDone;
+          });
+        });
+      }
+
+      _chatSubmit.disabled = false;
+      _chatInput.focus();
+    }
+
+    _chatForm.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const val = _chatInput.value.trim();
+      if (!val) return;
+      _chatInput.value = '';
+      _chatHandleSubmit(val);
+    });
   </script>
 </body>
 </html>
