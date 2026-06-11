@@ -1942,6 +1942,27 @@
     // Initialize Page
     applyTheme(currentTheme);
     applyLanguage(currentLang);
+
+    // === Custom quiz from URL parameter (from quizess.html chat bot) ===
+    (function() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const cqKey = params.get('customQuiz');
+        if (!cqKey) return;
+        const raw = localStorage.getItem(cqKey);
+        if (!raw) return;
+        const spec = JSON.parse(raw);
+        if (!spec || !Array.isArray(spec.questions) || !spec.questions.length) return;
+        QUIZZES.push({
+          title: spec.title || 'Custom Quiz',
+          filename: 'custom',
+          questions: spec.questions
+        });
+        setTimeout(function() {
+          try { startQuiz(QUIZZES.length - 1, 'original'); } catch (e) {}
+        }, 0);
+      } catch (e) {}
+    })();
   </script>
 </body>
 </html>

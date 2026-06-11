@@ -515,6 +515,126 @@
       transition: border-color 0.18s, color 0.18s;
     }
     .chat-chip:hover { border-color: var(--primary); color: var(--primary); }
+    .chat-advice {
+      align-self: flex-start;
+      width: 100%;
+      background: rgba(124, 58, 237, 0.10);
+      border: 1px solid #a78bfa;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .chat-advice-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #a78bfa;
+      margin-bottom: 4px;
+    }
+    .chat-advice-title {
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      color: #a78bfa;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+    .chat-advice-list { padding-left: 20px; margin: 4px 0; }
+    .chat-advice-list li { margin: 6px 0; }
+    .chat-advice strong { color: #c4b5fd; font-weight: 600; }
+    .chat-progress {
+      align-self: flex-start;
+      width: 100%;
+      background: rgba(56, 189, 248, 0.10);
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .chat-progress-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .chat-progress-summary {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .chat-progress-num strong {
+      font-size: 1.05rem;
+      color: var(--primary);
+      font-weight: 700;
+      display: block;
+    }
+    .chat-sparkline { margin: 6px 0 10px; }
+    .chat-sparkline svg { display: block; width: 100%; height: 48px; }
+    .chat-progress-topics {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.84rem;
+    }
+    .chat-progress-topic {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+    .chat-progress-topic strong { color: var(--text-main); font-weight: 600; }
+    .chat-quizlaunch {
+      align-self: flex-start;
+      width: 100%;
+      background: var(--success-glow);
+      border: 1px solid var(--success);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .chat-quizlaunch-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--success);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .chat-quizlaunch-title {
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .chat-quizlaunch-info {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .chat-quizlaunch-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: var(--success);
+      color: #0b0f19;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: opacity 0.18s;
+    }
+    .chat-quizlaunch-btn:hover { opacity: 0.88; }
     .chat-wiki-title { font-weight: 700; font-family: var(--font-outfit); margin-bottom: 4px; color: var(--primary); }
     .chat-wiki-link { display: inline-block; margin-top: 6px; font-size: 0.8rem; color: var(--primary); text-decoration: none; }
     .chat-wiki-link:hover { text-decoration: underline; }
@@ -920,6 +1040,24 @@
         chatClarify: "Σε ποιο από τα παρακάτω αναφέρεσαι;",
         chatLexiconLabel: "Λεξικό",
         chatWikiLeadLexicon: "Διάβασε περισσότερα στη Wikipedia →",
+        chatAdviceLabel: "Οδηγός Μελέτης",
+        chatProgressLabel: "Πρόοδος",
+        chatAttempts: "συνολικά",
+        chatAvg: "μέσος όρος",
+        chatRecent: "πρόσφατα",
+        chatTrendUp: "↗ βελτίωση",
+        chatTrendDown: "↘ πτώση",
+        chatTrendFlat: "→ σταθερό",
+        chatProgressEmpty: "Δεν έχεις ολοκληρώσει κανένα κουίζ ακόμη. Δοκίμασε ένα και θα στο δείξω εδώ.",
+        chatReadinessLabel: "Πρόβλεψη ετοιμότητας",
+        chatReadinessTooFew: "Χρειάζομαι τουλάχιστον 3 ολοκληρωμένα κουίζ για να βγάλω πρόβλεψη. Συνέχισε λίγο ακόμη!",
+        chatReadyNow: "Ο πρόσφατος μέσος όρος σου είναι {score}% — είσαι ήδη στο επίπεδο που χρειάζεσαι. Συνέχισε με γενικά τεστ για να εδραιώσεις τη γνώση.",
+        chatReadyEstimate: "Με τον τρέχοντα ρυθμό βελτίωσης (~{rate}% ανά κουίζ), χρειάζεσαι περίπου {n} ακόμη κουίζ για να φτάσεις στο 80%.",
+        chatReadyStable: "Ο πρόσφατος μέσος όρος σου είναι {score}% χωρίς αξιοσημείωτη βελτίωση. Στόχος: {target}%. Δοκίμασε active recall και μικρότερες, πιο τακτικές συνεδρίες.",
+        chatQuizGenLabel: "Κουίζ έτοιμο",
+        chatQuizQuestions: "ερωτήσεις",
+        chatQuizStart: "Έναρξη κουίζ",
+        chatQuizGenFailed: "Δεν μπόρεσα να φτιάξω κουίζ — βεβαιώσου ότι έχει φορτωθεί το υλικό (η λειτουργία απαιτεί φορτωμένο index ερωτήσεων).",
         chatHelpful: "👍 Χρήσιμο",
         chatHelpfulDone: "✓ Καταγράφηκε",
         chatResetTitle: "Επαναφορά μνήμης",
@@ -974,6 +1112,24 @@
         chatClarify: "Which of these did you mean?",
         chatLexiconLabel: "Lexicon",
         chatWikiLeadLexicon: "Read more on Wikipedia →",
+        chatAdviceLabel: "Study Guide",
+        chatProgressLabel: "Progress",
+        chatAttempts: "attempts",
+        chatAvg: "average",
+        chatRecent: "recent",
+        chatTrendUp: "↗ improving",
+        chatTrendDown: "↘ declining",
+        chatTrendFlat: "→ steady",
+        chatProgressEmpty: "You haven't completed any quizzes yet. Try one and I'll show it here.",
+        chatReadinessLabel: "Readiness forecast",
+        chatReadinessTooFew: "I need at least 3 completed quizzes to make a forecast. Keep going a little longer!",
+        chatReadyNow: "Your recent average is {score}% — you're at the level you need. Keep taking general tests to consolidate.",
+        chatReadyEstimate: "At your current improvement rate (~{rate}% per quiz), you need about {n} more quizzes to reach 80%.",
+        chatReadyStable: "Your recent average is {score}% with no clear improvement. Target: {target}%. Try active recall and shorter, more frequent sessions.",
+        chatQuizGenLabel: "Quiz ready",
+        chatQuizQuestions: "questions",
+        chatQuizStart: "Start quiz",
+        chatQuizGenFailed: "Couldn't build the quiz — make sure the question index has loaded (this feature needs the quiz pool).",
         chatHelpful: "👍 Helpful",
         chatHelpfulDone: "✓ Noted",
         chatResetTitle: "Reset memory",
@@ -1158,7 +1314,8 @@
             const html = await res.text();
             const quizzes = _searchExtractQuizzes(html);
             if (!Array.isArray(quizzes)) continue;
-            for (const quiz of quizzes) {
+            for (let qIdx = 0; qIdx < quizzes.length; qIdx++) {
+              const quiz = quizzes[qIdx];
               const qs = quiz && quiz.questions;
               if (!Array.isArray(qs)) continue;
               for (const q of qs) {
@@ -1176,6 +1333,13 @@
                   textEn: textEn,
                   correctEl: correctEl,
                   correctEn: correctEn,
+                  // Full question data needed to actually run the question in a
+                  // generated custom quiz. options_en may be undefined.
+                  options: Array.isArray(q.options) ? q.options.slice() : [],
+                  options_en: Array.isArray(q.options_en) ? q.options_en.slice() : null,
+                  correct_idx: ci,
+                  quizIdx: qIdx,
+                  quizTitle: (quiz && quiz.title) || '',
                   // Precomputed accent-stripped lowercase haystack covers both
                   // languages so a query in either matches.
                   haystack: _searchStripAccents((textEl + ' ¶ ' + textEn + ' ¶ ' + correctEl + ' ¶ ' + correctEn).toLowerCase())
@@ -1791,7 +1955,12 @@
     ]);
     const _CHAT_QUESTION_WORDS = new Set([
       'τι','ποιος','ποια','ποιο','ποιοι','ποιες','πότε','ποτε','πού','που','πώς','πως','γιατί','γιατι',
-      'what','who','whose','whom','where','when','why','how','which'
+      // Temporal/discourse adverbs that behave like question-prefix fillers in
+      // "Now who was X?" / "Τώρα ποιος είναι ο Y;" patterns — they carry no
+      // semantic content and confuse Wikipedia search if left in.
+      'τώρα','τωρα','σήμερα','σημερα','τότε','τοτε','επίσης','επισης','ακόμα','ακομα','ακόμη','ακομη',
+      'what','who','whose','whom','where','when','why','how','which',
+      'now','today','then','also','still','already'
     ]);
     const _CHAT_LINKING = new Set([
       'είναι','ειναι','ήταν','ηταν','σημαίνει','σημαινει',
@@ -1913,6 +2082,18 @@
         el: { term: 'Παρμενίδης', aliases: ['παρμενίδης ο ελεάτης'], definition: 'Ο Παρμενίδης ο Ελεάτης ήταν προσωκρατικός Έλληνας φιλόσοφος του 5ου π.Χ. αιώνα. Υποστήριξε ότι το Ον είναι ένα, αμετάβλητο και αιώνιο, και ότι η αλλαγή είναι απάτη των αισθήσεων.' },
         en: { term: 'Parmenides', aliases: ['parmenides of elea'], definition: 'Parmenides of Elea (5th century BC) was a pre-Socratic Greek philosopher who held that Being is one, unchanging and eternal, and change is an illusion of the senses.' },
         wiki_el: 'Παρμενίδης', wiki_en: 'Parmenides' },
+      { topic: 'noisi',
+        el: { term: 'Πλάτων', aliases: ['πλάτωνας','πλάτων ο αθηναίος'], definition: 'Ο Πλάτων (περ. 428–348 π.Χ.) ήταν Αθηναίος φιλόσοφος, μαθητής του Σωκράτη και δάσκαλος του Αριστοτέλη. Ίδρυσε την Ακαδημία και διατύπωσε τη θεωρία των Ιδεών, σύμφωνα με την οποία υπάρχει ένας υπεραισθητός κόσμος αιωνίων Μορφών.' },
+        en: { term: 'Plato', aliases: ['plato of athens'], definition: 'Plato (c. 428–348 BC) was an Athenian philosopher, student of Socrates and teacher of Aristotle. He founded the Academy and formulated the Theory of Forms — an intelligible realm of eternal archetypes.' },
+        wiki_el: 'Πλάτων', wiki_en: 'Plato' },
+      { topic: 'noisi',
+        el: { term: 'Αριστοτέλης', aliases: ['αριστοτέλης ο σταγειρίτης'], definition: 'Ο Αριστοτέλης (384–322 π.Χ.) ήταν Έλληνας φιλόσοφος, μαθητής του Πλάτωνα και δάσκαλος του Μ. Αλέξανδρου. Έγραψε για λογική, μεταφυσική, ηθική, φυσική και βιολογία, θεμελιώνοντας μεγάλο μέρος της δυτικής επιστημονικής σκέψης.' },
+        en: { term: 'Aristotle', aliases: ['aristotle of stagira'], definition: 'Aristotle (384–322 BC) was a Greek philosopher, student of Plato and teacher of Alexander the Great. He wrote on logic, metaphysics, ethics, physics and biology, founding much of Western scientific thought.' },
+        wiki_el: 'Αριστοτέλης', wiki_en: 'Aristotle' },
+      { topic: 'noisi',
+        el: { term: 'Σωκράτης', aliases: ['σωκράτης ο αθηναίος'], definition: 'Ο Σωκράτης (περ. 470–399 π.Χ.) ήταν Αθηναίος φιλόσοφος, θεμελιωτής της δυτικής φιλοσοφίας. Δεν έγραψε ο ίδιος έργα· τον γνωρίζουμε κυρίως μέσω του Πλάτωνα. Ανέπτυξε τη μαιευτική μέθοδο διαλόγου.' },
+        en: { term: 'Socrates', aliases: ['socrates of athens'], definition: 'Socrates (c. 470–399 BC) was an Athenian philosopher, foundational figure of Western philosophy. He wrote nothing himself; we know him mainly through Plato. He developed the Socratic method of dialectic inquiry.' },
+        wiki_el: 'Σωκράτης', wiki_en: 'Socrates' },
 
       // Animal welfare science
       { topic: 'euzwia',
@@ -1947,12 +2128,59 @@
         wiki_el: 'Ευρωπαϊκή οδηγία', wiki_en: 'Directive (European Union)' }
     ];
 
-    // Lexicon lookup: substring match on the prompt, then token-overlap match on
+    // Tiny rule-based lemmatizer for Greek + English. Lossy by design: strips
+    // the longest matching inflectional suffix that still leaves a 3-char stem,
+    // so διαβάζω/διάβασα/διαβάστηκα/διαβάζοντας all collapse toward "διαβ-"
+    // and walking/walked/walks collapse to "walk". Used for matching only;
+    // display text is never lemmatized.
+    const _CHAT_GREEK_SUFFIXES = [
+      // Verb forms (active/passive, all tenses)
+      'οντουσαν','οντουσαμε','ομασταν','οσασταν','ομαστε','οσαστε',
+      'ηθηκαμε','ηθηκατε','ηθηκαν','ηθηκα','ηθηκες','ηθηκε',
+      'ηκαμε','ηκατε','ηκαν','ηκα','ηκες','ηκε',
+      'ησαμε','ησατε','ησαν','ησα','ησες','ησε',
+      'οντας','ωντας','ομαι','εσαι','εται','ονται','ονταν',
+      'ουμε','ετε','ουν','εις','ει','ω',
+      // Noun & adjective inflections (multi-letter first to win the longest match)
+      'οτητας','οτητες','οτητων','οτητα',
+      'ισμων','ισμοι','ισμους','ισμος','ισμου','ισμο','ισμε',
+      'ωσεις','ωσεων','ωση','ωσης','ωσε','ωσιν',
+      'οτατος','οτατη','οτατο','τερος','τερη','τερο',
+      'ικους','ικες','ικον','ικος','ικη','ικο','ικα',
+      'εις','εων','ους','ων','ος','ου','οι','ες','ας','ης','ε','α','ο','η'
+    ].sort((a, b) => b.length - a.length);
+    const _CHAT_EN_SUFFIXES = [
+      'ization','ational','ization','iveness','fulness','ousness',
+      'ational','tional','alize','icate','ative','ical','ness','ment','able','ible','ence','ance','tion','sion',
+      'ies','ing','ed','es','ly','er','est','s'
+    ].sort((a, b) => b.length - a.length);
+
+    function _chatLemma(word) {
+      if (!word || word.length < 4) return word;
+      const w = String(word).toLowerCase();
+      const isLatin = /^[a-z0-9]+$/.test(w);
+      const suffixes = isLatin ? _CHAT_EN_SUFFIXES : _CHAT_GREEK_SUFFIXES;
+      for (const s of suffixes) {
+        if (w.length - s.length >= 3 && w.endsWith(s)) {
+          let stem = w.slice(0, w.length - s.length);
+          // English -ies → -y reconstruction so "ladies" → "lady"
+          if (isLatin && s === 'ies') stem += 'y';
+          return stem;
+        }
+      }
+      return w;
+    }
+
+    // Lexicon lookup: substring match on the prompt, then lemma-overlap match on
     // each entry's term + aliases. Returns scored candidates ordered by relevance.
     function _chatLexiconMatch(promptRaw, queryTokens) {
       const lang = _chatDetectLang(promptRaw);
       const promptStripped = _searchStripAccents(String(promptRaw || '').toLowerCase());
+      // Both the raw query set AND its lemmatised version are usable signals.
+      // Raw catches exact aliases (e.g. "Ηράκλειτος"); lemma catches inflected
+      // variants (διαβάζω↔διάβασα, study↔studied).
       const querySet = new Set(queryTokens);
+      const queryLemmaSet = new Set(queryTokens.map(_chatLemma));
       const matches = [];
       for (const entry of CHAT_LEXICON) {
         const e = entry[lang] || entry.en || entry.el;
@@ -1968,11 +2196,15 @@
             if (s > best) { best = s; via = c; }
             continue;
           }
-          // (2) token overlap: require either ≥2 tokens or full coverage for 1-token aliases
+          // (2) token overlap: require either ≥2 tokens or full coverage for 1-token aliases.
+          // Compare both raw and lemmatised forms; an alias token matches if
+          // either form appears in the corresponding query set.
           const cTokens = _searchTokenize(c);
           if (!cTokens.length) continue;
           let ov = 0;
-          for (const ct of cTokens) if (querySet.has(ct)) ov++;
+          for (const ct of cTokens) {
+            if (querySet.has(ct) || queryLemmaSet.has(_chatLemma(ct))) ov++;
+          }
           const ratio = ov / cTokens.length;
           if ((ov >= 2 && ratio >= 0.5) || (ov === 1 && cTokens.length === 1 && cTokens[0].length >= 5)) {
             const s = ov * 6;
@@ -2004,6 +2236,462 @@
             || ('https://' + host + '/wiki/' + encodeURIComponent(title))
         };
       } catch (e) { return null; }
+    }
+
+    // === Intent classifier (reuses MiniLM — no extra model download) ===
+    // Anchor prompts per intent. The multilingual model lets Greek and English
+    // anchors share the same embedding space, so we don't have to choose one or
+    // the other based on the user's language. Anchors are embedded once on
+    // first classification and cached in _CHAT_ANCHOR_VECS.
+    const _CHAT_INTENT_ANCHORS = [
+      { intent: 'advice', text: 'Πώς μπορώ να μελετήσω καλύτερα;' },
+      { intent: 'advice', text: 'Δώσε μου συμβουλές για το διάβασμα.' },
+      { intent: 'advice', text: 'Πώς να βελτιώσω την απομνημόνευσή μου;' },
+      { intent: 'advice', text: 'Τι μπορώ να κάνω για καλύτερη συγκέντρωση;' },
+      { intent: 'advice', text: 'Πώς να προετοιμαστώ για τις εξετάσεις;' },
+      { intent: 'advice', text: 'How can I study better?' },
+      { intent: 'advice', text: 'Give me tips for learning.' },
+      { intent: 'advice', text: 'How do I improve my concentration?' },
+      { intent: 'advice', text: 'How should I prepare for an exam?' },
+      { intent: 'factual', text: 'Ποιος ήταν ο Σωκράτης;' },
+      { intent: 'factual', text: 'Τι είναι η νόηση;' },
+      { intent: 'factual', text: 'Πότε υπογράφηκε η οδηγία;' },
+      { intent: 'factual', text: 'Δώσε ορισμό της ευζωίας.' },
+      { intent: 'factual', text: 'Εξήγησε τη θεωρία του νου.' },
+      { intent: 'factual', text: 'Who was Aristotle?' },
+      { intent: 'factual', text: 'What is qualia?' },
+      { intent: 'factual', text: 'Define animal welfare.' },
+      { intent: 'factual', text: 'Explain the mind-body problem.' },
+      { intent: 'progress', text: 'Θέλω να δω την πρόοδό μου στα κουίζ.' },
+      { intent: 'progress', text: 'Δείξε μου την εξέλιξή μου.' },
+      { intent: 'progress', text: 'Πώς τα πάω μέχρι τώρα στα κουίζ;' },
+      { intent: 'progress', text: 'Show me my quiz progress.' },
+      { intent: 'progress', text: 'How am I doing in the quizzes so far?' },
+      { intent: 'readiness', text: 'Πότε πιστεύεις ότι θα είμαι έτοιμος;' },
+      { intent: 'readiness', text: 'Είμαι έτοιμος για τις εξετάσεις;' },
+      { intent: 'readiness', text: 'Πόσο κοντά είμαι στον στόχο μου;' },
+      { intent: 'readiness', text: 'When will I be ready for the exams?' },
+      { intent: 'readiness', text: 'Am I prepared enough yet?' },
+      { intent: 'quiz_gen', text: 'Φτιάξε μου ένα τυχαίο κουίζ.' },
+      { intent: 'quiz_gen', text: 'Δώσε μου ένα κουίζ με τα αδύναμα σημεία μου.' },
+      { intent: 'quiz_gen', text: 'Φτιάξε ένα ιδανικό κουίζ για εμένα.' },
+      { intent: 'quiz_gen', text: 'Φτιάξε ένα κουίζ για την ενότητα 3 της νόησης.' },
+      { intent: 'quiz_gen', text: 'Δημιούργησε κουίζ.' },
+      { intent: 'quiz_gen', text: 'Build me a random quiz.' },
+      { intent: 'quiz_gen', text: 'Make a quiz from my weak areas.' },
+      { intent: 'quiz_gen', text: 'Generate the ideal quiz for me.' },
+      { intent: 'quiz_gen', text: 'Create a quiz for unit 2 of the welfare course.' }
+    ];
+    let _CHAT_ANCHOR_VECS = null;
+
+    async function _chatClassifyIntent(prompt) {
+      // No model available → cannot classify semantically, default to factual.
+      if (!_chatTransformer && _chatTransformerFailed) return 'factual';
+      const qVec = await _chatEmbed(prompt);
+      if (!qVec) return 'factual';
+      if (!_CHAT_ANCHOR_VECS) {
+        _CHAT_ANCHOR_VECS = [];
+        for (const a of _CHAT_INTENT_ANCHORS) {
+          const v = await _chatEmbed(a.text);
+          if (v) _CHAT_ANCHOR_VECS.push({ intent: a.intent, vec: v });
+        }
+      }
+      // Take the best similarity per intent rather than per-anchor average — a
+      // single very-close anchor is a stronger signal than the mean.
+      const bestPer = {};
+      for (const av of _CHAT_ANCHOR_VECS) {
+        const sim = _chatCosine(qVec, av.vec);
+        if (sim > (bestPer[av.intent] || -1)) bestPer[av.intent] = sim;
+      }
+      let bestIntent = 'factual';
+      let bestSim = -1;
+      for (const intent in bestPer) {
+        if (bestPer[intent] > bestSim) { bestSim = bestPer[intent]; bestIntent = intent; }
+      }
+      // Only switch away from default if confidently above a threshold AND
+      // markedly better than the second-best intent. Otherwise stay factual.
+      const others = Object.keys(bestPer).filter(k => k !== bestIntent);
+      const margin = others.length ? (bestSim - Math.max.apply(null, others.map(k => bestPer[k]))) : 1;
+      if (bestIntent !== 'factual' && (bestSim < 0.42 || margin < 0.04)) return 'factual';
+      return bestIntent;
+    }
+
+    // === Advice corpus — curated study guidance for the "advice" intent ===
+    // Strings inside `tips` may contain <strong>...</strong> for emphasis;
+    // they're trusted hardcoded content, not user input. Each entry has a
+    // small keyword list used by _chatAdvicePick to choose the closest topic.
+    const CHAT_ADVICE = {
+      el: [
+        { title: 'Γενικές συμβουλές μελέτης',
+          keywords: ['μελέτη','σπουδές','διάβασμα','καλύτερα','βελτίωση','γενικά','μαθαίνω'],
+          tips: [
+            '<strong>Διάβαζε σε μικρά κομμάτια κάθε μέρα.</strong> 30 λεπτά ημερησίως πιάνουν περισσότερο από 4 ώρες σε ένα βράδυ.',
+            '<strong>Τεχνική Pomodoro:</strong> 25 λεπτά μελέτης, 5 λεπτά διάλειμμα. Μετά από 4 κύκλους κάνε μεγαλύτερο διάλειμμα.',
+            '<strong>Active recall:</strong> Κλείσε το βιβλίο και προσπάθησε να θυμηθείς. Είναι πολύ πιο αποτελεσματικό από την ξανα-ανάγνωση.',
+            '<strong>Εξήγηση με δικά σου λόγια:</strong> Αν δεν μπορείς να το εξηγήσεις σε άλλον, δεν το έχεις κατανοήσει.',
+            '<strong>Χρησιμοποίησε τα κουίζ της πλατφόρμας:</strong> Είναι ακριβώς active recall σε δράση.'
+          ] },
+        { title: 'Συγκέντρωση και προσοχή',
+          keywords: ['συγκέντρωση','προσοχή','περισπασμοί','εστίαση','focus'],
+          tips: [
+            '<strong>Απενεργοποίησε ειδοποιήσεις.</strong> Το κινητό μακριά από το χώρο μελέτης.',
+            '<strong>Καθαρό περιβάλλον:</strong> καλό φως, σωστή στάση, νερό κοντά.',
+            '<strong>Ύπνος και άσκηση:</strong> 7-9 ώρες ύπνου και τακτική σωματική άσκηση — δεν είναι πολυτέλεια, είναι θεμελιακά.',
+            '<strong>Mindfulness:</strong> 10 λεπτά διαλογισμού την ημέρα βοηθούν μετρήσιμα τη συγκέντρωση.'
+          ] },
+        { title: 'Απομνημόνευση',
+          keywords: ['απομνημόνευση','μνήμη','θυμάμαι','μνημονικό'],
+          tips: [
+            '<strong>Spaced repetition:</strong> Επανάληψη σε αυξανόμενα διαστήματα (1 μέρα, 3 μέρες, 1 εβδομάδα…). Το Anki αυτοματοποιεί τη διαδικασία.',
+            '<strong>Mnemonics:</strong> Συσχέτισε νέες πληροφορίες με κάτι γνώριμο — δημιούργησε εικόνες, ιστορίες, ακρωνύμια.',
+            '<strong>Chunking:</strong> Ομαδοποίησε σχετικές πληροφορίες αντί να μαθαίνεις τυχαία στοιχεία.',
+            '<strong>Δίδαξε αυτό που έμαθες</strong> — η εξήγηση εδραιώνει τη μνήμη.'
+          ] },
+        { title: 'Προετοιμασία για εξετάσεις',
+          keywords: ['εξετάσεις','προετοιμασία','τεστ','εξέταση'],
+          tips: [
+            '<strong>Ξεκίνα νωρίς:</strong> τουλάχιστον 2 εβδομάδες πριν.',
+            '<strong>Κάνε τα γενικά τεστ της πλατφόρμας</strong> — λειτουργούν ως ρεαλιστικές προσομοιώσεις.',
+            '<strong>Εντόπισε τις αδυναμίες σου</strong> από τα αποτελέσματα κουίζ και επικεντρώσου εκεί.',
+            '<strong>Καλός ύπνος τη βραδιά πριν</strong> — δεν χρειάζεσαι ξενυχτι αλλά ξεκούραση.'
+          ] }
+      ],
+      en: [
+        { title: 'General study tips',
+          keywords: ['study','reading','better','improve','general','learn','learning'],
+          tips: [
+            '<strong>Read in small chunks every day.</strong> 30 minutes daily beats 4 hours in one night.',
+            '<strong>Pomodoro technique:</strong> 25 min of focused study, 5 min break. After 4 cycles take a longer break.',
+            '<strong>Active recall:</strong> Close the book and try to remember. Much more effective than re-reading.',
+            '<strong>Explain in your own words:</strong> If you can\'t explain it to someone else, you don\'t understand it.',
+            '<strong>Use the platform quizzes</strong> — they\'re active recall in action.'
+          ] },
+        { title: 'Concentration and attention',
+          keywords: ['concentration','attention','focus','distractions','distract'],
+          tips: [
+            '<strong>Turn off notifications.</strong> Phone away from the study area.',
+            '<strong>Clean environment:</strong> good light, good posture, water nearby.',
+            '<strong>Sleep and exercise:</strong> 7-9 hours of sleep and regular exercise — not luxuries, fundamentals.',
+            '<strong>Mindfulness:</strong> 10 min/day of meditation measurably helps concentration.'
+          ] },
+        { title: 'Memorization',
+          keywords: ['memorization','memory','remember','recall','memorize'],
+          tips: [
+            '<strong>Spaced repetition:</strong> Review at increasing intervals (1 day, 3 days, 1 week…). Tools like Anki automate this.',
+            '<strong>Mnemonics:</strong> Associate new information with something familiar — images, stories, acronyms.',
+            '<strong>Chunking:</strong> Group related information instead of memorizing isolated items.',
+            '<strong>Teach what you learned</strong> — explaining solidifies memory.'
+          ] },
+        { title: 'Exam preparation',
+          keywords: ['exam','exams','preparation','prepare','test'],
+          tips: [
+            '<strong>Start early:</strong> at least 2 weeks before.',
+            '<strong>Take the platform\'s general tests</strong> — they\'re realistic simulations.',
+            '<strong>Identify your weak spots</strong> from quiz history and focus there.',
+            '<strong>Good sleep the night before</strong> — you don\'t need an all-nighter, you need rest.'
+          ] }
+      ]
+    };
+
+    function _chatAdvicePick(promptRaw, queryTokens) {
+      const lang = _chatDetectLang(promptRaw);
+      const corpus = CHAT_ADVICE[lang] || CHAT_ADVICE.en;
+      const promptStripped = _searchStripAccents(String(promptRaw || '').toLowerCase());
+      let best = null;
+      let bestScore = 0;
+      for (const a of corpus) {
+        let score = 0;
+        for (const kw of a.keywords) {
+          const kwStripped = _searchStripAccents(kw.toLowerCase());
+          if (promptStripped.indexOf(kwStripped) >= 0) score += kw.length;
+        }
+        if (score > bestScore) { bestScore = score; best = a; }
+      }
+      return best || corpus[0]; // default to "general" if no keyword match
+    }
+
+    function _chatRenderAdvice(advice) {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      const card = document.createElement('div');
+      card.className = 'chat-advice';
+      // advice.tips contains hardcoded HTML (<strong>); safe to insert as innerHTML.
+      // Title and tag get escaped as usual.
+      card.innerHTML =
+        '<div class="chat-advice-tag">' + _searchEscapeHtml(t.chatAdviceLabel) + '</div>'
+        + '<div class="chat-advice-title">' + _searchEscapeHtml(advice.title) + '</div>'
+        + '<ul class="chat-advice-list">' + advice.tips.map(tip => '<li>' + tip + '</li>').join('') + '</ul>';
+      _chatAppendRaw(card);
+    }
+
+    // === Progress + readiness from quizProgressHistory ===
+    // Read the same localStorage key the quiz pages already write to. SVG
+    // sparkline is built inline — no chart library — so it stays bundle-free.
+    function _chatReadHistory() {
+      try {
+        const arr = JSON.parse(localStorage.getItem('quizProgressHistory') || '[]');
+        if (!Array.isArray(arr)) return [];
+        arr.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+        return arr;
+      } catch (e) { return []; }
+    }
+
+    function _chatSparklineSVG(values) {
+      if (!values.length) return '';
+      const W = 240, H = 48, PAD = 2;
+      const step = (W - PAD * 2) / Math.max(values.length - 1, 1);
+      const pts = values.map((v, i) => {
+        const x = PAD + i * step;
+        const y = PAD + (H - PAD * 2) * (1 - Math.max(0, Math.min(100, v)) / 100);
+        return x.toFixed(1) + ',' + y.toFixed(1);
+      });
+      const fill = '0,' + H + ' ' + pts.join(' ') + ' ' + W + ',' + H;
+      return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">'
+        + '<polygon points="' + fill + '" fill="var(--primary-glow)" />'
+        + '<polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />'
+        + '</svg>';
+    }
+
+    function _chatRenderProgress() {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      const entries = _chatReadHistory();
+      if (!entries.length) {
+        _chatAppendBubble('bot', _searchEscapeHtml(t.chatProgressEmpty));
+        return;
+      }
+      const total = entries.length;
+      const avg = entries.reduce((s, e) => s + (e.scorePercent || 0), 0) / total;
+      const recent = entries.slice(-10);
+      const recentAvg = recent.reduce((s, e) => s + (e.scorePercent || 0), 0) / recent.length;
+      const trendDelta = recentAvg - avg;
+      const trendLabel = trendDelta > 5 ? t.chatTrendUp
+        : trendDelta < -5 ? t.chatTrendDown
+        : t.chatTrendFlat;
+
+      // Per-topic averages
+      const perTopic = {};
+      entries.forEach(e => {
+        const k = e.topic || 'other';
+        if (!perTopic[k]) perTopic[k] = { sum: 0, n: 0 };
+        perTopic[k].sum += (e.scorePercent || 0);
+        perTopic[k].n++;
+      });
+      const topicKey = { noisi: 'topicNoisi', nomothesia: 'topicNomothesia', euzwia: 'topicEuzwia' };
+      const topicsHtml = Object.keys(perTopic).map(k => {
+        const s = perTopic[k];
+        const label = t[topicKey[k]] || k;
+        return '<div class="chat-progress-topic">'
+          + '<span>' + _searchEscapeHtml(label) + '</span>'
+          + '<strong>' + (s.sum / s.n).toFixed(0) + '% · ' + s.n + '</strong>'
+          + '</div>';
+      }).join('');
+
+      const card = document.createElement('div');
+      card.className = 'chat-progress';
+      card.innerHTML =
+        '<div class="chat-progress-tag">' + _searchEscapeHtml(t.chatProgressLabel) + '</div>'
+        + '<div class="chat-progress-summary">'
+        +   '<div class="chat-progress-num"><strong>' + total + '</strong> ' + _searchEscapeHtml(t.chatAttempts) + '</div>'
+        +   '<div class="chat-progress-num"><strong>' + avg.toFixed(0) + '%</strong> ' + _searchEscapeHtml(t.chatAvg) + '</div>'
+        +   '<div class="chat-progress-num"><strong>' + recentAvg.toFixed(0) + '%</strong> ' + _searchEscapeHtml(t.chatRecent) + ' (' + _searchEscapeHtml(trendLabel) + ')</div>'
+        + '</div>'
+        + '<div class="chat-sparkline">' + _chatSparklineSVG(recent.map(e => e.scorePercent || 0)) + '</div>'
+        + '<div class="chat-progress-topics">' + topicsHtml + '</div>';
+      _chatAppendRaw(card);
+    }
+
+    // === Custom-quiz generation (agentic) ===
+    // Parse the user prompt for which flavor of quiz to build, optionally
+    // pinning to a specific topic and unit number. Greek + English handled.
+    function _chatParseQuizSpec(promptRaw) {
+      const p = _searchStripAccents(String(promptRaw || '').toLowerCase());
+
+      // Topic detection: small keyword nets per topic
+      let topic = null;
+      if (/(νοησ|γνωσ|συνειδησ|qualia|cogniti|consciousness|brain)/.test(p)) topic = 'noisi';
+      else if (/(νομοθεσ|νομικ|νομ|δικα|legislation|law)/.test(p)) topic = 'nomothesia';
+      else if (/(ευζω|ευημερ|welfare|wellbeing|well-being)/.test(p)) topic = 'euzwia';
+
+      // Unit number detection — digit or Greek ordinal word stem
+      let unitNum = null;
+      const numericMatch = p.match(/(?:ενοτητ|unit|κουιζ|quiz)\D{0,10}(\d{1,2})/);
+      if (numericMatch) unitNum = parseInt(numericMatch[1], 10);
+      if (!unitNum) {
+        const ordinalStems = ['πρωτ','δευτερ','τριτ','τεταρτ','πεμπτ','εκτ','εβδομ','ογδο','ενατ','δεκατ','ενδεκατ','δωδεκατ'];
+        for (let i = 0; i < ordinalStems.length; i++) {
+          if (new RegExp('(?:ενοτητ|κουιζ)\\D{0,10}' + ordinalStems[i]).test(p)
+              || new RegExp(ordinalStems[i] + '\\D{0,10}(?:ενοτητ|κουιζ)').test(p)) {
+            unitNum = i + 1; break;
+          }
+        }
+      }
+
+      // Flavor: specific wins if topic + unit are clear; otherwise keyword-pick
+      let flavor;
+      if (topic && unitNum) {
+        flavor = 'specific';
+      } else if (/(αδυναμ|χρειαζ|δυσκολ|weak|need|trouble|improve)/.test(p)) {
+        flavor = 'weak';
+      } else if (/(ιδανικ|καλυτερ|ideal|best|perfect|optimal)/.test(p)) {
+        flavor = 'ideal';
+      } else {
+        flavor = 'random';
+      }
+
+      // Size: explicit number wins; otherwise sensible defaults
+      let n;
+      const sizeMatch = p.match(/(\d{1,2})\s*(ερωτησ|question)/);
+      if (sizeMatch) n = Math.max(5, Math.min(40, parseInt(sizeMatch[1], 10)));
+      else n = (flavor === 'ideal') ? 25 : (flavor === 'weak') ? 15 : (flavor === 'specific') ? 0 : 20;
+      return { flavor, topic, unitNum, n };
+    }
+
+    function _chatBuildCustomQuiz(spec) {
+      if (!SEARCH_INDEX || !SEARCH_INDEX.length) return null;
+      let pool = SEARCH_INDEX.filter(e => Array.isArray(e.options) && e.options.length && typeof e.correct_idx === 'number' && e.correct_idx >= 0);
+      if (!pool.length) return null;
+
+      if (spec.flavor === 'specific' && spec.topic && spec.unitNum) {
+        // unitNum is 1-based, quizIdx is 0-based
+        const filtered = pool.filter(e => e.topicKey === spec.topic && e.quizIdx === (spec.unitNum - 1));
+        if (!filtered.length) return null;
+        pool = filtered;
+        spec.n = filtered.length; // take all questions of that specific unit
+      } else if (spec.flavor === 'weak') {
+        const history = _chatReadHistory();
+        if (history.length >= 3) {
+          const perTopic = {};
+          history.forEach(h => {
+            const k = h.topic || 'other';
+            if (!perTopic[k]) perTopic[k] = { sum: 0, n: 0 };
+            perTopic[k].sum += (h.scorePercent || 0);
+            perTopic[k].n++;
+          });
+          const sorted = Object.keys(perTopic).sort((a, b) =>
+            (perTopic[a].sum / perTopic[a].n) - (perTopic[b].sum / perTopic[b].n)
+          );
+          const weak = new Set(sorted.slice(0, 2));
+          const filtered = pool.filter(e => weak.has(e.topicKey));
+          if (filtered.length) pool = filtered;
+        }
+      } else if (spec.flavor === 'ideal') {
+        const history = _chatReadHistory();
+        if (history.length >= 3) {
+          const perTopic = {};
+          history.forEach(h => {
+            const k = h.topic || 'other';
+            if (!perTopic[k]) perTopic[k] = { sum: 0, n: 0 };
+            perTopic[k].sum += (h.scorePercent || 0);
+            perTopic[k].n++;
+          });
+          const weights = {};
+          for (const k in perTopic) weights[k] = Math.max(1, 100 - perTopic[k].sum / perTopic[k].n);
+          const weighted = [];
+          pool.forEach(e => {
+            const w = weights[e.topicKey] || 50;
+            const copies = Math.max(1, Math.round(w / 25));
+            for (let i = 0; i < copies; i++) weighted.push(e);
+          });
+          pool = weighted;
+        }
+      }
+      // flavor === 'random': pool stays unfiltered
+
+      // Shuffle + dedupe + take up to N
+      const shuffled = pool.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      const picked = [];
+      const seen = new Set();
+      for (const e of shuffled) {
+        const key = e.topicKey + ':' + e.quizIdx + ':' + e.textEl.slice(0, 30);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        picked.push({
+          text: e.textEl,
+          text_en: e.textEn,
+          options: e.options.slice(),
+          options_en: e.options_en ? e.options_en.slice() : null,
+          correct_idx: e.correct_idx
+        });
+        if (spec.n && picked.length >= spec.n) break;
+      }
+      if (!picked.length) return null;
+
+      const titlesEl = {
+        random:   'Τυχαίο Κουίζ',
+        weak:     'Κουίζ Αδύναμων Σημείων',
+        ideal:    'Ιδανικό Κουίζ',
+        specific: 'Ενότητα ' + (spec.unitNum || '?') + ' — ' + (spec.topic || '')
+      };
+      const titlesEn = {
+        random:   'Random Quiz',
+        weak:     'Weak-Spots Quiz',
+        ideal:    'Ideal Quiz',
+        specific: 'Unit ' + (spec.unitNum || '?') + ' — ' + (spec.topic || '')
+      };
+      const title = currentLang === 'el' ? titlesEl[spec.flavor] : titlesEn[spec.flavor];
+      return { title, questions: picked, flavor: spec.flavor, topic: spec.topic };
+    }
+
+    function _chatLaunchCustomQuiz(quiz) {
+      const id = 'customQuiz:' + Date.now() + ':' + Math.random().toString(36).slice(2, 8);
+      try {
+        localStorage.setItem(id, JSON.stringify({ title: quiz.title, questions: quiz.questions, ts: Date.now() }));
+      } catch (e) { return null; }
+      // Host page: respect the topic when it's a specific-unit request, else
+      // default to noisi (largest pool, longest-supported page).
+      const host = (quiz.flavor === 'specific' && quiz.topic)
+        ? 'quizzes_' + quiz.topic + '.html'
+        : 'quizzes_noisi.html';
+      return host + '?customQuiz=' + encodeURIComponent(id);
+    }
+
+    function _chatRenderQuizLink(quiz, url) {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      const card = document.createElement('div');
+      card.className = 'chat-quizlaunch';
+      card.innerHTML =
+        '<div class="chat-quizlaunch-tag">' + _searchEscapeHtml(t.chatQuizGenLabel) + '</div>'
+        + '<div class="chat-quizlaunch-title">' + _searchEscapeHtml(quiz.title) + '</div>'
+        + '<div class="chat-quizlaunch-info">' + quiz.questions.length + ' ' + _searchEscapeHtml(t.chatQuizQuestions) + '</div>'
+        + '<a class="chat-quizlaunch-btn" href="' + _searchEscapeHtml(url) + '">' + _searchEscapeHtml(t.chatQuizStart) + ' ▶</a>';
+      _chatAppendRaw(card);
+    }
+
+    function _chatRenderReadiness() {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      const entries = _chatReadHistory();
+      if (entries.length < 3) {
+        _chatAppendBubble('bot', _searchEscapeHtml(t.chatReadinessTooFew));
+        return;
+      }
+      const TARGET = 80;
+      const avg = entries.reduce((s, e) => s + (e.scorePercent || 0), 0) / entries.length;
+      const recent = entries.slice(-5);
+      const recentAvg = recent.reduce((s, e) => s + (e.scorePercent || 0), 0) / recent.length;
+
+      let message;
+      if (recentAvg >= TARGET) {
+        message = t.chatReadyNow.replace('{score}', recentAvg.toFixed(0));
+      } else {
+        const improvement = recentAvg - avg;
+        if (improvement <= 0.5) {
+          message = t.chatReadyStable.replace('{score}', recentAvg.toFixed(0)).replace('{target}', TARGET);
+        } else {
+          const perQuiz = improvement / recent.length;
+          const remaining = Math.max(1, Math.ceil((TARGET - recentAvg) / Math.max(perQuiz, 0.5)));
+          message = t.chatReadyEstimate.replace('{n}', remaining).replace('{rate}', perQuiz.toFixed(1));
+        }
+      }
+
+      const card = document.createElement('div');
+      card.className = 'chat-progress';
+      card.innerHTML =
+        '<div class="chat-progress-tag">' + _searchEscapeHtml(t.chatReadinessLabel) + '</div>'
+        + '<div>' + _searchEscapeHtml(message) + '</div>';
+      _chatAppendRaw(card);
     }
 
     // === Semantic reranker (Transformers.js + multilingual MiniLM) ===
@@ -2334,6 +3022,58 @@
 
       const typing = _chatTyping();
       _chatSubmit.disabled = true;
+
+      // === Intent classification (MiniLM cosine to anchor prompts) ===
+      // Decide first whether this is a "how do I…" advice question or a
+      // factual lookup. Advice intent short-circuits the lexicon/Wikipedia
+      // pipeline and shows curated study guidance instead.
+      const intent = await _chatClassifyIntent(prompt);
+      if (intent === 'advice') {
+        const advice = _chatAdvicePick(prompt, queryTokens);
+        typing.remove();
+        if (advice) _chatRenderAdvice(advice);
+        _chatSubmit.disabled = false;
+        _chatInput.focus();
+        return;
+      }
+      if (intent === 'progress') {
+        typing.remove();
+        _chatRenderProgress();
+        _chatSubmit.disabled = false;
+        _chatInput.focus();
+        return;
+      }
+      if (intent === 'readiness') {
+        typing.remove();
+        _chatRenderReadiness();
+        _chatSubmit.disabled = false;
+        _chatInput.focus();
+        return;
+      }
+      if (intent === 'quiz_gen') {
+        // Quiz generation needs the SEARCH_INDEX (it's the question pool).
+        if (!SEARCH_INDEX) { try { await _searchLoadIndex(); } catch (e) {} }
+        typing.remove();
+        if (!SEARCH_INDEX || SEARCH_INDEX.length === 0) {
+          _chatAppendBubble('bot', _searchEscapeHtml(
+            location.protocol === 'file:' ? t.searchFileMode : t.chatQuizGenFailed
+          ));
+          _chatSubmit.disabled = false;
+          return;
+        }
+        const spec = _chatParseQuizSpec(prompt);
+        const quiz = _chatBuildCustomQuiz(spec);
+        if (!quiz) {
+          _chatAppendBubble('bot', _searchEscapeHtml(t.chatQuizGenFailed));
+        } else {
+          const url = _chatLaunchCustomQuiz(quiz);
+          if (url) _chatRenderQuizLink(quiz, url);
+          else _chatAppendBubble('bot', _searchEscapeHtml(t.chatQuizGenFailed));
+        }
+        _chatSubmit.disabled = false;
+        _chatInput.focus();
+        return;
+      }
 
       // Ensure search index is loaded
       if (!SEARCH_INDEX) {
