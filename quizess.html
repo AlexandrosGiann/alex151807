@@ -937,6 +937,24 @@
       <div id="historyList" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </section>
 
+    <!-- STUDY GRAPH -->
+    <section id="graphSection" class="card" style="margin-top: 40px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 8px;">
+        <h2 data-translate="graphTitle" style="font-family: var(--font-outfit); font-size: 1.5rem; font-weight: 700; color: var(--text-main);">Γράφος Μελέτης</h2>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-muted);">
+          <span data-translate="graphLegendCool">Καλή γνώση</span>
+          <span style="display: inline-block; width: 90px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #38bdf8, #facc15, #ef4444);"></span>
+          <span data-translate="graphLegendHot">Χρειάζεται μελέτη</span>
+        </div>
+      </div>
+      <p data-translate="graphHint" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Κάθε κόμβος είναι ένα κουίζ — όσο πιο «καυτός», τόσο περισσότερη μελέτη χρειάζεται. Σύρε τους κόμβους, πέρασε το ποντίκι από πάνω για λεπτομέρειες.</p>
+      <div id="graphWrap" style="position: relative; width: 100%; height: 460px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.12);">
+        <canvas id="graphCanvas" style="width: 100%; height: 100%; display: block; cursor: grab;"></canvas>
+        <div id="graphTooltip" style="position: absolute; display: none; pointer-events: none; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; color: var(--text-main); max-width: 260px; box-shadow: 0 6px 18px rgba(0,0,0,0.4); z-index: 10;"></div>
+        <div id="graphStatus" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem; padding: 20px; text-align: center;"></div>
+      </div>
+    </section>
+
   </main>
 
   <!-- MANUAL PREVIEW MODAL -->
@@ -956,6 +974,10 @@
 
   <!-- Floating Control Buttons -->
   <div class="floating-controls">
+    <button id="musicToggle" class="control-btn" title="Χαλαρωτική Μουσική / Relaxing Music">
+      <svg id="musicOffIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+      <svg id="musicOnIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    </button>
     <button id="themeToggle" class="control-btn" title="Εναλλαγή Θέματος / Toggle Theme">
       <svg id="themeSunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
       <svg id="themeMoonIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -1014,6 +1036,15 @@
         groupAttempts: "προσπάθειες",
         groupBest: "Καλύτερο",
         groupAvg: "Μ.Ο.",
+        graphTitle: "Γράφος Μελέτης",
+        graphHint: "Κάθε κόμβος είναι ένα κουίζ — όσο πιο «καυτός», τόσο περισσότερη μελέτη χρειάζεται. Σύρε τους κόμβους, πέρασε το ποντίκι από πάνω για λεπτομέρειες.",
+        graphLegendCool: "Καλή γνώση",
+        graphLegendHot: "Χρειάζεται μελέτη",
+        graphLoading: "Φόρτωση γράφου…",
+        graphAttemptsLbl: "προσπάθειες",
+        graphAvgLbl: "Μ.Ο.",
+        graphNoAttempts: "Δεν έχει δοκιμαστεί ακόμη",
+        graphOpenLbl: "Κλικ για άνοιγμα",
         confirmClear: "Είστε σίγουροι ότι θέλετε να διαγράψετε όλο το ιστορικό κουίζ;",
         tagStudy: "Μελέτη",
         titleManual: "Εγχειρίδιο Μελέτης",
@@ -1089,6 +1120,15 @@
         groupAttempts: "attempts",
         groupBest: "Best",
         groupAvg: "Avg",
+        graphTitle: "Study Graph",
+        graphHint: "Each node is a quiz — the hotter it glows, the more study it needs. Drag nodes around, hover for details.",
+        graphLegendCool: "Well known",
+        graphLegendHot: "Needs study",
+        graphLoading: "Loading graph…",
+        graphAttemptsLbl: "attempts",
+        graphAvgLbl: "Avg",
+        graphNoAttempts: "Not attempted yet",
+        graphOpenLbl: "Click to open",
         confirmClear: "Are you sure you want to delete all quiz history?",
         tagStudy: "Study",
         titleManual: "Study Manual",
@@ -3304,6 +3344,479 @@
       _chatInput.value = '';
       _chatHandleSubmit(val);
     });
+  </script>
+
+  <script>
+    // ============================================================
+    // STUDY GRAPH — Obsidian-style force-directed graph with a
+    // "needs study" heatmap. Nodes: root → topics → quizzes.
+    // Heat: unattempted = 100 (hottest); attempted = 100 − avg%.
+    // ============================================================
+    (function() {
+      const canvas = document.getElementById('graphCanvas');
+      const wrap = document.getElementById('graphWrap');
+      const tooltip = document.getElementById('graphTooltip');
+      const statusEl = document.getElementById('graphStatus');
+      if (!canvas || !wrap) return;
+      const ctx = canvas.getContext('2d');
+
+      let nodes = [];
+      let edges = [];
+      let dragNode = null;
+      let hoverNode = null;
+      let running = false;
+
+      function tdict() { return TRANSLATIONS[currentLang] || TRANSLATIONS.el; }
+
+      // heat 0..100 → color: blue → yellow → red
+      function heatColor(h) {
+        const x = Math.max(0, Math.min(100, h)) / 100;
+        let r, g, b;
+        if (x < 0.5) { // blue (#38bdf8) → yellow (#facc15)
+          const k = x / 0.5;
+          r = 0x38 + (0xfa - 0x38) * k;
+          g = 0xbd + (0xcc - 0xbd) * k;
+          b = 0xf8 + (0x15 - 0xf8) * k;
+        } else { // yellow → red (#ef4444)
+          const k = (x - 0.5) / 0.5;
+          r = 0xfa + (0xef - 0xfa) * k;
+          g = 0xcc + (0x44 - 0xcc) * k;
+          b = 0x15 + (0x44 - 0x15) * k;
+        }
+        return 'rgb(' + (r|0) + ',' + (g|0) + ',' + (b|0) + ')';
+      }
+
+      // History stats per quiz: map "topic::quizTitleEl" → {n, avg}
+      function historyStats() {
+        const stats = {};
+        try {
+          const arr = JSON.parse(localStorage.getItem('quizProgressHistory') || '[]');
+          (Array.isArray(arr) ? arr : []).forEach(e => {
+            const key = (e.topic || 'unknown') + '::' + (e.quizTitleEl || e.quizTitleEn || '—');
+            if (!stats[key]) stats[key] = { n: 0, sum: 0 };
+            stats[key].n++;
+            stats[key].sum += (e.scorePercent || 0);
+          });
+        } catch (e) {}
+        for (const k in stats) stats[k].avg = stats[k].sum / stats[k].n;
+        return stats;
+      }
+
+      function shortLabel(title) {
+        const s = String(title || '');
+        // Strip the long "Quiz Ενότητας:" prefix down to its core
+        const m = s.match(/:\s*(.+)$/);
+        const core = m ? m[1] : s;
+        return core.length > 26 ? core.slice(0, 24) + '…' : core;
+      }
+
+      function buildGraph() {
+        const t = tdict();
+        const stats = historyStats();
+        const W = wrap.clientWidth, H = wrap.clientHeight;
+        nodes = [];
+        edges = [];
+
+        const root = { id: 'root', type: 'root', label: currentLang === 'el' ? 'Μελέτη' : 'Study',
+          heat: 0, r: 16, x: W / 2, y: H / 2, vx: 0, vy: 0, fixed: false };
+        nodes.push(root);
+
+        const topicMeta = {
+          noisi:      { labelKey: 'topicNoisi',      file: 'quizzes_noisi.html' },
+          nomothesia: { labelKey: 'topicNomothesia', file: 'quizzes_nomothesia.html' },
+          euzwia:     { labelKey: 'topicEuzwia',     file: 'quizzes_euzwia.html' }
+        };
+
+        // Quiz list: prefer SEARCH_INDEX (full curriculum); fall back to
+        // history-only groups when the index can't load (e.g. file://).
+        const quizMap = new Map(); // topic::title → {topic, title, file}
+        if (SEARCH_INDEX && SEARCH_INDEX.length) {
+          SEARCH_INDEX.forEach(e => {
+            if (!e.quizTitle) return;
+            const key = e.topicKey + '::' + e.quizTitle;
+            if (!quizMap.has(key)) quizMap.set(key, { topic: e.topicKey, title: e.quizTitle, file: e.file });
+          });
+        } else {
+          for (const key in stats) {
+            const ix = key.indexOf('::');
+            const topic = key.slice(0, ix), title = key.slice(ix + 2);
+            const meta = topicMeta[topic];
+            quizMap.set(key, { topic: topic, title: title, file: meta ? meta.file : '' });
+          }
+        }
+        if (!quizMap.size) return false;
+
+        const topicNodes = {};
+        const topicHeats = {};
+        let ti = 0;
+        const presentTopics = new Set(Array.from(quizMap.values()).map(q => q.topic));
+        presentTopics.forEach(topic => {
+          const meta = topicMeta[topic];
+          const angle = (ti / Math.max(presentTopics.size, 1)) * Math.PI * 2;
+          const tn = {
+            id: 'topic:' + topic, type: 'topic', topic: topic,
+            label: meta ? (t[meta.labelKey] || topic) : topic,
+            file: meta ? meta.file : '',
+            heat: 0, r: 12,
+            x: W / 2 + Math.cos(angle) * 120, y: H / 2 + Math.sin(angle) * 120,
+            vx: 0, vy: 0
+          };
+          topicNodes[topic] = tn;
+          topicHeats[topic] = [];
+          nodes.push(tn);
+          edges.push({ a: root, b: tn, len: 130 });
+          ti++;
+        });
+
+        quizMap.forEach((q, key) => {
+          const st = stats[key];
+          const heat = st ? Math.max(0, 100 - st.avg) : 100;
+          const parent = topicNodes[q.topic];
+          if (!parent) return;
+          topicHeats[q.topic].push(heat);
+          const jitter = () => (Math.random() - 0.5) * 220;
+          nodes.push({
+            id: key, type: 'quiz', topic: q.topic, title: q.title, file: q.file,
+            label: shortLabel(q.title),
+            heat: heat, attempts: st ? st.n : 0, avg: st ? st.avg : null,
+            r: 7 + (heat / 100) * 4,
+            x: parent.x + jitter(), y: parent.y + jitter(), vx: 0, vy: 0
+          });
+          edges.push({ a: parent, b: nodes[nodes.length - 1], len: 90 });
+        });
+
+        // Topic heat = mean of its quizzes' heat
+        presentTopics.forEach(topic => {
+          const hs = topicHeats[topic];
+          topicNodes[topic].heat = hs.length ? hs.reduce((a, b) => a + b, 0) / hs.length : 50;
+        });
+        return true;
+      }
+
+      function resize() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = wrap.clientWidth * dpr;
+        canvas.height = wrap.clientHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function physics() {
+        const W = wrap.clientWidth, H = wrap.clientHeight;
+        // Pairwise repulsion (n is small, O(n²) is fine)
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i], b = nodes[j];
+            let dx = b.x - a.x, dy = b.y - a.y;
+            let d2 = dx * dx + dy * dy;
+            if (d2 < 1) d2 = 1;
+            const d = Math.sqrt(d2);
+            const force = 1800 / d2;
+            const fx = (dx / d) * force, fy = (dy / d) * force;
+            a.vx -= fx; a.vy -= fy;
+            b.vx += fx; b.vy += fy;
+          }
+        }
+        // Springs
+        edges.forEach(e => {
+          let dx = e.b.x - e.a.x, dy = e.b.y - e.a.y;
+          const d = Math.sqrt(dx * dx + dy * dy) || 1;
+          const f = (d - e.len) * 0.012;
+          const fx = (dx / d) * f, fy = (dy / d) * f;
+          e.a.vx += fx; e.a.vy += fy;
+          e.b.vx -= fx; e.b.vy -= fy;
+        });
+        // Gentle centering + integrate
+        nodes.forEach(n => {
+          if (n === dragNode) { n.vx = 0; n.vy = 0; return; }
+          n.vx += (W / 2 - n.x) * 0.0012;
+          n.vy += (H / 2 - n.y) * 0.0012;
+          n.vx *= 0.86; n.vy *= 0.86;
+          n.x += n.vx; n.y += n.vy;
+          const pad = n.r + 6;
+          n.x = Math.max(pad, Math.min(W - pad, n.x));
+          n.y = Math.max(pad, Math.min(H - pad, n.y));
+        });
+      }
+
+      function draw() {
+        const W = wrap.clientWidth, H = wrap.clientHeight;
+        ctx.clearRect(0, 0, W, H);
+        const isLight = document.body.classList.contains('light-mode');
+        // Edges
+        ctx.strokeStyle = isLight ? 'rgba(100,116,139,0.35)' : 'rgba(148,163,184,0.25)';
+        ctx.lineWidth = 1;
+        edges.forEach(e => {
+          ctx.beginPath();
+          ctx.moveTo(e.a.x, e.a.y);
+          ctx.lineTo(e.b.x, e.b.y);
+          ctx.stroke();
+        });
+        // Nodes
+        nodes.forEach(n => {
+          const col = n.type === 'root'
+            ? (isLight ? '#0284c7' : '#38bdf8')
+            : heatColor(n.heat);
+          // Heat glow for hot nodes
+          if (n.type !== 'root' && n.heat > 55) {
+            const glow = ctx.createRadialGradient(n.x, n.y, n.r * 0.5, n.x, n.y, n.r * 3);
+            glow.addColorStop(0, 'rgba(239,68,68,' + (0.12 + 0.18 * (n.heat - 55) / 45) + ')');
+            glow.addColorStop(1, 'rgba(239,68,68,0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r * 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+          ctx.fillStyle = col;
+          ctx.fill();
+          if (n === hoverNode) {
+            ctx.strokeStyle = isLight ? '#0f172a' : '#f8fafc';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+          // Labels for root + topics always; quizzes only on hover-neighbourhood
+          if (n.type !== 'quiz' || n === hoverNode) {
+            ctx.font = (n.type === 'quiz' ? '11px' : '600 12px') + ' Inter, sans-serif';
+            ctx.fillStyle = isLight ? '#334155' : '#cbd5e1';
+            ctx.textAlign = 'center';
+            ctx.fillText(n.label, n.x, n.y - n.r - 6);
+          }
+        });
+      }
+
+      function loop() {
+        if (!running) return;
+        physics();
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      function nodeAt(mx, my) {
+        for (let i = nodes.length - 1; i >= 0; i--) {
+          const n = nodes[i];
+          const dx = mx - n.x, dy = my - n.y;
+          if (dx * dx + dy * dy <= (n.r + 5) * (n.r + 5)) return n;
+        }
+        return null;
+      }
+
+      function mousePos(ev) {
+        const rect = canvas.getBoundingClientRect();
+        const cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
+        const cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - rect.top;
+        return { x: cx, y: cy };
+      }
+
+      let moved = false;
+      canvas.addEventListener('mousedown', ev => {
+        const p = mousePos(ev);
+        dragNode = nodeAt(p.x, p.y);
+        moved = false;
+        if (dragNode) canvas.style.cursor = 'grabbing';
+      });
+      canvas.addEventListener('mousemove', ev => {
+        const p = mousePos(ev);
+        if (dragNode) {
+          dragNode.x = p.x; dragNode.y = p.y;
+          moved = true;
+          tooltip.style.display = 'none';
+          return;
+        }
+        hoverNode = nodeAt(p.x, p.y);
+        canvas.style.cursor = hoverNode ? 'pointer' : 'grab';
+        if (hoverNode && hoverNode.type !== 'root') {
+          const t = tdict();
+          let html = '<strong>' + _searchEscapeHtml(hoverNode.title || hoverNode.label) + '</strong>';
+          if (hoverNode.type === 'quiz') {
+            html += '<br>' + (hoverNode.attempts
+              ? hoverNode.attempts + ' ' + _searchEscapeHtml(t.graphAttemptsLbl) + ' · ' + _searchEscapeHtml(t.graphAvgLbl) + ' ' + hoverNode.avg.toFixed(0) + '%'
+              : _searchEscapeHtml(t.graphNoAttempts));
+          }
+          if (hoverNode.file) html += '<br><span style="color: var(--primary); font-size: 0.76rem;">' + _searchEscapeHtml(t.graphOpenLbl) + '</span>';
+          tooltip.innerHTML = html;
+          tooltip.style.display = 'block';
+          tooltip.style.left = Math.min(p.x + 14, wrap.clientWidth - 270) + 'px';
+          tooltip.style.top = Math.max(p.y - 10, 4) + 'px';
+        } else {
+          tooltip.style.display = 'none';
+        }
+      });
+      window.addEventListener('mouseup', () => {
+        if (dragNode && !moved && dragNode.file) {
+          // Click (not drag) on a quiz/topic node → open the quiz page
+          location.href = dragNode.file;
+        }
+        dragNode = null;
+        canvas.style.cursor = 'grab';
+      });
+      canvas.addEventListener('mouseleave', () => { hoverNode = null; tooltip.style.display = 'none'; });
+      window.addEventListener('resize', () => { resize(); });
+
+      async function initGraph() {
+        const t = tdict();
+        statusEl.textContent = t.graphLoading;
+        try { await _searchLoadIndex(); } catch (e) {}
+        resize();
+        const ok = buildGraph();
+        if (!ok) {
+          statusEl.textContent = (location.protocol === 'file:') ? t.searchFileMode : t.historyEmpty;
+          return;
+        }
+        statusEl.style.display = 'none';
+        running = true;
+        loop();
+      }
+
+      // Rebuild on language switch so labels follow
+      const _origApplyLanguage = applyLanguage;
+      applyLanguage = function(lang) {
+        _origApplyLanguage(lang);
+        if (running) { buildGraph(); }
+      };
+
+      // Lazy init when the section scrolls into view (saves work on load)
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          if (entries.some(e => e.isIntersecting)) { io.disconnect(); initGraph(); }
+        }, { rootMargin: '120px' });
+        io.observe(wrap);
+      } else {
+        initGraph();
+      }
+    })();
+
+    // ============================================================
+    // RELAXING MUSIC — generated ambient drone (Web Audio API).
+    // No audio files: two-voice chord pad + filtered noise "wind",
+    // slow chord cycle, gentle breathing LFO on the master gain.
+    // ============================================================
+    (function() {
+      const btn = document.getElementById('musicToggle');
+      const onIcon = document.getElementById('musicOnIcon');
+      const offIcon = document.getElementById('musicOffIcon');
+      if (!btn) return;
+
+      let actx = null;
+      let master = null;
+      let voices = [];
+      let chordTimer = null;
+      let playing = false;
+
+      // Calm chord cycle (Hz): Am add9 → F maj7 → C maj → G sus2 flavours, low register
+      const CHORDS = [
+        [110.00, 164.81, 220.00, 246.94],
+        [ 87.31, 130.81, 174.61, 220.00],
+        [ 98.00, 146.83, 196.00, 261.63],
+        [ 82.41, 123.47, 164.81, 196.00]
+      ];
+      let chordIx = 0;
+
+      function startMusic() {
+        actx = new (window.AudioContext || window.webkitAudioContext)();
+        master = actx.createGain();
+        master.gain.value = 0;
+        // Breathing LFO on master (±25%, ~8s cycle)
+        const lfo = actx.createOscillator();
+        const lfoGain = actx.createGain();
+        lfo.frequency.value = 0.125;
+        lfoGain.gain.value = 0.012;
+        lfo.connect(lfoGain);
+        lfoGain.connect(master.gain);
+        lfo.start();
+
+        const filter = actx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 900;
+        filter.Q.value = 0.4;
+        master.connect(filter);
+        filter.connect(actx.destination);
+
+        // Pad voices
+        voices = CHORDS[0].map(freq => {
+          const osc = actx.createOscillator();
+          const g = actx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          // tiny detune per voice for warmth
+          osc.detune.value = (Math.random() - 0.5) * 8;
+          g.gain.value = 0.05;
+          osc.connect(g);
+          g.connect(master);
+          osc.start();
+          return { osc: osc, g: g };
+        });
+
+        // Noise "wind": looped brown-ish noise through a low lowpass
+        const len = actx.sampleRate * 4;
+        const buf = actx.createBuffer(1, len, actx.sampleRate);
+        const data = buf.getChannelData(0);
+        let last = 0;
+        for (let i = 0; i < len; i++) {
+          const white = Math.random() * 2 - 1;
+          last = (last + 0.02 * white) / 1.02;
+          data[i] = last * 3.5;
+        }
+        const noise = actx.createBufferSource();
+        noise.buffer = buf;
+        noise.loop = true;
+        const nFilter = actx.createBiquadFilter();
+        nFilter.type = 'lowpass';
+        nFilter.frequency.value = 320;
+        const nGain = actx.createGain();
+        nGain.gain.value = 0.025;
+        noise.connect(nFilter);
+        nFilter.connect(nGain);
+        nGain.connect(master);
+        noise.start();
+
+        // Fade in over 3s
+        master.gain.setValueAtTime(0, actx.currentTime);
+        master.gain.linearRampToValueAtTime(0.055, actx.currentTime + 3);
+
+        // Chord cycle: glide voices to the next chord every 22s over 7s
+        chordIx = 0;
+        chordTimer = setInterval(() => {
+          chordIx = (chordIx + 1) % CHORDS.length;
+          const chord = CHORDS[chordIx];
+          const now = actx.currentTime;
+          voices.forEach((v, i) => {
+            v.osc.frequency.cancelScheduledValues(now);
+            v.osc.frequency.setValueAtTime(v.osc.frequency.value, now);
+            v.osc.frequency.exponentialRampToValueAtTime(chord[i % chord.length], now + 7);
+          });
+        }, 22000);
+      }
+
+      function stopMusic() {
+        if (chordTimer) { clearInterval(chordTimer); chordTimer = null; }
+        if (actx && master) {
+          const now = actx.currentTime;
+          master.gain.cancelScheduledValues(now);
+          master.gain.setValueAtTime(master.gain.value, now);
+          master.gain.linearRampToValueAtTime(0, now + 1.2);
+          const ctxToClose = actx;
+          setTimeout(() => { try { ctxToClose.close(); } catch (e) {} }, 1500);
+        }
+        actx = null; master = null; voices = [];
+      }
+
+      btn.addEventListener('click', () => {
+        playing = !playing;
+        if (playing) {
+          try { startMusic(); } catch (e) { playing = false; return; }
+          onIcon.classList.remove('hidden');
+          offIcon.classList.add('hidden');
+        } else {
+          stopMusic();
+          onIcon.classList.add('hidden');
+          offIcon.classList.remove('hidden');
+        }
+      });
+
+      // Stop cleanly when leaving the page
+      window.addEventListener('pagehide', () => { if (playing) stopMusic(); });
+    })();
   </script>
 </body>
 </html>
