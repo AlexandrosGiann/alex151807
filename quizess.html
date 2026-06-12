@@ -635,6 +635,19 @@
       transition: opacity 0.18s;
     }
     .chat-quizlaunch-btn:hover { opacity: 0.88; }
+    #graphFsBtn:hover { color: var(--text-main); border-color: var(--primary); }
+    #graphWrap:fullscreen {
+      height: 100vh !important;
+      border-radius: 0 !important;
+      border: none !important;
+      background: var(--bg-color) !important;
+    }
+    #graphWrap:-webkit-full-screen {
+      height: 100vh !important;
+      border-radius: 0 !important;
+      border: none !important;
+      background: var(--bg-color) !important;
+    }
     .chat-wiki-title { font-weight: 700; font-family: var(--font-outfit); margin-bottom: 4px; color: var(--primary); }
     .chat-wiki-link { display: inline-block; margin-top: 6px; font-size: 0.8rem; color: var(--primary); text-decoration: none; }
     .chat-wiki-link:hover { text-decoration: underline; }
@@ -950,6 +963,9 @@
       <p data-translate="graphHint" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Κάθε κόμβος είναι ένα κουίζ — όσο πιο «καυτός», τόσο περισσότερη μελέτη χρειάζεται. Σύρε τους κόμβους, πέρασε το ποντίκι από πάνω για λεπτομέρειες.</p>
       <div id="graphWrap" style="position: relative; width: 100%; height: 460px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.12);">
         <canvas id="graphCanvas" style="width: 100%; height: 100%; display: block; cursor: grab;"></canvas>
+        <button id="graphFsBtn" type="button" title="Πλήρης οθόνη / Fullscreen" style="position: absolute; top: 10px; right: 10px; z-index: 11; width: 36px; height: 36px; border-radius: 8px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
+        </button>
         <div id="graphTooltip" style="position: absolute; display: none; pointer-events: none; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; color: var(--text-main); max-width: 260px; box-shadow: 0 6px 18px rgba(0,0,0,0.4); z-index: 10;"></div>
         <div id="graphStatus" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem; padding: 20px; text-align: center;"></div>
       </div>
@@ -3365,6 +3381,11 @@
       let dragNode = null;
       let hoverNode = null;
       let running = false;
+      // Camera: pan offset (screen px) + zoom scale. World coords stay fixed;
+      // the view transforms on top, so physics is untouched by pan/zoom.
+      const cam = { x: 0, y: 0, s: 1 };
+      let panning = null;
+      function toWorld(sx, sy) { return { x: (sx - cam.x) / cam.s, y: (sy - cam.y) / cam.s }; }
 
       function tdict() { return TRANSLATIONS[currentLang] || TRANSLATIONS.el; }
 
@@ -3541,6 +3562,9 @@
       function draw() {
         const W = wrap.clientWidth, H = wrap.clientHeight;
         ctx.clearRect(0, 0, W, H);
+        ctx.save();
+        ctx.translate(cam.x, cam.y);
+        ctx.scale(cam.s, cam.s);
         const isLight = document.body.classList.contains('light-mode');
         // Edges
         ctx.strokeStyle = isLight ? 'rgba(100,116,139,0.35)' : 'rgba(148,163,184,0.25)';
@@ -3575,14 +3599,15 @@
             ctx.lineWidth = 2;
             ctx.stroke();
           }
-          // Labels for root + topics always; quizzes only on hover-neighbourhood
-          if (n.type !== 'quiz' || n === hoverNode) {
+          // Labels for root + topics always; quizzes when hovered or zoomed in
+          if (n.type !== 'quiz' || n === hoverNode || cam.s >= 1.5) {
             ctx.font = (n.type === 'quiz' ? '11px' : '600 12px') + ' Inter, sans-serif';
             ctx.fillStyle = isLight ? '#334155' : '#cbd5e1';
             ctx.textAlign = 'center';
             ctx.fillText(n.label, n.x, n.y - n.r - 6);
           }
         });
+        ctx.restore();
       }
 
       function loop() {
@@ -3603,27 +3628,47 @@
 
       function mousePos(ev) {
         const rect = canvas.getBoundingClientRect();
-        const cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
-        const cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - rect.top;
+        const clientX = ev.touches && ev.touches[0] ? ev.touches[0].clientX : ev.clientX;
+        const clientY = ev.touches && ev.touches[0] ? ev.touches[0].clientY : ev.clientY;
+        const cx = clientX - rect.left;
+        const cy = clientY - rect.top;
         return { x: cx, y: cy };
       }
 
       let moved = false;
       canvas.addEventListener('mousedown', ev => {
         const p = mousePos(ev);
-        dragNode = nodeAt(p.x, p.y);
+        const wp = toWorld(p.x, p.y);
+        dragNode = nodeAt(wp.x, wp.y);
         moved = false;
-        if (dragNode) canvas.style.cursor = 'grabbing';
+        if (dragNode) {
+          canvas.style.cursor = 'grabbing';
+        } else {
+          panning = { startX: ev.clientX, startY: ev.clientY, camX: cam.x, camY: cam.y };
+          canvas.style.cursor = 'grabbing';
+        }
       });
+
       canvas.addEventListener('mousemove', ev => {
         const p = mousePos(ev);
         if (dragNode) {
-          dragNode.x = p.x; dragNode.y = p.y;
+          const wp = toWorld(p.x, p.y);
+          dragNode.x = wp.x;
+          dragNode.y = wp.y;
           moved = true;
           tooltip.style.display = 'none';
           return;
         }
-        hoverNode = nodeAt(p.x, p.y);
+        if (panning) {
+          const dx = ev.clientX - panning.startX;
+          const dy = ev.clientY - panning.startY;
+          cam.x = panning.camX + dx;
+          cam.y = panning.camY + dy;
+          tooltip.style.display = 'none';
+          return;
+        }
+        const wp = toWorld(p.x, p.y);
+        hoverNode = nodeAt(wp.x, wp.y);
         canvas.style.cursor = hoverNode ? 'pointer' : 'grab';
         if (hoverNode && hoverNode.type !== 'root') {
           const t = tdict();
@@ -3642,16 +3687,111 @@
           tooltip.style.display = 'none';
         }
       });
+
       window.addEventListener('mouseup', () => {
         if (dragNode && !moved && dragNode.file) {
           // Click (not drag) on a quiz/topic node → open the quiz page
           location.href = dragNode.file;
         }
         dragNode = null;
+        panning = null;
         canvas.style.cursor = 'grab';
       });
+
       canvas.addEventListener('mouseleave', () => { hoverNode = null; tooltip.style.display = 'none'; });
       window.addEventListener('resize', () => { resize(); });
+
+      // Touch events for mobile/tablet panning and node dragging
+      canvas.addEventListener('touchstart', ev => {
+        if (ev.touches.length === 1) {
+          const p = mousePos(ev);
+          const wp = toWorld(p.x, p.y);
+          dragNode = nodeAt(wp.x, wp.y);
+          moved = false;
+          if (!dragNode) {
+            panning = {
+              startX: ev.touches[0].clientX,
+              startY: ev.touches[0].clientY,
+              camX: cam.x,
+              camY: cam.y
+            };
+          }
+        }
+      }, { passive: true });
+
+      canvas.addEventListener('touchmove', ev => {
+        if (ev.touches.length === 1) {
+          const p = mousePos(ev);
+          if (dragNode) {
+            const wp = toWorld(p.x, p.y);
+            dragNode.x = wp.x;
+            dragNode.y = wp.y;
+            moved = true;
+            tooltip.style.display = 'none';
+            ev.preventDefault();
+          } else if (panning) {
+            const dx = ev.touches[0].clientX - panning.startX;
+            const dy = ev.touches[0].clientY - panning.startY;
+            cam.x = panning.camX + dx;
+            cam.y = panning.camY + dy;
+            tooltip.style.display = 'none';
+            ev.preventDefault();
+          }
+        }
+      }, { passive: false });
+
+      canvas.addEventListener('touchend', ev => {
+        if (dragNode && !moved && dragNode.file) {
+          location.href = dragNode.file;
+        }
+        dragNode = null;
+        panning = null;
+      }, { passive: true });
+
+      // Zoom via mouse wheel
+      canvas.addEventListener('wheel', ev => {
+        ev.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const sx = ev.clientX - rect.left;
+        const sy = ev.clientY - rect.top;
+        const wp = toWorld(sx, sy);
+        
+        const zoomFactor = 1.1;
+        let newScale = cam.s;
+        if (ev.deltaY < 0) {
+          newScale *= zoomFactor;
+        } else {
+          newScale /= zoomFactor;
+        }
+        newScale = Math.max(0.15, Math.min(newScale, 4.0));
+        cam.x = sx - wp.x * newScale;
+        cam.y = sy - wp.y * newScale;
+        cam.s = newScale;
+      }, { passive: false });
+
+      // Fullscreen button wiring
+      const fsBtn = document.getElementById('graphFsBtn');
+      if (fsBtn) {
+        fsBtn.addEventListener('click', () => {
+          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            const requestFS = wrap.requestFullscreen || wrap.webkitRequestFullscreen;
+            if (requestFS) {
+              requestFS.call(wrap).catch(err => {
+                console.error(`Error attempting to enable fullscreen: ${err.message}`);
+              });
+            }
+          } else {
+            const exitFS = document.exitFullscreen || document.webkitExitFullscreen;
+            if (exitFS) {
+              exitFS.call(document);
+            }
+          }
+        });
+      }
+
+      // Resize canvas on entering/exiting fullscreen
+      document.addEventListener('fullscreenchange', () => { resize(); });
+      document.addEventListener('webkitfullscreenchange', () => { resize(); });
 
       async function initGraph() {
         const t = tdict();
@@ -3712,6 +3852,56 @@
       ];
       let chordIx = 0;
 
+      let melodyTimer = null;
+
+      function playMelodyNote(time) {
+        if (!actx || actx.state === 'suspended') return;
+        
+        // Pick a note from the current chord and transpose it up by 2 or 3 octaves
+        const chord = CHORDS[chordIx];
+        const baseFreq = chord[Math.floor(Math.random() * chord.length)];
+        const octave = Math.random() < 0.6 ? 4 : 8;
+        const freq = baseFreq * octave;
+        
+        // Create melodic voice (triangle oscillator)
+        const osc = actx.createOscillator();
+        const g = actx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        
+        // Add subtle detune modulation for a warm vibrato effect
+        const vibrato = actx.createOscillator();
+        const vibratoGain = actx.createGain();
+        vibrato.frequency.value = 3.5 + Math.random() * 2;
+        vibratoGain.gain.value = 1.5;
+        vibrato.connect(vibratoGain);
+        vibratoGain.connect(osc.detune);
+        vibrato.start(time);
+        
+        // Lowpass filter to keep the melody notes smooth and warm
+        const filter = actx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1000;
+        
+        osc.connect(g);
+        g.connect(filter);
+        filter.connect(master);
+        
+        // Slow attack and long release envelope for ambient texture
+        const attack = 0.8 + Math.random() * 0.6;
+        const duration = 1.2 + Math.random() * 1.5;
+        const release = 2.0 + Math.random() * 1.0;
+        
+        g.gain.setValueAtTime(0, time);
+        g.gain.linearRampToValueAtTime(0.04, time + attack);
+        g.gain.setValueAtTime(0.04, time + attack + duration);
+        g.gain.exponentialRampToValueAtTime(0.0001, time + attack + duration + release);
+        
+        osc.start(time);
+        osc.stop(time + attack + duration + release + 0.1);
+        vibrato.stop(time + attack + duration + release + 0.1);
+      }
+
       function startMusic() {
         actx = new (window.AudioContext || window.webkitAudioContext)();
         master = actx.createGain();
@@ -3720,34 +3910,33 @@
         const lfo = actx.createOscillator();
         const lfoGain = actx.createGain();
         lfo.frequency.value = 0.125;
-        lfoGain.gain.value = 0.012;
+        lfoGain.gain.value = 0.03;
         lfo.connect(lfoGain);
         lfoGain.connect(master.gain);
         lfo.start();
 
         const filter = actx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.value = 900;
+        filter.frequency.value = 950;
         filter.Q.value = 0.4;
         master.connect(filter);
         filter.connect(actx.destination);
 
-        // Pad voices
+        // Pad voices - volume increased from 0.05 to 0.08
         voices = CHORDS[0].map(freq => {
           const osc = actx.createOscillator();
           const g = actx.createGain();
           osc.type = 'sine';
           osc.frequency.value = freq;
-          // tiny detune per voice for warmth
           osc.detune.value = (Math.random() - 0.5) * 8;
-          g.gain.value = 0.05;
+          g.gain.value = 0.08;
           osc.connect(g);
           g.connect(master);
           osc.start();
           return { osc: osc, g: g };
         });
 
-        // Noise "wind": looped brown-ish noise through a low lowpass
+        // Noise "wind" - reduced volume from 0.025 to 0.012 for a cleaner mix
         const len = actx.sampleRate * 4;
         const buf = actx.createBuffer(1, len, actx.sampleRate);
         const data = buf.getChannelData(0);
@@ -3764,15 +3953,15 @@
         nFilter.type = 'lowpass';
         nFilter.frequency.value = 320;
         const nGain = actx.createGain();
-        nGain.gain.value = 0.025;
+        nGain.gain.value = 0.012;
         noise.connect(nFilter);
         nFilter.connect(nGain);
         nGain.connect(master);
         noise.start();
 
-        // Fade in over 3s
+        // Fade in over 3s - master volume increased from 0.055 to 0.14
         master.gain.setValueAtTime(0, actx.currentTime);
-        master.gain.linearRampToValueAtTime(0.055, actx.currentTime + 3);
+        master.gain.linearRampToValueAtTime(0.14, actx.currentTime + 3);
 
         // Chord cycle: glide voices to the next chord every 22s over 7s
         chordIx = 0;
@@ -3786,10 +3975,21 @@
             v.osc.frequency.exponentialRampToValueAtTime(chord[i % chord.length], now + 7);
           });
         }, 22000);
+
+        // Start random melody note scheduler
+        const scheduler = () => {
+          if (!playing) return;
+          const delay = Math.random() * 1.5;
+          playMelodyNote(actx.currentTime + delay);
+          const nextInterval = 3000 + Math.random() * 4000;
+          melodyTimer = setTimeout(scheduler, nextInterval);
+        };
+        scheduler();
       }
 
       function stopMusic() {
         if (chordTimer) { clearInterval(chordTimer); chordTimer = null; }
+        if (melodyTimer) { clearTimeout(melodyTimer); melodyTimer = null; }
         if (actx && master) {
           const now = actx.currentTime;
           master.gain.cancelScheduledValues(now);
