@@ -1011,6 +1011,9 @@
         historySectionTitle: "Ιστορικό Προόδου",
         clearHistoryBtn: "Εκκαθάριση Ιστορικού",
         historyEmpty: "Δεν υπάρχει ιστορικό κουίζ ακόμη. Ολοκληρώστε ένα κουίζ για να εμφανιστούν τα αποτελέσματά σας εδώ.",
+        groupAttempts: "προσπάθειες",
+        groupBest: "Καλύτερο",
+        groupAvg: "Μ.Ο.",
         confirmClear: "Είστε σίγουροι ότι θέλετε να διαγράψετε όλο το ιστορικό κουίζ;",
         tagStudy: "Μελέτη",
         titleManual: "Εγχειρίδιο Μελέτης",
@@ -1083,6 +1086,9 @@
         historySectionTitle: "Progress History",
         clearHistoryBtn: "Clear History",
         historyEmpty: "No quiz history yet. Complete a quiz to see your results here.",
+        groupAttempts: "attempts",
+        groupBest: "Best",
+        groupAvg: "Avg",
         confirmClear: "Are you sure you want to delete all quiz history?",
         tagStudy: "Study",
         titleManual: "Study Manual",
@@ -1176,6 +1182,10 @@
     function loadQuizHistory() {
       try { return JSON.parse(localStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
     }
+    // Tracks which quiz-groups the user has expanded. In-memory only — the
+    // localStorage data itself (the chronological attempts) is never modified.
+    const _historyExpanded = new Set();
+
     function renderProgressHistory() {
       const list = document.getElementById('historyList');
       if (!list) return;
@@ -1185,22 +1195,95 @@
         list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.95rem; padding: 10px 0;">${t.historyEmpty}</div>`;
         return;
       }
-      entries.sort((a, b) => b.ts - a.ts);
+
+      // Group attempts by quiz (composite key topic+quizTitleEl). Entries that
+      // pre-date some fields (no topicTitleEl, no quizTitleEl) still group
+      // sensibly — fields default to safe placeholders so old localStorage data
+      // is never destroyed or rejected.
+      const groups = new Map();
+      entries.forEach(e => {
+        const topic = e.topic || 'unknown';
+        const titleEl = e.quizTitleEl || e.quizTitleEn || '—';
+        const key = topic + '::' + titleEl;
+        let g = groups.get(key);
+        if (!g) {
+          g = {
+            key: key,
+            topic: topic,
+            topicTitleEl: e.topicTitleEl || topic,
+            topicTitleEn: e.topicTitleEn || e.topicTitleEl || topic,
+            quizTitleEl: titleEl,
+            quizTitleEn: e.quizTitleEn || titleEl,
+            attempts: []
+          };
+          groups.set(key, g);
+        }
+        g.attempts.push(e);
+      });
+
+      const groupArr = [];
+      groups.forEach(g => {
+        g.attempts.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+        g.count = g.attempts.length;
+        g.bestScore = g.attempts.reduce((m, a) => Math.max(m, a.scorePercent || 0), 0);
+        g.latestScore = g.attempts[0].scorePercent || 0;
+        g.latestTs = g.attempts[0].ts || 0;
+        g.avg = g.attempts.reduce((s, a) => s + (a.scorePercent || 0), 0) / g.count;
+        groupArr.push(g);
+      });
+      // Sort by most-recently-attempted first (familiar default)
+      groupArr.sort((a, b) => b.latestTs - a.latestTs);
+
       const locale = currentLang === 'el' ? 'el-GR' : 'en-US';
-      list.innerHTML = entries.map(e => {
-        const dateStr = new Date(e.ts).toLocaleString(locale);
-        const topicTitle = currentLang === 'el' ? (e.topicTitleEl || '') : (e.topicTitleEn || e.topicTitleEl || '');
-        const quizTitle = currentLang === 'el' ? (e.quizTitleEl || '') : (e.quizTitleEn || e.quizTitleEl || '');
-        const scoreColor = e.scorePercent >= 80 ? 'var(--success)' : (e.scorePercent >= 50 ? 'var(--primary)' : 'var(--error)');
-        return `<div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 14px 18px; background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 10px; flex-wrap: wrap;">
-          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
-            <div style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${topicTitle}</div>
-            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">${quizTitle}</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">${dateStr}</div>
-          </div>
-          <div style="font-size: 1.1rem; font-weight: 700; color: ${scoreColor}; white-space: nowrap;">${e.correctCount}/${e.totalQuestions} &middot; ${e.scorePercent}%</div>
+      const scoreColor = s => s >= 80 ? 'var(--success)' : (s >= 50 ? 'var(--primary)' : 'var(--error)');
+      const esc = s => _searchEscapeHtml(String(s == null ? '' : s));
+
+      list.innerHTML = groupArr.map(g => {
+        const expanded = _historyExpanded.has(g.key);
+        const topicTitle = currentLang === 'el' ? g.topicTitleEl : g.topicTitleEn;
+        const quizTitle = currentLang === 'el' ? g.quizTitleEl : g.quizTitleEn;
+        const attemptsHtml = expanded ? g.attempts.map(a => {
+          const dateStr = a.ts ? new Date(a.ts).toLocaleString(locale) : '—';
+          return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 18px 8px 36px; border-top: 1px solid var(--border-color); font-size: 0.86rem;">
+            <span style="color: var(--text-muted);">${esc(dateStr)}</span>
+            <span style="font-weight: 600; color: ${scoreColor(a.scorePercent || 0)}; white-space: nowrap;">${a.correctCount || 0}/${a.totalQuestions || 0} &middot; ${a.scorePercent || 0}%</span>
+          </div>`;
+        }).join('') : '';
+        const caret = expanded ? '▾' : '▸';
+        const aria = expanded ? 'true' : 'false';
+        return `<div style="background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden;">
+          <button type="button" data-history-key="${esc(g.key)}" aria-expanded="${aria}" style="
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            gap: 12px; padding: 14px 18px; background: transparent; border: none;
+            color: var(--text-main); cursor: pointer; text-align: left;
+            font-family: var(--font-inter); font-size: inherit;
+          ">
+            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
+              <div style="font-size: 0.72rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${esc(topicTitle)}</div>
+              <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">${esc(quizTitle)}</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">
+                ${g.count} ${esc(t.groupAttempts)} &middot; ${esc(t.groupBest)} ${g.bestScore}% &middot; ${esc(t.groupAvg)} ${g.avg.toFixed(0)}%
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+              <span style="font-size: 1.05rem; font-weight: 700; color: ${scoreColor(g.latestScore)};">${g.latestScore}%</span>
+              <span style="color: var(--text-muted); font-size: 0.95rem; width: 12px; text-align: center;">${caret}</span>
+            </div>
+          </button>
+          ${attemptsHtml}
         </div>`;
       }).join('');
+
+      // Wire expand/collapse on the group buttons. We re-render rather than
+      // toggling inline so the caret state stays in sync with the rendered DOM.
+      list.querySelectorAll('[data-history-key]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-history-key');
+          if (_historyExpanded.has(key)) _historyExpanded.delete(key);
+          else _historyExpanded.add(key);
+          renderProgressHistory();
+        });
+      });
     }
     // === Quiz Search ===
     // Sources to search. Files live in the same directory; we fetch them on
