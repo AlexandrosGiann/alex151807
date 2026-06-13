@@ -124,8 +124,7 @@
         grid-template-columns: 1fr 1fr 1fr;
       }
       .study-tools-grid {
-        grid-template-columns: minmax(0, 480px);
-        justify-content: center;
+        grid-template-columns: 1fr 1fr;
       }
     }
 
@@ -957,6 +956,24 @@
           <button id="viewManualBtn" class="btn-action" style="border: none; cursor: pointer; width: 100%;" data-translate="viewManualBtn">Προβολή Εγχειριδίου</button>
         </div>
       </div>
+
+      <!-- DOWNLOAD QUIZZES CARD -->
+      <div class="card category-card" style="cursor: default;">
+        <div>
+          <span class="unit-tag" style="background-color: rgba(56, 189, 248, 0.15); color: var(--primary);" data-translate="tagOffline">Offline</span>
+          <h2 class="category-title" data-translate="titleDownload">Λήψη Κουίζ</h2>
+          <p class="category-desc" data-translate="descDownload">
+            Κατεβάστε τα κουίζ που θέλετε ως αρχεία HTML για να τα λύσετε εκτός σύνδεσης. Επιλέξτε ποιες θεματικές ενότητες σας ενδιαφέρουν.
+          </p>
+        </div>
+        <div>
+          <div class="category-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span data-translate="metaDownload">Αυτόνομα αρχεία HTML</span>
+          </div>
+          <button id="openDownloadBtn" class="btn-action" style="border: none; cursor: pointer; width: 100%;" data-translate="downloadQuizzesBtn">Λήψη Κουίζ</button>
+        </div>
+      </div>
     </div>
 
     <!-- PROGRESS HISTORY -->
@@ -1003,6 +1020,25 @@
         </div>
       </div>
       <div id="manualBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- DOWNLOAD QUIZZES MODAL -->
+  <div id="downloadModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="downloadModalTitle" data-translate="dlModalTitle">Λήψη Κουίζ για Offline</h2>
+        <div class="modal-header-actions">
+          <button id="downloadSelectAll" class="modal-btn" data-translate="dlSelectAll">Επιλογή Όλων</button>
+          <button id="downloadDoBtn" class="modal-btn primary" data-translate="dlDownloadSel">Λήψη Επιλεγμένων</button>
+          <button id="downloadCloseBtn" class="modal-btn" data-translate="closeBtn">Κλείσιμο</button>
+        </div>
+      </div>
+      <div id="downloadBody" class="modal-body">
+        <p id="downloadHint" data-translate="dlHint" style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">Διαλέξτε τα κουίζ και πατήστε «Λήψη Επιλεγμένων». Τα αρχεία λειτουργούν αυτόνομα offline (ο πυρήνας του κουίζ· οι εικόνες και η αναζήτηση χρειάζονται σύνδεση).</p>
+        <div id="downloadList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        <div id="downloadStatus" style="margin-top: 14px; font-size: 0.85rem; color: var(--success); min-height: 18px;"></div>
+      </div>
     </div>
   </div>
 
@@ -1090,6 +1126,18 @@
         viewManualBtn: "Προβολή Εγχειριδίου",
         downloadManualBtn: "Λήψη",
         closeBtn: "Κλείσιμο",
+        tagOffline: "Offline",
+        titleDownload: "Λήψη Κουίζ",
+        descDownload: "Κατεβάστε τα κουίζ που θέλετε ως αρχεία HTML για να τα λύσετε εκτός σύνδεσης. Επιλέξτε ποιες θεματικές ενότητες σας ενδιαφέρουν.",
+        metaDownload: "Αυτόνομα αρχεία HTML",
+        downloadQuizzesBtn: "Λήψη Κουίζ",
+        dlModalTitle: "Λήψη Κουίζ για Offline",
+        dlSelectAll: "Επιλογή Όλων",
+        dlDeselectAll: "Αποεπιλογή Όλων",
+        dlDownloadSel: "Λήψη Επιλεγμένων",
+        dlHint: "Διαλέξτε τα κουίζ και πατήστε «Λήψη Επιλεγμένων». Τα αρχεία λειτουργούν αυτόνομα offline (ο πυρήνας του κουίζ· οι εικόνες και η αναζήτηση χρειάζονται σύνδεση).",
+        dlDone: "Η λήψη ξεκίνησε ({n} αρχεία). Ελέγξτε τον φάκελο λήψεων.",
+        dlNone: "Επιλέξτε τουλάχιστον ένα κουίζ.",
         searchPlaceholder: "Αναζήτηση σε ερωτήσεις και σωστές απαντήσεις…",
         searchHint: "Η αναζήτηση γίνεται σε ερωτήσεις και σωστές απαντήσεις. Παραμένει εξ ολοκλήρου στον περιηγητή σας.",
         searchLoading: "Φόρτωση ερωτήσεων…",
@@ -1178,6 +1226,18 @@
         viewManualBtn: "View Manual",
         downloadManualBtn: "Download",
         closeBtn: "Close",
+        tagOffline: "Offline",
+        titleDownload: "Download Quizzes",
+        descDownload: "Download the quizzes you want as HTML files to take them offline. Pick which thematic units you're interested in.",
+        metaDownload: "Self-contained HTML files",
+        downloadQuizzesBtn: "Download Quizzes",
+        dlModalTitle: "Download Quizzes for Offline",
+        dlSelectAll: "Select All",
+        dlDeselectAll: "Deselect All",
+        dlDownloadSel: "Download Selected",
+        dlHint: "Pick the quizzes and press Download Selected. The files work standalone offline (the quiz core; images and search need a connection).",
+        dlDone: "Download started ({n} files). Check your downloads folder.",
+        dlNone: "Select at least one quiz.",
         searchPlaceholder: "Search across questions and correct answers…",
         searchHint: "Search runs across questions and correct answers. Everything stays in your browser.",
         searchLoading: "Loading questions…",
@@ -1934,6 +1994,90 @@
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+    });
+
+    // === Download Quizzes (offline) ===
+    // Each quiz page is a self-contained HTML file: an <a download> link saves
+    // a copy. Works both on https (GitHub Pages) and file:// — no fetch/CORS.
+    const QUIZ_FILES = [
+      { file: 'quizzes_noisi.html',      titleKey: 'titleNoisi' },
+      { file: 'quizzes_nomothesia.html', titleKey: 'titleNomothesia' },
+      { file: 'quizzes_euzwia.html',     titleKey: 'titleEuzwia' },
+      { file: 'quizzes_aws.html',        titleKey: 'titleAws' }
+    ];
+    const downloadModal = document.getElementById('downloadModal');
+    const downloadListEl = document.getElementById('downloadList');
+    const downloadStatusEl = document.getElementById('downloadStatus');
+
+    function renderDownloadList() {
+      const t = TRANSLATIONS[currentLang];
+      downloadStatusEl.textContent = '';
+      downloadListEl.innerHTML = QUIZ_FILES.map((q, i) => {
+        const label = (t && t[q.titleKey]) || q.file;
+        return `<label style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer;">
+          <input type="checkbox" class="dl-quiz-check" data-file="${q.file}" checked style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0;">
+          <span style="font-size: 0.95rem; color: var(--text-main);">${_searchEscapeHtml(label)}</span>
+        </label>`;
+      }).join('');
+    }
+
+    function openDownloadModal() {
+      renderDownloadList();
+      syncSelectAllLabel();
+      downloadModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDownloadModal() {
+      downloadModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('openDownloadBtn').addEventListener('click', openDownloadModal);
+    document.getElementById('downloadCloseBtn').addEventListener('click', closeDownloadModal);
+    downloadModal.addEventListener('click', (e) => {
+      if (e.target === downloadModal) closeDownloadModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !downloadModal.classList.contains('hidden')) closeDownloadModal();
+    });
+
+    function syncSelectAllLabel() {
+      const t = TRANSLATIONS[currentLang];
+      const checks = downloadListEl.querySelectorAll('.dl-quiz-check');
+      const allChecked = checks.length && Array.from(checks).every(c => c.checked);
+      document.getElementById('downloadSelectAll').textContent = allChecked ? t.dlDeselectAll : t.dlSelectAll;
+    }
+    document.getElementById('downloadSelectAll').addEventListener('click', () => {
+      const checks = downloadListEl.querySelectorAll('.dl-quiz-check');
+      const allChecked = Array.from(checks).every(c => c.checked);
+      checks.forEach(c => { c.checked = !allChecked; });
+      syncSelectAllLabel();
+    });
+    downloadListEl.addEventListener('change', syncSelectAllLabel);
+
+    document.getElementById('downloadDoBtn').addEventListener('click', () => {
+      const t = TRANSLATIONS[currentLang];
+      const selected = Array.from(downloadListEl.querySelectorAll('.dl-quiz-check'))
+        .filter(c => c.checked)
+        .map(c => c.getAttribute('data-file'));
+      if (!selected.length) {
+        downloadStatusEl.style.color = 'var(--error)';
+        downloadStatusEl.textContent = t.dlNone;
+        return;
+      }
+      // Trigger sequential downloads with a small gap (browsers throttle bursts).
+      selected.forEach((file, i) => {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.href = file;
+          a.download = file;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }, i * 350);
+      });
+      downloadStatusEl.style.color = 'var(--success)';
+      downloadStatusEl.textContent = t.dlDone.replace('{n}', selected.length);
     });
 
     document.getElementById('clearHistoryBtn').addEventListener('click', () => {
