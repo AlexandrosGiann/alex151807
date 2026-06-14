@@ -87,6 +87,8 @@
     .file-label:hover { border-color: var(--primary); }
     .file-label input { display: none; }
     #fileName { font-size: 0.82rem; color: var(--text-muted); }
+    .provider-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-main); cursor: pointer; }
+    .provider-toggle input { width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer; }
 
     .warning-box {
       display: flex; gap: 12px; align-items: flex-start;
@@ -177,7 +179,7 @@
       </div>
       <div class="privacy-box">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        <span data-i18n="privacy">Ιδιωτικότητα: το κείμενό σας δεν αποστέλλεται σε κανένα τρίτο API. Όλος ο έλεγχος ομοιότητας εκτελείται τοπικά στον περιηγητή σας.</span>
+        <span data-i18n="privacy">Ιδιωτικότητα: η σύγκριση ομοιότητας και τα embeddings εκτελούνται εξ ολοκλήρου στον περιηγητή σας. Το πλήρες κείμενό σας δεν ανεβαίνει πουθενά. Όταν ενεργοποιείτε αναζήτηση σε Wikipedia/PubMed, στέλνονται μόνο σύντομες λέξεις-κλειδιά για την εύρεση υποψήφιων σελίδων.</span>
       </div>
     </div>
 
@@ -208,6 +210,14 @@
       <label class="label" for="candidateUrls" data-i18n="lblUrls">Προαιρετικά: υποψήφια URLs (ένα ανά γραμμή)</label>
       <div class="hint" data-i18n="hintUrls">Θα αναζητηθούν στο Common Crawl και, αν επιτρέπεται από τον περιηγητή, θα ανακτηθεί το αρχειοθετημένο κείμενο.</div>
       <textarea id="candidateUrls" placeholder="https://example.com/article&#10;https://example.org/page"></textarea>
+
+      <label class="label" data-i18n="lblProviders">Αναζήτηση σε ανοιχτές πηγές</label>
+      <div class="row" style="gap:18px;">
+        <label class="provider-toggle"><input type="checkbox" id="useWikipedia" checked> <span data-i18n="provWiki">Wikipedia (EL/EN)</span></label>
+        <label class="provider-toggle"><input type="checkbox" id="usePubmed" checked> <span data-i18n="provPubmed">PubMed (αγγλικά / βιοϊατρικά)</span></label>
+      </div>
+      <div class="hint" id="providerNote" data-i18n="provNote" style="margin-top:6px;">Το Medium δεν διαθέτει δημόσιο API αναζήτησης με CORS, οπότε δεν μπορεί να ελεγχθεί αυτόματα — μόνο συγκεκριμένα URL μέσω του πεδίου παραπάνω (συνήθως αποκλείονται από CORS).</div>
+      <div class="hint" data-i18n="provPrivacy" style="margin-top:4px; color: var(--warning);">Όταν είναι ενεργές, στέλνονται μόνο σύντομες λέξεις-κλειδιά (όχι το πλήρες κείμενό σας) στη Wikipedia/PubMed για εύρεση υποψήφιων σελίδων.</div>
 
       <div class="row" style="margin-top:18px;">
         <button id="checkBtn" class="btn btn-primary" data-i18n="checkBtn">Έλεγχος λογοκλοπής</button>
@@ -269,7 +279,21 @@
         navHome: 'Αρχική', navQuizzes: 'Κουίζ', navPlag: 'Έλεγχος Λογοκλοπής',
         pageTitle: 'Έλεγχος Λογοκλοπής',
         warning: 'Αυτό το εργαλείο παρέχει ενδείξεις ομοιότητας, όχι επίσημη απόδειξη λογοκλοπής.',
-        privacy: 'Ιδιωτικότητα: το κείμενό σας δεν αποστέλλεται σε κανένα τρίτο API. Όλος ο έλεγχος ομοιότητας εκτελείται τοπικά στον περιηγητή σας.',
+        privacy: 'Ιδιωτικότητα: η σύγκριση ομοιότητας και τα embeddings εκτελούνται εξ ολοκλήρου στον περιηγητή σας. Το πλήρες κείμενό σας δεν ανεβαίνει πουθενά. Όταν ενεργοποιείτε αναζήτηση σε Wikipedia/PubMed, στέλνονται μόνο σύντομες λέξεις-κλειδιά για την εύρεση υποψήφιων σελίδων.',
+        lblProviders: 'Αναζήτηση σε ανοιχτές πηγές',
+        provWiki: 'Wikipedia (EL/EN)',
+        provPubmed: 'PubMed (αγγλικά / βιοϊατρικά)',
+        provNote: 'Το Medium δεν διαθέτει δημόσιο API αναζήτησης με CORS, οπότε δεν μπορεί να ελεγχθεί αυτόματα — μόνο συγκεκριμένα URL μέσω του πεδίου παραπάνω (συνήθως αποκλείονται από CORS).',
+        provPrivacy: 'Όταν είναι ενεργές, στέλνονται μόνο σύντομες λέξεις-κλειδιά (όχι το πλήρες κείμενό σας) στη Wikipedia/PubMed για εύρεση υποψήφιων σελίδων.',
+        wikiSearch: 'Wikipedia: αναζήτηση ({lang}) για: {q}',
+        wikiFound: 'Wikipedia: βρέθηκαν {n} άρθρα.',
+        wikiNone: 'Wikipedia: δεν βρέθηκαν σχετικά άρθρα.',
+        wikiFail: 'Wikipedia: η αναζήτηση απέτυχε ({err}).',
+        pubmedSearch: 'PubMed: αναζήτηση για: {q}',
+        pubmedFound: 'PubMed: βρέθηκαν {n} άρθρα.',
+        pubmedNone: 'PubMed: δεν βρέθηκαν σχετικά άρθρα.',
+        pubmedFail: 'PubMed: η αναζήτηση απέτυχε ({err}).',
+        noKeywords: 'Δεν εξήχθησαν αρκετές λέξεις-κλειδιά για αναζήτηση.',
         inputTitle: 'Κείμενο προς έλεγχο',
         lblText: 'Κείμενο φοιτητή',
         lblFile: 'Προαιρετικά: ανέβασμα αρχείου .txt',
@@ -314,7 +338,21 @@
         navHome: 'Home', navQuizzes: 'Quizzes', navPlag: 'Plagiarism Check',
         pageTitle: 'Plagiarism Check',
         warning: 'This tool provides similarity signals, not official plagiarism proof.',
-        privacy: 'Privacy: your text is never sent to any third-party API. All similarity checking runs locally in your browser.',
+        privacy: 'Privacy: the similarity comparison and embeddings run entirely in your browser. Your full text is never uploaded. When you enable Wikipedia/PubMed search, only short keywords are sent to find candidate pages.',
+        lblProviders: 'Search open sources',
+        provWiki: 'Wikipedia (EL/EN)',
+        provPubmed: 'PubMed (English / biomedical)',
+        provNote: 'Medium has no public CORS-enabled search API, so it cannot be checked automatically — only specific URLs via the field above (usually blocked by CORS).',
+        provPrivacy: 'When enabled, only short keywords (not your full text) are sent to Wikipedia/PubMed to find candidate pages.',
+        wikiSearch: 'Wikipedia: searching ({lang}) for: {q}',
+        wikiFound: 'Wikipedia: found {n} articles.',
+        wikiNone: 'Wikipedia: no relevant articles found.',
+        wikiFail: 'Wikipedia: search failed ({err}).',
+        pubmedSearch: 'PubMed: searching for: {q}',
+        pubmedFound: 'PubMed: found {n} articles.',
+        pubmedNone: 'PubMed: no relevant articles found.',
+        pubmedFail: 'PubMed: search failed ({err}).',
+        noKeywords: 'Not enough keywords extracted to search.',
         inputTitle: 'Text to check',
         lblText: 'Student text',
         lblFile: 'Optional: upload a .txt file',
@@ -515,6 +553,110 @@
         return txt.replace(/\s+/g, ' ').trim();
       } catch (e) { return ''; }
     }
+
+    // ============================================================
+    // Keyword extraction (for searching open-source corpora)
+    // ============================================================
+    const KW_STOP = new Set([
+      // English
+      'the','a','an','of','to','in','on','at','for','with','and','or','as','by','from','that','this','these','those','is','are','was','were','be','been','being','it','its','which','who','what','when','where','why','how','can','could','would','should','may','might','will','also','more','most','than','then','such','into','about','over','under','their','they','them','our','your','his','her','not','but','have','has','had','because','between','within','while','each','other','some','any','all','one','two','three',
+      // Greek (accent-stripped form, since we match on stripped)
+      'και','η','ο','το','οι','τα','του','της','των','τον','την','τους','τις','ενα','ενας','μια','μη','δεν','που','πως','ποιος','ποια','ποιο','ειναι','ηταν','με','σε','απο','για','ως','στο','στα','στη','στην','στις','στον','στους','οπως','καθε','αυτο','αυτη','αυτος','αυτα','αυτες','αυτοι','ολα','ολος','ολη','ολο','αλλα','επισης','μεταξυ','μεσα','προς','κατα','περι','ωστε','οταν','οπου','επειδη'
+    ]);
+    function extractKeywords(text, maxN) {
+      const norm = normalize(text); // lowercase, accents kept
+      const toks = norm.replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(Boolean);
+      const freq = new Map();
+      for (const tk of toks) {
+        const bare = stripAccents(tk);
+        if (bare.length < 4 || KW_STOP.has(bare)) continue;
+        freq.set(tk, (freq.get(tk) || 0) + 1);
+      }
+      const arr = [...freq.entries()].map(([w, f]) => ({ w, score: f * Math.min(w.length, 12) }));
+      arr.sort((a, b) => b.score - a.score);
+      return arr.slice(0, maxN).map(x => x.w);
+    }
+
+    // ============================================================
+    // Wikipedia provider (CORS-enabled MediaWiki API, EL + EN)
+    // ============================================================
+    const WikipediaProvider = {
+      async search(text, lang) {
+        const host = lang === 'el' ? 'el.wikipedia.org' : 'en.wikipedia.org';
+        const kws = extractKeywords(text, 8);
+        if (!kws.length) return { sources: [], query: '' };
+        const query = kws.join(' ');
+        const sUrl = 'https://' + host + '/w/api.php?action=query&list=search&format=json&origin=*'
+          + '&srlimit=5&srprop=&srsearch=' + encodeURIComponent(query);
+        const res = await fetch(sUrl);
+        if (!res.ok) throw new Error('search ' + res.status);
+        const data = await res.json();
+        const titles = ((data.query && data.query.search) || []).map(s => s.title).slice(0, 5);
+        const sources = [];
+        for (const title of titles) {
+          try {
+            const eUrl = 'https://' + host + '/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&format=json&origin=*'
+              + '&titles=' + encodeURIComponent(title);
+            const er = await fetch(eUrl);
+            if (!er.ok) continue;
+            const ed = await er.json();
+            const pages = (ed.query && ed.query.pages) || {};
+            const page = Object.values(pages)[0];
+            const extract = (page && page.extract) || '';
+            if (extract && extract.length >= CONFIG.CHUNK_IGNORE_BELOW) {
+              sources.push({
+                title: 'Wikipedia: ' + title,
+                url: 'https://' + host + '/wiki/' + encodeURIComponent(title.replace(/ /g, '_')),
+                language: lang,
+                text: extract.slice(0, 8000)
+              });
+            }
+          } catch (e) { /* skip a page */ }
+        }
+        return { sources, query };
+      }
+    };
+
+    // ============================================================
+    // PubMed provider (NCBI E-utilities, CORS-enabled; English/biomedical)
+    // ============================================================
+    const PubMedProvider = {
+      EUTILS: 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/',
+      async search(text) {
+        const kws = extractKeywords(text, 6);
+        if (!kws.length) return { sources: [], query: '' };
+        let term = kws.join(' ');
+        let ids = await this._esearch(term);
+        if (!ids.length && kws.length > 3) { // broaden
+          term = kws.slice(0, 3).join(' OR ');
+          ids = await this._esearch(term);
+        }
+        if (!ids.length) return { sources: [], query: term };
+        const sources = [];
+        for (const id of ids.slice(0, 5)) {
+          try {
+            const r = await fetch(this.EUTILS + 'efetch.fcgi?db=pubmed&rettype=abstract&retmode=text&id=' + encodeURIComponent(id));
+            if (!r.ok) continue;
+            const txt = (await r.text()).replace(/\s+/g, ' ').trim();
+            if (txt.length >= CONFIG.CHUNK_IGNORE_BELOW) {
+              sources.push({
+                title: 'PubMed PMID ' + id,
+                url: 'https://pubmed.ncbi.nlm.nih.gov/' + id + '/',
+                language: 'en',
+                text: txt.slice(0, 6000)
+              });
+            }
+          } catch (e) { /* skip a record */ }
+        }
+        return { sources, query: term };
+      },
+      async _esearch(term) {
+        const r = await fetch(this.EUTILS + 'esearch.fcgi?db=pubmed&retmode=json&retmax=5&term=' + encodeURIComponent(term));
+        if (!r.ok) throw new Error('esearch ' + r.status);
+        const d = await r.json();
+        return (d.esearchresult && d.esearchresult.idlist) || [];
+      }
+    };
 
     // ============================================================
     // Static sources
@@ -765,6 +907,37 @@
         if (!extracted) { log(t('directFail', { url }), 'err'); continue; }
         if (extracted.length < CONFIG.CHUNK_IGNORE_BELOW) { log(t('noExtract', { url }), 'err'); continue; }
         sources.push({ title: url, url, language: /[Ͱ-Ͽἀ-῿]/.test(extracted) ? 'el' : 'en', text: extracted });
+      }
+
+      // 3c) Wikipedia (CORS-enabled) — searches keywords, fetches article text
+      const docLang = /[Ͱ-Ͽἀ-῿]/.test(studentRaw) ? 'el' : 'en';
+      if (el('useWikipedia').checked) {
+        try {
+          const kwPreview = extractKeywords(studentRaw, 8).join(' ');
+          if (!kwPreview) { log(t('noKeywords')); }
+          else {
+            setProgress(43, t('wikiSearch', { lang: docLang, q: kwPreview }));
+            log(t('wikiSearch', { lang: docLang, q: kwPreview }));
+            const wiki = await WikipediaProvider.search(studentRaw, docLang);
+            if (wiki.sources.length) { wiki.sources.forEach(s => sources.push(s)); log(t('wikiFound', { n: wiki.sources.length }), 'ok'); }
+            else log(t('wikiNone'));
+          }
+        } catch (e) { log(t('wikiFail', { err: (e && e.message) || 'error' }), 'err'); }
+      }
+
+      // 3d) PubMed (CORS-enabled NCBI E-utilities) — English / biomedical
+      if (el('usePubmed').checked) {
+        try {
+          const kwPreview = extractKeywords(studentRaw, 6).join(' ');
+          if (!kwPreview) { log(t('noKeywords')); }
+          else {
+            setProgress(45, t('pubmedSearch', { q: kwPreview }));
+            log(t('pubmedSearch', { q: kwPreview }));
+            const pm = await PubMedProvider.search(studentRaw);
+            if (pm.sources.length) { pm.sources.forEach(s => sources.push(s)); log(t('pubmedFound', { n: pm.sources.length }), 'ok'); }
+            else log(t('pubmedNone'));
+          }
+        } catch (e) { log(t('pubmedFail', { err: (e && e.message) || 'error' }), 'err'); }
       }
 
       if (!sources.length) {
