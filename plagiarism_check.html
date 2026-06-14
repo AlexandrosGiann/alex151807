@@ -328,6 +328,8 @@
         comparing: 'Σύγκριση με «{title}»…',
         done: 'Ολοκληρώθηκε. {n} πηγές συγκρίθηκαν.',
         noSources: 'Δεν υπάρχουν πηγές για σύγκριση. Προσθέστε URLs ή ένα αρχείο data/plagiarism_sources.json.',
+        noSignificant: 'Ελέγχθηκαν {n} πηγές — καμία δεν παρουσίασε σημαντική ομοιότητα.',
+        othersChecked: '{n} ακόμη πηγές ελέγχθηκαν χωρίς σημαντική ομοιότητα (δεν εμφανίζονται).',
         riskHigh: 'Υψηλός κίνδυνος', riskMedium: 'Μέτριος κίνδυνος', riskLow: 'Χαμηλός', riskNone: 'Αμελητέο',
         scLex: 'Λεξιλογικό', scSem: 'Σημασιολογικό', scComb: 'Συνδυασμένο', scMatches: 'Αντιστοιχίες',
         matchedPassages: 'Πιθανά αντιστοιχισμένα αποσπάσματα',
@@ -387,6 +389,8 @@
         comparing: 'Comparing against "{title}"…',
         done: 'Done. {n} sources compared.',
         noSources: 'No sources to compare. Add URLs or a data/plagiarism_sources.json file.',
+        noSignificant: 'Checked {n} sources — none showed significant similarity.',
+        othersChecked: '{n} more sources were checked with no significant similarity (hidden).',
         riskHigh: 'High risk', riskMedium: 'Medium risk', riskLow: 'Low', riskNone: 'Negligible',
         scLex: 'Lexical', scSem: 'Semantic', scComb: 'Combined', scMatches: 'Matches',
         matchedPassages: 'Possible matched passages',
@@ -559,7 +563,10 @@
     // ============================================================
     const KW_STOP = new Set([
       // English
-      'the','a','an','of','to','in','on','at','for','with','and','or','as','by','from','that','this','these','those','is','are','was','were','be','been','being','it','its','which','who','what','when','where','why','how','can','could','would','should','may','might','will','also','more','most','than','then','such','into','about','over','under','their','they','them','our','your','his','her','not','but','have','has','had','because','between','within','while','each','other','some','any','all','one','two','three',
+      'the','a','an','of','to','in','on','at','for','with','and','or','as','by','from','that','this','these','those','is','are','was','were','be','been','being','it','its','which','who','what','when','where','why','how','can','could','would','should','may','might','will','also','more','most','than','then','such','into','about','over','under','their','they','them','our','your','his','her','not','but','have','has','had','because','between','within','while','each','other','others','some','any','all','one','two','three',
+      // Generic / geographic words that rarely identify the topic but pull in
+      // tangential articles (e.g. "United States" matched an unrelated war timeline).
+      'united','states','state','europe','european','america','american','world','country','countries','people','families','family','home','homes','school','schools','without','contact','exists','detected','respectively','especially','include','including','various','different','several','many','example','examples','number','years','year','time','first','second','third','using','used','based','known','found',
       // Greek (accent-stripped form, since we match on stripped)
       'και','η','ο','το','οι','τα','του','της','των','τον','την','τους','τις','ενα','ενας','μια','μη','δεν','που','πως','ποιος','ποια','ποιο','ειναι','ηταν','με','σε','απο','για','ως','στο','στα','στη','στην','στις','στον','στους','οπως','καθε','αυτο','αυτη','αυτος','αυτα','αυτες','αυτοι','ολα','ολος','ολη','ολο','αλλα','επισης','μεταξυ','μεσα','προς','κατα','περι','ωστε','οταν','οπου','επειδη'
     ]);
@@ -702,11 +709,19 @@
     // Scoring
     // ============================================================
     function riskOf(lex, sem, comb) {
-      if (comb !== null && comb > CONFIG.TH_COMBINED) return 'high';
-      if (sem !== null && sem > CONFIG.TH_SEMANTIC) return 'medium';
-      if (lex > CONFIG.TH_LEXICAL) return 'medium';
-      // soft "low" band so the user still sees weak signals
-      if ((sem !== null && sem > CONFIG.TH_SEMANTIC * 0.8) || lex > CONFIG.TH_LEXICAL * 0.7) return 'low';
+      // Character n-gram lexical similarity has a high floor for English (shared
+      // function-word n-grams), so ~0.3–0.4 lexical is normal even for unrelated
+      // text. When the semantic score is available we trust it to veto that floor.
+      if (sem !== null) {
+        if (comb > CONFIG.TH_COMBINED) return 'high';
+        if (sem > CONFIG.TH_SEMANTIC) return 'medium';                     // paraphrase
+        if (lex > CONFIG.TH_LEXICAL && sem > 0.5) return 'medium';         // direct copy, semantically confirmed
+        if (sem > 0.6 || (lex > CONFIG.TH_LEXICAL && sem > 0.42)) return 'low';
+        return 'none';   // low semantic ⇒ unrelated; ignore the lexical n-gram floor
+      }
+      // Lexical-only mode (semantic model unavailable): use a higher floor.
+      if (lex > CONFIG.TH_LEXICAL + 0.15) return 'medium';
+      if (lex > CONFIG.TH_LEXICAL) return 'low';
       return 'none';
     }
 
@@ -790,11 +805,26 @@
       wrap.innerHTML = '';
       el('resultsCard').classList.remove('hidden');
       if (!results.length) { wrap.innerHTML = '<div class="hint">' + esc(t('noSources')) + '</div>'; return; }
+      // Hide unrelated sources ('none'): they only add noise. Keep a count so the
+      // user knows they were checked and dismissed.
+      const shown = results.filter(r => r.overall !== 'none');
+      const hidden = results.length - shown.length;
+      if (!shown.length) {
+        wrap.innerHTML = '<div class="hint">' + esc(t('noSignificant', { n: results.length })) + '</div>';
+        return;
+      }
       // sort by combined risk
       const order = { high: 3, medium: 2, low: 1, none: 0 };
-      results.sort((a, b) => (order[b.overall] - order[a.overall]) || (b.maxComb - a.maxComb));
+      shown.sort((a, b) => (order[b.overall] - order[a.overall]) || (b.maxComb - a.maxComb));
       const riskLabel = { high: t('riskHigh'), medium: t('riskMedium'), low: t('riskLow'), none: t('riskNone') };
-      for (const r of results) {
+      if (hidden > 0) {
+        const note = document.createElement('div');
+        note.className = 'hint';
+        note.style.marginBottom = '12px';
+        note.textContent = t('othersChecked', { n: hidden });
+        wrap.appendChild(note);
+      }
+      for (const r of shown) {
         const div = document.createElement('div');
         div.className = 'source-result';
         const matchesHtml = r.matches.slice(0, 6).map(m => `
