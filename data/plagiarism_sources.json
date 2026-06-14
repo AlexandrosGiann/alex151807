@@ -1,1 +1,20 @@
-[{"title":"Medium", "url":"https://medium.com", "language":"en", "text":""}]
+[
+  {
+    "title": "Ευζωία των ζώων — Βασικές έννοιες",
+    "url": "https://example.org/el/euzoia-zoon",
+    "language": "el",
+    "text": "Η ευζωία των ζώων περιγράφει την κατάσταση ενός ζώου σε σχέση με τις προσπάθειές του να αντεπεξέλθει στο περιβάλλον στο οποίο ζει. Καλύπτει τη σωματική υγεία, τη συναισθηματική κατάσταση και τη δυνατότητα του ζώου να εκφράζει φυσιολογική συμπεριφορά. Οι Πέντε Ελευθερίες αποτελούν ένα διεθνώς αναγνωρισμένο πλαίσιο για την αξιολόγηση της ευζωίας: ελευθερία από την πείνα και τη δίψα, ελευθερία από τη δυσφορία, ελευθερία από τον πόνο και τις ασθένειες, ελευθερία να εκφράζουν φυσιολογική συμπεριφορά, και ελευθερία από τον φόβο και το άγχος. Η αξιολόγηση της ευζωίας βασίζεται σε φυσιολογικούς, συμπεριφορικούς και παραγωγικούς δείκτες, όπως τα επίπεδα κορτιζόλης, οι στερεοτυπικές συμπεριφορές και η παραγωγική απόδοση. Ο περιβαλλοντικός εμπλουτισμός βελτιώνει την ψυχική ευημερία των ζώων παρέχοντας ερεθίσματα που υποστηρίζουν τη φυσική τους συμπεριφορά."
+  },
+  {
+    "title": "Νόηση και συνείδηση στα ζώα",
+    "url": "https://example.org/el/noisi-zoon",
+    "language": "el",
+    "text": "Η νόηση αναφέρεται στους νοητικούς μηχανισμούς μέσω των οποίων ένας οργανισμός επεξεργάζεται πληροφορίες, μαθαίνει και προσαρμόζεται στο περιβάλλον του. Στη φιλοσοφία της νόησης, το πρόβλημα νου-σώματος εξετάζει τη σχέση ανάμεσα στις νοητικές καταστάσεις και τον εγκέφαλο, καθώς και το αν ο νους και το σώμα αποτελούν την ίδια οντότητα. Ο δυϊσμός υποστηρίζει ότι ο νους και το σώμα είναι δύο διαφορετικές ουσίες, ενώ ο υλισμός θεωρεί ότι τα πάντα, συμπεριλαμβανομένου του νου, αποτελούνται από ύλη. Τα ζώα μαθαίνουν μέσω της κλασικής και της συντελεστικής εξάρτησης, και πολλά είδη επιδεικνύουν μορφές συναισθημάτων και κοινωνικής νόησης."
+  },
+  {
+    "title": "Cloud Computing Fundamentals",
+    "url": "https://example.org/en/cloud-computing",
+    "language": "en",
+    "text": "Cloud computing is the on-demand delivery of IT resources over the internet with pay-as-you-go pricing. Instead of buying, owning, and maintaining physical data centers and servers, organizations can access technology services such as computing power, storage, and databases on an as-needed basis. The cloud offers several benefits, including elasticity, which is the ability to scale resources up or down automatically based on demand, and high availability, achieved by distributing resources across multiple availability zones within a region. A hybrid deployment combines on-premises infrastructure with cloud resources, which is useful when legacy applications must remain in a local data center for compliance or low-latency reasons. Amazon EC2 provides resizable compute capacity, while serverless services like AWS Lambda run code in response to events without requiring you to provision or manage servers."
+  }
+]
