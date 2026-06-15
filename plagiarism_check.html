@@ -685,6 +685,28 @@
     // Strip XML/HTML tags (e.g. Crossref JATS abstracts) → plain text.
     function stripTags(s) { return String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
 
+    // fetch() with retry + backoff on transient failures (429/500/502/503/504)
+    // and network errors. Public open-data APIs (esp. OpenAlex's anonymous pool)
+    // occasionally return 503 under load; one or two retries usually recovers.
+    async function corsFetch(url, opts, retries = 2) {
+      let lastErr;
+      for (let i = 0; i <= retries; i++) {
+        try {
+          const res = await fetch(url, opts);
+          if ([429, 500, 502, 503, 504].includes(res.status) && i < retries) {
+            await new Promise(r => setTimeout(r, 700 * (i + 1)));
+            continue;
+          }
+          return res;
+        } catch (e) {
+          lastErr = e;
+          if (i < retries) { await new Promise(r => setTimeout(r, 700 * (i + 1))); continue; }
+          throw e;
+        }
+      }
+      throw lastErr || new Error('fetch failed');
+    }
+
     // ============================================================
     // Europe PMC provider — CORS-enabled JSON REST, no key. Returns abstracts
     // directly (resultType=core), making it the easiest scholarly text source.
@@ -697,7 +719,7 @@
         const query = kws.join(' ');
         const url = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query='
           + encodeURIComponent(query) + '&format=json&pageSize=4&resultType=core';
-        const res = await fetch(url);
+        const res = await corsFetch(url);
         if (!res.ok) throw new Error('europepmc ' + res.status);
         const data = await res.json();
         const items = (data.resultList && data.resultList.result) || [];
@@ -732,7 +754,7 @@
         if (!kws.length) return { sources: [], query: '' };
         const query = kws.join(' ');
         const url = 'https://api.openalex.org/works?search=' + encodeURIComponent(query) + '&per-page=4';
-        const res = await fetch(url);
+        const res = await corsFetch(url);
         if (!res.ok) throw new Error('openalex ' + res.status);
         const data = await res.json();
         const items = data.results || [];
@@ -761,7 +783,7 @@
         const query = kws.join(' ');
         const url = 'https://api.crossref.org/works?query=' + encodeURIComponent(query)
           + '&rows=5&select=title,abstract,DOI,URL';
-        const res = await fetch(url);
+        const res = await corsFetch(url);
         if (!res.ok) throw new Error('crossref ' + res.status);
         const data = await res.json();
         const items = (data.message && data.message.items) || [];
