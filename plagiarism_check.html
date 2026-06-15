@@ -212,9 +212,12 @@
       <textarea id="candidateUrls" placeholder="https://example.com/article&#10;https://example.org/page"></textarea>
 
       <label class="label" data-i18n="lblProviders">Αναζήτηση σε ανοιχτές πηγές</label>
-      <div class="row" style="gap:18px;">
+      <div class="row" style="gap:16px 18px;">
         <label class="provider-toggle"><input type="checkbox" id="useWikipedia" checked> <span data-i18n="provWiki">Wikipedia (EL/EN)</span></label>
         <label class="provider-toggle"><input type="checkbox" id="usePubmed" checked> <span data-i18n="provPubmed">PubMed (αγγλικά / βιοϊατρικά)</span></label>
+        <label class="provider-toggle"><input type="checkbox" id="useEuropePmc"> <span data-i18n="provEpmc">Europe PMC (βιοϊατρικά)</span></label>
+        <label class="provider-toggle"><input type="checkbox" id="useOpenAlex"> <span data-i18n="provOpenalex">OpenAlex (επιστημονικά)</span></label>
+        <label class="provider-toggle"><input type="checkbox" id="useCrossref"> <span data-i18n="provCrossref">Crossref (επιστημονικά)</span></label>
       </div>
       <div class="hint" id="providerNote" data-i18n="provNote" style="margin-top:6px;">Το Medium δεν διαθέτει δημόσιο API αναζήτησης με CORS, οπότε δεν μπορεί να ελεγχθεί αυτόματα — μόνο συγκεκριμένα URL μέσω του πεδίου παραπάνω (συνήθως αποκλείονται από CORS).</div>
       <div class="hint" data-i18n="provPrivacy" style="margin-top:4px; color: var(--warning);">Όταν είναι ενεργές, στέλνονται μόνο σύντομες λέξεις-κλειδιά (όχι το πλήρες κείμενό σας) στη Wikipedia/PubMed για εύρεση υποψήφιων σελίδων.</div>
@@ -283,6 +286,13 @@
         lblProviders: 'Αναζήτηση σε ανοιχτές πηγές',
         provWiki: 'Wikipedia (EL/EN)',
         provPubmed: 'PubMed (αγγλικά / βιοϊατρικά)',
+        provEpmc: 'Europe PMC (βιοϊατρικά)',
+        provOpenalex: 'OpenAlex (επιστημονικά)',
+        provCrossref: 'Crossref (επιστημονικά)',
+        srcSearch: '{src}: αναζήτηση για: {q}',
+        srcFound: '{src}: βρέθηκαν {n} αποτελέσματα.',
+        srcNone: '{src}: δεν βρέθηκαν αποτελέσματα.',
+        srcFail: '{src}: η αναζήτηση απέτυχε ({err}).',
         provNote: 'Το Medium δεν διαθέτει δημόσιο API αναζήτησης με CORS, οπότε δεν μπορεί να ελεγχθεί αυτόματα — μόνο συγκεκριμένα URL μέσω του πεδίου παραπάνω (συνήθως αποκλείονται από CORS).',
         provPrivacy: 'Όταν είναι ενεργές, στέλνονται μόνο σύντομες λέξεις-κλειδιά (όχι το πλήρες κείμενό σας) στη Wikipedia/PubMed για εύρεση υποψήφιων σελίδων.',
         wikiSearch: 'Wikipedia: αναζήτηση ({lang}) για: {q}',
@@ -344,6 +354,13 @@
         lblProviders: 'Search open sources',
         provWiki: 'Wikipedia (EL/EN)',
         provPubmed: 'PubMed (English / biomedical)',
+        provEpmc: 'Europe PMC (biomedical)',
+        provOpenalex: 'OpenAlex (scholarly)',
+        provCrossref: 'Crossref (scholarly)',
+        srcSearch: '{src}: searching for: {q}',
+        srcFound: '{src}: found {n} results.',
+        srcNone: '{src}: no results found.',
+        srcFail: '{src}: search failed ({err}).',
         provNote: 'Medium has no public CORS-enabled search API, so it cannot be checked automatically — only specific URLs via the field above (usually blocked by CORS).',
         provPrivacy: 'When enabled, only short keywords (not your full text) are sent to Wikipedia/PubMed to find candidate pages.',
         wikiSearch: 'Wikipedia: searching ({lang}) for: {q}',
@@ -665,6 +682,102 @@
       }
     };
 
+    // Strip XML/HTML tags (e.g. Crossref JATS abstracts) → plain text.
+    function stripTags(s) { return String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+    // ============================================================
+    // Europe PMC provider — CORS-enabled JSON REST, no key. Returns abstracts
+    // directly (resultType=core), making it the easiest scholarly text source.
+    // https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=Q&format=json
+    // ============================================================
+    const EuropePmcProvider = {
+      async search(text) {
+        const kws = extractKeywords(text, 6);
+        if (!kws.length) return { sources: [], query: '' };
+        const query = kws.join(' ');
+        const url = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query='
+          + encodeURIComponent(query) + '&format=json&pageSize=4&resultType=core';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('europepmc ' + res.status);
+        const data = await res.json();
+        const items = (data.resultList && data.resultList.result) || [];
+        const sources = [];
+        for (const it of items) {
+          const abs = stripTags(it.abstractText || '');
+          const body = ((it.title || '') + '. ' + abs).trim();
+          if (body.length < CONFIG.CHUNK_IGNORE_BELOW) continue;
+          const link = it.doi ? ('https://doi.org/' + it.doi)
+            : (it.source && it.id ? ('https://europepmc.org/article/' + it.source + '/' + it.id) : 'https://europepmc.org/');
+          sources.push({ title: 'Europe PMC: ' + (it.title || it.id || ''), url: link, language: 'en', text: body.slice(0, 6000) });
+        }
+        return { sources, query };
+      }
+    };
+
+    // ============================================================
+    // OpenAlex provider — CORS-enabled, no key. Abstracts come as an inverted
+    // index (word → positions); reconstruct() rebuilds readable text.
+    // https://api.openalex.org/works?search=QUERY
+    // ============================================================
+    function reconstructAbstract(inv) {
+      if (!inv) return '';
+      const pairs = [];
+      for (const w in inv) for (const pos of inv[w]) pairs.push([pos, w]);
+      pairs.sort((a, b) => a[0] - b[0]);
+      return pairs.map(p => p[1]).join(' ');
+    }
+    const OpenAlexProvider = {
+      async search(text) {
+        const kws = extractKeywords(text, 6);
+        if (!kws.length) return { sources: [], query: '' };
+        const query = kws.join(' ');
+        const url = 'https://api.openalex.org/works?search=' + encodeURIComponent(query) + '&per-page=4';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('openalex ' + res.status);
+        const data = await res.json();
+        const items = data.results || [];
+        const sources = [];
+        for (const it of items) {
+          const abs = reconstructAbstract(it.abstract_inverted_index);
+          const title = it.title || it.display_name || '';
+          const body = (title + '. ' + abs).trim();
+          if (body.length < CONFIG.CHUNK_IGNORE_BELOW) continue;
+          sources.push({ title: 'OpenAlex: ' + title, url: it.doi || it.id || 'https://openalex.org/', language: 'en', text: body.slice(0, 6000) });
+        }
+        return { sources, query };
+      }
+    };
+
+    // ============================================================
+    // Crossref provider — CORS-enabled, no key. Metadata for scholarly works;
+    // abstracts (when present) are JATS XML, so we strip tags. Title-only items
+    // are skipped to avoid weak matches.
+    // https://api.crossref.org/works?query=QUERY
+    // ============================================================
+    const CrossrefProvider = {
+      async search(text) {
+        const kws = extractKeywords(text, 6);
+        if (!kws.length) return { sources: [], query: '' };
+        const query = kws.join(' ');
+        const url = 'https://api.crossref.org/works?query=' + encodeURIComponent(query)
+          + '&rows=5&select=title,abstract,DOI,URL';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('crossref ' + res.status);
+        const data = await res.json();
+        const items = (data.message && data.message.items) || [];
+        const sources = [];
+        for (const it of items) {
+          const title = Array.isArray(it.title) ? it.title.join(' ') : (it.title || '');
+          const abs = stripTags(it.abstract || '');
+          const body = (title + '. ' + abs).trim();
+          if (body.length < CONFIG.CHUNK_IGNORE_BELOW) continue; // skip title-only (too weak)
+          const link = it.URL || (it.DOI ? 'https://doi.org/' + it.DOI : 'https://www.crossref.org/');
+          sources.push({ title: 'Crossref: ' + title.slice(0, 90), url: link, language: 'en', text: body.slice(0, 6000) });
+        }
+        return { sources, query };
+      }
+    };
+
     // ============================================================
     // Static sources
     // Primary: data/plagiarism_sources.json (editable, deploy alongside the page).
@@ -969,6 +1082,23 @@
           }
         } catch (e) { log(t('pubmedFail', { err: (e && e.message) || 'error' }), 'err'); }
       }
+
+      // 3e–3g) Additional CORS-friendly scholarly providers (opt-in). Generic
+      // runner: logs search/found/none/fail with the provider's display name.
+      async function runProvider(label, provider, prog) {
+        try {
+          const kwPreview = extractKeywords(studentRaw, 6).join(' ');
+          if (!kwPreview) { log(t('noKeywords')); return; }
+          setProgress(prog, t('srcSearch', { src: label, q: kwPreview }));
+          log(t('srcSearch', { src: label, q: kwPreview }));
+          const r = await provider.search(studentRaw);
+          if (r.sources.length) { r.sources.forEach(s => sources.push(s)); log(t('srcFound', { src: label, n: r.sources.length }), 'ok'); }
+          else log(t('srcNone', { src: label }));
+        } catch (e) { log(t('srcFail', { src: label, err: (e && e.message) || 'error' }), 'err'); }
+      }
+      if (el('useEuropePmc').checked) await runProvider('Europe PMC', EuropePmcProvider, 46);
+      if (el('useOpenAlex').checked) await runProvider('OpenAlex', OpenAlexProvider, 47);
+      if (el('useCrossref').checked) await runProvider('Crossref', CrossrefProvider, 48);
 
       if (!sources.length) {
         setProgress(100, '');
