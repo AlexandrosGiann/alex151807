@@ -123,6 +123,8 @@
     .risk-medium { background: var(--warning-glow); color: var(--warning); border: 1px solid var(--warning); }
     .risk-low { background: var(--success-glow); color: var(--success); border: 1px solid var(--success); }
     .risk-none { background: rgba(148,163,184,0.12); color: var(--text-muted); border: 1px solid var(--border-color); }
+    .tr-badge { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid #a855f7; }
+    .tr-tag { display: inline-block; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #a855f7; border: 1px solid #a855f7; border-radius: 6px; padding: 1px 6px; margin-right: 4px; vertical-align: middle; }
     .score-grid { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 12px; }
     .score-item { font-size: 0.8rem; color: var(--text-muted); }
     .score-item strong { display: block; font-size: 1.05rem; color: var(--text-main); font-weight: 700; }
@@ -219,6 +221,9 @@
         <label class="provider-toggle"><input type="checkbox" id="useOpenAlex"> <span data-i18n="provOpenalex">OpenAlex (επιστημονικά)</span></label>
         <label class="provider-toggle"><input type="checkbox" id="useCrossref"> <span data-i18n="provCrossref">Crossref (επιστημονικά)</span></label>
       </div>
+      <div class="row" style="gap:16px 18px; margin-top:8px;">
+        <label class="provider-toggle"><input type="checkbox" id="useTranslated" checked> <span data-i18n="provTranslated">Έλεγχος μεταφρασμένης λογοκλοπής (αναζήτηση και στην άλλη γλώσσα)</span></label>
+      </div>
       <div class="hint" id="providerNote" data-i18n="provNote" style="margin-top:6px;">Το Medium δεν διαθέτει δημόσιο API αναζήτησης με CORS, οπότε δεν μπορεί να ελεγχθεί αυτόματα — μόνο συγκεκριμένα URL μέσω του πεδίου παραπάνω (συνήθως αποκλείονται από CORS).</div>
       <div class="hint" data-i18n="provPrivacy" style="margin-top:4px; color: var(--warning);">Όταν είναι ενεργές, στέλνονται μόνο σύντομες λέξεις-κλειδιά (όχι το πλήρες κείμενό σας) στη Wikipedia/PubMed για εύρεση υποψήφιων σελίδων.</div>
 
@@ -268,6 +273,8 @@
       TH_LEXICAL: 0.45,          // lexical > this  => possible direct similarity
       TH_SEMANTIC: 0.78,         // semantic > this => possible paraphrase similarity
       TH_COMBINED: 0.70,         // combined > this => high similarity risk
+      TH_TRANSLATED: 0.72,       // cross-language semantic > this => possible TRANSLATED similarity
+                                 // (lexical is ~0 across scripts, so we rely on semantics alone)
       LEX_WEIGHT: 0.4,           // combined = LEX_WEIGHT*lex + SEM_WEIGHT*sem
       SEM_WEIGHT: 0.6,
       STATIC_SOURCES_URL: 'data/plagiarism_sources.json',
@@ -289,6 +296,11 @@
         provEpmc: 'Europe PMC (βιοϊατρικά)',
         provOpenalex: 'OpenAlex (επιστημονικά)',
         provCrossref: 'Crossref (επιστημονικά)',
+        provTranslated: 'Έλεγχος μεταφρασμένης λογοκλοπής (αναζήτηση και στην άλλη γλώσσα)',
+        translatedTag: 'Πιθανή μετάφραση',
+        crossLingual: 'διαγλωσσική αντιστοιχία',
+        translatedNote: 'Πιθανή μεταφρασμένη ομοιότητα: υψηλή σημασιολογική αντιστοιχία σε διαφορετική γλώσσα με σχεδόν μηδενική λεξιλογική — ένδειξη πιθανής μετάφρασης, όχι απόδειξη.',
+        wikiOther: 'Wikipedia ({lang}, για μετάφραση): αναζήτηση…',
         srcSearch: '{src}: αναζήτηση για: {q}',
         srcFound: '{src}: βρέθηκαν {n} αποτελέσματα.',
         srcNone: '{src}: δεν βρέθηκαν αποτελέσματα.',
@@ -357,6 +369,11 @@
         provEpmc: 'Europe PMC (biomedical)',
         provOpenalex: 'OpenAlex (scholarly)',
         provCrossref: 'Crossref (scholarly)',
+        provTranslated: 'Check translated plagiarism (also search the other language)',
+        translatedTag: 'Possible translation',
+        crossLingual: 'cross-lingual match',
+        translatedNote: 'Possible translated similarity: high semantic match in a different language with near-zero lexical overlap — a sign of possible translation, not proof.',
+        wikiOther: 'Wikipedia ({lang}, for translation): searching…',
         srcSearch: '{src}: searching for: {q}',
         srcFound: '{src}: found {n} results.',
         srcNone: '{src}: no results found.',
@@ -605,39 +622,70 @@
     // Wikipedia provider (CORS-enabled MediaWiki API, EL + EN)
     // ============================================================
     const WikipediaProvider = {
+      _host(lang) { return (lang === 'el' ? 'el' : 'en') + '.wikipedia.org'; },
+      async _titleSearch(host, query) {
+        const sUrl = 'https://' + host + '/w/api.php?action=query&list=search&format=json&origin=*'
+          + '&srlimit=5&srprop=&srsearch=' + encodeURIComponent(query);
+        const res = await corsFetch(sUrl);
+        if (!res.ok) throw new Error('search ' + res.status);
+        const data = await res.json();
+        return ((data.query && data.query.search) || []).map(s => s.title).slice(0, 5);
+      },
+      async _extract(host, title, lang) {
+        const eUrl = 'https://' + host + '/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&format=json&origin=*'
+          + '&titles=' + encodeURIComponent(title);
+        const er = await corsFetch(eUrl);
+        if (!er.ok) return null;
+        const ed = await er.json();
+        const page = Object.values((ed.query && ed.query.pages) || {})[0];
+        const extract = (page && page.extract) || '';
+        if (!extract || extract.length < CONFIG.CHUNK_IGNORE_BELOW) return null;
+        return {
+          title: 'Wikipedia (' + lang + '): ' + title,
+          url: 'https://' + host + '/wiki/' + encodeURIComponent(title.replace(/ /g, '_')),
+          language: lang,
+          text: extract.slice(0, 8000)
+        };
+      },
       async search(text, lang) {
-        const host = lang === 'el' ? 'el.wikipedia.org' : 'en.wikipedia.org';
         const kws = extractKeywords(text, 8);
         if (!kws.length) return { sources: [], query: '' };
         const query = kws.join(' ');
-        const sUrl = 'https://' + host + '/w/api.php?action=query&list=search&format=json&origin=*'
-          + '&srlimit=5&srprop=&srsearch=' + encodeURIComponent(query);
-        const res = await fetch(sUrl);
-        if (!res.ok) throw new Error('search ' + res.status);
-        const data = await res.json();
-        const titles = ((data.query && data.query.search) || []).map(s => s.title).slice(0, 5);
+        const host = this._host(lang);
+        const titles = await this._titleSearch(host, query);
         const sources = [];
         for (const title of titles) {
-          try {
-            const eUrl = 'https://' + host + '/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&format=json&origin=*'
-              + '&titles=' + encodeURIComponent(title);
-            const er = await fetch(eUrl);
-            if (!er.ok) continue;
-            const ed = await er.json();
-            const pages = (ed.query && ed.query.pages) || {};
-            const page = Object.values(pages)[0];
-            const extract = (page && page.extract) || '';
-            if (extract && extract.length >= CONFIG.CHUNK_IGNORE_BELOW) {
-              sources.push({
-                title: 'Wikipedia: ' + title,
-                url: 'https://' + host + '/wiki/' + encodeURIComponent(title.replace(/ /g, '_')),
-                language: lang,
-                text: extract.slice(0, 8000)
-              });
-            }
-          } catch (e) { /* skip a page */ }
+          try { const s = await this._extract(host, title, lang); if (s) sources.push(s); } catch (e) {}
         }
         return { sources, query };
+      },
+      // Translated-plagiarism finder: search the student's own language, then
+      // follow Wikipedia language-links to fetch the equivalent article in the
+      // OTHER language. This actually locates a translated original (e.g. the
+      // Greek «Αριστοτέλης» article ↔ the English «Aristotle» article), which a
+      // wrong-language keyword search could never find.
+      async crossLingual(text, fromLang, toLang) {
+        const kws = extractKeywords(text, 8);
+        if (!kws.length) return { sources: [] };
+        const fromHost = this._host(fromLang), toHost = this._host(toLang);
+        const titles = await this._titleSearch(fromHost, kws.join(' '));
+        if (!titles.length) return { sources: [] };
+        const llUrl = 'https://' + fromHost + '/w/api.php?action=query&prop=langlinks&lllang=' + toLang
+          + '&lllimit=500&format=json&origin=*&titles=' + encodeURIComponent(titles.join('|'));
+        const lres = await corsFetch(llUrl);
+        if (!lres.ok) throw new Error('langlinks ' + lres.status);
+        const ldata = await lres.json();
+        const pages = (ldata.query && ldata.query.pages) || {};
+        const otherTitles = [];
+        for (const p of Object.values(pages)) {
+          const ll = p.langlinks && p.langlinks[0];
+          if (ll && ll['*']) otherTitles.push(ll['*']);
+        }
+        const sources = [];
+        for (const title of otherTitles.slice(0, 5)) {
+          try { const s = await this._extract(toHost, title, toLang); if (s) sources.push(s); } catch (e) {}
+        }
+        return { sources };
       }
     };
 
@@ -860,16 +908,40 @@
       return 'none';
     }
 
+    // Coarse language detection: Greek script => 'el', otherwise 'en'.
+    function detectLang(s) { return /[Ͱ-Ͽἀ-῿]/.test(String(s || '')) ? 'el' : 'en'; }
+
+    // Evaluate one student-chunk ↔ source-chunk match, with translation awareness.
+    // Cross-lingual (languages differ): lexical n-grams are structurally ~0, so we
+    // judge by semantics alone and mark the match as a possible TRANSLATION.
+    // Same-language: fall back to the normal lexical+semantic logic.
+    function evalMatch(lex, sem, sLang, srcLang) {
+      const cross = sLang && srcLang && sLang !== srcLang;
+      if (sem !== null && cross) {
+        if (sem > CONFIG.TH_SEMANTIC) return { risk: 'high', translated: true, comb: sem };
+        if (sem > CONFIG.TH_TRANSLATED) return { risk: 'medium', translated: true, comb: sem };
+        if (sem > 0.6) return { risk: 'low', translated: true, comb: sem };
+        return { risk: 'none', translated: false, comb: sem };
+      }
+      const comb = (sem !== null) ? (CONFIG.LEX_WEIGHT * lex + CONFIG.SEM_WEIGHT * sem) : lex;
+      return { risk: riskOf(lex, sem, sem !== null ? comb : null), translated: false, comb: comb };
+    }
+
     // studentChunks: [{text}], studentVecs: [Float32Array|null]
     async function scoreSource(source, studentChunks, studentVecs, semOn) {
       const srcChunks = chunkText(source.text).slice(0, CONFIG.MAX_SOURCE_CHUNKS);
       if (!srcChunks.length) return null;
       const srcVecs = semOn ? await Promise.all(srcChunks.map(c => embed(normalize(c)))) : srcChunks.map(() => null);
+      const srcLang = source.language || detectLang(source.text);
 
       let maxLex = 0, maxSem = semOn ? 0 : null, maxComb = 0;
+      let anyTranslated = false;
+      const order = { high: 3, medium: 2, low: 1, none: 0 };
+      let overall = 'none';
       const matches = [];
       for (let i = 0; i < studentChunks.length; i++) {
         const sc = studentChunks[i];
+        const sLang = detectLang(sc.text);
         let bestLex = 0, bestSem = semOn ? 0 : null, bestJ = -1, bestSemJ = -1;
         for (let j = 0; j < srcChunks.length; j++) {
           const lx = lexicalSim(sc.text, srcChunks[j]);
@@ -880,19 +952,20 @@
           }
         }
         const semVal = semOn ? (bestSem || 0) : null;
-        const comb = semOn ? (CONFIG.LEX_WEIGHT * bestLex + CONFIG.SEM_WEIGHT * semVal) : bestLex;
+        const ev = evalMatch(bestLex, semVal, sLang, srcLang);
         if (bestLex > maxLex) maxLex = bestLex;
         if (semOn && semVal > maxSem) maxSem = semVal;
-        if (comb > maxComb) maxComb = comb;
-        const r = riskOf(bestLex, semVal, semOn ? comb : null);
-        if (r !== 'none') {
-          const srcIdx = (semOn && bestSemJ >= 0 && (semVal >= bestLex)) ? bestSemJ : bestJ;
-          matches.push({ student: sc.text, source: srcChunks[srcIdx] || '', lex: bestLex, sem: semVal, comb: semOn ? comb : null, risk: r });
+        if (ev.comb > maxComb) maxComb = ev.comb;
+        if (order[ev.risk] > order[overall]) overall = ev.risk;
+        if (ev.risk !== 'none') {
+          if (ev.translated) anyTranslated = true;
+          // For a translated match the closest chunk is the semantic one (lexical is ~0).
+          const srcIdx = (semOn && bestSemJ >= 0 && (ev.translated || semVal >= bestLex)) ? bestSemJ : bestJ;
+          matches.push({ student: sc.text, source: srcChunks[srcIdx] || '', lex: bestLex, sem: semVal, comb: semOn ? ev.comb : null, risk: ev.risk, translated: ev.translated });
         }
       }
       matches.sort((a, b) => (b.comb ?? b.lex) - (a.comb ?? a.lex));
-      const overall = riskOf(maxLex, semOn ? maxSem : null, semOn ? maxComb : null);
-      return { source, maxLex, maxSem, maxComb: semOn ? maxComb : maxLex, semOn, matches, overall };
+      return { source, maxLex, maxSem, maxComb: semOn ? maxComb : maxLex, semOn, matches, overall, translated: anyTranslated };
     }
 
     // ============================================================
@@ -964,9 +1037,9 @@
         div.className = 'source-result';
         const matchesHtml = r.matches.slice(0, 6).map(m => `
           <div class="passage">
-            <div class="passage-q">${highlightMatch(m.student, m.source)}</div>
+            <div class="passage-q">${m.translated ? '<span class="tr-tag">' + esc(t('translatedTag')) + '</span> ' : ''}${highlightMatch(m.student, m.source)}</div>
             <div class="passage-src"><em>${esc(t('sourceSnippet'))}</em> ${esc(m.source.slice(0, 280))}${m.source.length > 280 ? '…' : ''}</div>
-            <div class="passage-meta">${esc(t('scLex'))}: ${pct(m.lex)} · ${esc(t('scSem'))}: ${pct(m.sem)} · ${esc(t('scComb'))}: ${pct(m.comb)}</div>
+            <div class="passage-meta">${esc(t('scLex'))}: ${pct(m.lex)} · ${esc(t('scSem'))}: ${pct(m.sem)} · ${esc(t('scComb'))}: ${pct(m.comb)}${m.translated ? ' · ' + esc(t('crossLingual')) : ''}</div>
           </div>`).join('');
         div.innerHTML = `
           <div class="source-head">
@@ -974,8 +1047,12 @@
               <div class="source-title">${esc(r.source.title || r.source.url || 'Source')}</div>
               ${r.source.url ? `<a class="source-url" href="${esc(r.source.url)}" target="_blank" rel="noopener">${esc(r.source.url)}</a>` : ''}
             </div>
-            <span class="risk-badge risk-${r.overall}">${esc(riskLabel[r.overall])}</span>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              ${r.translated ? `<span class="risk-badge tr-badge">${esc(t('translatedTag'))}</span>` : ''}
+              <span class="risk-badge risk-${r.overall}">${esc(riskLabel[r.overall])}</span>
+            </div>
           </div>
+          ${r.translated ? `<div class="hint" style="margin:-4px 0 10px; color: var(--warning);">${esc(t('translatedNote'))}</div>` : ''}
           <div class="score-grid">
             <div class="score-item">${esc(t('scLex'))}<strong>${pct(r.maxLex)}</strong></div>
             <div class="score-item">${esc(t('scSem'))}<strong>${r.semOn ? pct(r.maxSem) : esc(t('semNA'))}</strong></div>
@@ -1087,6 +1164,21 @@
             if (wiki.sources.length) { wiki.sources.forEach(s => sources.push(s)); log(t('wikiFound', { n: wiki.sources.length }), 'ok'); }
             else log(t('wikiNone'));
           }
+        } catch (e) { log(t('wikiFail', { err: (e && e.message) || 'error' }), 'err'); }
+      }
+
+      // 3c-bis) Translated-plagiarism check: follow Wikipedia language-links to
+      // fetch the equivalent article in the OTHER language as a cross-lingual
+      // candidate. The multilingual model then matches it semantically even
+      // though it shares no characters with the (translated) submission.
+      if (semOn && el('useTranslated').checked && el('useWikipedia').checked) {
+        const otherLang = docLang === 'el' ? 'en' : 'el';
+        try {
+          setProgress(44, t('wikiOther', { lang: otherLang }));
+          log(t('wikiOther', { lang: otherLang }));
+          const wiki2 = await WikipediaProvider.crossLingual(studentRaw, docLang, otherLang);
+          if (wiki2.sources.length) { wiki2.sources.forEach(s => sources.push(s)); log(t('wikiFound', { n: wiki2.sources.length }), 'ok'); }
+          else log(t('wikiNone'));
         } catch (e) { log(t('wikiFail', { err: (e && e.message) || 'error' }), 'err'); }
       }
 
