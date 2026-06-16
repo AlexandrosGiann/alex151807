@@ -918,6 +918,7 @@
 
       <h2 id="resultFeedbackTitle" class="result-feedback-title">Συγχαρητήρια!</h2>
       <p id="resultFeedbackText" class="result-feedback-text">Ολοκληρώσατε το κουίζ. Δείτε τις απαντήσεις σας παρακάτω.</p>
+      <p id="resultTimeText" class="result-feedback-text hidden" style="font-weight:600; color: var(--text-muted); margin-top:2px;"></p>
 
       <div class="button-group">
         <button id="restartBtn" class="btn btn-primary">
@@ -1123,6 +1124,8 @@
     let timerInterval = null;
     let timeLeftSeconds = 0;
     let isTimerRunning = false;
+    let quizTimerEnabled = false;
+    let quizTimerTotalSeconds = 0;
 
     // Sound Synthesis (Web Audio API)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1431,6 +1434,8 @@
       
       if (timerEnabled && durationMinutes > 0) {
         isTimerRunning = true;
+        quizTimerEnabled = true;
+        quizTimerTotalSeconds = durationMinutes * 60;
         timeLeftSeconds = durationMinutes * 60;
         quizTimerText.classList.remove('hidden');
         timerCountdown.classList.remove('timer-warning');
@@ -1449,6 +1454,7 @@
         }, 1000);
       } else {
         isTimerRunning = false;
+        quizTimerEnabled = false;
         quizTimerText.classList.add('hidden');
       }
       
@@ -1790,6 +1796,20 @@
           : `You got only ${correctCount} out of ${totalQuestions} correct answers. We suggest you re-read the notes and try again.`;
       }
       
+      // Show time used if a timer was enabled for this quiz
+      const _rtt = document.getElementById('resultTimeText');
+      if (_rtt) {
+        if (quizTimerEnabled) {
+          const used = Math.max(0, quizTimerTotalSeconds - Math.max(0, timeLeftSeconds));
+          const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+          const lbl = currentLang === 'el' ? 'Χρόνος' : 'Time';
+          _rtt.textContent = lbl + ': ' + fmt(used) + ' / ' + fmt(quizTimerTotalSeconds);
+          _rtt.classList.remove('hidden');
+        } else {
+          _rtt.classList.add('hidden');
+        }
+      }
+
       reviewContainer.innerHTML = '';
       activeQuestions.forEach((q, idx) => {
         const userChoiceIdx = userAnswers[idx];

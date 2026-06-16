@@ -60,6 +60,23 @@
       border-radius: 8px;
       text-decoration: none;
     }
+
+    .lang-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #94a3b8;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.2s ease;
+    }
+    .lang-toggle:hover { color: #f8fafc; border-color: #38bdf8; transform: scale(1.05); }
   </style>
 </head>
 
@@ -70,12 +87,12 @@
   <h1>Αλέξανδρος Γιαννάκης</h1>
 
 <ul>
-<li> Προγραμματιστής </li>
-<li> Μεταπτυχιακός Φοιτητής ΕΚΠΑ, ΔΠΜΣ Ζώα: Ηθική, Δίκαιο, Ευζωΐα </li>
-<li> Απόφοιτος Ανώτατης Εκκλησιαστικής Ακαδημίας Αθηνών, Προγράμματος Διαχείρισης Εκκλησιαστικών Κειμηλίων </li>
+<li data-i18n="roleDev"> Προγραμματιστής </li>
+<li data-i18n="roleMsc"> Μεταπτυχιακός Φοιτητής ΕΚΠΑ, ΔΠΜΣ Ζώα: Ηθική, Δίκαιο, Ευζωΐα </li>
+<li data-i18n="roleGrad"> Απόφοιτος Ανώτατης Εκκλησιαστικής Ακαδημίας Αθηνών, Προγράμματος Διαχείρισης Εκκλησιαστικών Κειμηλίων </li>
 </ul>
 
-<h4>Κάνετε κλικ στα badges για περισσότερες λεπτομέρειες.</h4>
+<h4 data-i18n="badgeHint">Κάνετε κλικ στα badges για περισσότερες λεπτομέρειες.</h4>
   <!-- GitHub Badges -->
   <div class="section-title">GitHub Badges</div>
   <div class="badges">
@@ -107,9 +124,47 @@
   <!-- Buttons -->
   <div>
     <a class="button" href="https://github.com/AlexandrosGiann" target="_blank">GitHub</a>
-    <a class="button" href="quizess.html" style="background: #10b981; color: white;">Κουίζ</a>
-    <a class="button" href="plagiarism_check.html">Έλεγχος Λογοκλοπής</a>
+    <a class="button" href="quizess.html" style="background: #10b981; color: white;" data-i18n="btnQuiz">Κουίζ</a>
+    <a class="button" href="plagiarism_check.html" data-i18n="btnPlag">Έλεγχος Λογοκλοπής</a>
   </div>
+
+  <button id="langToggle" class="lang-toggle" title="Αλλαγή Γλώσσας / Switch Language">EN</button>
+
+  <script>
+    const I18N = {
+      el: {
+        roleDev: 'Προγραμματιστής',
+        roleMsc: 'Μεταπτυχιακός Φοιτητής ΕΚΠΑ, ΔΠΜΣ Ζώα: Ηθική, Δίκαιο, Ευζωΐα',
+        roleGrad: 'Απόφοιτος Ανώτατης Εκκλησιαστικής Ακαδημίας Αθηνών, Προγράμματος Διαχείρισης Εκκλησιαστικών Κειμηλίων',
+        badgeHint: 'Κάνετε κλικ στα badges για περισσότερες λεπτομέρειες.',
+        btnQuiz: 'Κουίζ',
+        btnPlag: 'Έλεγχος Λογοκλοπής'
+      },
+      en: {
+        roleDev: 'Programmer',
+        roleMsc: "MSc Student, NKUA — Interdepartmental MSc 'Animals: Ethics, Law, Welfare'",
+        roleGrad: 'Graduate of the Ecclesiastical Academy of Athens (A.E.A.A.), Management of Ecclesiastical Cultural Heritage Objects',
+        badgeHint: 'Click on the badges for more details.',
+        btnQuiz: 'Quizzes',
+        btnPlag: 'Plagiarism Check'
+      }
+    };
+    let lang = localStorage.getItem('lang') || 'el';
+    function applyLang() {
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (I18N[lang] && I18N[lang][k]) el.textContent = I18N[lang][k];
+      });
+      document.getElementById('langToggle').textContent = lang === 'el' ? 'EN' : 'EL';
+    }
+    document.getElementById('langToggle').addEventListener('click', () => {
+      lang = lang === 'el' ? 'en' : 'el';
+      localStorage.setItem('lang', lang);
+      applyLang();
+    });
+    applyLang();
+  </script>
 
 </body>
 </html>
