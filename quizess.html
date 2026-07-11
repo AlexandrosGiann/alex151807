@@ -1184,6 +1184,24 @@
                 </div>
             </a>
 
+            <!-- CATEGORY 5: Διατροφή ζώων συντροφιάς -->
+            <a href="quizzes_diatrofi.html" class="card category-card">
+                <div>
+                    <span class="unit-tag" data-translate="tagActive">Ενεργό</span>
+                    <h2 class="category-title" data-translate="titleDiatrofi">Διατροφή ζώων συντροφιάς</h2>
+                    <p class="category-desc" data-translate="descDiatrofi">
+                        Κουίζ για τη διατροφή σκύλου, γάτας, ιπποειδών, ερπετών, κουνελιών, τρωκτικών και ωδικών πτηνών, καθώς και κλινική διατροφή και τοξικές τροφές.
+                    </p>
+                </div>
+                <div>
+                    <div class="category-meta">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <span data-translate="metaDiatrofi">10 Κουίζ + Γενικό Τεστ</span>
+                    </div>
+                    <div class="btn-action" data-translate="startBtn">Έναρξη Κουίζ</div>
+                </div>
+            </a>
+
         </div>
 
         <!-- STUDY TOOLS -->
@@ -1353,6 +1371,9 @@
                 titleAws: "AWS Cloud Practitioner Essentials",
                 descAws: "Κουίζ για τις βασικές έννοιες του AWS Cloud: cloud computing, παγκόσμια υποδομή, compute, δικτύωση και αποθήκευση.",
                 metaAws: "5 Κουίζ + Γενικό Τεστ",
+                titleDiatrofi: "Διατροφή ζώων συντροφιάς",
+                descDiatrofi: "Κουίζ για τη διατροφή σκύλου, γάτας, ιπποειδών, ερπετών, κουνελιών, τρωκτικών και ωδικών πτηνών, καθώς και κλινική διατροφή και τοξικές τροφές.",
+                metaDiatrofi: "10 Κουίζ + Γενικό Τεστ",
                 startBtn: "Έναρξη Κουίζ",
                 historySectionTitle: "Ιστορικό Προόδου",
                 clearHistoryBtn: "Εκκαθάριση Ιστορικού",
@@ -1402,6 +1423,7 @@
                 topicNomothesia: "Νομοθεσία & Ευζωία",
                 topicEuzwia: "Επιστήμη Ευζωίας",
                 topicAws: "AWS Cloud Practitioner",
+                topicDiatrofi: "Διατροφή Ζώων Συντροφιάς",
                 chatTitle: "Σύμβουλος Μελέτης",
                 chatPlaceholder: "Ρώτησέ με κάτι για τη μελέτη σου…",
                 chatGreeting: "Γεια! Ρώτησέ με για κάποιο θέμα και θα ψάξω στο υλικό σου και στη Wikipedia.",
@@ -1455,6 +1477,9 @@
                 titleAws: "AWS Cloud Practitioner Essentials",
                 descAws: "Quizzes on AWS Cloud fundamentals: cloud computing, global infrastructure, compute, networking, and storage.",
                 metaAws: "5 Quizzes + General Test",
+                titleDiatrofi: "Companion Animal Nutrition",
+                descDiatrofi: "Quizzes on the nutrition of dogs, cats, equines, reptiles, rabbits, rodents and songbirds, plus clinical nutrition and toxic foods.",
+                metaDiatrofi: "10 Quizzes + General Test",
                 startBtn: "Start Quiz",
                 historySectionTitle: "Progress History",
                 clearHistoryBtn: "Clear History",
@@ -1504,6 +1529,7 @@
                 topicNomothesia: "Legislation & Welfare",
                 topicEuzwia: "Welfare Science",
                 topicAws: "AWS Cloud Practitioner",
+                topicDiatrofi: "Companion Animal Nutrition",
                 chatTitle: "Study Bot",
                 chatPlaceholder: "Ask me about your study material…",
                 chatGreeting: "Hi! Ask me about a topic and I'll search your material and Wikipedia.",
@@ -1687,7 +1713,8 @@
             { topicKey: 'noisi', file: 'quizzes_noisi.html', labelKey: 'topicNoisi' },
             { topicKey: 'nomothesia', file: 'quizzes_nomothesia.html', labelKey: 'topicNomothesia' },
             { topicKey: 'euzwia', file: 'quizzes_euzwia.html', labelKey: 'topicEuzwia' },
-            { topicKey: 'aws', file: 'quizzes_aws.html', labelKey: 'topicAws' }
+            { topicKey: 'aws', file: 'quizzes_aws.html', labelKey: 'topicAws' },
+            { topicKey: 'diatrofi', file: 'quizzes_diatrofi.html', labelKey: 'topicDiatrofi' }
         ];
         const SEARCH_MAX_RESULTS = 30;
         let SEARCH_INDEX = null;          // built lazily
@@ -2256,7 +2283,8 @@
             { file: 'quizzes_noisi.html', titleKey: 'titleNoisi' },
             { file: 'quizzes_nomothesia.html', titleKey: 'titleNomothesia' },
             { file: 'quizzes_euzwia.html', titleKey: 'titleEuzwia' },
-            { file: 'quizzes_aws.html', titleKey: 'titleAws' }
+            { file: 'quizzes_aws.html', titleKey: 'titleAws' },
+            { file: 'quizzes_diatrofi.html', titleKey: 'titleDiatrofi' }
         ];
         const downloadModal = document.getElementById('downloadModal');
         const downloadListEl = document.getElementById('downloadList');
@@ -3094,7 +3122,7 @@
                 perTopic[k].sum += (e.scorePercent || 0);
                 perTopic[k].n++;
             });
-            const topicKey = { noisi: 'topicNoisi', nomothesia: 'topicNomothesia', euzwia: 'topicEuzwia', aws: 'topicAws' };
+            const topicKey = { noisi: 'topicNoisi', nomothesia: 'topicNomothesia', euzwia: 'topicEuzwia', aws: 'topicAws', diatrofi: 'topicDiatrofi' };
             const topicsHtml = Object.keys(perTopic).map(k => {
                 const s = perTopic[k];
                 const label = t[topicKey[k]] || k;
@@ -3126,7 +3154,8 @@
 
             // Topic detection: small keyword nets per topic
             let topic = null;
-            if (/(aws|cloud|ec2|lambda|\bs3\b|\bvpc\b|practitioner|cloudfront|κλαουντ)/.test(p)) topic = 'aws';
+            if (/(διατροφ|τροφ|θρεψ|nutrition|diet|feeding|σκυλ|γατ|κουνελ|τρωκτ|ερπετ|ιπποειδ|διατροφη)/.test(p)) topic = 'diatrofi';
+            else if (/(aws|cloud|ec2|lambda|\bs3\b|\bvpc\b|practitioner|cloudfront|κλαουντ)/.test(p)) topic = 'aws';
             else if (/(νοησ|γνωσ|συνειδησ|qualia|cogniti|consciousness|brain)/.test(p)) topic = 'noisi';
             else if (/(νομοθεσ|νομικ|νομ|δικα|legislation|law)/.test(p)) topic = 'nomothesia';
             else if (/(ευζω|ευημερ|welfare|wellbeing|well-being)/.test(p)) topic = 'euzwia';
@@ -3929,7 +3958,8 @@
                     noisi: { labelKey: 'topicNoisi', file: 'quizzes_noisi.html' },
                     nomothesia: { labelKey: 'topicNomothesia', file: 'quizzes_nomothesia.html' },
                     euzwia: { labelKey: 'topicEuzwia', file: 'quizzes_euzwia.html' },
-                    aws: { labelKey: 'topicAws', file: 'quizzes_aws.html' }
+                    aws: { labelKey: 'topicAws', file: 'quizzes_aws.html' },
+                    diatrofi: { labelKey: 'topicDiatrofi', file: 'quizzes_diatrofi.html' }
                 };
 
                 // Quiz list: prefer SEARCH_INDEX (full curriculum); fall back to

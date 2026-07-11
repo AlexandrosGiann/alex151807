@@ -1,0 +1,2358 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Διατροφή ζώων συντροφιάς | Αλέξανδρος Γιαννάκης</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: #1e293b;
+      --card-hover: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.15);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --error: #ef4444;
+      --error-glow: rgba(239, 68, 68, 0.15);
+      --border-color: #475569;
+      --font-outfit: 'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-inter);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link.active {
+      color: var(--primary);
+      background-color: var(--primary-glow);
+    }
+
+    .page-title {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Card styling with glassmorphism */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+    }
+
+    /* Dashboard styling */
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 600px) {
+      .quiz-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .quiz-grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+    }
+
+    .quiz-card {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.1), 0 10px 10px -5px rgba(56, 189, 248, 0.04);
+      background-color: var(--card-hover);
+      border-color: var(--primary);
+    }
+
+    .unit-tag {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .quiz-card-title {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text-main);
+    }
+
+    .quiz-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Active Quiz Screen */
+    .hidden {
+      display: none !important;
+    }
+
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8 0%, #10b981 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .question-title {
+      font-family: var(--font-outfit);
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 25px;
+      color: var(--text-main);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px 20px;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-marker {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      margin-top: 1px;
+    }
+
+    .option-btn:hover:not(:disabled) .option-marker {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* State Styles for Options */
+    .option-btn.selected-correct {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-correct .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect {
+      background-color: var(--error-glow);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect .option-marker {
+      background-color: var(--error);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.correct-reveal {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+    }
+
+    .option-btn.correct-reveal .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .action-row {
+      margin-top: 30px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #000;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #7dd3fc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-main);
+    }
+
+    .order-option-btn {
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .order-option-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    }
+    #randomOrderBtn:hover {
+      background-color: var(--success-glow) !important;
+      border-color: var(--success) !important;
+      color: white !important;
+    }
+    #originalOrderBtn:hover {
+      background-color: var(--primary-glow) !important;
+      border-color: var(--primary) !important;
+      color: white !important;
+    }
+
+    /* Unit Selection for General Test */
+    .unit-selection-item {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .unit-selection-item:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+      border-color: var(--primary);
+      transform: translateX(6px);
+    }
+    .unit-selection-item.selected {
+      background-color: var(--primary-glow);
+      border-color: var(--primary);
+    }
+    .checkbox-indicator {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: transparent;
+      background-color: rgba(0,0,0,0.3);
+    }
+    .unit-selection-item.selected .checkbox-indicator {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #0b0f19;
+    }
+
+    /* Shake animation for error state */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* Timer Pulsing Animation */
+    @keyframes timerPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+    .timer-warning {
+      color: var(--error) !important;
+      animation: timerPulse 1s infinite;
+    }
+
+    .results-quiz-title {
+      font-family: var(--font-outfit);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    /* Circular Score Summary Styling */
+    .results-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .score-circle-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 15px 0;
+    }
+
+    .score-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .score-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 12;
+    }
+
+    .score-fill {
+      fill: none;
+      stroke: var(--success);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+
+    .score-text-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .score-number {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .result-feedback-title {
+      font-family: var(--font-outfit);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .result-feedback-text {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 500px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Review Area */
+    .review-section {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .review-title-text {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .review-item {
+      background-color: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .review-item-q {
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .review-opt {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .review-opt-correct {
+      background-color: rgba(16, 185, 129, 0.08);
+      border: 1px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .review-opt-incorrect {
+      background-color: rgba(239, 68, 68, 0.08);
+      border: 1px solid var(--error);
+      color: #fca5a5;
+    }
+
+    .review-opt-neutral {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .review-opt-marker {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 1px;
+    }
+
+    /* Custom audio control overlay */
+    .sound-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .sound-toggle:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .sound-toggle.muted {
+      opacity: 0.6;
+    }
+
+    /* Print styling to save beautifully as PDF */
+    @media print {
+      @page {
+        margin: 15mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection, #orderSection, #testConfigSection {
+        display: none !important;
+      }
+      .results-quiz-title {
+        color: #000000 !important;
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+      }
+      .score-label {
+        color: #475569 !important;
+      }
+      .results-card {
+        background-color: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+      .card {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      /* Ensure SVG scores look good in print */
+      .score-bg {
+        stroke: #f1f5f9 !important;
+      }
+      .score-fill {
+        stroke: #10b981 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .score-number {
+        color: #000000 !important;
+      }
+      .result-feedback-title {
+        color: #000000 !important;
+      }
+      .result-feedback-text {
+        color: #475569 !important;
+      }
+      .review-title-text {
+        color: #000000 !important;
+        border-bottom-color: #cbd5e1 !important;
+      }
+      .review-item {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .review-item-q {
+        color: #000000 !important;
+      }
+      /* Hide individual report buttons in print */
+      .review-item button {
+        display: none !important;
+      }
+      .review-opt {
+        border-width: 1px !important;
+        border-style: solid !important;
+      }
+      .review-opt-correct {
+        background-color: #f0fdf4 !important;
+        border-color: #10b981 !important;
+        color: #14532d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-incorrect {
+        background-color: #fef2f2 !important;
+        border-color: #ef4444 !important;
+        color: #7f1d1d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-neutral {
+        background-color: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #475569 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    body.light-mode {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --card-hover: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.1);
+      --success: #059669;
+      --success-glow: rgba(5, 150, 105, 0.1);
+      --error: #dc2626;
+      --error-glow: rgba(220, 38, 38, 0.1);
+      --border-color: #cbd5e1;
+    }
+
+    /* Floating controls */
+    .floating-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .control-btn:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+  </style>
+
+  <style>
+    /* Optional question image (Wikimedia Commons) */
+    .question-image-container {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 14px 0 18px;
+    }
+    .question-image-container img {
+      max-width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: rgba(0, 0, 0, 0.12);
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .question-image-container img { max-height: 220px; }
+    }
+
+    /* Glossary highlight in results review */
+    .glossary-term {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+
+</head>
+<body>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'dark';
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+      }
+    })();
+  </script>
+
+  <!-- Floating Control Buttons -->
+  <div class="floating-controls">
+    <!-- Sound Toggle -->
+    <button id="soundToggle" class="control-btn muted" title="Ενεργοποίηση/Απενεργοποίηση Ήχου / Toggle Sound">
+      <svg id="soundOnIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+      <svg id="soundMutedIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+    </button>
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="control-btn" title="Εναλλαγή Θέματος / Toggle Theme">
+      <svg id="themeSunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="themeMoonIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    <!-- Language Toggle -->
+    <button id="langToggle" class="control-btn" title="Αλλαγή Γλώσσας / Switch Language">EN</button>
+  </div>
+
+  <header>
+    <div class="nav-bar">
+      <a href="index.html" class="nav-link" data-translate="navHome">Αρχική</a>
+      <a href="quizess.html" class="nav-link active" data-translate="navQuizzes">Κουίζ</a>
+    </div>
+    <h1 class="page-title" data-translate="courseTitle">Διατροφή ζώων συντροφιάς</h1>
+    <a href="quizess.html" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-top: -5px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" data-translate="navBackToHub">← Επιστροφή στις Θεματικές Ενότητες</a>
+  </header>
+
+  <main class="container">
+    
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection" class="quiz-grid">
+      <!-- Cards will be populated by JS -->
+    </section>
+
+    <!-- ORDER SELECTION SECTION -->
+    <section id="orderSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 30px auto; align-items: center;">
+      <h2 id="orderQuizTitle" class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Όνομα Κουίζ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 420px; margin-bottom: 10px;" data-translate="orderDesc">
+        Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+        <button id="originalOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span data-translate="btnOriginal"><span data-translate="btnOriginal">Αρχική Σειρά (Όπως στο έγγραφο)</span></span>
+        </button>
+        <button id="randomOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; border-color: var(--success); color: var(--success); width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+          <span data-translate="btnRandom"><span data-translate="btnRandom">Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)</span></span>
+        </button>
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="shuffleOptionsUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblShuffleOptions">Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
+      <!-- Countdown Timer Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="timerEnableUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+          <span data-translate="lblTimer">Ενεργοποίηση Χρονομέτρου</span>
+        </label>
+        <div id="timerDurationUnitContainer" style="display: none; align-items: center; gap: 6px;">
+          <input type="number" id="timerDurationUnitInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
+          <span data-translate="lblMinutes">λεπτά</span>
+        </div>
+      </div>
+
+      <!-- Anti-Cheat Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="antiCheatUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
+
+      <!-- Question Images Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="imagesUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblImages">Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)</span>
+      </label>
+
+      <!-- Glossary Highlight Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="glossaryUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
+      </label>
+
+      <!-- Adjustable Size Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="quizQuestionCountInput" min="1" value="10" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="quizQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
+      
+      <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;" data-translate="btnBack">Επιστροφή</button>
+    </section>
+
+    <!-- TEST CONFIGURATION SECTION -->
+    <section id="testConfigSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 650px; margin: 30px auto; align-items: center;">
+      <h2 class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;" data-translate="configTitle">Παραμετροποίηση Γενικού Τεστ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 500px; margin-bottom: 10px;" data-translate="configDesc">
+        Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τυχαίο τεστ. Θα επιλεγούν 30 τυχαίες ερωτήσεις από τις επιλεγμένες ενότητες.
+      </p>
+      
+      <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 5px;">
+        <button id="toggleAllUnitsBtn" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem; border-color: var(--border-color); color: var(--primary);" data-translate="toggleAllUnitsSelect">
+          Επιλογή Όλων
+        </button>
+      </div>
+
+      <div id="unitsSelectionList" style="display: flex; flex-direction: column; gap: 10px; width: 100%; text-align: left;">
+        <!-- Unit items will be populated by JS -->
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 10px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="shuffleOptionsGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblShuffleOptions">Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
+      <!-- Countdown Timer Option General -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="timerEnableGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+          <span data-translate="lblTimer">Ενεργοποίηση Χρονομέτρου</span>
+        </label>
+        <div id="timerDurationGeneralContainer" style="display: none; align-items: center; gap: 6px;">
+          <input type="number" id="timerDurationGeneralInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
+          <span data-translate="lblMinutes">λεπτά</span>
+        </div>
+      </div>
+
+      <!-- Anti-Cheat Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="antiCheatGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
+
+      <!-- Question Images Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="imagesGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblImages">Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)</span>
+      </label>
+
+      <!-- Glossary Highlight Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="glossaryGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
+      </label>
+
+      <!-- Adjustable Size Option General -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
+        <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="generalQuestionCountInput" min="1" value="30" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="generalQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
+
+      <div style="display: flex; gap: 15px; margin-top: 15px; width: 100%; justify-content: center; flex-wrap: wrap;">
+        <button id="startConfiguredTestBtn" class="btn btn-primary" style="padding: 14px 28px; font-size: 1rem;" disabled data-translate="startGeneralTestBtn">
+          Έναρξη Τεστ
+        </button>
+        <button id="configBackBtn" class="btn btn-outline" style="padding: 14px 28px; font-size: 1rem; border-color: var(--border-color); color: var(--text-muted);" data-translate="btnBack">Επιστροφή</button>
+      </div>
+    </section>
+
+    <!-- ACTIVE QUIZ SECTION -->
+    <section id="quizSection" class="card hidden">
+      <div class="progress-section">
+        <div class="progress-header">
+          <span id="quizUnitText">ΕΝΟΤΗΤΑ 1</span>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="quizTimerText" class="hidden" style="font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 5px; font-family: monospace; font-size: 1rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span id="timerCountdown">30:00</span>
+            </span>
+            <span id="progressText">Ερώτηση 1 από 10</span>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+      
+      <div id="questionContainer">
+        <h2 id="questionTitle" class="question-title">Φόρτωση ερώτησης...</h2>
+        <div id="questionImageContainer" class="question-image-container" aria-hidden="true"></div>
+        <div id="optionsList" class="options-list">
+          <!-- Options will be populated by JS -->
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="nextBtn" class="btn btn-primary" disabled>
+          <span>Επόμενο</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section id="resultsSection" class="card results-card hidden">
+      <h1 id="resultsQuizTitle" class="results-quiz-title"></h1>
+      <div class="score-circle-wrapper">
+        <svg class="score-svg" viewBox="0 0 160 160">
+          <circle class="score-bg" cx="80" cy="80" r="70"></circle>
+          <circle id="scoreFill" class="score-fill" cx="80" cy="80" r="70"></circle>
+        </svg>
+        <div class="score-text-center">
+          <div id="scoreNumber" class="score-number">0%</div>
+          <div class="score-label" data-translate="scoreLabel">Σκορ</div>
+        </div>
+      </div>
+
+      <h2 id="resultFeedbackTitle" class="result-feedback-title">Συγχαρητήρια!</h2>
+      <p id="resultFeedbackText" class="result-feedback-text">Ολοκληρώσατε το κουίζ. Δείτε τις απαντήσεις σας παρακάτω.</p>
+      <p id="resultTimeText" class="result-feedback-text hidden" style="font-weight:600; color: var(--text-muted); margin-top:2px;"></p>
+
+      <div class="button-group">
+        <button id="restartBtn" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          <span data-translate="restartBtnText">Επανάληψη</span>
+        </button>
+        <button id="backBtn" class="btn btn-outline" data-translate="backBtnText">Επιστροφή στα Κουίζ</button>
+        <button id="pdfBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span data-translate="pdfBtnText">Αποθήκευση ως PDF</span>
+        </button>
+        <button id="generalReportBtn" class="btn btn-outline" style="border-color: var(--error); color: #fca5a5;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span data-translate="generalReportBtnText">Αναφορά / Σχόλια</span>
+        </button>
+      </div>
+
+      <!-- Review Section -->
+      <div class="review-section">
+        <div id="historyBlock" style="margin-top: 10px; margin-bottom: 30px; width: 100%; text-align: left;">
+          <h3 id="historyTitle" class="review-title-text" data-translate="historyTitle" style="margin-bottom: 12px;">Ιστορικό για αυτό το κουίζ</h3>
+          <div id="historyList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+        <h3 class="review-title-text" data-translate="resultsTitle">Αναλυτικά Αποτελέσματα</h3>
+        <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 15px; text-align: left; width: 100%;">
+          <!-- Review items populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Embedded Quiz Data & Core Script -->
+  <script>
+    const QUIZZES = [{"title": "Ενότητα 1: Η διατροφή του σκύλου", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Πώς χαρακτηρίζεται διατροφικά ο σκύλος στο υλικό;", "options": ["Αυστηρά φυτοφάγο ζώο", "Κυρίως σαρκοφάγο ζώο που έχει προσαρμοστεί και σε άλλες πηγές τροφής", "Αποκλειστικά παμφάγο ζώο", "Μηρυκαστικό ζώο"], "correct_idx": 1, "text_en": "How is the dog characterized nutritionally in the material?", "options_en": ["Strictly herbivorous animal", "Mainly carnivorous animal that has also adapted to other food sources", "Exclusively omnivorous animal", "Ruminant animal"]}, {"text": "Περίπου τι ποσοστό του πεπτικού σωλήνα του σκύλου καταλαμβάνουν οι ζυμωτικοί χώροι;", "options": ["5%", "16%", "35%", "62%"], "correct_idx": 1, "text_en": "Approximately what percentage of the dog's digestive tract do the fermentation chambers occupy?", "options_en": ["5%", "16%", "35%", "62%"]}, {"text": "Ποιος είναι ο κατά προσέγγιση χρόνος παραμονής της τροφής στον πεπτικό σωλήνα του σκύλου;", "options": ["2 ώρες", "6 ώρες", "12 ώρες", "48 ώρες"], "correct_idx": 2, "text_en": "What is the approximate transit time of food in the dog's digestive tract?", "options_en": ["2 hours", "6 hours", "12 hours", "48 hours"]}, {"text": "Σε σχέση με έναν ενήλικο σκύλο της ίδιας φυλής, τα κουτάβια χρειάζονται ανά kg σωματικού βάρους περίπου:", "options": ["Τις μισές θερμίδες", "Τις ίδιες θερμίδες", "Διπλάσιες θερμίδες", "Τετραπλάσιες θερμίδες"], "correct_idx": 2, "text_en": "Compared with an adult dog of the same breed, puppies need per kg of body weight approximately:", "options_en": ["Half the calories", "The same calories", "Double the calories", "Quadruple the calories"]}, {"text": "Πότε συνήθως ενηλικιώνεται μια φυλή γίγας άνω των 45 kg;", "options": ["6–9 μήνες", "9–12 μήνες", "12–15 μήνες", "18–24 μήνες"], "correct_idx": 3, "text_en": "When does a giant breed over 45 kg usually reach adulthood?", "options_en": ["6–9 months", "9–12 months", "12–15 months", "18–24 months"]}, {"text": "Ποια είναι η συνήθης διάρκεια κυοφορίας της σκύλας;", "options": ["42 ημέρες", "63 ημέρες", "90 ημέρες", "120 ημέρες"], "correct_idx": 1, "text_en": "What is the usual gestation duration of the bitch?", "options_en": ["42 days", "63 days", "90 days", "120 days"]}, {"text": "Κατά πόσο μειώνονται συνήθως οι ενεργειακές ανάγκες των ηλικιωμένων σκύλων;", "options": ["2–5%", "8–10%", "18–20%", "40–50%"], "correct_idx": 2, "text_en": "By how much do the energy needs of elderly dogs usually decrease?", "options_en": ["2–5%", "8–10%", "18–20%", "40–50%"]}, {"text": "Ποια περιεκτικότητα αμύλου αναφέρεται ως ενδεικτική σύσταση FEDIAF για υγιείς σκύλους;", "options": ["Κάτω από 5% της ξηράς ουσίας", "10–15% της ξηράς ουσίας", "30–40% της ξηράς ουσίας", "Πάνω από 70% της ξηράς ουσίας"], "correct_idx": 2, "text_en": "What starch content is mentioned as an indicative FEDIAF recommendation for healthy dogs?", "options_en": ["Below 5% of dry matter", "10–15% of dry matter", "30–40% of dry matter", "Above 70% of dry matter"]}, {"text": "Οι υδατάνθρακες θεωρούνται απολύτως απαραίτητο θρεπτικό συστατικό για τον σκύλο.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Carbohydrates are considered an absolutely essential nutrient for the dog.", "options_en": ["True", "False"]}, {"text": "Η υδρολυμένη πρωτεΐνη έχει διασπαστεί σε μικρότερα πεπτίδια, ώστε να είναι πιο εύπεπτη και λιγότερο αναγνωρίσιμη ως αλλεργιογόνο.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Hydrolyzed protein has been broken down into smaller peptides so that it is more digestible and less recognizable as an allergen.", "options_en": ["True", "False"]}, {"text": "Μια τροφή grain free δεν περιέχει καθόλου υδατάνθρακες.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "A grain-free food contains no carbohydrates at all.", "options_en": ["True", "False"]}, {"text": "Κρεμμύδι, σκόρδο, ξυλιτόλη και σοκολάτα περιλαμβάνονται στις επιβλαβείς ουσίες για τον σκύλο.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Onion, garlic, xylitol and chocolate are among the substances harmful to the dog.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 2: Κλινική διατροφή του σκύλου", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Πριν από την έναρξη οποιασδήποτε κλινικής τροφής είναι απαραίτητο:", "options": ["Να επιλεγεί η πιο ακριβή τροφή", "Να γίνει απότομη αλλαγή σιτηρεσίου", "Να προηγηθεί αξιολόγηση και σύσταση κτηνιάτρου", "Να διακοπεί η πρόσληψη νερού"], "correct_idx": 2, "text_en": "Before starting any clinical diet, it is necessary to:", "options_en": ["Choose the most expensive food", "Make an abrupt diet change", "Have a veterinary assessment and recommendation first", "Stop water intake"]}, {"text": "Ποιο είναι το ανώτατο ενδεικτικό ποσοστό αποφάγων ή προσφαγίων στη διατροφή παχύσαρκου σκύλου;", "options": ["≤5%", "≤10%", "≤25%", "≤50%"], "correct_idx": 1, "text_en": "What is the maximum indicative percentage of leftovers or treats in the diet of an obese dog?", "options_en": ["≤5%", "≤10%", "≤25%", "≤50%"]}, {"text": "Ποιος συνδυασμός βοηθά περισσότερο στον κορεσμό κατά την απώλεια βάρους;", "options": ["Χαμηλή πρωτεΐνη και χαμηλές ίνες", "Υψηλό λίπος και χαμηλές ίνες", "Αυξημένη πρωτεΐνη και φυτικές ίνες", "Μόνο απλά σάκχαρα"], "correct_idx": 2, "text_en": "Which combination best promotes satiety during weight loss?", "options_en": ["Low protein and low fiber", "High fat and low fiber", "Increased protein and dietary fiber", "Only simple sugars"]}, {"text": "Ποια συστατικά συνδέονται με διατροφική υποστήριξη της οστεοαρθρίτιδας;", "options": ["EPA/DHA, γλυκοζαμίνη και χονδροϊτίνη", "Μόνο ζάχαρη και άμυλο", "Υψηλό αλάτι", "Αποκλειστικά βιταμίνη C"], "correct_idx": 0, "text_en": "Which components are associated with nutritional support for osteoarthritis?", "options_en": ["EPA/DHA, glucosamine and chondroitin", "Only sugar and starch", "High salt", "Exclusively vitamin C"]}, {"text": "Ποιο προφίλ τροφής προτείνεται για σκύλο με διαβήτη;", "options": ["Υψηλοί υδατάνθρακες και χαμηλή πρωτεΐνη", "Χαμηλότεροι υδατάνθρακες, αυξημένη πρωτεΐνη και φυτικές ίνες", "Μόνο λίπος", "Χωρίς καθόλου πρωτεΐνη"], "correct_idx": 1, "text_en": "What food profile is recommended for a dog with diabetes?", "options_en": ["High carbohydrates and low protein", "Lower carbohydrates, increased protein and dietary fiber", "Only fat", "No protein at all"]}, {"text": "Ποια διατροφική προσέγγιση αναφέρεται για διάρροια παχέος εντέρου;", "options": ["Υψηλή περιεκτικότητα σε φυτικές ίνες", "Πλήρης αποχή από νερό", "Υψηλό λίπος", "Μόνο ωμή τροφή"], "correct_idx": 0, "text_en": "What dietary approach is mentioned for large-bowel diarrhea?", "options_en": ["High dietary fiber content", "Complete abstention from water", "High fat", "Raw food only"]}, {"text": "Σε οξεία νεφρική βλάβη, ποια μεταβολή της πρωτεΐνης αναφέρεται ενδεικτικά;", "options": ["Αύξηση κατά 100%", "Καμία μεταβολή σε όλες τις περιπτώσεις", "Μείωση περίπου 25–50% από την τρέχουσα πρόσληψη", "Πλήρης κατάργηση όλων των αμινοξέων"], "correct_idx": 2, "text_en": "In acute kidney injury, what indicative change in protein is mentioned?", "options_en": ["A 100% increase", "No change in all cases", "A reduction of about 25–50% from current intake", "Complete elimination of all amino acids"]}, {"text": "Ποια δήλωση για το λίπος στις ηπατικές παθήσεις είναι ορθότερη;", "options": ["Πρέπει πάντα να μηδενίζεται", "Πρέπει πάντα να αυξάνεται στο μέγιστο", "Ο περιορισμός του δεν απαιτείται σε όλες τις ηπατικές παθήσεις", "Δεν έχει ποτέ σημασία"], "correct_idx": 2, "text_en": "Which statement about fat in liver diseases is most correct?", "options_en": ["It must always be set to zero", "It must always be maximized", "Its restriction is not required in all liver diseases", "It never matters"]}, {"text": "Ο ιδιοκτήτης μπορεί να επιλέξει μόνος του κλινική τροφή χωρίς διάγνωση.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "The owner can choose a clinical diet on their own without a diagnosis.", "options_en": ["True", "False"]}, {"text": "Σε υπέρβαρο σκύλο με οστεοαρθρίτιδα μπορεί να χρειαστεί τροφή μειωμένης ενεργειακής πυκνότητας.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "An overweight dog with osteoarthritis may need a food of reduced energy density.", "options_en": ["True", "False"]}, {"text": "Το μουρουνέλαιο χρειάζεται προσοχή επειδή είναι πλούσιο σε βιταμίνες Α και D.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Cod liver oil requires caution because it is rich in vitamins A and D.", "options_en": ["True", "False"]}, {"text": "Το έλαιο καρύδας πρέπει να εισάγεται σταδιακά στη διατροφή.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Coconut oil should be introduced into the diet gradually.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 3: Η διατροφή της γάτας", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Πώς χαρακτηρίζεται η γάτα από άποψη φυσιολογίας θρέψης;", "options": ["Αυστηρά σαρκοφάγο ζώο", "Μηρυκαστικό ζώο", "Αποκλειστικά φυτοφάγο ζώο", "Ζώο που δεν χρειάζεται πρωτεΐνη"], "correct_idx": 0, "text_en": "How is the cat characterized in terms of nutritional physiology?", "options_en": ["Strict carnivore", "Ruminant", "Exclusively herbivorous", "An animal that does not need protein"]}, {"text": "Ποια ομάδα θρεπτικών συστατικών πρέπει να προσλαμβάνεται από τη διατροφή λόγω περιορισμένης σύνθεσης ή μετατροπής;", "options": ["Ταυρίνη, αργινίνη, αραχιδονικό οξύ και βιταμίνη Α", "Μόνο κυτταρίνη", "Μόνο βιταμίνη C", "Μόνο άμυλο"], "correct_idx": 0, "text_en": "Which group of nutrients must be obtained from the diet due to limited synthesis or conversion?", "options_en": ["Taurine, arginine, arachidonic acid and vitamin A", "Only cellulose", "Only vitamin C", "Only starch"]}, {"text": "Ποιο όριο αμύλου αναφέρεται για τη γάτα;", "options": ["Κάτω από 10% της ξηράς ουσίας", "30–40% της ξηράς ουσίας", "50–60% της ξηράς ουσίας", "Δεν υπάρχει κανένα όριο"], "correct_idx": 0, "text_en": "What starch limit is mentioned for the cat?", "options_en": ["Below 10% of dry matter", "30–40% of dry matter", "50–60% of dry matter", "There is no limit"]}, {"text": "Η οξεία ανεπάρκεια αργινίνης μπορεί να οδηγήσει σε:", "options": ["Υποθερμία", "Υπεραμμωνιαιμία", "Αυξημένη παραγωγή ταυρίνης", "Υπερβιταμίνωση C"], "correct_idx": 1, "text_en": "Acute arginine deficiency can lead to:", "options_en": ["Hypothermia", "Hyperammonemia", "Increased taurine production", "Vitamin C hypervitaminosis"]}, {"text": "Η ανεπαρκής ταυρίνη συνδέεται κυρίως με:", "options": ["Εκφυλισμό αμφιβληστροειδούς", "Υπερβολική πέψη αμύλου", "Αύξηση της οστικής πυκνότητας", "Μείωση της ανάγκης για πρωτεΐνη"], "correct_idx": 0, "text_en": "Insufficient taurine is mainly associated with:", "options_en": ["Retinal degeneration", "Excessive starch digestion", "Increased bone density", "Reduced need for protein"]}, {"text": "Ποιο χαρακτηριστικό του πεπτικού συστήματος εξηγεί την ανάγκη για εύπεπτες τροφές;", "options": ["Πεπτικός σωλήνας περίπου 20 φορές το μήκος του σώματος", "Μεγάλη ζυμωτική κοιλία", "Μικρό μήκος και γρήγορη διέλευση της τροφής", "Απουσία στομάχου"], "correct_idx": 2, "text_en": "Which feature of the digestive system explains the need for highly digestible foods?", "options_en": ["A digestive tract about 20 times the body length", "A large fermentation chamber", "Short length and rapid passage of food", "Absence of a stomach"]}, {"text": "Ποιο είναι το ενδεικτικό ελάχιστο όριο πρωτεΐνης που αναφέρεται για τροφή γάτας σε σύγκριση με τροφή σκύλου;", "options": ["Γάτα >10%, σκύλος >25%", "Γάτα >18%, σκύλος >25%", "Γάτα >25%, σκύλος >18%", "Ίδιο όριο 5% και για τα δύο"], "correct_idx": 2, "text_en": "What is the indicative minimum protein limit mentioned for cat food compared with dog food?", "options_en": ["Cat >10%, dog >25%", "Cat >18%, dog >25%", "Cat >25%, dog >18%", "The same 5% limit for both"]}, {"text": "Γιατί δεν είναι ασφαλές να τρέφεται συστηματικά μια γάτα με τροφή σκύλου;", "options": ["Επειδή η τροφή σκύλου περιέχει πάντα υπερβολική ταυρίνη", "Επειδή μπορεί να είναι ανεπαρκής σε πρωτεΐνη, ταυρίνη, αργινίνη και αραχιδονικό οξύ", "Επειδή δεν περιέχει καθόλου νερό", "Επειδή είναι πάντα τοξική από μόνη της"], "correct_idx": 1, "text_en": "Why is it not safe to systematically feed a cat with dog food?", "options_en": ["Because dog food always contains excessive taurine", "Because it may be deficient in protein, taurine, arginine and arachidonic acid", "Because it contains no water at all", "Because it is always toxic by itself"]}, {"text": "Η γάτα μετατρέπει αποτελεσματικά το β-καροτένιο σε βιταμίνη Α.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "The cat efficiently converts beta-carotene into vitamin A.", "options_en": ["True", "False"]}, {"text": "Τα φυτικά συστατικά αποτελούν επαρκή πηγή ταυρίνης για τη γάτα.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Plant ingredients are a sufficient source of taurine for the cat.", "options_en": ["True", "False"]}, {"text": "Το αραχιδονικό οξύ πρέπει να προσλαμβάνεται με την τροφή της γάτας.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Arachidonic acid must be obtained from the cat's food.", "options_en": ["True", "False"]}, {"text": "Η μαύρη σοκολάτα και το κακάο έχουν υψηλότερη συγκέντρωση μεθυλοξανθινών από τη λευκή σοκολάτα.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Dark chocolate and cocoa have a higher concentration of methylxanthines than white chocolate.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 4: Κλινική διατροφή της γάτας", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Πότε πρέπει να ξεκινά κλινική διατροφή σε μια γάτα;", "options": ["Μετά από διάγνωση και σύσταση κτηνιάτρου", "Μόλις αλλάξει η μάρκα τροφής", "Χωρίς κτηνιατρική εξέταση", "Μόνο όταν η γάτα είναι νεογέννητη"], "correct_idx": 0, "text_en": "When should clinical nutrition begin in a cat?", "options_en": ["After a diagnosis and veterinary recommendation", "As soon as the food brand changes", "Without a veterinary examination", "Only when the cat is a newborn"]}, {"text": "Ποιο προφίλ χαρακτηρίζει τροφές για ουρολιθίαση;", "options": ["Υψηλό μαγνήσιο και υψηλό φώσφορο", "Μειωμένο μαγνήσιο και φώσφορο, ισορροπημένο ασβέστιο και L-μεθειονίνη", "Αποκλειστικά υψηλό λίπος", "Καμία επίδραση στο pH των ούρων"], "correct_idx": 1, "text_en": "What profile characterizes foods for urolithiasis?", "options_en": ["High magnesium and high phosphorus", "Reduced magnesium and phosphorus, balanced calcium and L-methionine", "Exclusively high fat", "No effect on urine pH"]}, {"text": "Πώς μεταβάλλεται ο κίνδυνος χρόνιας νεφρικής ανεπάρκειας με την ηλικία;", "options": ["Μειώνεται μετά τα 10 έτη", "Δεν αλλάζει ποτέ", "Αυξάνεται σημαντικά: περίπου 4–5 φορές μετά τα 10 και περίπου 20 φορές μετά τα 15 έτη", "Υπάρχει μόνο σε γατάκια"], "correct_idx": 2, "text_en": "How does the risk of chronic kidney failure change with age?", "options_en": ["It decreases after age 10", "It never changes", "It increases significantly: about 4–5 times after age 10 and about 20 times after age 15", "It exists only in kittens"]}, {"text": "Γιατί χρειάζεται προσοχή η L-μεθειονίνη σε γάτα με χρόνια νεφρική νόσο;", "options": ["Μπορεί να επιδεινώσει τη μεταβολική οξέωση", "Αυξάνει πάντα την όρεξη", "Μηδενίζει την πρωτεΐνη", "Προκαλεί υπερβολική παραγωγή ινσουλίνης"], "correct_idx": 0, "text_en": "Why does L-methionine require caution in a cat with chronic kidney disease?", "options_en": ["It can worsen metabolic acidosis", "It always increases appetite", "It zeroes out protein", "It causes excessive insulin production"]}, {"text": "Ποιο διατροφικό προφίλ βοηθά στη διαχείριση του διαβήτη της γάτας;", "options": ["Υψηλοί υδατάνθρακες και χαμηλή πρωτεΐνη", "Χαμηλότεροι υδατάνθρακες και αυξημένη πρωτεΐνη, μαζί με ινσουλίνη όπου απαιτείται", "Μόνο φρούτα", "Αποκλειστικά συμπληρώματα"], "correct_idx": 1, "text_en": "What dietary profile helps manage feline diabetes?", "options_en": ["High carbohydrates and low protein", "Lower carbohydrates and increased protein, together with insulin where required", "Only fruit", "Only supplements"]}, {"text": "Ποια πρακτική υποστηρίζει την απώλεια βάρους σε παχύσαρκη γάτα;", "options": ["Απεριόριστες λιχουδιές", "Μόνο ένα πολύ μεγάλο γεύμα", "Υγρή τροφή, αυξημένη δραστηριότητα και 2–4 ελεγχόμενα γεύματα", "Διακοπή νερού"], "correct_idx": 2, "text_en": "Which practice supports weight loss in an obese cat?", "options_en": ["Unlimited treats", "Only one very large meal", "Wet food, increased activity and 2–4 controlled meals", "Withholding water"]}, {"text": "Ποιοι τύποι τροφής χρησιμοποιούνται σε αλλεργίες ή δυσανεξίες;", "options": ["Υδρολυμένη πρωτεΐνη", "Μία πηγή πρωτεΐνης", "Τροφή χωρίς σιτηρά ή γλουτένη, ανάλογα με την περίπτωση", "Όλα τα παραπάνω"], "correct_idx": 3, "text_en": "Which types of food are used for allergies or intolerances?", "options_en": ["Hydrolyzed protein", "A single protein source", "Grain-free or gluten-free food, depending on the case", "All of the above"]}, {"text": "Ποιο συστατικό αναφέρεται για τη διαχείριση δυσκοιλιότητας;", "options": ["Ψύλλιο και διαλυτές ίνες", "Αποκλειστικά ζάχαρη", "Υψηλό αλάτι", "Καφεΐνη"], "correct_idx": 0, "text_en": "Which component is mentioned for managing constipation?", "options_en": ["Psyllium and soluble fiber", "Exclusively sugar", "High salt", "Caffeine"]}, {"text": "Η νεφρική κλινική τροφή πρέπει να έχει υψηλά επίπεδα φωσφόρου.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Renal clinical food should have high phosphorus levels.", "options_en": ["True", "False"]}, {"text": "Ένα κατάλληλο μίγμα φυτικών ινών μπορεί να βοηθήσει στην αποβολή τριχών μέσω των κοπράνων.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "A suitable fiber blend can help eliminate hair through the feces.", "options_en": ["True", "False"]}, {"text": "Η ίδια ακριβώς τροφή είναι κατάλληλη για ουρολιθίαση και χρόνια νεφρική νόσο σε όλες τις γάτες.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "The exact same food is suitable for urolithiasis and chronic kidney disease in all cats.", "options_en": ["True", "False"]}, {"text": "Μικρή ποσότητα βρασμένης κολοκύθας μπορεί να βοηθήσει στη δυσκοιλιότητα και στις τριχόμπαλες.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "A small amount of boiled pumpkin can help with constipation and hairballs.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 5: Τοξικές και επικίνδυνες τροφές για τη γάτα", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Ποιες είναι από τις συχνότερες κατηγορίες αιτιών δηλητηρίασης στη γάτα;", "options": ["Φάρμακα, τοξικά φυτά και οικιακά χημικά", "Μόνο καθαρό νερό", "Μόνο κτηνιατρικές τροφές", "Αποκλειστικά παιχνίδια"], "correct_idx": 0, "text_en": "What are some of the most common categories of poisoning causes in cats?", "options_en": ["Medicines, toxic plants and household chemicals", "Only clean water", "Only veterinary foods", "Exclusively toys"]}, {"text": "Ποια σοβαρή βλάβη μπορούν να προκαλέσουν τα φυτά του γένους Lilium;", "options": ["Οξεία νεφρική ανεπάρκεια", "Μόνο ήπιο κνησμό", "Υπερανάπτυξη τριχώματος", "Βελτίωση της πέψης"], "correct_idx": 0, "text_en": "What serious damage can plants of the genus Lilium cause?", "options_en": ["Acute kidney failure", "Only mild itching", "Overgrowth of fur", "Improved digestion"]}, {"text": "Σε ποιες ουσίες οφείλεται κυρίως η τοξικότητα κακάο και σοκολάτας;", "options": ["Θεοβρωμίνη και καφεΐνη", "Βιταμίνη C και ασβέστιο", "Ταυρίνη και αργινίνη", "Κυτταρίνη και άμυλο"], "correct_idx": 0, "text_en": "To which substances is the toxicity of cocoa and chocolate mainly due?", "options_en": ["Theobromine and caffeine", "Vitamin C and calcium", "Taurine and arginine", "Cellulose and starch"]}, {"text": "Ποια μορφή σοκολάτας έχει συνήθως τη μεγαλύτερη συγκέντρωση μεθυλοξανθινών;", "options": ["Λευκή σοκολάτα", "Μαύρη σοκολάτα και κακάο", "Όλες ακριβώς την ίδια", "Σοκολάτα χωρίς κακάο"], "correct_idx": 1, "text_en": "Which form of chocolate usually has the highest concentration of methylxanthines?", "options_en": ["White chocolate", "Dark chocolate and cocoa", "All exactly the same", "Chocolate without cocoa"]}, {"text": "Γιατί οι γάτες συνήθως δεν καταναλώνουν μεγάλες ποσότητες γλυκών;", "options": ["Δεν έχουν υποδοχείς γλυκιάς γεύσης", "Δεν μπορούν να μασήσουν", "Δεν έχουν όσφρηση", "Δεν πίνουν νερό"], "correct_idx": 0, "text_en": "Why do cats usually not consume large amounts of sweets?", "options_en": ["They have no sweet-taste receptors", "They cannot chew", "They have no sense of smell", "They do not drink water"]}, {"text": "Ποιο από τα ακόλουθα μπορεί να είναι σύμπτωμα δηλητηρίασης από μεθυλοξανθίνες;", "options": ["Αρρυθμίες και τρόμος", "Μόνο αυξημένη όρεξη", "Αύξηση της όρασης", "Μόνιμη ηρεμία χωρίς άλλα σημεία"], "correct_idx": 0, "text_en": "Which of the following can be a symptom of methylxanthine poisoning?", "options_en": ["Arrhythmias and tremor", "Only increased appetite", "Improved vision", "Permanent calm with no other signs"]}, {"text": "Ποιος κίνδυνος σχετίζεται με ωμές ή ακατάλληλα αποθηκευμένες τροφές;", "options": ["Παθογόνοι μικροοργανισμοί", "Αύξηση της βιταμίνης D", "Εξάλειψη όλων των βακτηρίων", "Αυτόματη αποτοξίνωση"], "correct_idx": 0, "text_en": "What risk is associated with raw or improperly stored foods?", "options_en": ["Pathogenic microorganisms", "Increased vitamin D", "Elimination of all bacteria", "Automatic detoxification"]}, {"text": "Ποιοι επιπλέον κίνδυνοι μπορεί να υπάρχουν ακόμη και σε εμπορικές τροφές;", "options": ["Υπολείμματα φυτοφαρμάκων ή βαρέα μέταλλα", "Μόνο υπερβολικό οξυγόνο", "Αποκλειστικά έλλειψη νερού", "Κανένας απολύτως"], "correct_idx": 0, "text_en": "What additional risks may exist even in commercial foods?", "options_en": ["Pesticide residues or heavy metals", "Only excess oxygen", "Exclusively lack of water", "None whatsoever"]}, {"text": "Η περιέργεια της γάτας μπορεί να παραμένει έντονη ακόμη και όταν είναι καλά ταϊσμένη.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "A cat's curiosity can remain strong even when it is well fed.", "options_en": ["True", "False"]}, {"text": "Η λευκή σοκολάτα περιέχει τις υψηλότερες συγκεντρώσεις θεοβρωμίνης.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "White chocolate contains the highest concentrations of theobromine.", "options_en": ["True", "False"]}, {"text": "Ακόμη και μικρή δόση σοκολάτας μπορεί να προκαλέσει σοβαρά συμπτώματα σε ευαίσθητη γάτα.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Even a small dose of chocolate can cause serious symptoms in a sensitive cat.", "options_en": ["True", "False"]}, {"text": "Οι εμπορικές τροφές είναι εξ ορισμού απολύτως απαλλαγμένες από κάθε κίνδυνο.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Commercial foods are by definition completely free of any risk.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 6: Η διατροφή των ιπποειδών", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Πώς χαρακτηρίζεται το πεπτικό σύστημα του ίππου;", "options": ["Μηρυκαστικό με ζύμωση στη μεγάλη κοιλία", "Μονογαστρικό φυτοφάγο με μικροβιακή ζύμωση στο παχύ έντερο", "Αυστηρά σαρκοφάγο", "Πτηνό με μυώδη στόμαχο"], "correct_idx": 1, "text_en": "How is the horse's digestive system characterized?", "options_en": ["Ruminant with fermentation in a large chamber", "Monogastric herbivore with microbial fermentation in the large intestine", "Strictly carnivorous", "A bird with a muscular stomach"]}, {"text": "Τι ποσοστό των αναγκών συντήρησης μπορεί να καλύπτεται από πτητικά λιπαρά οξέα;", "options": ["1–5%", "10–20%", "30–70%", "90–100%"], "correct_idx": 2, "text_en": "What percentage of maintenance needs can be covered by volatile fatty acids?", "options_en": ["1–5%", "10–20%", "30–70%", "90–100%"]}, {"text": "Ποια είναι περίπου η χωρητικότητα του στομάχου του ίππου;", "options": ["1–2 L", "8–15 L", "40–70 L", "180–220 L"], "correct_idx": 1, "text_en": "What is approximately the capacity of the horse's stomach?", "options_en": ["1–2 L", "8–15 L", "40–70 L", "180–220 L"]}, {"text": "Ποιο είναι το κατά προσέγγιση μήκος του λεπτού εντέρου;", "options": ["1–2 m", "5–8 m", "21–25 m", "60–70 m"], "correct_idx": 2, "text_en": "What is the approximate length of the small intestine?", "options_en": ["1–2 m", "5–8 m", "21–25 m", "60–70 m"]}, {"text": "Ποια είναι η ελάχιστη ημερήσια πρόσληψη χονδροειδών τροφών σε ξηρά ουσία;", "options": ["0,2% του σωματικού βάρους", "0,5% του σωματικού βάρους", "Περίπου 1,5% του σωματικού βάρους", "Πάνω από 10% του σωματικού βάρους"], "correct_idx": 2, "text_en": "What is the minimum daily intake of roughage on a dry-matter basis?", "options_en": ["0.2% of body weight", "0.5% of body weight", "About 1.5% of body weight", "Above 10% of body weight"]}, {"text": "Ποια αναλογία Ca:P θεωρείται κατάλληλη;", "options": ["0,5:1 και πάντα ανεστραμμένη", "1,5–2:1 και ποτέ ανεστραμμένη", "5:1 σε όλες τις ηλικίες", "Η αναλογία δεν έχει σημασία"], "correct_idx": 1, "text_en": "Which Ca:P ratio is considered appropriate?", "options_en": ["0.5:1 and always inverted", "1.5–2:1 and never inverted", "5:1 at all ages", "The ratio does not matter"]}, {"text": "Ποιο είναι το πρώτο περιοριστικό αμινοξύ στον ίππο;", "options": ["Λυσίνη", "Ταυρίνη", "Καρνιτίνη", "Γλυκίνη"], "correct_idx": 0, "text_en": "What is the first limiting amino acid in the horse?", "options_en": ["Lysine", "Taurine", "Carnitine", "Glycine"]}, {"text": "Ποια δήλωση για την κυοφορία της φοράδας είναι ορθή;", "options": ["Διαρκεί περίπου 63 ημέρες", "Διαρκεί περίπου 340 ημέρες και το 75% της εμβρυϊκής ανάπτυξης γίνεται στο τελευταίο τρίμηνο", "Οι ανάγκες μειώνονται στο τελευταίο τρίμηνο", "Δεν αλλάζουν ποτέ οι ανάγκες"], "correct_idx": 1, "text_en": "Which statement about the mare's gestation is correct?", "options_en": ["It lasts about 63 days", "It lasts about 340 days and 75% of fetal development occurs in the last trimester", "Needs decrease in the last trimester", "Needs never change"]}, {"text": "Ο ίππος έχει ανάγκη από συχνή πρόσληψη μικρών ποσοτήτων τροφής.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "The horse needs frequent intake of small amounts of food.", "options_en": ["True", "False"]}, {"text": "Οι απότομες αλλαγές σιτηρεσίου είναι ασφαλείς επειδή το μικροβίωμα προσαρμόζεται αμέσως.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Abrupt diet changes are safe because the microbiome adapts immediately.", "options_en": ["True", "False"]}, {"text": "Το νερό είναι κρίσιμο και η στέρηση για 48 ώρες μπορεί να προκαλέσει σοβαρή ηλεκτρολυτική ανισορροπία.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Water is critical, and deprivation for 48 hours can cause severe electrolyte imbalance.", "options_en": ["True", "False"]}, {"text": "Ο όνος πρέπει να αντιμετωπίζεται διατροφικά απλώς ως μικρό άλογο.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "The donkey should be treated nutritionally simply as a small horse.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 7: Η διατροφή των ερπετών", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Τι σημαίνει ότι τα ερπετά είναι εξώθερμα;", "options": ["Ρυθμίζουν πλήρως τη θερμοκρασία τους εσωτερικά", "Η θερμοκρασία σώματος εξαρτάται σε μεγάλο βαθμό από το περιβάλλον", "Δεν επηρεάζονται από τη θερμοκρασία", "Παράγουν θερμότητα όπως τα πτηνά"], "correct_idx": 1, "text_en": "What does it mean that reptiles are ectothermic?", "options_en": ["They fully regulate their temperature internally", "Body temperature depends largely on the environment", "They are unaffected by temperature", "They produce heat like birds"]}, {"text": "Ποιες λειτουργίες επηρεάζονται έντονα από τη θερμοκρασία;", "options": ["Πέψη, δραστηριότητα, ανάπτυξη και αναπαραγωγή", "Μόνο το χρώμα του κλουβιού", "Καμία λειτουργία", "Μόνο η ακοή"], "correct_idx": 0, "text_en": "Which functions are strongly affected by temperature?", "options_en": ["Digestion, activity, growth and reproduction", "Only the color of the cage", "No function", "Only hearing"]}, {"text": "Γιατί είναι κρίσιμη η ακτινοβολία UVB για πολλά ερπετά;", "options": ["Επιτρέπει τη σύνθεση βιταμίνης D3 και υποστηρίζει την απορρόφηση ασβεστίου", "Αυξάνει μόνο την όρεξη", "Αντικαθιστά πλήρως την τροφή", "Μειώνει την ανάγκη για νερό στο μηδέν"], "correct_idx": 0, "text_en": "Why is UVB radiation critical for many reptiles?", "options_en": ["It enables vitamin D3 synthesis and supports calcium absorption", "It only increases appetite", "It fully replaces food", "It reduces the need for water to zero"]}, {"text": "Ποια στοιχεία πρέπει να διαθέτει ένα σωστό ερπετάριο;", "options": ["Κατάλληλη θερμοκρασία, UVB/UVA, αερισμό, υγρασία, κρυψώνες, χώρο κίνησης και νερό", "Μόνο ένα μπολ τροφής", "Πλήρες σκοτάδι όλο το 24ωρο", "Καμία δυνατότητα κίνησης"], "correct_idx": 0, "text_en": "What elements should a proper reptile enclosure (terrarium) have?", "options_en": ["Appropriate temperature, UVB/UVA, ventilation, humidity, hiding spots, movement space and water", "Only a food bowl", "Complete darkness 24 hours a day", "No possibility of movement"]}, {"text": "Σε ποιους παράγοντες πρέπει να προσαρμόζεται η δίαιτα ενός ερπετού;", "options": ["Μόνο στο χρώμα του", "Είδος, ηλικία, μέγεθος, στάδιο ζωής, φυσιολογική κατάσταση και περιβάλλον", "Μόνο στην τιμή της τροφής", "Σε μία ίδια δίαιτα για όλα τα ερπετά"], "correct_idx": 1, "text_en": "To which factors should a reptile's diet be adapted?", "options_en": ["Only its color", "Species, age, size, life stage, physiological condition and environment", "Only the price of the food", "To one and the same diet for all reptiles"]}, {"text": "Ποια δήλωση για τα φίδια είναι ορθή;", "options": ["Είναι φυτοφάγα και τρώνε μόνο φύλλα", "Είναι σαρκοφάγα και συνήθως καταπίνουν ολόκληρο το θήραμα", "Χρειάζονται καθημερινά φρούτα", "Δεν καταναλώνουν ζωική πρωτεΐνη"], "correct_idx": 1, "text_en": "Which statement about snakes is correct?", "options_en": ["They are herbivores and eat only leaves", "They are carnivores and usually swallow the whole prey", "They need fruit daily", "They do not consume animal protein"]}, {"text": "Ποια διατροφική ποικιλία εμφανίζουν οι χελώνες;", "options": ["Όλες είναι αποκλειστικά σαρκοφάγες", "Μπορεί να είναι φυτοφάγες, παμφάγες ή σαρκοφάγες, ανάλογα με το είδος και την ηλικία", "Όλες τρώνε ακριβώς την ίδια τροφή", "Δεν χρειάζονται ασβέστιο"], "correct_idx": 1, "text_en": "What dietary variety do turtles/tortoises show?", "options_en": ["All are exclusively carnivorous", "They may be herbivorous, omnivorous or carnivorous, depending on species and age", "All eat exactly the same food", "They do not need calcium"]}, {"text": "Ποια πρακτική αυξάνει τον κίνδυνο μεταβολικής οστικής νόσου;", "options": ["Κατάλληλος λόγος Ca:P και επαρκής UVB", "Έλλειψη ασβεστίου και βιταμίνης D3", "Ποικιλία κατάλληλων τροφών", "Σωστή θερμοκρασία"], "correct_idx": 1, "text_en": "Which practice increases the risk of metabolic bone disease?", "options_en": ["Appropriate Ca:P ratio and adequate UVB", "Lack of calcium and vitamin D3", "A variety of appropriate foods", "Correct temperature"]}, {"text": "Τα ερπετά μπορούν να διατηρήσουν την ίδια πέψη ανεξάρτητα από τη θερμοκρασία περιβάλλοντος.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Reptiles can maintain the same digestion regardless of ambient temperature.", "options_en": ["True", "False"]}, {"text": "Μια υπερβολικά μονότονη δίαιτα μπορεί να δημιουργήσει προβλήματα.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "An overly monotonous diet can create problems.", "options_en": ["True", "False"]}, {"text": "Στα κατοικίδια φίδια μπορούν να χρησιμοποιούνται κατάλληλα κατεψυγμένα θηράματα εμπορίου.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "For pet snakes, appropriate commercially frozen prey can be used.", "options_en": ["True", "False"]}, {"text": "Υπερβολικά σακχαρούχα φρούτα είναι κατάλληλη βασική τροφή για σαύρες.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Excessively sugary fruit is a suitable staple food for lizards.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 8: Η διατροφή των κουνελιών", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Σε ποια τάξη ανήκουν τα κουνέλια;", "options": ["Rodentia", "Lagomorpha", "Carnivora", "Passeriformes"], "correct_idx": 1, "text_en": "To which order do rabbits belong?", "options_en": ["Rodentia", "Lagomorpha", "Carnivora", "Passeriformes"]}, {"text": "Ποιο είναι το κατάλληλο γενικό προφίλ της δίαιτας του κουνελιού;", "options": ["Πλούσια σε φυτικές ίνες και φτωχή σε σάκχαρα και λίπος", "Πλούσια σε ζάχαρη και χαμηλή σε ίνες", "Μόνο ζωική πρωτεΐνη", "Μόνο φρούτα"], "correct_idx": 0, "text_en": "What is the appropriate general profile of the rabbit's diet?", "options_en": ["Rich in fiber and low in sugars and fat", "Rich in sugar and low in fiber", "Only animal protein", "Only fruit"]}, {"text": "Περίπου τι ποσοστό του όγκου του πεπτικού συστήματος αποτελεί το τυφλό έντερο;", "options": ["5%", "15%", "50%", "90%"], "correct_idx": 2, "text_en": "Approximately what percentage of the digestive system's volume does the cecum make up?", "options_en": ["5%", "15%", "50%", "90%"]}, {"text": "Τι είναι η τυφλοτροφία;", "options": ["Αποφυγή κάθε κόπρου", "Επανακατανάλωση της μαλακής κόπρου/τυφλοτροφής για αξιοποίηση πρωτεϊνών, αμινοξέων και βιταμινών", "Μόνο κατανάλωση νερού", "Αποθήκευση τροφής στα μάγουλα"], "correct_idx": 1, "text_en": "What is cecotrophy?", "options_en": ["Avoidance of all feces", "Re-consumption of the soft feces/cecotrophs to utilize proteins, amino acids and vitamins", "Only water consumption", "Storing food in the cheeks"]}, {"text": "Τι ποσοστό της δίαιτας πρέπει να αποτελεί κατά προσέγγιση το σανό;", "options": ["Κάτω από 10%", "20–30%", "Πάνω από 85%", "Ακριβώς 50%"], "correct_idx": 2, "text_en": "What percentage of the diet should hay make up approximately?", "options_en": ["Below 10%", "20–30%", "Above 85%", "Exactly 50%"]}, {"text": "Ποια είναι η ενδεικτική συμμετοχή των pellets στη δίαιτα;", "options": ["5–10%", "30–40%", "60–70%", "100%"], "correct_idx": 0, "text_en": "What is the indicative share of pellets in the diet?", "options_en": ["5–10%", "30–40%", "60–70%", "100%"]}, {"text": "Ποιο είναι το ανώτατο ενδεικτικό ποσοστό φρούτων ημερησίως;", "options": ["2%", "10%", "25%", "50%"], "correct_idx": 0, "text_en": "What is the maximum indicative percentage of fruit per day?", "options_en": ["2%", "10%", "25%", "50%"]}, {"text": "Ποια ηλικιακή φάση θεωρείται η πιο ευαίσθητη για γαστρεντερικά προβλήματα;", "options": ["0–7 ημερών", "Φάση απογαλακτισμού 28–35 ημερών", "6–12 μηνών", "Μόνο μετά τα 10 έτη"], "correct_idx": 1, "text_en": "Which age phase is considered the most sensitive for gastrointestinal problems?", "options_en": ["0–7 days", "The weaning phase, 28–35 days", "6–12 months", "Only after age 10"]}, {"text": "Τα μίγματα muesli και σπόρων είναι προτιμότερα από το σανό ως βάση της δίαιτας.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Muesli and seed mixes are preferable to hay as the basis of the diet.", "options_en": ["True", "False"]}, {"text": "Το alfalfa hay είναι συνήθως καταλληλότερο για νεαρά ή αναπτυσσόμενα κουνέλια παρά για ενήλικα.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Alfalfa hay is usually more suitable for young or growing rabbits than for adults.", "options_en": ["True", "False"]}, {"text": "Οι βιταμίνες του συμπλέγματος Β και η βιταμίνη Κ μπορούν να συντίθενται στο τυφλό και να προσλαμβάνονται μέσω τυφλοτροφίας.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "B-complex vitamins and vitamin K can be synthesized in the cecum and obtained through cecotrophy.", "options_en": ["True", "False"]}, {"text": "Η υπερβολική πρόσληψη ασβεστίου μπορεί να συμβάλει στον σχηματισμό ουρόλιθων.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Excessive calcium intake can contribute to the formation of urinary stones.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 9: Η διατροφή των τρωκτικών", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Πόσα περίπου είδη περιλαμβάνει η τάξη Rodentia;", "options": ["Λιγότερα από 50", "Περίπου 300", "Πάνω από 2.300", "Ακριβώς 10.000"], "correct_idx": 2, "text_en": "Approximately how many species does the order Rodentia include?", "options_en": ["Fewer than 50", "About 300", "Over 2,300", "Exactly 10,000"]}, {"text": "Το κουνέλι και ο λαγός ανήκουν:", "options": ["Στα τρωκτικά", "Στα λαγόμορφα", "Στα σαρκοφάγα", "Στα πτηνά"], "correct_idx": 1, "text_en": "The rabbit and the hare belong to:", "options_en": ["The rodents", "The lagomorphs", "The carnivores", "The birds"]}, {"text": "Ποιο είναι χαρακτηριστικό των δοντιών των τρωκτικών;", "options": ["Οι κοπτήρες μεγαλώνουν συνεχώς και φθείρονται με το ροκάνισμα", "Δεν έχουν κοπτήρες", "Αλλάζουν όλα τα δόντια κάθε μήνα", "Έχουν μόνο κυνόδοντες"], "correct_idx": 0, "text_en": "What is a characteristic of rodents' teeth?", "options_en": ["The incisors grow continuously and are worn down by gnawing", "They have no incisors", "All teeth are replaced every month", "They have only canines"]}, {"text": "Γιατί τα τρωκτικά χρειάζονται σταθερή ενεργειακή παροχή;", "options": ["Έχουν πολύ υψηλό μεταβολικό ρυθμό", "Δεν κινούνται ποτέ", "Δεν χρησιμοποιούν ενέργεια για θερμορρύθμιση", "Δεν αναπτύσσονται"], "correct_idx": 0, "text_en": "Why do rodents need a steady energy supply?", "options_en": ["They have a very high metabolic rate", "They never move", "They do not use energy for thermoregulation", "They do not grow"]}, {"text": "Ποιες είναι οι κύριες πηγές ενέργειας για τα τρωκτικά;", "options": ["Υδατάνθρακες και λίπη", "Μόνο νερό", "Μόνο ανόργανα στοιχεία", "Μόνο βιταμίνη C"], "correct_idx": 0, "text_en": "What are the main energy sources for rodents?", "options_en": ["Carbohydrates and fats", "Only water", "Only minerals", "Only vitamin C"]}, {"text": "Ποια τροφή αποτελεί πλήρη βάση για ποντίκια σύμφωνα με το υλικό;", "options": ["Pellets για τρωκτικά με πρωτεΐνη πάνω από 14%", "Μόνο ηλιόσποροι", "Μόνο φρούτα", "Σοκολάτα"], "correct_idx": 0, "text_en": "Which food is a complete base for mice according to the material?", "options_en": ["Rodent pellets with protein above 14%", "Only sunflower seeds", "Only fruit", "Chocolate"]}, {"text": "Ποια δήλωση για το χάμστερ είναι ορθή;", "options": ["Είναι αποκλειστικά φυτοφάγο", "Είναι παμφάγο και χρειάζεται ειδική τροφή για χάμστερ", "Τρέφεται μόνο με ωμές πατάτες", "Δεν χρειάζεται νερό"], "correct_idx": 1, "text_en": "Which statement about the hamster is correct?", "options_en": ["It is exclusively herbivorous", "It is omnivorous and needs a specific hamster food", "It feeds only on raw potatoes", "It does not need water"]}, {"text": "Ποια βιταμίνη δεν συνθέτουν τα ινδικά χοιρίδια;", "options": ["Βιταμίνη C", "Βιταμίνη K", "Βιταμίνη B12", "Βιταμίνη E"], "correct_idx": 0, "text_en": "Which vitamin do guinea pigs not synthesize?", "options_en": ["Vitamin C", "Vitamin K", "Vitamin B12", "Vitamin E"]}, {"text": "Μια δίαιτα μόνο με σπόρους είναι κατάλληλη για μακροχρόνια διατροφή ποντικιών.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "A seed-only diet is suitable for the long-term feeding of mice.", "options_en": ["True", "False"]}, {"text": "Οι απαιτήσεις σε φυτικές ίνες είναι ίδιες για όλα τα είδη τρωκτικών.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Fiber requirements are the same for all rodent species.", "options_en": ["True", "False"]}, {"text": "Το φρέσκο και καθαρό νερό πρέπει να είναι πάντα διαθέσιμο.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Fresh, clean water must always be available.", "options_en": ["True", "False"]}, {"text": "Οι νέες τροφές πρέπει να εισάγονται απότομα για να προσαρμοστεί γρήγορα το έντερο.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "New foods should be introduced abruptly so the gut adapts quickly.", "options_en": ["True", "False"]}]}, {"title": "Ενότητα 10: Η διατροφή των ωδικών πτηνών", "filename": "Διατροφή ζώων συντροφιάς", "questions": [{"text": "Σε ποια τάξη ανήκει το άγριο καναρίνι Serinus canaria;", "options": ["Passeriformes", "Carnivora", "Rodentia", "Lagomorpha"], "correct_idx": 0, "text_en": "To which order does the wild canary Serinus canaria belong?", "options_en": ["Passeriformes", "Carnivora", "Rodentia", "Lagomorpha"]}, {"text": "Πού βρίσκεται η σύριγγα, το όργανο διαμόρφωσης της φωνής;", "options": ["Στο άκρο του ράμφους", "Στο σημείο διχασμού της τραχείας στους πρωτογενείς βρόγχους", "Στην αμάρα", "Στον πρόλοβο"], "correct_idx": 1, "text_en": "Where is the syrinx, the organ that shapes the voice, located?", "options_en": ["At the tip of the beak", "At the point where the trachea splits into the primary bronchi", "In the cloaca", "In the crop"]}, {"text": "Ποια είναι βασική λειτουργία του προλόβου;", "options": ["Αποθήκευση και προετοιμασία της τροφής", "Παραγωγή ούρων", "Σύνθεση οστών", "Απορρόφηση οξυγόνου"], "correct_idx": 0, "text_en": "What is a basic function of the crop?", "options_en": ["Storage and preparation of food", "Urine production", "Bone synthesis", "Oxygen absorption"]}, {"text": "Από πόσα διακριτά τμήματα αποτελείται ο στόμαχος των πτηνών;", "options": ["Ένα", "Δύο: αδενώδη και μυώδη", "Τρία ίδια τμήματα", "Δεν έχουν στόμαχο"], "correct_idx": 1, "text_en": "How many distinct parts does the birds' stomach consist of?", "options_en": ["One", "Two: glandular and muscular", "Three identical parts", "They have no stomach"]}, {"text": "Ποιο είναι το τελικό προϊόν καταβολισμού πρωτεϊνών στα πτηνά;", "options": ["Ουρικό οξύ", "Ουρία", "Γλυκόζη", "Γαλακτικό οξύ μόνο"], "correct_idx": 0, "text_en": "What is the end product of protein catabolism in birds?", "options_en": ["Uric acid", "Urea", "Glucose", "Lactic acid only"]}, {"text": "Γιατί μια δίαιτα αποκλειστικά με σπόρους δεν θεωρείται πλήρης;", "options": ["Δεν περιέχει καθόλου ενέργεια", "Δεν παρέχει όλα τα θρεπτικά συστατικά στις απαιτούμενες ποσότητες", "Οι σπόροι είναι πάντα τοξικοί", "Τα πτηνά δεν μπορούν να σπάσουν σπόρους"], "correct_idx": 1, "text_en": "Why is a seed-only diet not considered complete?", "options_en": ["It contains no energy at all", "It does not provide all nutrients in the required amounts", "Seeds are always toxic", "Birds cannot crack seeds"]}, {"text": "Ποια σχέση έχει η ενεργειακή πυκνότητα της τροφής με την κατανάλωση;", "options": ["Όσο αυξάνεται, αυξάνεται πάντα και η κατανάλωση", "Η σχέση είναι συνήθως αντιστρόφως ανάλογη", "Δεν υπάρχει καμία σχέση", "Η κατανάλωση μηδενίζεται"], "correct_idx": 1, "text_en": "What is the relationship between the energy density of food and consumption?", "options_en": ["As it increases, consumption always increases too", "The relationship is usually inversely proportional", "There is no relationship", "Consumption drops to zero"]}, {"text": "Ποιος είναι ένας κίνδυνος της απεριόριστης παροχής τροφής;", "options": ["Παχυσαρκία και μειωμένη ψυχική/σωματική διέγερση", "Αύξηση της φυσικής αναζήτησης τροφής", "Πάντα καλύτερη υγεία", "Εξάλειψη κάθε ασθένειας"], "correct_idx": 0, "text_en": "What is a risk of unlimited food provision?", "options_en": ["Obesity and reduced mental/physical stimulation", "Increased natural foraging", "Always better health", "Elimination of all disease"]}, {"text": "Τα πτηνά διαθέτουν ουροδόχο κύστη όπως τα περισσότερα θηλαστικά.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "Birds have a urinary bladder like most mammals.", "options_en": ["True", "False"]}, {"text": "Ένας μόνο σπόρος μπορεί να καλύψει όλα τα θρεπτικά συστατικά του καναρινιού.", "options": ["Σωστό", "Λάθος"], "correct_idx": 1, "text_en": "A single seed can cover all of the canary's nutrients.", "options_en": ["True", "False"]}, {"text": "Οι συνθήκες βλάστησης των σπόρων μπορεί να ευνοούν και την ανάπτυξη παθογόνων.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Seed-sprouting conditions can also favor the growth of pathogens.", "options_en": ["True", "False"]}, {"text": "Το φυσικό φως συμβάλλει στη σύνθεση βιταμίνης D.", "options": ["Σωστό", "Λάθος"], "correct_idx": 0, "text_en": "Natural light contributes to vitamin D synthesis.", "options_en": ["True", "False"]}]}];
+
+    const COURSE_NAME = "Διατροφή ζώων συντροφιάς";
+    const indexToUnitLabel = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
+    // State Variables
+    let currentQuizIndex = -1;
+    let currentQuestionIndex = 0;
+    let userAnswers = []; // Store indices of user's chosen options
+    let correctCount = 0;
+    let isAnswered = false;
+    let soundEnabled = false; // Default off, user can toggle on
+    let currentOrderType = 'original'; // 'original' or 'random'
+    let activeQuestions = []; // Array of active questions (original order or shuffled)
+    let selectedQuizIndexForOrder = -1;
+    let currentShuffleOptions = false;
+    
+    // Theme and Language State Management
+    let currentTheme = localStorage.getItem('theme') || 'dark';
+    let currentLang = localStorage.getItem('lang') || 'el';
+
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeSunIcon = document.getElementById('themeSunIcon');
+    const themeMoonIcon = document.getElementById('themeMoonIcon');
+    const langToggleBtn = document.getElementById('langToggle');
+
+    // Language configuration
+    const TRANSLATIONS = {
+      el: {
+        navHome: "Αρχική",
+        navQuizzes: "Κουίζ",
+        courseTitle: "Διατροφή ζώων συντροφιάς",
+        navBackToHub: "← Επιστροφή στις Θεματικές Ενότητες",
+        orderDesc: "Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:",
+        btnOriginal: "Αρχική Σειρά (Όπως στο έγγραφο)",
+        btnRandom: "Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)",
+        lblShuffleOptions: "Ανακάτεμα επιλογών απάντησης (A, B, C, D)",
+        lblTimer: "Ενεργοποίηση Χρονομέτρου",
+        lblAntiCheat: "Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης (anti-cheat)",
+        lblImages: "Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)",
+        lblGlossary: "Χρωματισμός όρων-κλειδιών στα αποτελέσματα",
+        cheatViolationTitle: "Ακυρώθηκε λόγω παραβίασης",
+        cheatReasonPrefix: "Λόγος: ",
+        cheatReasonTab: "Αλλαγή καρτέλας ή ελαχιστοποίηση παραθύρου",
+        cheatReasonBlur: "Απώλεια εστίασης παραθύρου",
+        cheatReasonFs: "Έξοδος από πλήρη οθόνη",
+        lblMinutes: "λεπτά",
+        lblQuestionsCount: "Αριθμός Ερωτήσεων:",
+        btnBack: "Επιστροφή",
+        configTitle: "Παραμετροποίηση Γενικού Τεστ",
+        configDesc: "Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τυχαίο τεστ. Θα επιλεγούν 30 τυχαίες ερωτήσεις από τις επιλεγμένες ενότητες.",
+        toggleAllUnitsSelect: "Επιλογή Όλων",
+        toggleAllUnitsDeselect: "Αποεπιλογή Όλων",
+        startGeneralTestBtn: "Έναρξη Τεστ",
+        scoreLabel: "Σκορ",
+        restartBtnText: "Επανάληψη",
+        backBtnText: "Επιστροφή στα Κουίζ",
+        pdfBtnText: "Αποθήκευση ως PDF",
+        generalReportBtnText: "Αναφορά / Σχόλια",
+        resultsTitle: "Αναλυτικά Αποτελέσματα"
+      },
+      en: {
+        navHome: "Home",
+        navQuizzes: "Quizzes",
+        courseTitle: "Companion Animal Nutrition",
+        navBackToHub: "← Back to Thematic Units",
+        orderDesc: "Select the order in which you want the quiz questions to appear:",
+        btnOriginal: "Original Order (As in the document)",
+        btnRandom: "Random Order (Shuffled questions)",
+        lblShuffleOptions: "Shuffle answer choices (A, B, C, D)",
+        lblTimer: "Enable Timer",
+        lblAntiCheat: "Enable anti-cheat detection",
+        lblImages: "Show question images (Wikimedia Commons)",
+        lblGlossary: "Highlight key terms in results",
+        cheatViolationTitle: "Invalidated due to violation",
+        cheatReasonPrefix: "Reason: ",
+        cheatReasonTab: "Tab switch or window minimized",
+        cheatReasonBlur: "Window focus loss",
+        cheatReasonFs: "Exited fullscreen",
+        lblMinutes: "minutes",
+        lblQuestionsCount: "Number of Questions:",
+        btnBack: "Back",
+        configTitle: "General Test Configuration",
+        configDesc: "Select which units to include in the general test. A total of 30 random questions will be selected from the chosen units.",
+        toggleAllUnitsSelect: "Select All",
+        toggleAllUnitsDeselect: "Deselect All",
+        startGeneralTestBtn: "Start Test",
+        scoreLabel: "Score",
+        restartBtnText: "Retry",
+        backBtnText: "Back to Quizzes",
+        pdfBtnText: "Save as PDF",
+        generalReportBtnText: "Report / Feedback",
+        resultsTitle: "Detailed Results"
+      }
+    };
+
+    const TITLE_TRANSLATIONS = {
+      el: {"Ενότητα 1: Η διατροφή του σκύλου": "Ενότητα 1: Η διατροφή του σκύλου", "Ενότητα 2: Κλινική διατροφή του σκύλου": "Ενότητα 2: Κλινική διατροφή του σκύλου", "Ενότητα 3: Η διατροφή της γάτας": "Ενότητα 3: Η διατροφή της γάτας", "Ενότητα 4: Κλινική διατροφή της γάτας": "Ενότητα 4: Κλινική διατροφή της γάτας", "Ενότητα 5: Τοξικές και επικίνδυνες τροφές για τη γάτα": "Ενότητα 5: Τοξικές και επικίνδυνες τροφές για τη γάτα", "Ενότητα 6: Η διατροφή των ιπποειδών": "Ενότητα 6: Η διατροφή των ιπποειδών", "Ενότητα 7: Η διατροφή των ερπετών": "Ενότητα 7: Η διατροφή των ερπετών", "Ενότητα 8: Η διατροφή των κουνελιών": "Ενότητα 8: Η διατροφή των κουνελιών", "Ενότητα 9: Η διατροφή των τρωκτικών": "Ενότητα 9: Η διατροφή των τρωκτικών", "Ενότητα 10: Η διατροφή των ωδικών πτηνών": "Ενότητα 10: Η διατροφή των ωδικών πτηνών"},
+      en: {"Ενότητα 1: Η διατροφή του σκύλου": "Unit 1: Dog Nutrition", "Ενότητα 2: Κλινική διατροφή του σκύλου": "Unit 2: Clinical Nutrition of the Dog", "Ενότητα 3: Η διατροφή της γάτας": "Unit 3: Cat Nutrition", "Ενότητα 4: Κλινική διατροφή της γάτας": "Unit 4: Clinical Nutrition of the Cat", "Ενότητα 5: Τοξικές και επικίνδυνες τροφές για τη γάτα": "Unit 5: Toxic and Dangerous Foods for Cats", "Ενότητα 6: Η διατροφή των ιπποειδών": "Unit 6: Equine Nutrition", "Ενότητα 7: Η διατροφή των ερπετών": "Unit 7: Reptile Nutrition", "Ενότητα 8: Η διατροφή των κουνελιών": "Unit 8: Rabbit Nutrition", "Ενότητα 9: Η διατροφή των τρωκτικών": "Unit 9: Rodent Nutrition", "Ενότητα 10: Η διατροφή των ωδικών πτηνών": "Unit 10: Songbird Nutrition"}
+    };
+
+    function applyTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        themeSunIcon.classList.add('hidden');
+        themeMoonIcon.classList.remove('hidden');
+      } else {
+        document.body.classList.remove('light-mode');
+        themeSunIcon.classList.remove('hidden');
+        themeMoonIcon.classList.add('hidden');
+      }
+      localStorage.setItem('theme', theme);
+      currentTheme = theme;
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    function applyLanguage(lang) {
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          el.textContent = TRANSLATIONS[lang][key];
+        }
+      });
+      langToggleBtn.textContent = lang === 'el' ? 'EN' : 'EL';
+      localStorage.setItem('lang', lang);
+      currentLang = lang;
+      
+      // Update dynamic parts
+      initDashboard();
+      if (currentQuizIndex !== -1) {
+        const progressTemplate = currentLang === 'el' ? "Ερώτηση {current} από {total}" : "Question {current} of {total}";
+        progressText.textContent = progressTemplate.replace("{current}", currentQuestionIndex + 1).replace("{total}", activeQuestions.length);
+        
+        const nextBtnText = currentLang === 'el' ? "Επόμενο" : "Next";
+        const finishBtnText = currentLang === 'el' ? "Τέλος" : "Finish";
+        const isLastQuestion = (currentQuestionIndex === activeQuestions.length - 1);
+        nextBtn.innerHTML = `
+          <span>${isLastQuestion ? finishBtnText : nextBtnText}</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        `;
+      }
+      if (currentQuizIndex !== -1 && !quizSection.classList.contains('hidden')) {
+        const q = activeQuestions[currentQuestionIndex];
+        const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+        questionTitle.textContent = qText;
+        Array.from(optionsList.children).forEach((btn, idx) => {
+          const option = q.options[idx];
+          const optionText = currentLang === 'el' ? option : ((q.options_en && q.options_en[idx]) || option);
+          const textSpan = btn.querySelector('span:not(.option-marker)');
+          if (textSpan) {
+            textSpan.textContent = optionText;
+          }
+        });
+        
+        // Update quizUnitText
+        if (currentQuizIndex === 10) {
+          quizUnitText.textContent = currentLang === 'el' ? "ΓΕΝΙΚΟ ΤΕΣΤ" : "GENERAL TEST";
+        } else {
+          const unitNameLabel = indexToUnitLabel[currentQuizIndex];
+          quizUnitText.textContent = currentLang === 'el' ? `ΕΝΟΤΗΤΑ ${unitNameLabel}` : `UNIT ${unitNameLabel}`;
+        }
+      }
+      if (selectedQuizIndexForOrder !== -1 && !orderSection.classList.contains('hidden')) {
+        const quiz = QUIZZES[selectedQuizIndexForOrder];
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        orderQuizTitle.textContent = displayTitle;
+      }
+      if (!testConfigSection.classList.contains('hidden')) {
+        initUnitsSelectionList();
+      }
+      if (!resultsSection.classList.contains('hidden')) {
+        showResults();
+      }
+      updateStartBtnState();
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      applyLanguage(currentLang === 'el' ? 'en' : 'el');
+    });
+    
+    // Timer Variables
+    let timerInterval = null;
+    let timeLeftSeconds = 0;
+    let isTimerRunning = false;
+    let quizTimerEnabled = false;
+    let quizTimerTotalSeconds = 0;
+
+    // Sound Synthesis (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      if (!soundEnabled) return;
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      const now = audioCtx.currentTime;
+      
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.12, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === 'incorrect') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(146.83, now); // D3
+        osc.frequency.linearRampToValueAtTime(98.00, now + 0.25); // G2
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    }
+
+    // Elements
+    const dashboardSection = document.getElementById('dashboardSection');
+    const quizSection = document.getElementById('quizSection');
+    const resultsSection = document.getElementById('resultsSection');
+    const orderSection = document.getElementById('orderSection');
+    const orderQuizTitle = document.getElementById('orderQuizTitle');
+    const originalOrderBtn = document.getElementById('originalOrderBtn');
+    const randomOrderBtn = document.getElementById('randomOrderBtn');
+    const orderBackBtn = document.getElementById('orderBackBtn');
+    const testConfigSection = document.getElementById('testConfigSection');
+    const toggleAllUnitsBtn = document.getElementById('toggleAllUnitsBtn');
+    const unitsSelectionList = document.getElementById('unitsSelectionList');
+    const startConfiguredTestBtn = document.getElementById('startConfiguredTestBtn');
+    const configBackBtn = document.getElementById('configBackBtn');
+    const shuffleOptionsUnitCheckbox = document.getElementById('shuffleOptionsUnitCheckbox');
+    const shuffleOptionsGeneralCheckbox = document.getElementById('shuffleOptionsGeneralCheckbox');
+    
+    // Timer DOM references
+    const timerEnableUnitCheckbox = document.getElementById('timerEnableUnitCheckbox');
+    const timerDurationUnitContainer = document.getElementById('timerDurationUnitContainer');
+    const timerDurationUnitInput = document.getElementById('timerDurationUnitInput');
+    const timerEnableGeneralCheckbox = document.getElementById('timerEnableGeneralCheckbox');
+    const timerDurationGeneralContainer = document.getElementById('timerDurationGeneralContainer');
+    const timerDurationGeneralInput = document.getElementById('timerDurationGeneralInput');
+    const quizTimerText = document.getElementById('quizTimerText');
+    const timerCountdown = document.getElementById('timerCountdown');
+    const generalReportBtn = document.getElementById('generalReportBtn');
+    const quizQuestionCountInput = document.getElementById('quizQuestionCountInput');
+    const quizQuestionCountMaxLabel = document.getElementById('quizQuestionCountMaxLabel');
+    const generalQuestionCountInput = document.getElementById('generalQuestionCountInput');
+    const generalQuestionCountMaxLabel = document.getElementById('generalQuestionCountMaxLabel');
+    
+    const quizUnitText = document.getElementById('quizUnitText');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    
+    const questionTitle = document.getElementById('questionTitle');
+    const optionsList = document.getElementById('optionsList');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    const scoreNumber = document.getElementById('scoreNumber');
+    const scoreFill = document.getElementById('scoreFill');
+    const resultFeedbackTitle = document.getElementById('resultFeedbackTitle');
+    const resultFeedbackText = document.getElementById('resultFeedbackText');
+    const reviewContainer = document.getElementById('reviewContainer');
+    const resultsQuizTitle = document.getElementById('resultsQuizTitle');
+    
+    const restartBtn = document.getElementById('restartBtn');
+    const backBtn = document.getElementById('backBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
+    const soundToggle = document.getElementById('soundToggle');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundMutedIcon = document.getElementById('soundMutedIcon');
+
+    // Shuffle Helper (Fisher-Yates)
+    function shuffleArray(array) {
+      let shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Shuffle Options Helper
+    function shuffleQuestionOptions(question) {
+      let optionsWithIndices = question.options.map((opt, idx) => ({
+        text: opt,
+        isCorrect: (idx === question.correct_idx)
+      }));
+      let shuffled = shuffleArray(optionsWithIndices);
+      let newOptions = shuffled.map(item => item.text);
+      let newCorrectIdx = shuffled.findIndex(item => item.isCorrect);
+      return {
+        text: question.text,
+        options: newOptions,
+        correct_idx: newCorrectIdx
+      };
+    }
+
+    // Initialize Dashboard
+    function initDashboard() {
+      dashboardSection.innerHTML = '';
+      
+      QUIZZES.slice(0, 10).forEach((quiz, index) => {
+        const card = document.createElement('div');
+        card.className = 'card quiz-card';
+        card.addEventListener('click', () => promptOrderSelection(index));
+        
+        let unitText = "";
+        if (currentLang === 'el') {
+          unitText = `Ενότητα ${indexToUnitLabel[index]}`;
+        } else {
+          unitText = `Unit ${indexToUnitLabel[index]}`;
+        }
+        
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        const questionsText = currentLang === 'el' ? 'Ερωτήσεις' : 'Questions';
+
+        card.innerHTML = `
+          <div>
+            <span class="unit-tag">${unitText}</span>
+            <h3 class="quiz-card-title">${displayTitle}</h3>
+          </div>
+          <div class="quiz-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>${quiz.questions.length} ${questionsText}</span>
+          </div>
+        `;
+        dashboardSection.appendChild(card);
+      });
+
+      // Add General Test Card (takes index 10)
+      const card = document.createElement('div');
+      card.className = 'card quiz-card';
+      card.style.borderColor = 'var(--success)';
+      card.style.boxShadow = '0 10px 25px -5px rgba(16, 185, 129, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.3)';
+      card.addEventListener('click', () => promptTestConfiguration());
+      
+      const genTitle = currentLang === 'el' ? 'Γενικό Τεστ (30 τυχαίες ερωτήσεις)' : 'General Test (30 random questions)';
+      const genTag = currentLang === 'el' ? 'Γενικό Τεστ' : 'General Test';
+      const genMeta = currentLang === 'el' ? 'Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τεστ' : 'Select which units to include in the test';
+
+      card.innerHTML = `
+        <div>
+          <span class="unit-tag" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">${genTag}</span>
+          <h3 class="quiz-card-title">${genTitle}</h3>
+        </div>
+        <div class="quiz-meta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>${genMeta}</span>
+        </div>
+      `;
+      dashboardSection.appendChild(card);
+    }
+
+    // Sound toggle function
+    soundToggle.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) {
+        soundToggle.classList.remove('muted');
+        soundOnIcon.classList.remove('hidden');
+        soundMutedIcon.classList.add('hidden');
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } else {
+        soundToggle.classList.add('muted');
+        soundOnIcon.classList.add('hidden');
+        soundMutedIcon.classList.remove('hidden');
+      }
+    });
+
+    // Timer Toggles listeners
+    timerEnableUnitCheckbox.addEventListener('change', () => {
+      timerDurationUnitContainer.style.display = timerEnableUnitCheckbox.checked ? 'flex' : 'none';
+    });
+    timerEnableGeneralCheckbox.addEventListener('change', () => {
+      timerDurationGeneralContainer.style.display = timerEnableGeneralCheckbox.checked ? 'flex' : 'none';
+    });
+
+    // Order Selection Logic
+    function promptOrderSelection(quizIdx) {
+      selectedQuizIndexForOrder = quizIdx;
+      const quiz = QUIZZES[quizIdx];
+      const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+      orderQuizTitle.textContent = displayTitle;
+      
+      const totalQuestions = quiz.questions.length;
+      quizQuestionCountInput.max = totalQuestions;
+      quizQuestionCountInput.value = totalQuestions;
+      quizQuestionCountMaxLabel.textContent = currentLang === 'el' ? `(Μέγιστο: ${totalQuestions})` : `(Maximum: ${totalQuestions})`;
+      
+      validateQuizQuestionCount();
+
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.remove('hidden');
+    }
+
+    originalOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'original');
+    });
+
+    randomOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'random');
+    });
+
+    orderBackBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // Custom General Test Configuration Selection
+    let selectedUnitsForTest = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]); // Default all selected
+    
+    function initUnitsSelectionList() {
+      const listContainer = document.getElementById('unitsSelectionList');
+      listContainer.innerHTML = '';
+      
+      QUIZZES.slice(0, 10).forEach((quiz, index) => {
+        const item = document.createElement('div');
+        item.className = 'unit-selection-item' + (selectedUnitsForTest.has(index) ? ' selected' : '');
+        
+        let unitName = "";
+        if (currentLang === 'el') {
+          unitName = `Ενότητα ${indexToUnitLabel[index]}`;
+        } else {
+          unitName = `Unit ${indexToUnitLabel[index]}`;
+        }
+
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        const shortTitle = displayTitle
+          .replace(/Ενότητα \d+:\s*/, "")
+          .replace(/Unit \d+:\s*/, "");
+
+        const questionsText = currentLang === 'el' ? 'ερωτήσεις' : 'questions';
+
+        item.innerHTML = `
+          <div>
+            <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-main); margin-bottom: 2px;">${unitName}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); max-width: 480px; line-height: 1.4;">${shortTitle} (${quiz.questions.length} ${questionsText})</div>
+          </div>
+          <div class="checkbox-indicator">${selectedUnitsForTest.has(index) ? '✔' : ''}</div>
+        `;
+        
+        item.addEventListener('click', () => {
+          if (selectedUnitsForTest.has(index)) {
+            selectedUnitsForTest.delete(index);
+            item.classList.remove('selected');
+            item.querySelector('.checkbox-indicator').textContent = '';
+          } else {
+            selectedUnitsForTest.add(index);
+            item.classList.add('selected');
+            item.querySelector('.checkbox-indicator').textContent = '✔';
+          }
+          updateStartBtnState();
+        });
+        
+        listContainer.appendChild(item);
+      });
+      updateStartBtnState();
+    }
+    
+    function updateStartBtnState() {
+      if (selectedUnitsForTest.size === 10) {
+        toggleAllUnitsBtn.textContent = currentLang === 'el' ? 'Αποεπιλογή Όλων' : 'Deselect All';
+        toggleAllUnitsBtn.style.color = 'var(--error)';
+      } else {
+        toggleAllUnitsBtn.textContent = currentLang === 'el' ? 'Επιλογή Όλων' : 'Select All';
+        toggleAllUnitsBtn.style.color = 'var(--primary)';
+      }
+      
+      updateGeneralQuestionCountInput();
+    }
+    
+    toggleAllUnitsBtn.addEventListener('click', () => {
+      if (selectedUnitsForTest.size === 10) {
+        selectedUnitsForTest.clear();
+      } else {
+        selectedUnitsForTest = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      }
+      initUnitsSelectionList();
+    });
+
+    function validateQuizQuestionCount() {
+      const val = parseInt(quizQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1;
+      originalOrderBtn.disabled = !isValid;
+      randomOrderBtn.disabled = !isValid;
+    }
+    quizQuestionCountInput.addEventListener('input', validateQuizQuestionCount);
+    quizQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(quizQuestionCountInput.value);
+      const maxQ = parseInt(quizQuestionCountInput.max) || 1;
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > maxQ) val = maxQ;
+      quizQuestionCountInput.value = val;
+      validateQuizQuestionCount();
+    });
+
+    function validateGeneralQuestionCount() {
+      const val = parseInt(generalQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1 && selectedUnitsForTest.size > 0;
+      startConfiguredTestBtn.disabled = !isValid;
+    }
+    generalQuestionCountInput.addEventListener('input', validateGeneralQuestionCount);
+    generalQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(generalQuestionCountInput.value);
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > totalAvailable) val = totalAvailable;
+      generalQuestionCountInput.value = val;
+      validateGeneralQuestionCount();
+    });
+
+    function updateGeneralQuestionCountInput() {
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      
+      generalQuestionCountInput.max = totalAvailable;
+      generalQuestionCountMaxLabel.textContent = currentLang === 'el' ? `(Μέγιστο: ${totalAvailable})` : `(Maximum: ${totalAvailable})`;
+      
+      let currentVal = parseInt(generalQuestionCountInput.value);
+      if (currentVal > totalAvailable) {
+        generalQuestionCountInput.value = totalAvailable;
+      }
+      
+      validateGeneralQuestionCount();
+    }
+
+    function promptTestConfiguration() {
+      initUnitsSelectionList();
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.add('hidden');
+      testConfigSection.classList.remove('hidden');
+    }
+
+    startConfiguredTestBtn.addEventListener('click', () => {
+      testConfigSection.classList.add('hidden');
+      startQuiz(11, 'random');
+    });
+
+    configBackBtn.addEventListener('click', () => {
+      testConfigSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // === Anti-Cheat System ===
+    const antiCheatUnitCheckbox = document.getElementById('antiCheatUnitCheckbox');
+    const antiCheatGeneralCheckbox = document.getElementById('antiCheatGeneralCheckbox');
+    let antiCheatEnabled = false;
+    let antiCheatActive = false;
+    let cheatViolationReason = null;
+    function antiCheatOnVisibility() { if (document.hidden) triggerCheatViolation('tab'); }
+    function antiCheatOnBlur() { triggerCheatViolation('blur'); }
+    function antiCheatOnFs() { if (!document.fullscreenElement) triggerCheatViolation('fs'); }
+    function startAntiCheat() {
+      if (!antiCheatEnabled || antiCheatActive) return;
+      antiCheatActive = true;
+      cheatViolationReason = null;
+      document.addEventListener('visibilitychange', antiCheatOnVisibility);
+      window.addEventListener('blur', antiCheatOnBlur);
+      document.addEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+    function stopAntiCheat() {
+      if (!antiCheatActive) return;
+      antiCheatActive = false;
+      document.removeEventListener('visibilitychange', antiCheatOnVisibility);
+      window.removeEventListener('blur', antiCheatOnBlur);
+      document.removeEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    function triggerCheatViolation(reasonKey) {
+      if (!antiCheatActive || cheatViolationReason) return;
+      cheatViolationReason = reasonKey;
+      stopAntiCheat();
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      isTimerRunning = false;
+      correctCount = 0;
+      showResults();
+    }
+    function getCheatReasonText() {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      if (cheatViolationReason === 'tab') return t.cheatReasonTab;
+      if (cheatViolationReason === 'blur') return t.cheatReasonBlur;
+      if (cheatViolationReason === 'fs') return t.cheatReasonFs;
+      return '';
+    }
+
+    // Start Quiz
+    function startQuiz(quizIdx, orderType) {
+      currentOrderType = orderType;
+      const quiz = QUIZZES[quizIdx];
+
+      if (quizIdx === 10) {
+        currentShuffleOptions = shuffleOptionsGeneralCheckbox.checked;
+        
+        // Pool questions from selected units
+        let pool = [];
+        selectedUnitsForTest.forEach(idx => {
+          if (QUIZZES[idx]) {
+            pool = pool.concat(QUIZZES[idx].questions);
+          }
+        });
+        
+        let N = pool.length;
+        const countVal = parseInt(generalQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          N = Math.min(countVal, pool.length);
+        }
+        
+        let selectedQuestions = shuffleArray(pool).slice(0, N);
+        
+        // Shuffle options if checked
+        selectedQuestions = selectedQuestions.map(q => {
+          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+        });
+
+        const selectedUnitsLabels = Array.from(selectedUnitsForTest)
+          .sort((a,b) => a - b)
+          .map(i => indexToUnitLabel[i])
+          .join(', ');
+
+        const genTestTitleEl = currentLang === 'el'
+          ? `Γενικό Τεστ (${N} ερωτήσεις - Ενότητες: ${selectedUnitsLabels})`
+          : `General Test (${N} questions - Units: ${selectedUnitsLabels})`;
+
+        QUIZZES[11] = {
+          title: genTestTitleEl,
+          questions: selectedQuestions
+        };
+        
+        activeQuestions = selectedQuestions;
+      } else {
+        currentShuffleOptions = shuffleOptionsUnitCheckbox.checked;
+        
+        let tempQuestions = (orderType === 'random') ? shuffleArray(quiz.questions) : [...quiz.questions];
+        
+        // Shuffle options if checked
+        activeQuestions = tempQuestions.map(q => {
+          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+        });
+
+        // Slice to selected count
+        let limit = activeQuestions.length;
+        const countVal = parseInt(quizQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          limit = Math.min(countVal, activeQuestions.length);
+        }
+        activeQuestions = activeQuestions.slice(0, limit);
+      }
+
+      currentQuizIndex = quizIdx;
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      correctCount = 0;
+      isAnswered = false;
+
+      cheatViolationReason = null;
+      antiCheatEnabled = (quizIdx === 10) ? antiCheatGeneralCheckbox.checked : antiCheatUnitCheckbox.checked;
+      imagesEnabled = (quizIdx === 10) ? imagesGeneralCheckbox.checked : imagesUnitCheckbox.checked;
+      glossaryEnabled = (quizIdx === 10) ? glossaryGeneralCheckbox.checked : glossaryUnitCheckbox.checked;
+
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+
+      startAntiCheat();
+
+      if (currentQuizIndex === 10) {
+        quizUnitText.textContent = currentLang === 'el' ? "ΓΕΝΙΚΟ ΤΕΣΤ" : "GENERAL TEST";
+      } else {
+        const unitNameLabel = indexToUnitLabel[currentQuizIndex];
+        quizUnitText.textContent = currentLang === 'el' ? `ΕΝΟΤΗΤΑ ${unitNameLabel}` : `UNIT ${unitNameLabel}`;
+      }
+      
+      // Countdown Timer Start Logic
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      
+      const timerEnabled = (quizIdx === 10) ? timerEnableGeneralCheckbox.checked : timerEnableUnitCheckbox.checked;
+      const durationMinutes = (quizIdx === 10) ? parseInt(timerDurationGeneralInput.value) : parseInt(timerDurationUnitInput.value);
+      
+      if (timerEnabled && durationMinutes > 0) {
+        isTimerRunning = true;
+        quizTimerEnabled = true;
+        quizTimerTotalSeconds = durationMinutes * 60;
+        timeLeftSeconds = durationMinutes * 60;
+        quizTimerText.classList.remove('hidden');
+        timerCountdown.classList.remove('timer-warning');
+        updateTimerDisplay();
+        
+        timerInterval = setInterval(() => {
+          timeLeftSeconds--;
+          updateTimerDisplay();
+          
+          if (timeLeftSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isTimerRunning = false;
+            timeIsUp();
+          }
+        }, 1000);
+      } else {
+        isTimerRunning = false;
+        quizTimerEnabled = false;
+        quizTimerText.classList.add('hidden');
+      }
+      
+      loadQuestion();
+    }
+
+    // Timer Update Display Function
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeftSeconds / 60);
+      const seconds = timeLeftSeconds % 60;
+      const formatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      timerCountdown.textContent = formatted;
+      
+      if (timeLeftSeconds < 120) { // under 2 minutes
+        timerCountdown.classList.add('timer-warning');
+      } else {
+        timerCountdown.classList.remove('timer-warning');
+      }
+    }
+
+    // Time is Up auto submit
+    function timeIsUp() {
+      const alertMsg = currentLang === 'el' 
+        ? "Ο χρόνος έληξε! Το κουίζ θα υποβληθεί αυτόματα με τις απαντήσεις που έχετε δώσει έως τώρα." 
+        : "Time's up! The quiz will be submitted automatically with the answers you have provided so far.";
+      alert(alertMsg);
+      showResults();
+    }
+
+    // Load Question
+    // === Optional question image (Wikimedia Commons) ===
+    const imagesUnitCheckbox = document.getElementById('imagesUnitCheckbox');
+    const imagesGeneralCheckbox = document.getElementById('imagesGeneralCheckbox');
+    let imagesEnabled = false;
+    const _imgMemCache = {};
+    const IMG_CACHE_KEY = 'quizImageCache';
+    function getCachedImage(query) {
+      if (query in _imgMemCache) return _imgMemCache[query];
+      try {
+        const c = JSON.parse(sessionStorage.getItem(IMG_CACHE_KEY) || '{}');
+        if (query in c) { _imgMemCache[query] = c[query]; return c[query]; }
+      } catch (e) {}
+      return undefined;
+    }
+    function setCachedImage(query, url) {
+      _imgMemCache[query] = url;
+      try {
+        const c = JSON.parse(sessionStorage.getItem(IMG_CACHE_KEY) || '{}');
+        c[query] = url;
+        sessionStorage.setItem(IMG_CACHE_KEY, JSON.stringify(c));
+      } catch (e) {}
+    }
+    async function fetchQuestionImage(query) {
+      if (!query) return null;
+      const cached = getCachedImage(query);
+      if (cached !== undefined) return cached;
+      try {
+        const apiUrl = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrlimit=1'
+          + '&gsrsearch=' + encodeURIComponent(query)
+          + '&prop=imageinfo&iiprop=url%7Cmime&iiurlwidth=800&format=json&origin=*';
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const pages = data && data.query && data.query.pages;
+        if (!pages) { setCachedImage(query, null); return null; }
+        const first = Object.values(pages)[0];
+        const info = first && first.imageinfo && first.imageinfo[0];
+        if (!info) { setCachedImage(query, null); return null; }
+        const mime = (info.mime || '').toLowerCase();
+        if (mime && !mime.startsWith('image/')) { setCachedImage(query, null); return null; }
+        const imgUrl = info.thumburl || info.url || null;
+        setCachedImage(query, imgUrl);
+        return imgUrl;
+      } catch (e) {
+        setCachedImage(query, null);
+        return null;
+      }
+    }
+    const _STOP_WORDS = new Set([
+      'the','a','an','of','to','in','on','at','by','for','with','and','or','but','not','no','is','are','was','were','be','been','being','has','have','had','do','does','did','this','that','these','those','it','its','what','which','who','how','when','where','why','can','could','would','should','may','might','will','shall','must','also','more','less','very','so','as','if','than','then','only','just','all','any','some','each','every','one','two','three','four','five','about','into','from','out','over','under','again','here','there','both','few','most','other','same','too','my','your','his','her','our','their','you','he','she','we','they','them','him','us','me','following','mainly','describes','describe','term','study','studies','among','also',
+      'ο','η','το','οι','τα','του','της','των','τον','την','τους','τις','ενας','μια','ενα','και','αν','αλλα','για','με','σε','απο','στο','στα','στη','στην','στις','στους','στον','ως','που','πως','ποιος','ποια','ποιο','ποιοι','ποιες','τι','να','θα','δεν','μη','μην','ειναι','ηταν','εχει','ειχε','σου','μου','αυτο','αυτη','αυτος','αυτοι','αυτες','αυτα','εκεινο','εκεινη','εκεινος','ολος','ολη','ολο','οτι','οπως','καθε','μεσα','μεταξυ','μονο','πιο','πολυ','λιγο','περι','κατα','προς','αναμεσα','επι','μεχρι','ακομα','ακομη','επισης','πρωτος','πρωτη','πρωτο','δευτερος','δευτερη','δευτερο','τριτος','τριτη','τριτο','τεταρτος','τεταρτη','τεταρτο','πεμπτος','πεμπτη','πεμπτο','ποιο','ποιον','ποιαν','ορος','ορο','περιγραφει','περιγραφουν','κυριως','κατα','μεταξυ','σχεση','σχεσεις','επισημες','παρακατω','ακολουθο','ακολουθα','επομενο','επομενη','αυτος','αυτη','αυτο'
+    ]);
+    function _stripAccents(s) {
+      try { return s.normalize('NFD').replace(new RegExp('[\\u0300-\\u036f]', 'g'), ''); }
+      catch (e) { return s; }
+    }
+    function deriveImageQuery(question) {
+      if (!question) return '';
+      const raw = (question.text_en && question.text_en.length > 5) ? question.text_en : (question.text || '');
+      if (!raw) return '';
+      const cleaned = _stripAccents(raw.toLowerCase()).replace(/[^a-zα-ω0-9\s]/gi, ' ');
+      const tokens = cleaned.split(/\s+/).filter(t => t.length >= 4 && !_STOP_WORDS.has(t));
+      if (tokens.length < 2) return '';
+      return tokens.slice(0, 4).join(' ');
+    }
+
+    // Generic stop-words to discard before matching (added to existing _STOP_WORDS at runtime).
+    const _EXTRA_STOPS = ['what','which','who','whose','whom','use','uses','used','using','make','makes','made','making','take','takes','took','taken','taking','give','gives','gave','given','giving','find','finds','found','finding','see','sees','saw','seen','seeing','get','gets','got','getting','need','needs','needed','needing','want','wants','wanted','wanting','help','helps','helped','helping','show','shows','showed','shown','showing','include','includes','included','including','consider','considers','considered','considering','occur','occurs','occurred','occurring','during','within','because','since','through','though','follow','follows','followed','following','among','answer','answers','correct','wrong','right','below','above','before','after','their','they','there','these','those','them','this','that','than','then','very','also','only','just','well','more','most','many','much','some','such','same','than','then','here','what','where','when','how','why','call','calls','called','calling','work','works','worked','working','say','says','said','saying','tell','tells','told','telling','know','knows','knew','known','knowing','think','thinks','thought','thinking','come','comes','came','coming','look','looks','looked','looking','seem','seems','seemed','seeming','mainly','about','into','from','over','under','again','both','each','every','other','same','too','any','our','your','their','its','will','would','should','could','may','might','must','shall'];
+    _EXTRA_STOPS.forEach(w => _STOP_WORDS.add(w));
+
+    // Tiny stemmer: enough to bridge bats↔bat, puppies↔puppy, catches↔catch
+    function _stem(w) {
+      if (!w || w.length < 4) return w;
+      if (w.length > 4 && w.endsWith('ies')) return w.slice(0, -3) + 'y';
+      if (w.length > 4 && w.endsWith('sses')) return w.slice(0, -2);
+      if (w.length > 4 && w.endsWith('es')) return w.slice(0, -2);
+      if (w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1);
+      if (w.length > 6 && w.endsWith('ing')) return w.slice(0, -3);
+      if (w.length > 5 && w.endsWith('ed')) return w.slice(0, -2);
+      return w;
+    }
+
+    async function fetchBestQuestionImage(question) {
+      if (!question) return null;
+      // English text only — Wikipedia article matching needs English titles
+      const raw = (question.text_en && question.text_en.length > 5) ? question.text_en : '';
+      if (!raw) return null;
+      const cleaned = raw.toLowerCase().replace(/[^a-z0-9\s]/gi, ' ');
+      const tokensRaw = cleaned.split(/\s+/).filter(t => t.length >= 4 && !_STOP_WORDS.has(t));
+      if (!tokensRaw.length) return null;
+      const queryTerms = tokensRaw.slice(0, 4);
+      const cacheKey = 'wiki:' + queryTerms.join(' ');
+      const cached = getCachedImage(cacheKey);
+      if (cached !== undefined) return cached;
+
+      // Wikipedia opensearch -> page-summary thumbnail. Articles are curated, so
+      // the lead image on "Bat" is a real bat photo, not a bat-themed motorway.
+      // Progressive fallback: drop the rightmost term on no result; up to 3
+      // suggested titles per attempt are probed for a thumbnail.
+      let terms = queryTerms.slice();
+      while (terms.length > 0) {
+        const searchStr = terms.join(' ');
+        try {
+          const osUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&limit=3&format=json&origin=*&search=' + encodeURIComponent(searchStr);
+          const osRes = await fetch(osUrl);
+          if (osRes.ok) {
+            const osData = await osRes.json();
+            const titles = (osData && osData[1]) || [];
+            for (const title of titles) {
+              try {
+                const sumUrl = 'https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title);
+                const sumRes = await fetch(sumUrl);
+                if (!sumRes.ok) continue;
+                const sumData = await sumRes.json();
+                const img = (sumData.thumbnail && sumData.thumbnail.source)
+                  || (sumData.originalimage && sumData.originalimage.source);
+                if (img) { setCachedImage(cacheKey, img); return img; }
+              } catch (e) {}
+            }
+          }
+        } catch (e) {}
+        if (terms.length === 1) break;
+        terms = terms.slice(0, -1);
+      }
+
+      setCachedImage(cacheKey, null);
+      return null;
+    }
+
+    async function renderQuestionImage(question) {
+      const container = document.getElementById('questionImageContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      container.style.display = 'none';
+      if (!imagesEnabled) return;
+      let url = (question && question.image) ? question.image : null;
+      if (!url && question && question.imageQuery) {
+        url = await fetchQuestionImage(question.imageQuery);
+        if (activeQuestions[currentQuestionIndex] !== question) return; // user moved on
+      } else if (!url && question) {
+        url = await fetchBestQuestionImage(question);
+        if (activeQuestions[currentQuestionIndex] !== question) return;
+      }
+      if (!url) return;
+      const img = new Image();
+      img.alt = (question.imageQuery || question.text || '').toString().slice(0, 120);
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => {
+        if (activeQuestions[currentQuestionIndex] !== question) return;
+        container.appendChild(img);
+        container.style.display = 'flex';
+      };
+      img.onerror = () => { container.innerHTML = ''; container.style.display = 'none'; };
+      img.src = url;
+    }
+
+    function loadQuestion() {
+      const q = activeQuestions[currentQuestionIndex];
+      isAnswered = false;
+      nextBtn.disabled = true;
+
+      const progressTemplate = currentLang === 'el' ? "Ερώτηση {current} από {total}" : "Question {current} of {total}";
+      progressText.textContent = progressTemplate.replace("{current}", currentQuestionIndex + 1).replace("{total}", activeQuestions.length);
+      const progressPercent = (currentQuestionIndex / activeQuestions.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+      questionTitle.textContent = qText;
+      renderQuestionImage(q);
+      optionsList.innerHTML = '';
+      
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        const markerChar = String.fromCharCode(65 + idx);
+        const optionText = currentLang === 'el' ? option : ((q.options_en && q.options_en[idx]) || option);
+        
+        btn.innerHTML = `
+          <span class="option-marker">${markerChar}</span>
+          <span>${optionText}</span>
+        `;
+        
+        btn.addEventListener('click', () => selectOption(idx, btn));
+        optionsList.appendChild(btn);
+      });
+
+      const nextBtnText = currentLang === 'el' ? "Επόμενο" : "Next";
+      const finishBtnText = currentLang === 'el' ? "Τέλος" : "Finish";
+      const isLastQuestion = (currentQuestionIndex === activeQuestions.length - 1);
+      nextBtn.innerHTML = `
+        <span>${isLastQuestion ? finishBtnText : nextBtnText}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      `;
+    }
+
+    // Select Option
+    function selectOption(optionIdx, buttonEl) {
+      if (isAnswered) return;
+      isAnswered = true;
+      userAnswers.push(optionIdx);
+      
+      const q = activeQuestions[currentQuestionIndex];
+      const correctIdx = q.correct_idx;
+      const isCorrect = (optionIdx === correctIdx);
+      
+      if (isCorrect) {
+        correctCount++;
+        buttonEl.classList.add('selected-correct');
+        playSound('correct');
+      } else {
+        buttonEl.classList.add('selected-incorrect');
+        buttonEl.classList.add('shake');
+        playSound('incorrect');
+        
+        const correctBtn = optionsList.children[correctIdx];
+        if (correctBtn) {
+          correctBtn.classList.add('correct-reveal');
+        }
+      }
+      
+      Array.from(optionsList.children).forEach(btn => {
+        btn.disabled = true;
+      });
+      
+      nextBtn.disabled = false;
+    }
+
+    // Next Question Button Click
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      
+      if (currentQuestionIndex < activeQuestions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    // === Glossary highlighting in results review ===
+    const glossaryUnitCheckbox = document.getElementById('glossaryUnitCheckbox');
+    const glossaryGeneralCheckbox = document.getElementById('glossaryGeneralCheckbox');
+    let glossaryEnabled = false;
+    const GLOSSARY = {
+      el: ["διατροφή", "θρεπτικά συστατικά", "πρωτεΐνη", "λίπος", "υδατάνθρακες", "φυτικές ίνες", "ταυρίνη", "αργινίνη", "αραχιδονικό οξύ", "βιταμίνη", "ασβέστιο", "φώσφορος", "ενέργεια", "θερμίδες", "σανό", "pellets", "τυφλοτροφία", "ουρολιθίαση", "διαβήτης", "νεφρική", "ηπατική", "οστεοαρθρίτιδα", "αλλεργία", "υδρολυμένη πρωτεΐνη", "θεοβρωμίνη", "καφεΐνη", "μεθυλοξανθίνες", "ξυλιτόλη", "τοξικό", "σαρκοφάγο", "φυτοφάγο", "παμφάγο", "εξώθερμα", "μεταβολική οστική νόσος", "κυοφορία", "απογαλακτισμός", "σκύλος", "γάτα", "κουνέλι", "τρωκτικά", "ερπετά", "ιπποειδή", "πτηνά"],
+      en: ["nutrition", "nutrients", "protein", "fat", "carbohydrates", "fiber", "taurine", "arginine", "arachidonic acid", "vitamin", "calcium", "phosphorus", "energy", "calories", "hay", "pellets", "cecotrophy", "urolithiasis", "diabetes", "renal", "hepatic", "osteoarthritis", "allergy", "hydrolyzed protein", "theobromine", "caffeine", "methylxanthines", "xylitol", "toxic", "carnivore", "herbivore", "omnivore", "ectothermic", "metabolic bone disease", "gestation", "weaning", "dog", "cat", "rabbit", "rodent", "reptile", "equine", "bird"]
+    };
+    function _escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function highlightGlossary(text, lang) {
+      if (!text || !glossaryEnabled) return text;
+      const terms = (GLOSSARY[lang] || []);
+      if (!terms.length) return text;
+      // Longest-first so multi-word phrases match before their constituent words
+      const sorted = [...terms].sort((a, b) => b.length - a.length);
+      const pattern = sorted.map(_escapeRegex).join('|');
+      // Word boundaries that work across Greek + Latin: a letter/digit MUST NOT
+      // sit immediately before or after the match (Unicode-aware via \p{L}\p{N}).
+      let re;
+      try {
+        re = new RegExp('(?<![\\p{L}\\p{N}])(' + pattern + ')(?![\\p{L}\\p{N}])', 'giu');
+      } catch (e) {
+        // Fallback for older engines without lookbehind/property escapes
+        re = new RegExp('\\b(' + pattern + ')\\b', 'gi');
+      }
+      return text.replace(re, '<span class="glossary-term">$1</span>');
+    }
+
+    // Show Results
+    function showResults() {
+      stopAntiCheat();
+      // Clear countdown interval
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      isTimerRunning = false;
+
+      if (cheatViolationReason) { correctCount = 0; }
+
+      quizSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+
+      const quiz = QUIZZES[currentQuizIndex];
+
+
+
+      const totalQuestions = activeQuestions.length;
+      const scorePercent = Math.round((correctCount / totalQuestions) * 100);
+      
+      scoreNumber.textContent = `${scorePercent}%`;
+      
+      const strokeOffset = 440 - (440 * scorePercent) / 100;
+      setTimeout(() => {
+        scoreFill.style.strokeDashoffset = strokeOffset;
+      }, 100);
+      
+      const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+      resultsQuizTitle.textContent = displayTitle;
+
+      if (cheatViolationReason) {
+        const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+        resultFeedbackTitle.textContent = t.cheatViolationTitle;
+        resultFeedbackText.textContent = t.cheatReasonPrefix + getCheatReasonText();
+      } else if (scorePercent === 100) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Άριστα! 🎉" : "Perfect! 🎉";
+        resultFeedbackText.textContent = currentLang === 'el' 
+          ? "Απαντήσατε σωστά σε όλες τις ερωτήσεις! Έχετε κατανοήσει πλήρως την ενότητα αυτή."
+          : "You answered all questions correctly! You have fully understood this unit.";
+      } else if (scorePercent >= 80) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Εξαιρετική Προσπάθεια! ✨" : "Excellent Effort! ✨";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Πρωτοφανής γνώση του αντικειμένου!`
+          : `You got ${correctCount} out of ${totalQuestions} correct answers. Outstanding knowledge of the subject!`;
+      } else if (scorePercent >= 50) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Πολύ Καλά! 👍" : "Well Done! 👍";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Έχετε καλή βάση, αλλά μπορείτε να βελτιωθείτε.`
+          : `You got ${correctCount} out of ${totalQuestions} correct answers. Good foundation, but there is room for improvement.`;
+      } else {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Χρειάζεται Μελέτη! 📚" : "Needs Study! 📚";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε μόνο ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Σας προτείνουμε να ξαναδιαβάσετε τις σημειώσεις και να δοκιμάσετε ξανά.`
+          : `You got only ${correctCount} out of ${totalQuestions} correct answers. We suggest you re-read the notes and try again.`;
+      }
+      
+      // Show time used if a timer was enabled for this quiz
+      const _rtt = document.getElementById('resultTimeText');
+      if (_rtt) {
+        if (quizTimerEnabled) {
+          const used = Math.max(0, quizTimerTotalSeconds - Math.max(0, timeLeftSeconds));
+          const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+          const lbl = currentLang === 'el' ? 'Χρόνος' : 'Time';
+          _rtt.textContent = lbl + ': ' + fmt(used) + ' / ' + fmt(quizTimerTotalSeconds);
+          _rtt.classList.remove('hidden');
+        } else {
+          _rtt.classList.add('hidden');
+        }
+      }
+
+      reviewContainer.innerHTML = '';
+      activeQuestions.forEach((q, idx) => {
+        const userChoiceIdx = userAnswers[idx];
+        const correctIdx = q.correct_idx;
+        const isUserCorrect = (userChoiceIdx === correctIdx);
+        
+        const reviewItem = document.createElement('div');
+        reviewItem.className = 'review-item';
+        
+        const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+        
+        let optionsMarkup = '';
+        q.options.forEach((opt, optIdx) => {
+          const optMarker = String.fromCharCode(65 + optIdx);
+          let optClass = 'review-opt-neutral';
+          let statusIndicator = '';
+          
+          if (optIdx === correctIdx) {
+            optClass = 'review-opt-correct';
+            statusIndicator = currentLang === 'el' ? ' (Σωστό)' : ' (Correct)';
+          } else if (userChoiceIdx !== undefined && optIdx === userChoiceIdx && !isUserCorrect) {
+            optClass = 'review-opt-incorrect';
+            statusIndicator = currentLang === 'el' ? ' (Η επιλογή σας)' : ' (Your choice)';
+          }
+          
+          const optText = currentLang === 'el' ? opt : ((q.options_en && q.options_en[optIdx]) || opt);
+          optionsMarkup += `
+            <div class="review-opt ${optClass}">
+              <span class="review-opt-marker">${optMarker}.</span>
+              <span>${highlightGlossary(optText, currentLang)}${statusIndicator}</span>
+            </div>
+          `;
+        });
+        
+        let qStatusText = '';
+        if (userChoiceIdx === undefined) {
+          qStatusText = currentLang === 'el' 
+            ? ' <span style="color: var(--error); font-size: 0.85rem; font-weight: 600;">(Δεν απαντήθηκε λόγω χρόνου)</span>'
+            : ' <span style="color: var(--error); font-size: 0.85rem; font-weight: 600;">(Not answered due to time limit)</span>';
+        }
+        
+        const escapedTitle = quiz.title.replace(/'/g, "\'");
+        const escapedQText = qText.replace(/'/g, "\'");
+        
+        const reportBtnText = currentLang === 'el' ? 'Αναφορά' : 'Report';
+        reviewItem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;">
+            <div class="review-item-q">${idx + 1}. ${highlightGlossary(qText, currentLang)}${qStatusText}</div>
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="reportQuestion('${escapedTitle}', '${idx + 1}', '${escapedQText}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <span>${reportBtnText}</span>
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${optionsMarkup}
+          </div>
+        `;
+        reviewContainer.appendChild(reviewItem);
+      });
+
+      const attemptFp = currentQuizIndex + ':' + userAnswers.join(',') + ':' + correctCount + ':' + totalQuestions;
+      if (showResults._lastFp !== attemptFp) {
+        showResults._lastFp = attemptFp;
+        recordQuizAttempt({
+          ts: Date.now(),
+          topic: 'diatrofi',
+          topicTitleEl: 'Διατροφή ζώων συντροφιάς',
+          topicTitleEn: 'Companion Animal Nutrition',
+          quizTitleEl: quiz.title,
+          quizTitleEn: (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title),
+          scorePercent: scorePercent,
+          correctCount: correctCount,
+          totalQuestions: totalQuestions
+        });
+      }
+      renderHistoryForCurrentQuiz();
+    }
+
+    const QUIZ_HISTORY_KEY = 'quizProgressHistory';
+    function loadQuizHistory() {
+      try { return JSON.parse(localStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function recordQuizAttempt(entry) {
+      const arr = loadQuizHistory();
+      arr.push(entry);
+      try { localStorage.setItem(QUIZ_HISTORY_KEY, JSON.stringify(arr)); } catch (e) {}
+    }
+    function renderHistoryForCurrentQuiz() {
+      const title = document.getElementById('historyTitle');
+      const list = document.getElementById('historyList');
+      if (!title || !list) return;
+      title.textContent = currentLang === 'el' ? 'Ιστορικό για αυτό το κουίζ' : 'History for this quiz';
+      const quiz = QUIZZES[currentQuizIndex];
+      if (!quiz) { list.innerHTML = ''; return; }
+      const entries = loadQuizHistory().filter(e => e.topic === 'diatrofi' && e.quizTitleEl === quiz.title);
+      if (!entries.length) {
+        list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9rem;">${currentLang === 'el' ? 'Δεν υπάρχει ιστορικό ακόμη.' : 'No history yet.'}</div>`;
+        return;
+      }
+      entries.sort((a, b) => b.ts - a.ts);
+      const locale = currentLang === 'el' ? 'el-GR' : 'en-US';
+      list.innerHTML = entries.map(e => {
+        const dateStr = new Date(e.ts).toLocaleString(locale);
+        return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem;">
+          <span style="color: var(--text-muted);">${dateStr}</span>
+          <span style="font-weight: 600; color: var(--text-main);">${e.correctCount}/${e.totalQuestions} &middot; ${e.scorePercent}%</span>
+        </div>`;
+      }).join('');
+    }
+
+    // Google Form individual question report redirection
+    function reportQuestion(quizTitle, unitName, questionText) {
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const questionField = "entry.86795942";
+      
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quizTitle + " - " + unitName)}&${questionField}=${encodeURIComponent(questionText)}`;
+      window.open(prefillUrl, '_blank');
+    }
+
+    // Google Form general report button click listener
+    generalReportBtn.addEventListener('click', () => {
+      const quiz = QUIZZES[currentQuizIndex];
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quiz.title)}`;
+      window.open(prefillUrl, '_blank');
+    });
+
+    // Restart Quiz
+    restartBtn.addEventListener('click', () => {
+      startQuiz(currentQuizIndex, currentOrderType);
+    });
+
+    // Go Back to Dashboard
+    backBtn.addEventListener('click', () => {
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+      initDashboard();
+    });
+
+    // Save Results as PDF
+    pdfBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Initialize Page
+    applyTheme(currentTheme);
+    applyLanguage(currentLang);
+
+    // === Custom quiz from URL parameter (from quizess.html chat bot) ===
+    // If we were navigated here with ?customQuiz=<localStorageKey>, look up the
+    // generated quiz spec, push it onto QUIZZES, and auto-start it. Any failure
+    // silently falls through to the normal dashboard.
+    (function() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const cqKey = params.get('customQuiz');
+        if (!cqKey) return;
+        const raw = localStorage.getItem(cqKey);
+        if (!raw) return;
+        const spec = JSON.parse(raw);
+        if (!spec || !Array.isArray(spec.questions) || !spec.questions.length) return;
+        QUIZZES.push({
+          title: spec.title || 'Custom Quiz',
+          filename: 'custom',
+          questions: spec.questions
+        });
+        setTimeout(function() {
+          try { startQuiz(QUIZZES.length - 1, 'original'); } catch (e) {}
+        }, 0);
+      } catch (e) {}
+    })();
+  </script>
+</body>
+</html>
