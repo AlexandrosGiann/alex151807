@@ -818,7 +818,7 @@
 <body>
   <script>
     (function() {
-      const theme = localStorage.getItem('theme') || 'dark';
+      let theme = 'dark'; try { theme = localStorage.getItem('theme') || 'dark'; } catch (e) {}
       if (theme === 'light') {
         document.body.classList.add('light-mode');
       }
@@ -1089,9 +1089,14 @@
     let selectedQuizIndexForOrder = -1;
     let currentShuffleOptions = false;
     
+    // Safe storage: Brave/Chromium can throw SecurityError on localStorage under file://
+    const safeStorage = (function(){
+      try { const k='__ls_test__'; window.safeStorage.setItem(k,'1'); window.safeStorage.removeItem(k); return window.localStorage; }
+      catch(e){ const mem={}; return { getItem:function(k){return k in mem?mem[k]:null;}, setItem:function(k,v){mem[k]=String(v);}, removeItem:function(k){delete mem[k];} }; }
+    })();
     // Theme and Language State Management
-    let currentTheme = localStorage.getItem('theme') || 'dark';
-    let currentLang = localStorage.getItem('lang') || 'el';
+    let currentTheme = safeStorage.getItem('theme') || 'dark';
+    let currentLang = safeStorage.getItem('lang') || 'el';
 
     const themeToggleBtn = document.getElementById('themeToggle');
     const themeSunIcon = document.getElementById('themeSunIcon');
@@ -1183,7 +1188,7 @@
         themeSunIcon.classList.remove('hidden');
         themeMoonIcon.classList.add('hidden');
       }
-      localStorage.setItem('theme', theme);
+      safeStorage.setItem('theme', theme);
       currentTheme = theme;
     }
 
@@ -1199,7 +1204,7 @@
         }
       });
       langToggleBtn.textContent = lang === 'el' ? 'EN' : 'EL';
-      localStorage.setItem('lang', lang);
+      safeStorage.setItem('lang', lang);
       currentLang = lang;
       
       // Update dynamic parts
@@ -1635,7 +1640,7 @@
 
     startConfiguredTestBtn.addEventListener('click', () => {
       testConfigSection.classList.add('hidden');
-      startQuiz(11, 'random');
+      startQuiz(10, 'random');
     });
 
     configBackBtn.addEventListener('click', () => {
@@ -1728,7 +1733,7 @@
           ? `Γενικό Τεστ (${N} ερωτήσεις - Ενότητες: ${selectedUnitsLabels})`
           : `General Test (${N} questions - Units: ${selectedUnitsLabels})`;
 
-        QUIZZES[11] = {
+        QUIZZES[10] = {
           title: genTestTitleEl,
           questions: selectedQuestions
         };
@@ -2257,12 +2262,12 @@
 
     const QUIZ_HISTORY_KEY = 'quizProgressHistory';
     function loadQuizHistory() {
-      try { return JSON.parse(localStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
+      try { return JSON.parse(safeStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
     }
     function recordQuizAttempt(entry) {
       const arr = loadQuizHistory();
       arr.push(entry);
-      try { localStorage.setItem(QUIZ_HISTORY_KEY, JSON.stringify(arr)); } catch (e) {}
+      try { safeStorage.setItem(QUIZ_HISTORY_KEY, JSON.stringify(arr)); } catch (e) {}
     }
     function renderHistoryForCurrentQuiz() {
       const title = document.getElementById('historyTitle');
@@ -2339,7 +2344,7 @@
         const params = new URLSearchParams(location.search);
         const cqKey = params.get('customQuiz');
         if (!cqKey) return;
-        const raw = localStorage.getItem(cqKey);
+        const raw = safeStorage.getItem(cqKey);
         if (!raw) return;
         const spec = JSON.parse(raw);
         if (!spec || !Array.isArray(spec.questions) || !spec.questions.length) return;
