@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Προσομοίωση Οδήγησης | Αλέξανδρος Γιαννάκης</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --border-color: #334155;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary: #38bdf8;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    padding: 28px 16px 60px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  .top-nav { text-align: center; margin-bottom: 18px; }
+  .top-nav a {
+    color: var(--text-muted); text-decoration: none; margin: 0 10px;
+    font-size: 0.95rem;
+  }
+  .top-nav a:hover { color: var(--primary); }
+  h1.main-title {
+    text-align: center; color: var(--primary); margin: 0 0 6px;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+  }
+  .subtitle {
+    text-align: center; color: var(--text-muted); margin: 0 auto 26px;
+    max-width: 720px; line-height: 1.6; font-size: 0.98rem;
+  }
+
+  /* Scenario picker */
+  .scenario-bar {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-bottom: 24px;
+  }
+  .scenario-btn {
+    background: var(--card-bg); color: var(--text-muted);
+    border: 1px solid var(--border-color); border-radius: 999px;
+    padding: 8px 16px; cursor: pointer; font-size: 0.88rem;
+    transition: all 0.18s ease; font-family: inherit;
+  }
+  .scenario-btn:hover { color: var(--text-main); border-color: var(--primary); }
+  .scenario-btn.active {
+    background: var(--primary); color: #06283d; border-color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* Stage */
+  .stage-card {
+    background: var(--card-bg); border: 1px solid var(--border-color);
+    border-radius: 16px; padding: 18px; margin-bottom: 18px;
+  }
+  #scene { width: 100%; height: auto; display: block; border-radius: 12px; }
+
+  .step-head {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    margin: 0 0 10px;
+  }
+  .step-counter {
+    font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--primary); font-weight: 700;
+  }
+  .step-title { margin: 0; font-size: 1.15rem; }
+  .step-body { color: var(--text-main); line-height: 1.65; margin: 0 0 12px; }
+
+  .rule-box {
+    border-left: 4px solid var(--success);
+    background: rgba(16, 185, 129, 0.08);
+    border-radius: 8px; padding: 11px 14px; margin-bottom: 10px;
+  }
+  .rule-box.warn { border-left-color: var(--warning); background: rgba(245, 158, 11, 0.08); }
+  .rule-box.stop { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.08); }
+  .rule-label {
+    font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+    font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;
+  }
+  .rule-text { margin: 0; line-height: 1.6; font-size: 0.95rem; }
+  .refs { margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); }
+  .ref-chip {
+    display: inline-block; background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.35); color: var(--primary);
+    border-radius: 6px; padding: 2px 8px; margin: 2px 4px 2px 0;
+    font-size: 0.76rem; font-family: monospace;
+  }
+
+  .controls { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+  .btn {
+    background: var(--primary); color: #06283d; border: none; border-radius: 10px;
+    padding: 10px 20px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: opacity 0.18s ease;
+  }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent; color: var(--text-muted);
+    border: 1px solid var(--border-color);
+  }
+  .btn-ghost:hover:not(:disabled) { color: var(--text-main); border-color: var(--primary); }
+  .progress-dots { display: flex; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); }
+  .dot.done { background: var(--primary); }
+
+  .note {
+    max-width: 860px; margin: 26px auto 0; text-align: center;
+    color: var(--text-muted); font-size: 0.82rem; line-height: 1.6;
+  }
+  @media (max-width: 600px) {
+    .step-title { font-size: 1.02rem; }
+    .btn { padding: 9px 14px; font-size: 0.88rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-nav">
+    <a href="index.html">Αρχική</a>
+    <a href="quizess.html">Κουίζ</a>
+    <a href="quizzes_kok.html">Ερωτήσεις Κ.Ο.Κ.</a>
+  </div>
+
+  <h1 class="main-title">Προσομοίωση Οδήγησης</h1>
+  <p class="subtitle">
+    Δες βήμα-βήμα πώς εξελίσσεται η οδήγηση σύμφωνα με τον Κ.Ο.Κ. Κάθε βήμα βασίζεται
+    στις επίσημες ερωτήσεις της Κατηγορίας Β — οι κωδικοί κάτω από κάθε βήμα δείχνουν
+    από ποιες ερωτήσεις προκύπτει ο κανόνας.
+  </p>
+
+  <div class="scenario-bar" id="scenarioBar"></div>
+
+  <div class="stage-card">
+    <svg id="scene" viewBox="0 0 800 380" role="img" aria-label="Σκηνή προσομοίωσης"></svg>
+  </div>
+
+  <div class="stage-card">
+    <div class="step-head">
+      <span class="step-counter" id="stepCounter">Βήμα 1</span>
+      <h2 class="step-title" id="stepTitle">—</h2>
+    </div>
+    <p class="step-body" id="stepBody"></p>
+    <div id="ruleSlot"></div>
+    <div class="refs" id="refSlot"></div>
+
+    <div class="controls" style="margin-top:16px;">
+      <button class="btn btn-ghost" id="prevBtn">← Προηγούμενο</button>
+      <div class="progress-dots" id="dots"></div>
+      <button class="btn" id="nextBtn">Επόμενο →</button>
+    </div>
+  </div>
+
+  <p class="note">
+    Η προσομοίωση είναι εκπαιδευτικό βοήθημα και δεν υποκαθιστά το επίσημο υλικό ή τον
+    εκπαιδευτή οδήγησης. Οι κυκλικές διασταυρώσεις δεν περιλαμβάνονται.
+  </p>
+</div>
+
+<script>
+/* ================= SVG primitives ================= */
+const NS = 'http://www.w3.org/2000/svg';
+
+function svgEl(tag, attrs, children) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in (attrs || {})) e.setAttribute(k, attrs[k]);
+  (children || []).forEach(c => e.appendChild(c));
+  return e;
+}
+function txt(x, y, s, opts) {
+  const o = opts || {};
+  const t = svgEl('text', {
+    x: x, y: y,
+    fill: o.fill || '#cbd5e1',
+    'font-size': o.size || 13,
+    'font-family': 'Segoe UI, Arial, sans-serif',
+    'font-weight': o.weight || 400,
+    'text-anchor': o.anchor || 'middle'
+  });
+  t.textContent = s;
+  return t;
+}
+
+/* Top-down car. dir: 'up'|'down'|'left'|'right' */
+function carTop(x, y, dir, color, label) {
+  const rot = { up: 0, right: 90, down: 180, left: 270 }[dir] || 0;
+  const g = svgEl('g', { transform: `translate(${x},${y}) rotate(${rot})` });
+  g.appendChild(svgEl('rect', { x: -15, y: -26, width: 30, height: 52, rx: 7,
+    fill: color, stroke: '#0b1220', 'stroke-width': 2 }));
+  // windshield (front = -y)
+  g.appendChild(svgEl('path', { d: 'M -11 -18 L 11 -18 L 8 -8 L -8 -8 Z',
+    fill: 'rgba(15,23,42,0.55)' }));
+  // rear window
+  g.appendChild(svgEl('rect', { x: -9, y: 12, width: 18, height: 7, rx: 2,
+    fill: 'rgba(15,23,42,0.4)' }));
+  // headlights
+  g.appendChild(svgEl('rect', { x: -13, y: -27, width: 7, height: 4, rx: 1.5, fill: '#fde68a' }));
+  g.appendChild(svgEl('rect', { x: 6, y: -27, width: 7, height: 4, rx: 1.5, fill: '#fde68a' }));
+  if (label) {
+    const t = txt(0, 5, label, { size: 15, weight: 700, fill: '#f8fafc' });
+    t.setAttribute('transform', `rotate(${-rot})`);
+    g.appendChild(t);
+  }
+  return g;
+}
+
+/* Traffic officer, top-down. pose: 'vertical' | 'open'. facing: 'up'|'down'|'left'|'right' */
+function officerTop(x, y, pose, facing) {
+  const rot = { up: 0, right: 90, down: 180, left: 270 }[facing] || 0;
+  const g = svgEl('g', { transform: `translate(${x},${y}) rotate(${rot})` });
+  // shoulders
+  g.appendChild(svgEl('rect', { x: -16, y: -5, width: 32, height: 11, rx: 5, fill: '#1d4ed8' }));
+  if (pose === 'vertical') {
+    // one arm raised straight up (drawn as a bright vertical bar + hand)
+    g.appendChild(svgEl('rect', { x: -3.5, y: -34, width: 7, height: 30, rx: 3.5, fill: '#f8fafc' }));
+    g.appendChild(svgEl('circle', { cx: 0, cy: -36, r: 5, fill: '#fbbf24' }));
+  } else {
+    // arms out to both sides
+    g.appendChild(svgEl('rect', { x: -34, y: -2.5, width: 68, height: 6, rx: 3, fill: '#f8fafc' }));
+    g.appendChild(svgEl('circle', { cx: -36, cy: 0.5, r: 4.5, fill: '#fbbf24' }));
+    g.appendChild(svgEl('circle', { cx: 36, cy: 0.5, r: 4.5, fill: '#fbbf24' }));
+  }
+  // head + facing nose
+  g.appendChild(svgEl('circle', { cx: 0, cy: 0, r: 9, fill: '#fbbf24', stroke: '#0b1220', 'stroke-width': 1.5 }));
+  g.appendChild(svgEl('path', { d: 'M -4 -7 L 4 -7 L 0 -13 Z', fill: '#0b1220' }));
+  return g;
+}
+
+function trafficLight(x, y, state) {
+  const g = svgEl('g', { transform: `translate(${x},${y})` });
+  g.appendChild(svgEl('rect', { x: -11, y: -30, width: 22, height: 58, rx: 5,
+    fill: '#111827', stroke: '#374151', 'stroke-width': 2 }));
+  const on = { red: '#ef4444', yellow: '#f59e0b', green: '#22c55e' };
+  const off = '#1f2937';
+  [['red', -19], ['yellow', -1], ['green', 17]].forEach(([c, cy]) => {
+    g.appendChild(svgEl('circle', { cx: 0, cy: cy, r: 7,
+      fill: state === c ? on[c] : off }));
+  });
+  return g;
+}
+
+/* ================= Scene builders ================= */
+const SCENES = {
+  /* Side view of the car - used for getting in / setting up / starting off */
+  side(p) {
+    const g = svgEl('g');
+    g.appendChild(svgEl('rect', { x: 0, y: 300, width: 800, height: 80, fill: '#1f2937' }));
+    g.appendChild(svgEl('rect', { x: 0, y: 296, width: 800, height: 5, fill: '#475569' }));
+    const cx = 400, cy = 250;
+    const car = svgEl('g', { transform: `translate(${cx},${cy})` });
+    // body
+    car.appendChild(svgEl('path', {
+      d: 'M -150 20 L -150 -6 Q -150 -14 -140 -16 L -92 -22 L -52 -54 Q -46 -60 -34 -60 L 42 -60 Q 56 -60 64 -52 L 100 -18 L 140 -12 Q 150 -10 150 0 L 150 20 Z',
+      fill: p.carColor || '#dc2626', stroke: '#0b1220', 'stroke-width': 2.5, 'stroke-linejoin': 'round'
+    }));
+    // windows
+    car.appendChild(svgEl('path', { d: 'M -44 -22 L -12 -52 L -4 -52 L -4 -22 Z', fill: 'rgba(148,197,255,0.35)' }));
+    car.appendChild(svgEl('path', { d: 'M 4 -52 L 38 -52 Q 48 -52 54 -46 L 76 -22 L 4 -22 Z', fill: 'rgba(148,197,255,0.35)' }));
+    // door (open or closed)
+    if (p.door === 'open') {
+      car.appendChild(svgEl('path', { d: 'M -46 -20 L -46 18 L -104 34 L -104 -8 Z',
+        fill: 'rgba(220,38,38,0.85)', stroke: '#0b1220', 'stroke-width': 2 }));
+    } else {
+      car.appendChild(svgEl('line', { x1: -46, y1: -20, x2: -46, y2: 18,
+        stroke: '#0b1220', 'stroke-width': 2 }));
+    }
+    // wheels
+    [[-96, 22], [86, 22]].forEach(([wx, wy]) => {
+      car.appendChild(svgEl('circle', { cx: wx, cy: wy, r: 21, fill: '#0f172a', stroke: '#334155', 'stroke-width': 3 }));
+      car.appendChild(svgEl('circle', { cx: wx, cy: wy, r: 8, fill: '#475569' }));
+    });
+    g.appendChild(car);
+
+    // driver
+    if (p.driver === 'outside') {
+      const d = svgEl('g', { transform: `translate(${cx - 168},${cy - 26})` });
+      d.appendChild(svgEl('circle', { cx: 0, cy: -24, r: 11, fill: '#fbbf24' }));
+      d.appendChild(svgEl('rect', { x: -9, y: -11, width: 18, height: 30, rx: 7, fill: '#2563eb' }));
+      d.appendChild(svgEl('rect', { x: -8, y: 19, width: 6, height: 22, rx: 3, fill: '#1e293b' }));
+      d.appendChild(svgEl('rect', { x: 2, y: 19, width: 6, height: 22, rx: 3, fill: '#1e293b' }));
+      g.appendChild(d);
+    } else if (p.driver === 'inside') {
+      const d = svgEl('g', { transform: `translate(${cx - 24},${cy - 34})` });
+      d.appendChild(svgEl('circle', { cx: 0, cy: -8, r: 10, fill: '#fbbf24' }));
+      d.appendChild(svgEl('rect', { x: -8, y: 4, width: 16, height: 22, rx: 6, fill: '#2563eb' }));
+      if (p.belt) {
+        d.appendChild(svgEl('line', { x1: -8, y1: 4, x2: 8, y2: 24,
+          stroke: '#f8fafc', 'stroke-width': 3.5, 'stroke-linecap': 'round' }));
+      }
+      g.appendChild(d);
+      // steering wheel
+      g.appendChild(svgEl('circle', { cx: cx + 6, cy: cy - 30, r: 13,
+        fill: 'none', stroke: '#0b1220', 'stroke-width': 4 }));
+    }
+    // exhaust puff when the engine runs
+    if (p.engine) {
+      [0, 1, 2].forEach(i => {
+        g.appendChild(svgEl('circle', { cx: cx + 158 + i * 16, cy: cy + 16 - i * 7,
+          r: 5 + i * 2.5, fill: 'rgba(148,163,184,' + (0.4 - i * 0.1) + ')' }));
+      });
+    }
+    if (p.caption) g.appendChild(txt(400, 348, p.caption, { size: 14, fill: '#94a3b8' }));
+    return g;
+  },
+
+  /* Top-down 4-way intersection */
+  cross(p) {
+    const g = svgEl('g');
+    g.appendChild(svgEl('rect', { x: 0, y: 0, width: 800, height: 380, fill: '#14532d', opacity: 0.25 }));
+    // roads
+    g.appendChild(svgEl('rect', { x: 0, y: 130, width: 800, height: 120, fill: '#1f2937' }));
+    g.appendChild(svgEl('rect', { x: 340, y: 0, width: 120, height: 380, fill: '#1f2937' }));
+    // dashes
+    for (let x = 10; x <= 776; x += 46) {
+      if (x > 320 && x < 470) continue;
+      g.appendChild(svgEl('rect', { x: x, y: 187, width: 24, height: 5, fill: '#facc15', opacity: 0.8 }));
+    }
+    for (let y = 10; y <= 356; y += 46) {
+      if (y > 120 && y < 262) continue;
+      g.appendChild(svgEl('rect', { x: 397, y: y, width: 5, height: 24, fill: '#facc15', opacity: 0.8 }));
+    }
+    (p.cars || []).forEach(c => g.appendChild(carTop(c.x, c.y, c.dir, c.color, c.label)));
+    if (p.officer) g.appendChild(officerTop(400, 190, p.officer.pose, p.officer.facing));
+    if (p.light) g.appendChild(trafficLight(p.lightX || 480, p.lightY || 96, p.light));
+    if (p.caption) g.appendChild(txt(400, 366, p.caption, { size: 14, fill: '#94a3b8' }));
+    return g;
+  },
+
+  /* Straight road, following another car - safe distance */
+  follow(p) {
+    const g = svgEl('g');
+    g.appendChild(svgEl('rect', { x: 0, y: 90, width: 800, height: 200, fill: '#1f2937' }));
+    g.appendChild(svgEl('rect', { x: 0, y: 86, width: 800, height: 4, fill: '#475569' }));
+    g.appendChild(svgEl('rect', { x: 0, y: 290, width: 800, height: 4, fill: '#475569' }));
+    for (let x = 10; x <= 772; x += 52) {
+      g.appendChild(svgEl('rect', { x: x, y: 188, width: 28, height: 5, fill: '#facc15', opacity: 0.75 }));
+    }
+    const lead = p.leadX == null ? 560 : p.leadX;
+    const you = p.youX == null ? 240 : p.youX;
+    g.appendChild(carTop(lead, 148, 'right', '#0ea5e9', ''));
+    g.appendChild(carTop(you, 148, 'right', '#dc2626', ''));
+    // gap arrow
+    g.appendChild(svgEl('line', { x1: you + 30, y1: 232, x2: lead - 30, y2: 232,
+      stroke: p.gapColor || '#22c55e', 'stroke-width': 3, 'stroke-dasharray': '7 5' }));
+    g.appendChild(txt((you + lead) / 2, 256, p.gapLabel || '', { size: 14, fill: p.gapColor || '#22c55e', weight: 700 }));
+    if (p.caption) g.appendChild(txt(400, 330, p.caption, { size: 14, fill: '#94a3b8' }));
+    return g;
+  },
+
+  /* Car parked on a slope */
+  slope(p) {
+    const g = svgEl('g');
+    const up = p.dir === 'up';
+    const y1 = up ? 300 : 200, y2 = up ? 200 : 300;
+    g.appendChild(svgEl('path', { d: `M 0 ${y1} L 800 ${y2} L 800 380 L 0 380 Z`, fill: '#1f2937' }));
+    g.appendChild(svgEl('line', { x1: 0, y1: y1, x2: 800, y2: y2, stroke: '#475569', 'stroke-width': 4 }));
+    const ang = up ? -7.1 : 7.1;
+    const car = svgEl('g', { transform: `translate(400,${up ? 232 : 232}) rotate(${ang})` });
+    car.appendChild(svgEl('path', {
+      d: 'M -110 14 L -110 -4 Q -110 -11 -102 -13 L -68 -17 L -38 -40 Q -34 -45 -25 -45 L 31 -45 Q 41 -45 47 -38 L 74 -13 L 103 -9 Q 110 -7 110 0 L 110 14 Z',
+      fill: '#dc2626', stroke: '#0b1220', 'stroke-width': 2.5, 'stroke-linejoin': 'round'
+    }));
+    car.appendChild(svgEl('path', { d: 'M -32 -16 L -9 -38 L -3 -38 L -3 -16 Z', fill: 'rgba(148,197,255,0.35)' }));
+    car.appendChild(svgEl('path', { d: 'M 3 -38 L 28 -38 Q 35 -38 39 -34 L 55 -16 L 3 -16 Z', fill: 'rgba(148,197,255,0.35)' }));
+    [[-70, 16], [63, 16]].forEach(([wx, wy]) => {
+      car.appendChild(svgEl('circle', { cx: wx, cy: wy, r: 16, fill: '#0f172a', stroke: '#334155', 'stroke-width': 3 }));
+    });
+    g.appendChild(car);
+    if (p.caption) g.appendChild(txt(400, 90, p.caption, { size: 15, fill: '#e2e8f0', weight: 700 }));
+    if (p.sub) g.appendChild(txt(400, 118, p.sub, { size: 13, fill: '#94a3b8' }));
+    return g;
+  },
+
+  /* Simple info panel (alcohol / abstract rules) */
+  panel(p) {
+    const g = svgEl('g');
+    g.appendChild(svgEl('rect', { x: 60, y: 60, width: 680, height: 260, rx: 18,
+      fill: '#0b1220', stroke: '#334155', 'stroke-width': 2 }));
+    (p.rows || []).forEach((r, i) => {
+      const y = 118 + i * 62;
+      g.appendChild(svgEl('rect', { x: 96, y: y - 26, width: 608, height: 46, rx: 10,
+        fill: r.color || 'rgba(56,189,248,0.1)' }));
+      g.appendChild(txt(126, y + 4, r.k, { size: 15, weight: 700, fill: '#f8fafc', anchor: 'start' }));
+      g.appendChild(txt(674, y + 4, r.v, { size: 15, weight: 700, fill: r.vColor || '#38bdf8', anchor: 'end' }));
+    });
+    if (p.caption) g.appendChild(txt(400, 94, p.caption, { size: 14, fill: '#94a3b8' }));
+    return g;
+  }
+};
+
+/* ================= Scenarios =================
+   Every rule below comes from the official Category B questions.
+   Κυκλικές διασταυρώσεις (ΔΙΑΣΤΑΥΡΩΣΕΙΣ 9 & 10) are deliberately excluded. */
+const SCENARIOS = [];
+
+SCENARIOS.push({
+  id: 'epivivasi', label: '1. Επιβίβαση',
+  steps: [
+    {
+      title: 'Πλησιάζεις το όχημα',
+      body: 'Πριν μπεις, ρίξε μια ματιά γύρω από το αυτοκίνητο: εμπόδια, παιδιά, ελαστικά. Ανοίγεις την πόρτα προσέχοντας τα οχήματα που έρχονται από πίσω.',
+      rule: { type: 'ok', label: 'Κανόνας', text: 'Ο έλεγχος πριν την επιβίβαση είναι μέρος της ασφαλούς οδήγησης — ξεκινάς πάντα με το όχημα σε γνωστή κατάσταση.' },
+      refs: ['ΟΔΗΓΟΣ 3'],
+      scene: { type: 'side', door: 'open', driver: 'outside', caption: 'Έλεγχος γύρω από το όχημα πριν την επιβίβαση' }
+    },
+    {
+      title: 'Ρυθμίζεις το κάθισμα',
+      body: 'Κάθεσαι με την πλάτη να ακουμπά στο κάθισμα. Η σωστή απόσταση είναι εκείνη που σου επιτρέπει να ακουμπάς τους καρπούς σου στο επάνω μέρος του τιμονιού και ταυτόχρονα να πατάς τον συμπλέκτη ως το τέρμα.',
+      rule: { type: 'ok', label: 'Σωστή θέση οδηγού', text: 'Καρποί στο επάνω μέρος του τιμονιού και συμπλέκτης πατημένος ως το τέρμα. Ο συμπλέκτης έχει τη μεγαλύτερη διαδρομή, οπότε με βάση αυτόν ρυθμίζεις.' },
+      refs: ['ΟΔΗΓΟΣ 3'],
+      scene: { type: 'side', door: 'closed', driver: 'inside', caption: 'Ρύθμιση καθίσματος' }
+    },
+    {
+      title: 'Ρυθμίζεις τους καθρέπτες',
+      body: 'Οι καθρέπτες ρυθμίζονται ξεχωριστά για κάθε οδηγό, ανάλογα με το ύψος του. Ακόμη και σωστά ρυθμισμένοι, αφήνουν μια περιοχή που δεν φαίνεται: τη νεκρή γωνία.',
+      rule: { type: 'warn', label: 'Νεκρή γωνία', text: 'Οι καθρέπτες δεν καλύπτουν όλη την περιοχή πίσω σου. Σε μια ορισμένη περιοχή (νεκρή γωνία) μπορεί να μη φαίνονται οχήματα που σε προσπερνούν — χρειάζεται και στροφή του κεφαλιού.' },
+      refs: ['ΟΡΓΑΝΑ 32', 'ΟΡΓΑΝΑ 41'],
+      scene: { type: 'side', door: 'closed', driver: 'inside', caption: 'Ρύθμιση καθρεπτών — προσοχή στη νεκρή γωνία' }
+    },
+    {
+      title: 'Ζώνη ασφαλείας — όλοι',
+      body: 'Δένεις ζώνη και φροντίζεις να τη φορούν όλοι, και οι επιβάτες των πίσω καθισμάτων. Τα μικρά παιδιά μεταφέρονται στο πίσω κάθισμα, σε εγκεκριμένο παιδικό κάθισμα.',
+      rule: { type: 'stop', label: 'Γιατί έχει σημασία', text: 'Επιβάτης χωρίς ζώνη στο πίσω κάθισμα δεν κινδυνεύει μόνο ο ίδιος: σε σύγκρουση εκτινάσσεται προς τα εμπρός και μπορεί να τραυματίσει σοβαρά τον οδηγό και τον συνοδηγό.' },
+      refs: ['ΟΡΓΑΝΑ 28', 'ΟΡΓΑΝΑ 29', 'ΟΡΓΑΝΑ 35', 'ΟΔΗΓΟΣ 20'],
+      scene: { type: 'side', door: 'closed', driver: 'inside', belt: true, caption: 'Ζώνη σε κάθε διαδρομή, για όλους τους επιβάτες' }
+    }
+  ]
+});
+
+SCENARIOS.push({
+  id: 'ekkinisi', label: '2. Εκκίνηση',
+  steps: [
+    {
+      title: 'Θέση χεριών στο τιμόνι',
+      body: 'Φαντάσου το τιμόνι σαν ρολόι με δείκτες. Σε ευθεία πορεία τα χέρια στέκονται εκεί που οι δείκτες θα έδειχναν «εννέα και τέταρτο» ως «δέκα και δέκα».',
+      rule: { type: 'ok', label: 'Θέση χεριών', text: 'Εννέα και τέταρτο ως δέκα και δέκα. Μέσα σε στροφή κρατάς και τα δύο χέρια στο τιμόνι — δεν αλλάζεις ταχύτητα μέσα στη στροφή.' },
+      refs: ['ΟΡΓΑΝΑ 17', 'ΣΤΡΟΦΕΣ 17'],
+      scene: { type: 'side', door: 'closed', driver: 'inside', belt: true, caption: 'Θέση χεριών «9:15 – 10:10»' }
+    },
+    {
+      title: 'Βάζεις μπροστά',
+      body: 'Με τον μοχλό στη νεκρά και το φρένο πατημένο, βάζεις μπροστά τον κινητήρα. Ελέγχεις τα όργανα και τις ενδεικτικές λυχνίες πριν κινηθείς.',
+      rule: { type: 'ok', label: 'Πριν κινηθείς', text: 'Έλεγχος οργάνων και καθρεπτών, φλας για την πρόθεσή σου, και ξεκινάς μόνο όταν ο δρόμος είναι ελεύθερος.' },
+      refs: ['ΟΡΓΑΝΑ 21', 'ΟΡΓΑΝΑ 32'],
+      scene: { type: 'side', door: 'closed', driver: 'inside', belt: true, engine: true, caption: 'Ο κινητήρας λειτουργεί — έλεγχος πριν την εκκίνηση' }
+    },
+    {
+      title: 'Σε κανονική πορεία',
+      body: 'Όταν δεν χρειάζεται συχνή αλλαγή ταχυτήτων, το αριστερό πόδι δεν ακουμπά στον συμπλέκτη.',
+      rule: { type: 'ok', label: 'Αριστερό πόδι', text: 'Μένει ακίνητο στα αριστερά του ποδομοχλού, για να μην κουράζεται και να επιστρέφει εύκολα στον συμπλέκτη.' },
+      refs: ['ΟΡΓΑΝΑ 24'],
+      scene: { type: 'side', door: 'closed', driver: 'inside', belt: true, engine: true, caption: 'Κανονική πορεία' }
+    }
+  ]
+});
+
+SCENARIOS.push({
+  id: 'fanari', label: '3. Στο φανάρι',
+  steps: [
+    {
+      title: 'Κόκκινο — περιμένεις',
+      body: 'Σταματάς πριν τη γραμμή. Όσο περιμένεις να ανάψει το πράσινο, δεν κρατάς την 1η με πατημένο συμπλέκτη.',
+      rule: { type: 'ok', label: 'Σωστός χειρισμός', text: 'Μοχλός ταχυτήτων στη «νεκρά» και πατάς τον ποδομοχλό της πέδης (φρένο). Με την 1η βαλμένη κουράζεις το αριστερό πόδι και προκαλείς άσκοπες φθορές.' },
+      refs: ['ΟΡΓΑΝΑ 21'],
+      scene: { type: 'cross', light: 'red', cars: [{ x: 400, y: 300, dir: 'up', color: '#dc2626', label: '' }], caption: 'Κόκκινο: νεκρά και φρένο' }
+    },
+    {
+      title: 'Πράσινο — ξεκινάς',
+      body: 'Με το πράσινο βάζεις 1η και ξεκινάς, αφού βεβαιωθείς ότι η διασταύρωση είναι ελεύθερη. Δεν μπαίνεις στη διασταύρωση αν κινδυνεύεις να εγκλωβιστείς μέσα της.',
+      rule: { type: 'warn', label: 'Προσοχή', text: 'Πράσινο δεν σημαίνει αυτόματα «περνάω»: αν λόγω της πυκνότητας της κυκλοφορίας θα μείνεις μέσα στη διασταύρωση, δεν εισέρχεσαι.' },
+      refs: ['ΔΙΑΣΤΑΥΡΩΣΕΙΣ 1', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 22'],
+      scene: { type: 'cross', light: 'green', cars: [{ x: 400, y: 250, dir: 'up', color: '#dc2626', label: '' }], caption: 'Πράσινο: ξεκινάς αν η διασταύρωση είναι ελεύθερη' }
+    },
+    {
+      title: 'Τι υπερισχύει;',
+      body: 'Όταν σε μια διασταύρωση δεν υπάρχει τροχονόμος και τα φανάρια λειτουργούν, τα φανάρια υπερισχύουν των πινακίδων.',
+      rule: { type: 'ok', label: 'Ιεραρχία', text: 'Τροχονόμος πάνω από φωτεινό σηματοδότη, σηματοδότης πάνω από πινακίδες, πινακίδες πάνω από τους γενικούς κανόνες.' },
+      refs: ['ΔΙΑΣΤΑΥΡΩΣΕΙΣ 22', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 98', 'ΣΗΜΑΝΣΗ 260'],
+      scene: { type: 'panel', caption: 'Σειρά ισχύος στη διασταύρωση', rows: [
+        { k: '1. Τροχονόμος', v: 'Υπερισχύει όλων', color: 'rgba(34,197,94,0.14)', vColor: '#22c55e' },
+        { k: '2. Φωτεινός σηματοδότης', v: 'Πάνω από πινακίδες', color: 'rgba(56,189,248,0.12)' },
+        { k: '3. Πινακίδες', v: 'Πάνω από γεν. κανόνες', color: 'rgba(245,158,11,0.12)', vColor: '#f59e0b' },
+        { k: '4. Γενικοί κανόνες', v: 'π.χ. προτεραιότητα', color: 'rgba(148,163,184,0.12)', vColor: '#94a3b8' }
+      ] }
+    }
+  ]
+});
+
+SCENARIOS.push({
+  id: 'troxonomos', label: '4. Τροχονόμος',
+  steps: [
+    {
+      title: 'Χέρι κατακόρυφα — σταματούν όλοι',
+      body: 'Ο τροχονόμος υψώνει το ένα χέρι κατακόρυφα. Το σήμα αφορά όλες τις κατευθύνσεις χωρίς εξαίρεση.',
+      rule: { type: 'stop', label: 'Σταματούν όλοι', text: 'Όταν ο τροχονόμος έχει το ένα χέρι του κατακόρυφα, σταματούν όλοι από όπου και αν έρχονται. Κανένα όχημα δεν περνά τη διασταύρωση.' },
+      refs: ['ΔΙΑΣΤΑΥΡΩΣΕΙΣ 26', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 49', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 65', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 82'],
+      scene: { type: 'cross', officer: { pose: 'vertical', facing: 'down' }, cars: [
+        { x: 400, y: 310, dir: 'up', color: '#dc2626', label: '1' },
+        { x: 620, y: 165, dir: 'left', color: '#dc2626', label: '2' },
+        { x: 180, y: 215, dir: 'right', color: '#dc2626', label: '3' }
+      ], caption: 'Χέρι κατακόρυφα: κανένα όχημα δεν περνά' }
+    },
+    {
+      title: 'Χέρι όχι κατακόρυφα — περνούν τα πλάγια',
+      body: 'Ο τροχονόμος έχει τα χέρια ανοιχτά στο πλάι. Τώρα η κατεύθυνση από την οποία τον βλέπεις καθορίζει τι κάνεις.',
+      rule: { type: 'ok', label: 'Ποιοι περνούν', text: 'Περνούν όσοι βρίσκονται στα πλάγια του τροχονόμου. Τα οχήματα 2 και 3 (στα πλάγια) συνεχίζουν, το όχημα 1 περιμένει.' },
+      refs: ['ΔΙΑΣΤΑΥΡΩΣΕΙΣ 38', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 69', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 80'],
+      scene: { type: 'cross', officer: { pose: 'open', facing: 'down' }, cars: [
+        { x: 400, y: 310, dir: 'up', color: '#dc2626', label: '1' },
+        { x: 620, y: 165, dir: 'left', color: '#22c55e', label: '2' },
+        { x: 180, y: 215, dir: 'right', color: '#22c55e', label: '3' }
+      ], caption: 'Πράσινα = περνούν (πλάγια), κόκκινο = περιμένει' }
+    },
+    {
+      title: 'Βλέπεις την πλάτη ή το πρόσωπό του — σταματάς',
+      body: 'Οδηγείς το κόκκινο όχημα και βλέπεις τον τροχονόμο από πίσω. Δεν είσαι στα πλάγια του, άρα δεν περνάς.',
+      rule: { type: 'stop', label: 'Σταματάς', text: 'Όταν ο τροχονόμος δεν έχει το χέρι του κατακόρυφα, σταματούν τα οχήματα που τον βλέπουν από εμπρός ή βλέπουν την πλάτη του.' },
+      refs: ['ΔΙΑΣΤΑΥΡΩΣΕΙΣ 3', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 23', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 90'],
+      scene: { type: 'cross', officer: { pose: 'open', facing: 'up' }, cars: [
+        { x: 400, y: 310, dir: 'up', color: '#dc2626', label: '1' }
+      ], caption: 'Βλέπεις την πλάτη του τροχονόμου: σταματάς' }
+    },
+    {
+      title: 'Ο τροχονόμος υπερισχύει του φαναριού',
+      body: 'Αν ο τροχονόμος ρυθμίζει την κυκλοφορία ενώ ο σηματοδότης λειτουργεί, ακολουθείς τον τροχονόμο — ακόμη και αν το φανάρι δείχνει κόκκινο.',
+      rule: { type: 'ok', label: 'Ποιον ακολουθείς', text: 'Συμμορφώνεσαι με τα σήματα του τροχονόμου. Ένα κόκκινο φανάρι δεν υπερισχύει ενός τροχονόμου, και τις υποδείξεις του τις ακολουθείς σε κάθε περίπτωση.' },
+      refs: ['ΔΙΑΣΤΑΥΡΩΣΕΙΣ 98', 'ΣΗΜΑΝΣΗ 256', 'ΣΗΜΑΝΣΗ 257', 'ΣΗΜΑΝΣΗ 260'],
+      scene: { type: 'cross', officer: { pose: 'open', facing: 'down' }, light: 'red', cars: [
+        { x: 620, y: 165, dir: 'left', color: '#22c55e', label: '2' }
+      ], caption: 'Φανάρι κόκκινο, αλλά ο τροχονόμος σε περνά' }
+    }
+  ]
+});
+
+SCENARIOS.push({
+  id: 'diastavrosi', label: '5. Διασταύρωση',
+  steps: [
+    {
+      title: 'STOP — υποχρεωτική διακοπή',
+      body: 'Το σήμα STOP σε υποχρεώνει να σταματήσεις σε κάθε περίπτωση, ακόμη και αν ο δρόμος φαίνεται ελεύθερος.',
+      rule: { type: 'stop', label: 'STOP', text: 'Σταματάς στο ύψος της πινακίδας και ξεκινάς όταν μπορείς να το πράξεις χωρίς κίνδυνο. Ισχύει ακόμη και σε θέση εκτός κόμβου.' },
+      refs: ['ΣΗΜΑΝΣΗ 1'],
+      scene: { type: 'cross', cars: [
+        { x: 400, y: 300, dir: 'up', color: '#dc2626', label: '' },
+        { x: 640, y: 165, dir: 'left', color: '#0ea5e9', label: '' }
+      ], caption: 'STOP: σταματάς πάντα, μετά ξεκινάς με ασφάλεια' }
+    },
+    {
+      title: 'Ανάποδο τρίγωνο — παραχώρηση',
+      body: 'Το ανάποδο τρίγωνο σημαίνει υποχρεωτική παραχώρηση προτεραιότητας. Δεν οδηγείς σε δρόμο με προτεραιότητα.',
+      rule: { type: 'warn', label: 'Παραχωρείς', text: 'Δίνεις προτεραιότητα στα οχήματα που βρίσκονται δεξιά και αριστερά.' },
+      refs: ['ΣΗΜΑΝΣΗ 2', 'ΣΗΜΑΝΣΗ 26'],
+      scene: { type: 'cross', cars: [
+        { x: 400, y: 300, dir: 'up', color: '#dc2626', label: '' },
+        { x: 180, y: 215, dir: 'right', color: '#22c55e', label: '' }
+      ], caption: 'Παραχωρείς προτεραιότητα δεξιά και αριστερά' }
+    },
+    {
+      title: 'Δρόμος με προτεραιότητα',
+      body: 'Όσο κινείσαι σε οδό με προτεραιότητα, οι δρόμοι που συναντάς έχουν STOP ή ανάποδο τρίγωνο. Η προσοχή όμως παραμένει.',
+      rule: { type: 'ok', label: 'Πρόβλεψη', text: 'Ακόμη κι όταν έχεις προτεραιότητα, είσαι έτοιμος να σταματήσεις — πάντα είναι πιθανή η παραβίαση της προτεραιότητάς σου. Η ουσία στην οδήγηση είναι η πρόβλεψη.' },
+      refs: ['ΣΗΜΑΝΣΗ 20', 'ΣΗΜΑΝΣΗ 34', 'ΔΙΑΣΤΑΥΡΩΣΕΙΣ 2'],
+      scene: { type: 'cross', cars: [
+        { x: 400, y: 250, dir: 'up', color: '#dc2626', label: '' },
+        { x: 640, y: 165, dir: 'left', color: '#f59e0b', label: '' }
+      ], caption: 'Έχεις προτεραιότητα — αλλά είσαι έτοιμος να σταματήσεις' }
+    }
+  ]
+});
+
+SCENARIOS.push({
+  id: 'apostasi', label: '6. Απόσταση ασφαλείας',
+  steps: [
+    {
+      title: 'Πολύ κοντά',
+      body: 'Ακολουθείς το προπορευόμενο όχημα από πολύ κοντά. Αν φρενάρει απότομα, ο χρόνος αντίδρασης δεν επαρκεί.',
+      rule: { type: 'stop', label: 'Κίνδυνος', text: 'Χωρίς επαρκή απόσταση, η ακινητοποίηση μέσα στον διαθέσιμο χώρο γίνεται αδύνατη.' },
+      refs: ['ΑΠΟΣΤΑΣΕΙΣ 2'],
+      scene: { type: 'follow', youX: 430, leadX: 560, gapColor: '#ef4444', gapLabel: 'Πολύ κοντά', caption: 'Ανεπαρκής απόσταση ασφαλείας' }
+    },
+    {
+      title: 'Σωστή απόσταση',
+      body: 'Η ελάχιστη απόσταση ασφαλείας που αφήνεις ακολουθώντας κάποιο όχημα αντιστοιχεί στον χρόνο αντιδράσεως επί δύο.',
+      rule: { type: 'ok', label: 'Ο κανόνας', text: 'Απόσταση ασφαλείας = χρόνος αντιδράσεως επί δύο. Σε ολισθηρό οδόστρωμα ή μειωμένη ορατότητα, την αυξάνεις.' },
+      refs: ['ΑΠΟΣΤΑΣΕΙΣ 2', 'ΣΗΜΑΝΣΗ 137'],
+      scene: { type: 'follow', youX: 210, leadX: 600, gapColor: '#22c55e', gapLabel: 'Χρόνος αντίδρασης × 2', caption: 'Επαρκής απόσταση ασφαλείας' }
+    }
+  ]
+});
+
+SCENARIOS.push({
+  id: 'stathmefsi', label: '7. Στάθμευση σε κλίση',
+  steps: [
+    {
+      title: 'Στάθμευση σε ανηφόρα',
+      body: 'Σταθμεύεις με το μπροστινό μέρος του οχήματος σε ανηφορική κλίση. Εκτός από το χειρόφρενο, αφήνεις και ταχύτητα.',
+      rule: { type: 'ok', label: 'Ανηφόρα', text: 'Χειρόφρενο και πρώτη ταχύτητα. Ο κινητήρας, όταν δεν λειτουργεί, συγκρατεί τους τροχούς με μεγάλη ροπή.' },
+      refs: ['ΣΤΑΣΗ 45'],
+      scene: { type: 'slope', dir: 'up', caption: 'Ανηφόρα', sub: 'Χειρόφρενο + 1η ταχύτητα' }
+    },
+    {
+      title: 'Στάθμευση σε κατηφόρα',
+      body: 'Όταν το πίσω μέρος του οχήματος βρίσκεται σε ανηφορική κλίση, το όχημα στέκεται ουσιαστικά σε κατηφόρα.',
+      rule: { type: 'ok', label: 'Κατηφόρα', text: 'Χειρόφρενο και όπισθεν.' },
+      refs: ['ΣΤΑΣΗ 47'],
+      scene: { type: 'slope', dir: 'down', caption: 'Κατηφόρα', sub: 'Χειρόφρενο + όπισθεν' }
+    }
+  ]
+});
+
+SCENARIOS.push({
+  id: 'alkool', label: '8. Αλκοόλ',
+  steps: [
+    {
+      title: 'Τα όρια',
+      body: 'Πριν καθίσεις στη θέση του οδηγού, το αλκοόλ είναι ο παράγοντας που ελέγχεις πληρέστερα: επιλέγοντας να μην πιεις.',
+      rule: { type: 'stop', label: 'Επιτρεπόμενα όρια', text: 'Στη χώρα μας, σύμφωνα με τον Κ.Ο.Κ., τα ανώτερα επιτρεπόμενα όρια είναι 0,5 γραμμάρια ανά λίτρο αίματος και 0,2 γραμμάρια ανά λίτρο αίματος για νέους οδηγούς.' },
+      refs: ['ΑΛΚΟΟΛ 6'],
+      scene: { type: 'panel', caption: 'Ανώτατα επιτρεπόμενα όρια αλκοόλ στο αίμα', rows: [
+        { k: 'Οδηγός', v: '0,5 g ανά λίτρο', color: 'rgba(245,158,11,0.14)', vColor: '#f59e0b' },
+        { k: 'Νέος οδηγός', v: '0,2 g ανά λίτρο', color: 'rgba(239,68,68,0.14)', vColor: '#ef4444' },
+        { k: 'Ασφαλέστερη επιλογή', v: 'Καθόλου αλκοόλ', color: 'rgba(34,197,94,0.14)', vColor: '#22c55e' }
+      ] }
+    }
+  ]
+});
+
+/* ================= Navigation / rendering ================= */
+let curScenario = 0, curStep = 0;
+
+const scene = document.getElementById('scene');
+const bar = document.getElementById('scenarioBar');
+const stepCounter = document.getElementById('stepCounter');
+const stepTitle = document.getElementById('stepTitle');
+const stepBody = document.getElementById('stepBody');
+const ruleSlot = document.getElementById('ruleSlot');
+const refSlot = document.getElementById('refSlot');
+const dots = document.getElementById('dots');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function buildBar() {
+  bar.innerHTML = '';
+  SCENARIOS.forEach((sc, i) => {
+    const b = document.createElement('button');
+    b.className = 'scenario-btn' + (i === curScenario ? ' active' : '');
+    b.textContent = sc.label;
+    b.addEventListener('click', () => { curScenario = i; curStep = 0; render(); });
+    bar.appendChild(b);
+  });
+}
+
+function render() {
+  const sc = SCENARIOS[curScenario];
+  const st = sc.steps[curStep];
+
+  scene.innerHTML = '';
+  scene.appendChild(svgEl('rect', { x: 0, y: 0, width: 800, height: 380, fill: '#0b1220' }));
+  const builder = SCENES[st.scene.type];
+  if (builder) scene.appendChild(builder(st.scene));
+
+  stepCounter.textContent = 'Βήμα ' + (curStep + 1) + ' από ' + sc.steps.length;
+  stepTitle.textContent = st.title;
+  stepBody.textContent = st.body;
+
+  ruleSlot.innerHTML = '';
+  if (st.rule) {
+    const cls = st.rule.type === 'stop' ? ' stop' : (st.rule.type === 'warn' ? ' warn' : '');
+    const box = document.createElement('div');
+    box.className = 'rule-box' + cls;
+    const lab = document.createElement('span');
+    lab.className = 'rule-label';
+    lab.textContent = st.rule.label;
+    const p = document.createElement('p');
+    p.className = 'rule-text';
+    p.textContent = st.rule.text;
+    box.appendChild(lab); box.appendChild(p);
+    ruleSlot.appendChild(box);
+  }
+
+  refSlot.innerHTML = '';
+  if (st.refs && st.refs.length) {
+    refSlot.appendChild(document.createTextNode('Από τις ερωτήσεις: '));
+    st.refs.forEach(r => {
+      const c = document.createElement('span');
+      c.className = 'ref-chip';
+      c.textContent = r;
+      refSlot.appendChild(c);
+    });
+  }
+
+  dots.innerHTML = '';
+  sc.steps.forEach((_, i) => {
+    const d = document.createElement('span');
+    d.className = 'dot' + (i <= curStep ? ' done' : '');
+    dots.appendChild(d);
+  });
+
+  prevBtn.disabled = (curScenario === 0 && curStep === 0);
+  const isLastOverall = (curScenario === SCENARIOS.length - 1 && curStep === sc.steps.length - 1);
+  nextBtn.disabled = isLastOverall;
+  nextBtn.textContent = (curStep === sc.steps.length - 1 && !isLastOverall)
+    ? 'Επόμενο σενάριο →' : 'Επόμενο →';
+
+  Array.from(bar.children).forEach((b, i) => b.classList.toggle('active', i === curScenario));
+}
+
+nextBtn.addEventListener('click', () => {
+  const sc = SCENARIOS[curScenario];
+  if (curStep < sc.steps.length - 1) curStep++;
+  else if (curScenario < SCENARIOS.length - 1) { curScenario++; curStep = 0; }
+  render();
+});
+prevBtn.addEventListener('click', () => {
+  if (curStep > 0) curStep--;
+  else if (curScenario > 0) { curScenario--; curStep = SCENARIOS[curScenario].steps.length - 1; }
+  render();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && !nextBtn.disabled) nextBtn.click();
+  if (e.key === 'ArrowLeft' && !prevBtn.disabled) prevBtn.click();
+});
+
+buildBar();
+render();
+</script>
+</body>
+</html>

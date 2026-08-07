@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hackviser CORE | Αλέξανδρος Γιαννάκης</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: #1e293b;
+      --card-hover: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.15);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --error: #ef4444;
+      --error-glow: rgba(239, 68, 68, 0.15);
+      --border-color: #475569;
+      --font-outfit: 'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-inter);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link.active {
+      color: var(--primary);
+      background-color: var(--primary-glow);
+    }
+
+    .page-title {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Card styling with glassmorphism */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+    }
+
+    /* Dashboard styling */
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 600px) {
+      .quiz-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .quiz-grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+    }
+
+    .quiz-card {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.1), 0 10px 10px -5px rgba(56, 189, 248, 0.04);
+      background-color: var(--card-hover);
+      border-color: var(--primary);
+    }
+
+    .unit-tag {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .quiz-card-title {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text-main);
+    }
+
+    .quiz-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Active Quiz Screen */
+    .hidden {
+      display: none !important;
+    }
+
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8 0%, #10b981 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .question-title {
+      font-family: var(--font-outfit);
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 25px;
+      color: var(--text-main);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px 20px;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-marker {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      margin-top: 1px;
+    }
+
+    .option-btn:hover:not(:disabled) .option-marker {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* State Styles for Options */
+    .option-btn.selected-correct {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-correct .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect {
+      background-color: var(--error-glow);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect .option-marker {
+      background-color: var(--error);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.correct-reveal {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+    }
+
+    .option-btn.correct-reveal .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .action-row {
+      margin-top: 30px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #000;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #7dd3fc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-main);
+    }
+
+    .order-option-btn {
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .order-option-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    }
+    #randomOrderBtn:hover {
+      background-color: var(--success-glow) !important;
+      border-color: var(--success) !important;
+      color: white !important;
+    }
+    #originalOrderBtn:hover {
+      background-color: var(--primary-glow) !important;
+      border-color: var(--primary) !important;
+      color: white !important;
+    }
+
+    /* Unit Selection for General Test */
+    .unit-selection-item {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .unit-selection-item:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+      border-color: var(--primary);
+      transform: translateX(6px);
+    }
+    .unit-selection-item.selected {
+      background-color: var(--primary-glow);
+      border-color: var(--primary);
+    }
+    .checkbox-indicator {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: transparent;
+      background-color: rgba(0,0,0,0.3);
+    }
+    .unit-selection-item.selected .checkbox-indicator {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #0b0f19;
+    }
+
+    /* Shake animation for error state */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* Timer Pulsing Animation */
+    @keyframes timerPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+    .timer-warning {
+      color: var(--error) !important;
+      animation: timerPulse 1s infinite;
+    }
+
+    .results-quiz-title {
+      font-family: var(--font-outfit);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    /* Circular Score Summary Styling */
+    .results-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .score-circle-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 15px 0;
+    }
+
+    .score-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .score-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 12;
+    }
+
+    .score-fill {
+      fill: none;
+      stroke: var(--success);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+
+    .score-text-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .score-number {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .result-feedback-title {
+      font-family: var(--font-outfit);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .result-feedback-text {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 500px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Review Area */
+    .review-section {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .review-title-text {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .review-item {
+      background-color: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .review-item-q {
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .review-opt {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .review-opt-correct {
+      background-color: rgba(16, 185, 129, 0.08);
+      border: 1px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .review-opt-incorrect {
+      background-color: rgba(239, 68, 68, 0.08);
+      border: 1px solid var(--error);
+      color: #fca5a5;
+    }
+
+    .review-opt-neutral {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .review-opt-marker {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 1px;
+    }
+
+    /* Custom audio control overlay */
+    .sound-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .sound-toggle:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .sound-toggle.muted {
+      opacity: 0.6;
+    }
+
+    /* Print styling to save beautifully as PDF */
+    @media print {
+      @page {
+        margin: 15mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection, #orderSection, #testConfigSection {
+        display: none !important;
+      }
+      .results-quiz-title {
+        color: #000000 !important;
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+      }
+      .score-label {
+        color: #475569 !important;
+      }
+      .results-card {
+        background-color: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+      .card {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      /* Ensure SVG scores look good in print */
+      .score-bg {
+        stroke: #f1f5f9 !important;
+      }
+      .score-fill {
+        stroke: #10b981 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .score-number {
+        color: #000000 !important;
+      }
+      .result-feedback-title {
+        color: #000000 !important;
+      }
+      .result-feedback-text {
+        color: #475569 !important;
+      }
+      .review-title-text {
+        color: #000000 !important;
+        border-bottom-color: #cbd5e1 !important;
+      }
+      .review-item {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .review-item-q {
+        color: #000000 !important;
+      }
+      /* Hide individual report buttons in print */
+      .review-item button {
+        display: none !important;
+      }
+      .review-opt {
+        border-width: 1px !important;
+        border-style: solid !important;
+      }
+      .review-opt-correct {
+        background-color: #f0fdf4 !important;
+        border-color: #10b981 !important;
+        color: #14532d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-incorrect {
+        background-color: #fef2f2 !important;
+        border-color: #ef4444 !important;
+        color: #7f1d1d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-neutral {
+        background-color: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #475569 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    body.light-mode {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --card-hover: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.1);
+      --success: #059669;
+      --success-glow: rgba(5, 150, 105, 0.1);
+      --error: #dc2626;
+      --error-glow: rgba(220, 38, 38, 0.1);
+      --border-color: #cbd5e1;
+    }
+
+    /* Floating controls */
+    .floating-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .control-btn:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+  </style>
+
+  <style>
+    /* Question image (Κ.Ο.Κ. διάγραμμα) - always shown when the question has one */
+    .question-image-container {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 14px 0 18px;
+    }
+    .question-image-container img {
+      max-width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: rgba(0, 0, 0, 0.12);
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .question-image-container img { max-height: 220px; }
+    }
+
+    /* Explanation shown after the question is answered */
+    .explanation-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--primary);
+      background: rgba(56, 189, 248, 0.07);
+      animation: fadeIn 0.3s ease;
+    }
+    .explanation-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .explanation-text {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    /* Glossary highlight in results review */
+    .glossary-term {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+
+</head>
+<body>
+  <script>
+    (function() {
+      let theme = 'dark'; try { theme = localStorage.getItem('theme') || 'dark'; } catch (e) {}
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+      }
+    })();
+  </script>
+
+  <!-- Floating Control Buttons -->
+  <div class="floating-controls">
+    <!-- Sound Toggle -->
+    <button id="soundToggle" class="control-btn muted" title="Ενεργοποίηση/Απενεργοποίηση Ήχου / Toggle Sound">
+      <svg id="soundOnIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+      <svg id="soundMutedIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+    </button>
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="control-btn" title="Εναλλαγή Θέματος / Toggle Theme">
+      <svg id="themeSunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="themeMoonIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    <!-- Language Toggle -->
+    <button id="langToggle" class="control-btn" title="Αλλαγή Γλώσσας / Switch Language">EN</button>
+  </div>
+
+  <header>
+    <div class="nav-bar">
+      <a href="index.html" class="nav-link" data-translate="navHome">Αρχική</a>
+      <a href="quizess.html" class="nav-link active" data-translate="navQuizzes">Κουίζ</a>
+    </div>
+    <h1 class="page-title" data-translate="courseTitle">Διατροφή ζώων συντροφιάς</h1>
+    <a href="quizess.html" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-top: -5px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" data-translate="navBackToHub">← Επιστροφή στις Θεματικές Ενότητες</a>
+  </header>
+
+  <main class="container">
+    
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection" class="quiz-grid">
+      <!-- Cards will be populated by JS -->
+    </section>
+
+    <!-- ORDER SELECTION SECTION -->
+    <section id="orderSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 30px auto; align-items: center;">
+      <h2 id="orderQuizTitle" class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Όνομα Κουίζ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 420px; margin-bottom: 10px;" data-translate="orderDesc">
+        Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+        <button id="originalOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span data-translate="btnOriginal"><span data-translate="btnOriginal">Αρχική Σειρά (Όπως στο έγγραφο)</span></span>
+        </button>
+        <button id="randomOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; border-color: var(--success); color: var(--success); width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+          <span data-translate="btnRandom"><span data-translate="btnRandom">Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)</span></span>
+        </button>
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="shuffleOptionsUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblShuffleOptions">Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
+      <!-- Countdown Timer Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="timerEnableUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+          <span data-translate="lblTimer">Ενεργοποίηση Χρονομέτρου</span>
+        </label>
+        <div id="timerDurationUnitContainer" style="display: none; align-items: center; gap: 6px;">
+          <input type="number" id="timerDurationUnitInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
+          <span data-translate="lblMinutes">λεπτά</span>
+        </div>
+      </div>
+
+      <!-- Anti-Cheat Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="antiCheatUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
+
+
+      <!-- Glossary Highlight Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="glossaryUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
+      </label>
+
+      <!-- Adjustable Size Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="quizQuestionCountInput" min="1" value="10" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="quizQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
+      
+      <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;" data-translate="btnBack">Επιστροφή</button>
+    </section>
+
+    <!-- TEST CONFIGURATION SECTION -->
+    <section id="testConfigSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 650px; margin: 30px auto; align-items: center;">
+      <h2 class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;" data-translate="configTitle">Παραμετροποίηση Γενικού Τεστ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 500px; margin-bottom: 10px;" data-translate="configDesc">
+        Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τυχαίο τεστ. Θα επιλεγούν 30 τυχαίες ερωτήσεις από τις επιλεγμένες ενότητες.
+      </p>
+      
+      <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 5px;">
+        <button id="toggleAllUnitsBtn" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem; border-color: var(--border-color); color: var(--primary);" data-translate="toggleAllUnitsSelect">
+          Επιλογή Όλων
+        </button>
+      </div>
+
+      <div id="unitsSelectionList" style="display: flex; flex-direction: column; gap: 10px; width: 100%; text-align: left;">
+        <!-- Unit items will be populated by JS -->
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 10px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="shuffleOptionsGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblShuffleOptions">Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
+      <!-- Countdown Timer Option General -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="timerEnableGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+          <span data-translate="lblTimer">Ενεργοποίηση Χρονομέτρου</span>
+        </label>
+        <div id="timerDurationGeneralContainer" style="display: none; align-items: center; gap: 6px;">
+          <input type="number" id="timerDurationGeneralInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
+          <span data-translate="lblMinutes">λεπτά</span>
+        </div>
+      </div>
+
+      <!-- Anti-Cheat Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="antiCheatGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
+
+
+      <!-- Glossary Highlight Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="glossaryGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
+      </label>
+
+      <!-- Adjustable Size Option General -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
+        <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="generalQuestionCountInput" min="1" value="30" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="generalQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
+
+      <div style="display: flex; gap: 15px; margin-top: 15px; width: 100%; justify-content: center; flex-wrap: wrap;">
+        <button id="startConfiguredTestBtn" class="btn btn-primary" style="padding: 14px 28px; font-size: 1rem;" disabled data-translate="startGeneralTestBtn">
+          Έναρξη Τεστ
+        </button>
+        <button id="configBackBtn" class="btn btn-outline" style="padding: 14px 28px; font-size: 1rem; border-color: var(--border-color); color: var(--text-muted);" data-translate="btnBack">Επιστροφή</button>
+      </div>
+    </section>
+
+    <!-- ACTIVE QUIZ SECTION -->
+    <section id="quizSection" class="card hidden">
+      <div class="progress-section">
+        <div class="progress-header">
+          <span id="quizUnitText">ΕΝΟΤΗΤΑ 1</span>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="quizTimerText" class="hidden" style="font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 5px; font-family: monospace; font-size: 1rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span id="timerCountdown">30:00</span>
+            </span>
+            <span id="progressText">Ερώτηση 1 από 10</span>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+      
+      <div id="questionContainer">
+        <h2 id="questionTitle" class="question-title">Φόρτωση ερώτησης...</h2>
+        <div id="questionImageContainer" class="question-image-container" aria-hidden="true"></div>
+        <div id="optionsList" class="options-list">
+          <!-- Options will be populated by JS -->
+        </div>
+        <div id="explanationBox" class="explanation-box hidden">
+          <div class="explanation-title">Επεξήγηση</div>
+          <p id="explanationText" class="explanation-text"></p>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="nextBtn" class="btn btn-primary" disabled>
+          <span>Επόμενο</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section id="resultsSection" class="card results-card hidden">
+      <h1 id="resultsQuizTitle" class="results-quiz-title"></h1>
+      <div class="score-circle-wrapper">
+        <svg class="score-svg" viewBox="0 0 160 160">
+          <circle class="score-bg" cx="80" cy="80" r="70"></circle>
+          <circle id="scoreFill" class="score-fill" cx="80" cy="80" r="70"></circle>
+        </svg>
+        <div class="score-text-center">
+          <div id="scoreNumber" class="score-number">0%</div>
+          <div class="score-label" data-translate="scoreLabel">Σκορ</div>
+        </div>
+      </div>
+
+      <h2 id="resultFeedbackTitle" class="result-feedback-title">Συγχαρητήρια!</h2>
+      <p id="resultFeedbackText" class="result-feedback-text">Ολοκληρώσατε το κουίζ. Δείτε τις απαντήσεις σας παρακάτω.</p>
+      <p id="resultTimeText" class="result-feedback-text hidden" style="font-weight:600; color: var(--text-muted); margin-top:2px;"></p>
+
+      <div class="button-group">
+        <button id="restartBtn" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          <span data-translate="restartBtnText">Επανάληψη</span>
+        </button>
+        <button id="backBtn" class="btn btn-outline" data-translate="backBtnText">Επιστροφή στα Κουίζ</button>
+        <button id="pdfBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span data-translate="pdfBtnText">Αποθήκευση ως PDF</span>
+        </button>
+        <button id="generalReportBtn" class="btn btn-outline" style="border-color: var(--error); color: #fca5a5;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span data-translate="generalReportBtnText">Αναφορά / Σχόλια</span>
+        </button>
+      </div>
+
+      <!-- Review Section -->
+      <div class="review-section">
+        <div id="historyBlock" style="margin-top: 10px; margin-bottom: 30px; width: 100%; text-align: left;">
+          <h3 id="historyTitle" class="review-title-text" data-translate="historyTitle" style="margin-bottom: 12px;">Ιστορικό για αυτό το κουίζ</h3>
+          <div id="historyList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+        <h3 class="review-title-text" data-translate="resultsTitle">Αναλυτικά Αποτελέσματα</h3>
+        <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 15px; text-align: left; width: 100%;">
+          <!-- Review items populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Embedded Quiz Data & Core Script -->
+  <script>
+    const QUIZZES = [{"title": "Ενότητα 1: Cyber Kill Chain και Πλαίσια Απειλών", "filename": "Hackviser CORE", "questions": [{"text": "Ποιος οργανισμός ανέπτυξε αρχικά το μοντέλο Cyber Kill Chain;", "text_en": "Which organization originally developed the Cyber Kill Chain model?", "options": ["MITRE Corporation", "Lockheed Martin", "NSA (Υπηρεσία Εθνικής Ασφάλειας)", "SANS Institute"], "options_en": ["MITRE Corporation", "Lockheed Martin", "NSA (National Security Agency)", "SANS Institute"], "correct_idx": 1, "explanation": "Η Lockheed Martin ανέπτυξε αρχικά το μοντέλο Cyber Kill Chain. Η MITRE συνδέεται με το πλαίσιο MITRE ATT&CK, ενώ η NSA και το SANS Institute δεν δημιούργησαν το Cyber Kill Chain."}, {"text": "Ποια είναι η βασική παραδοχή του Cyber Kill Chain;", "text_en": "What is the basic premise of the Cyber Kill Chain?", "options": ["Οι επιτιθέμενοι έχουν πάντα βοήθεια από μέσα.", "Η διακοπή της αλυσίδας επίθεσης σε οποιοδήποτε στάδιο αρκεί για να σταματήσει η επίθεση.", "Οι επιτιθέμενοι πρέπει πάντα να ολοκληρώνουν και τα επτά στάδια, αλλιώς θα εντοπιστούν.", "Οι αμυνόμενοι είναι πάντα ένα βήμα μπροστά από τον επιτιθέμενο."], "options_en": ["Attackers always get help from the inside.", "Breaking the attack chain at any stage is sufficient to stop the attack.", "Attackers must always complete all seven stages, otherwise they will be detected.", "Defenders are always one step ahead of the attacker."], "correct_idx": 1, "explanation": "Το μοντέλο αντιμετωπίζει μια επίθεση ως αλυσίδα αλληλεξαρτώμενων σταδίων. Αν οι αμυνόμενοι διακόψουν επιτυχώς ένα στάδιο, ο επιτιθέμενος μπορεί να εμποδιστεί από το να φτάσει στον τελικό του στόχο."}, {"text": "Σε ποιο στάδιο ο επιτιθέμενος συλλέγει παθητικές ή ενεργητικές πληροφορίες για τον στόχο;", "text_en": "Which stage is where the attacker gathers passive or active information about the target?", "options": ["Delivery (Παράδοση)", "Weaponization (Οπλοποίηση)", "Reconnaissance (Αναγνώριση)", "Exploitation (Εκμετάλλευση)"], "options_en": ["Delivery", "Weaponization", "Reconnaissance", "Exploitation"], "correct_idx": 2, "explanation": "Κατά το στάδιο Reconnaissance, ο επιτιθέμενος συλλέγει πληροφορίες για τον στόχο. Αυτό μπορεί να περιλαμβάνει παθητική έρευνα από δημόσιες πηγές ή ενεργητική αλληλεπίδραση με τα συστήματα του στόχου."}, {"text": "Ποιο από τα παρακάτω είναι παράδειγμα παθητικής αναγνώρισης (passive reconnaissance);", "text_en": "Which of the following is an example of passive reconnaissance?", "options": ["Σάρωση θυρών με το Nmap", "Αποστολή ping στον διακομιστή-στόχο", "Συλλογή ονομάτων υπαλλήλων μέσω LinkedIn", "Αποστολή payload SQL injection στον web server"], "options_en": ["Scanning ports with Nmap", "Pinging the target server", "Collecting employee names via LinkedIn", "Sending an SQL injection payload to the web server"], "correct_idx": 2, "explanation": "Η χρήση δημόσια διαθέσιμων πληροφοριών χωρίς άμεση αλληλεπίδραση με την υποδομή του στόχου είναι παθητική αναγνώριση. Η σάρωση θυρών και το ping στέλνουν κίνηση προς τον στόχο και συνεπώς αποτελούν ενεργητική αναγνώριση."}, {"text": "Ποιο από τα παρακάτω ΔΕΝ είναι μέθοδος παράδοσης (delivery);", "text_en": "Which of the following is NOT a delivery method?", "options": ["Αποστολή phishing email", "Τοποθέτηση κακόβουλου USB στην είσοδο του γραφείου", "Εγκατάσταση backdoor στο σύστημα-στόχο", "Οργάνωση επίθεσης watering-hole"], "options_en": ["Sending a phishing email", "Leaving a malicious USB at the office entrance", "Installing a backdoor on the target system", "Organizing a watering-hole attack"], "correct_idx": 2, "explanation": "Η εγκατάσταση backdoor ανήκει στο στάδιο Installation. Τα phishing emails, οι κακόβουλες συσκευές USB και οι επιθέσεις watering-hole μπορούν όλα να χρησιμοποιηθούν για την παράδοση κακόβουλου περιεχομένου σε έναν στόχο."}, {"text": "Ποιο από τα παρακάτω είναι παράδειγμα εκμετάλλευσης (exploitation);", "text_en": "Which of the following is an example of exploitation?", "options": ["Αναζήτηση ανοιχτών καμερών με το Shodan", "Άντληση δεδομένων από τη βάση δεδομένων με SQL injection", "Δημιουργία payload με το msfvenom", "Αποστολή email στον χρήστη-στόχο"], "options_en": ["Searching for open cameras with Shodan", "Pulling data from the database with SQL injection", "Creating a payload with msfvenom", "Sending an email to the target user"], "correct_idx": 1, "explanation": "Το SQL injection εκμεταλλεύεται αδυναμίες στον τρόπο με τον οποίο μια εφαρμογή επεξεργάζεται είσοδο προς τη βάση δεδομένων. Οι αναζητήσεις στο Shodan είναι γενικά reconnaissance, η δημιουργία payload είναι weaponization και η αποστολή email είναι delivery."}, {"text": "Ποια από τις παρακάτω είναι αποτελεσματική μέθοδος για τον εντοπισμό του σταδίου εγκατάστασης (installation);", "text_en": "Which of the following is an effective method for detecting the installation stage?", "options": ["File Integrity Monitoring (FIM)", "Σάρωση θυρών (port scanning)", "Ερώτημα WHOIS", "Φίλτρο ανεπιθύμητης αλληλογραφίας (spam filter)"], "options_en": ["File Integrity Monitoring (FIM)", "Port scanning", "WHOIS query", "Spam filter"], "correct_idx": 0, "explanation": "Το FIM εντοπίζει μη αναμενόμενη δημιουργία, διαγραφή ή τροποποίηση αρχείων. Αυτές οι αλλαγές μπορεί να υποδεικνύουν ότι έχει εγκατασταθεί κακόβουλο λογισμικό, backdoor ή άλλος μηχανισμός διατήρησης πρόσβασης (persistence)."}, {"text": "Ποια είναι η κύρια χρήση της τεχνικής DNS tunneling;", "text_en": "What is the primary use of the DNS tunneling technique?", "options": ["Σάρωση θυρών", "Δημιουργία επικοινωνίας command-and-control ή εξαγωγή δεδομένων παρακάμπτοντας τους περιορισμούς του firewall", "Σπάσιμο κωδικών πρόσβασης", "Εκτέλεση επίθεσης άρνησης υπηρεσίας (denial-of-service)"], "options_en": ["Port scanning", "Establishing command-and-control communication or exfiltrating data by bypassing firewall restrictions", "Cracking passwords", "Launching a denial-of-service attack"], "correct_idx": 1, "explanation": "Το DNS tunneling κρύβει εντολές ή δεδομένα μέσα σε ερωτήματα και απαντήσεις DNS. Επειδή η κίνηση DNS συνήθως επιτρέπεται μέσα στα δίκτυα, οι επιτιθέμενοι μπορεί να την καταχραστούν για command and control ή για εξαγωγή δεδομένων."}, {"text": "Ποια πληροφορία κεφαλίδας (header) ΔΕΝ χρησιμοποιείται πρωτίστως για να διαπιστωθεί αν ο αποστολέας ενός email είναι αυθεντικός;", "text_en": "Which header information is NOT primarily used to determine whether an email sender is authentic?", "options": ["SPF", "DKIM", "DMARC", "Content-Type"], "options_en": ["SPF", "DKIM", "DMARC", "Content-Type"], "correct_idx": 3, "explanation": "Τα SPF, DKIM και DMARC είναι μηχανισμοί ταυτοποίησης email. Το Content-Type περιγράφει τη μορφή του σώματος ή των συνημμένων ενός email και δεν πιστοποιεί τον αποστολέα. Μπορεί ωστόσο να είναι χρήσιμο σε μια ευρύτερη εγκληματολογική έρευνα."}, {"text": "Ποια είναι η κύρια διαφορά μεταξύ του MITRE ATT&CK και του Cyber Kill Chain;", "text_en": "What is the main difference between MITRE ATT&CK and the Cyber Kill Chain?", "options": ["Το Cyber Kill Chain αφορά μόνο Windows, ενώ το ATT&CK μόνο Linux.", "Το Cyber Kill Chain προσφέρει μια υψηλού επιπέδου, διαδοχική διαδικασία, ενώ το ATT&CK εστιάζει σε τεχνικές και συμπεριφορικές λεπτομέρειες.", "Το Cyber Kill Chain είναι νεότερο, ενώ το ATT&CK παλαιότερο.", "Το ATT&CK αφορά μόνο την άμυνα, ενώ το Cyber Kill Chain μόνο την επίθεση."], "options_en": ["The Cyber Kill Chain is only for Windows, while ATT&CK is only for Linux.", "The Cyber Kill Chain offers a high-level, sequential process, while ATT&CK focuses on technical and behavioral details.", "The Cyber Kill Chain is newer, while ATT&CK is older.", "ATT&CK is only for defense, while the Cyber Kill Chain is only for attack."], "correct_idx": 1, "explanation": "Το Cyber Kill Chain οργανώνει μια εισβολή σε επτά ευρέα, κατά κύριο λόγο διαδοχικά στάδια. Το MITRE ATT&CK παρέχει μια πιο λεπτομερή βάση γνώσης τακτικών, τεχνικών και υπο-τεχνικών του αντιπάλου και δεν περιορίζεται σε μία γραμμική ακολουθία."}]}];
+
+    const COURSE_NAME = "Hackviser CORE";
+    const indexToUnitLabel = ["1"];
+
+    // State Variables
+    let currentQuizIndex = -1;
+    let currentQuestionIndex = 0;
+    let userAnswers = []; // Store indices of user's chosen options
+    let correctCount = 0;
+    let isAnswered = false;
+    let soundEnabled = false; // Default off, user can toggle on
+    let currentOrderType = 'original'; // 'original' or 'random'
+    let activeQuestions = []; // Array of active questions (original order or shuffled)
+    let selectedQuizIndexForOrder = -1;
+    let currentShuffleOptions = false;
+    
+    // Safe storage: Brave/Chromium can throw SecurityError on localStorage under file://
+    const safeStorage = (function(){
+      try { const k='__ls_test__'; window.safeStorage.setItem(k,'1'); window.safeStorage.removeItem(k); return window.localStorage; }
+      catch(e){ const mem={}; return { getItem:function(k){return k in mem?mem[k]:null;}, setItem:function(k,v){mem[k]=String(v);}, removeItem:function(k){delete mem[k];} }; }
+    })();
+    // Theme and Language State Management
+    let currentTheme = safeStorage.getItem('theme') || 'dark';
+    let currentLang = safeStorage.getItem('lang') || 'el';
+
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeSunIcon = document.getElementById('themeSunIcon');
+    const themeMoonIcon = document.getElementById('themeMoonIcon');
+    const langToggleBtn = document.getElementById('langToggle');
+
+    // Language configuration
+    const TRANSLATIONS = {
+      el: {
+        navHome: "Αρχική",
+        navQuizzes: "Κουίζ",
+        courseTitle: "Διατροφή ζώων συντροφιάς",
+        navBackToHub: "← Επιστροφή στις Θεματικές Ενότητες",
+        orderDesc: "Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:",
+        btnOriginal: "Αρχική Σειρά (Όπως στο έγγραφο)",
+        btnRandom: "Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)",
+        lblShuffleOptions: "Ανακάτεμα επιλογών απάντησης (A, B, C, D)",
+        lblTimer: "Ενεργοποίηση Χρονομέτρου",
+        lblAntiCheat: "Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης (anti-cheat)",
+        lblImages: "Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)",
+        lblGlossary: "Χρωματισμός όρων-κλειδιών στα αποτελέσματα",
+        cheatViolationTitle: "Ακυρώθηκε λόγω παραβίασης",
+        cheatReasonPrefix: "Λόγος: ",
+        cheatReasonTab: "Αλλαγή καρτέλας ή ελαχιστοποίηση παραθύρου",
+        cheatReasonBlur: "Απώλεια εστίασης παραθύρου",
+        cheatReasonFs: "Έξοδος από πλήρη οθόνη",
+        lblMinutes: "λεπτά",
+        lblQuestionsCount: "Αριθμός Ερωτήσεων:",
+        btnBack: "Επιστροφή",
+        configTitle: "Παραμετροποίηση Γενικού Τεστ",
+        configDesc: "Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τυχαίο τεστ. Θα επιλεγούν 30 τυχαίες ερωτήσεις από τις επιλεγμένες ενότητες.",
+        toggleAllUnitsSelect: "Επιλογή Όλων",
+        toggleAllUnitsDeselect: "Αποεπιλογή Όλων",
+        startGeneralTestBtn: "Έναρξη Τεστ",
+        scoreLabel: "Σκορ",
+        restartBtnText: "Επανάληψη",
+        backBtnText: "Επιστροφή στα Κουίζ",
+        pdfBtnText: "Αποθήκευση ως PDF",
+        generalReportBtnText: "Αναφορά / Σχόλια",
+        resultsTitle: "Αναλυτικά Αποτελέσματα"
+      },
+      en: {
+        navHome: "Home",
+        navQuizzes: "Quizzes",
+        courseTitle: "Companion Animal Nutrition",
+        navBackToHub: "← Back to Thematic Units",
+        orderDesc: "Select the order in which you want the quiz questions to appear:",
+        btnOriginal: "Original Order (As in the document)",
+        btnRandom: "Random Order (Shuffled questions)",
+        lblShuffleOptions: "Shuffle answer choices (A, B, C, D)",
+        lblTimer: "Enable Timer",
+        lblAntiCheat: "Enable anti-cheat detection",
+        lblImages: "Show question images (Wikimedia Commons)",
+        lblGlossary: "Highlight key terms in results",
+        cheatViolationTitle: "Invalidated due to violation",
+        cheatReasonPrefix: "Reason: ",
+        cheatReasonTab: "Tab switch or window minimized",
+        cheatReasonBlur: "Window focus loss",
+        cheatReasonFs: "Exited fullscreen",
+        lblMinutes: "minutes",
+        lblQuestionsCount: "Number of Questions:",
+        btnBack: "Back",
+        configTitle: "General Test Configuration",
+        configDesc: "Select which units to include in the general test. A total of 30 random questions will be selected from the chosen units.",
+        toggleAllUnitsSelect: "Select All",
+        toggleAllUnitsDeselect: "Deselect All",
+        startGeneralTestBtn: "Start Test",
+        scoreLabel: "Score",
+        restartBtnText: "Retry",
+        backBtnText: "Back to Quizzes",
+        pdfBtnText: "Save as PDF",
+        generalReportBtnText: "Report / Feedback",
+        resultsTitle: "Detailed Results"
+      }
+    };
+
+    const TITLE_TRANSLATIONS = {"en": {"Ενότητα 1: Cyber Kill Chain και Πλαίσια Απειλών": "Unit 1: Cyber Kill Chain & Threat Frameworks"}};
+
+    function applyTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        themeSunIcon.classList.add('hidden');
+        themeMoonIcon.classList.remove('hidden');
+      } else {
+        document.body.classList.remove('light-mode');
+        themeSunIcon.classList.remove('hidden');
+        themeMoonIcon.classList.add('hidden');
+      }
+      safeStorage.setItem('theme', theme);
+      currentTheme = theme;
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    function applyLanguage(lang) {
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          el.textContent = TRANSLATIONS[lang][key];
+        }
+      });
+      langToggleBtn.textContent = lang === 'el' ? 'EN' : 'EL';
+      safeStorage.setItem('lang', lang);
+      currentLang = lang;
+      
+      // Update dynamic parts
+      initDashboard();
+      if (currentQuizIndex !== -1) {
+        const progressTemplate = currentLang === 'el' ? "Ερώτηση {current} από {total}" : "Question {current} of {total}";
+        progressText.textContent = progressTemplate.replace("{current}", currentQuestionIndex + 1).replace("{total}", activeQuestions.length);
+        
+        const nextBtnText = currentLang === 'el' ? "Επόμενο" : "Next";
+        const finishBtnText = currentLang === 'el' ? "Τέλος" : "Finish";
+        const isLastQuestion = (currentQuestionIndex === activeQuestions.length - 1);
+        nextBtn.innerHTML = `
+          <span>${isLastQuestion ? finishBtnText : nextBtnText}</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        `;
+      }
+      if (currentQuizIndex !== -1 && !quizSection.classList.contains('hidden')) {
+        const q = activeQuestions[currentQuestionIndex];
+        const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+        questionTitle.textContent = qText;
+        Array.from(optionsList.children).forEach((btn, idx) => {
+          const option = q.options[idx];
+          const optionText = currentLang === 'el' ? option : ((q.options_en && q.options_en[idx]) || option);
+          const textSpan = btn.querySelector('span:not(.option-marker)');
+          if (textSpan) {
+            textSpan.textContent = optionText;
+          }
+        });
+        
+        // Update quizUnitText
+        if (currentQuizIndex === 1) {
+          quizUnitText.textContent = currentLang === 'el' ? "ΓΕΝΙΚΟ ΤΕΣΤ" : "GENERAL TEST";
+        } else {
+          const unitNameLabel = indexToUnitLabel[currentQuizIndex];
+          quizUnitText.textContent = currentLang === 'el' ? `ΕΝΟΤΗΤΑ ${unitNameLabel}` : `UNIT ${unitNameLabel}`;
+        }
+      }
+      if (selectedQuizIndexForOrder !== -1 && !orderSection.classList.contains('hidden')) {
+        const quiz = QUIZZES[selectedQuizIndexForOrder];
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        orderQuizTitle.textContent = displayTitle;
+      }
+      if (!testConfigSection.classList.contains('hidden')) {
+        initUnitsSelectionList();
+      }
+      if (!resultsSection.classList.contains('hidden')) {
+        showResults();
+      }
+      updateStartBtnState();
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      applyLanguage(currentLang === 'el' ? 'en' : 'el');
+    });
+    
+    // Timer Variables
+    let timerInterval = null;
+    let timeLeftSeconds = 0;
+    let isTimerRunning = false;
+    let quizTimerEnabled = false;
+    let quizTimerTotalSeconds = 0;
+
+    // Sound Synthesis (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      if (!soundEnabled) return;
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      const now = audioCtx.currentTime;
+      
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.12, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === 'incorrect') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(146.83, now); // D3
+        osc.frequency.linearRampToValueAtTime(98.00, now + 0.25); // G2
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    }
+
+    // Elements
+    const dashboardSection = document.getElementById('dashboardSection');
+    const quizSection = document.getElementById('quizSection');
+    const resultsSection = document.getElementById('resultsSection');
+    const orderSection = document.getElementById('orderSection');
+    const orderQuizTitle = document.getElementById('orderQuizTitle');
+    const originalOrderBtn = document.getElementById('originalOrderBtn');
+    const randomOrderBtn = document.getElementById('randomOrderBtn');
+    const orderBackBtn = document.getElementById('orderBackBtn');
+    const testConfigSection = document.getElementById('testConfigSection');
+    const toggleAllUnitsBtn = document.getElementById('toggleAllUnitsBtn');
+    const unitsSelectionList = document.getElementById('unitsSelectionList');
+    const startConfiguredTestBtn = document.getElementById('startConfiguredTestBtn');
+    const configBackBtn = document.getElementById('configBackBtn');
+    const shuffleOptionsUnitCheckbox = document.getElementById('shuffleOptionsUnitCheckbox');
+    const shuffleOptionsGeneralCheckbox = document.getElementById('shuffleOptionsGeneralCheckbox');
+    
+    // Timer DOM references
+    const timerEnableUnitCheckbox = document.getElementById('timerEnableUnitCheckbox');
+    const timerDurationUnitContainer = document.getElementById('timerDurationUnitContainer');
+    const timerDurationUnitInput = document.getElementById('timerDurationUnitInput');
+    const timerEnableGeneralCheckbox = document.getElementById('timerEnableGeneralCheckbox');
+    const timerDurationGeneralContainer = document.getElementById('timerDurationGeneralContainer');
+    const timerDurationGeneralInput = document.getElementById('timerDurationGeneralInput');
+    const quizTimerText = document.getElementById('quizTimerText');
+    const timerCountdown = document.getElementById('timerCountdown');
+    const generalReportBtn = document.getElementById('generalReportBtn');
+    const quizQuestionCountInput = document.getElementById('quizQuestionCountInput');
+    const quizQuestionCountMaxLabel = document.getElementById('quizQuestionCountMaxLabel');
+    const generalQuestionCountInput = document.getElementById('generalQuestionCountInput');
+    const generalQuestionCountMaxLabel = document.getElementById('generalQuestionCountMaxLabel');
+    
+    const quizUnitText = document.getElementById('quizUnitText');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    
+    const questionTitle = document.getElementById('questionTitle');
+    const optionsList = document.getElementById('optionsList');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    const scoreNumber = document.getElementById('scoreNumber');
+    const scoreFill = document.getElementById('scoreFill');
+    const resultFeedbackTitle = document.getElementById('resultFeedbackTitle');
+    const resultFeedbackText = document.getElementById('resultFeedbackText');
+    const reviewContainer = document.getElementById('reviewContainer');
+    const resultsQuizTitle = document.getElementById('resultsQuizTitle');
+    
+    const restartBtn = document.getElementById('restartBtn');
+    const backBtn = document.getElementById('backBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
+    const soundToggle = document.getElementById('soundToggle');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundMutedIcon = document.getElementById('soundMutedIcon');
+
+    // Shuffle Helper (Fisher-Yates)
+    function shuffleArray(array) {
+      let shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Shuffle Options Helper
+    function shuffleQuestionOptions(question) {
+      let optionsWithIndices = question.options.map((opt, idx) => ({
+        text: opt,
+        isCorrect: (idx === question.correct_idx)
+      }));
+      let shuffled = shuffleArray(optionsWithIndices);
+      let newOptions = shuffled.map(item => item.text);
+      let newCorrectIdx = shuffled.findIndex(item => item.isCorrect);
+      return {
+        text: question.text,
+        options: newOptions,
+        correct_idx: newCorrectIdx
+      };
+    }
+
+    // Initialize Dashboard
+    function initDashboard() {
+      dashboardSection.innerHTML = '';
+      
+      QUIZZES.slice(0, 1).forEach((quiz, index) => {
+        const card = document.createElement('div');
+        card.className = 'card quiz-card';
+        card.addEventListener('click', () => promptOrderSelection(index));
+        
+        let unitText = "";
+        if (currentLang === 'el') {
+          unitText = `Ενότητα ${indexToUnitLabel[index]}`;
+        } else {
+          unitText = `Unit ${indexToUnitLabel[index]}`;
+        }
+        
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        const questionsText = currentLang === 'el' ? 'Ερωτήσεις' : 'Questions';
+
+        card.innerHTML = `
+          <div>
+            <span class="unit-tag">${unitText}</span>
+            <h3 class="quiz-card-title">${displayTitle}</h3>
+          </div>
+          <div class="quiz-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>${quiz.questions.length} ${questionsText}</span>
+          </div>
+        `;
+        dashboardSection.appendChild(card);
+      });
+
+      // Add General Test Card (takes index 1)
+      const card = document.createElement('div');
+      card.className = 'card quiz-card';
+      card.style.borderColor = 'var(--success)';
+      card.style.boxShadow = '0 10px 25px -5px rgba(16, 185, 129, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.3)';
+      card.addEventListener('click', () => promptTestConfiguration());
+      
+      const genTitle = currentLang === 'el' ? 'Γενικό Τεστ (30 τυχαίες ερωτήσεις)' : 'General Test (30 random questions)';
+      const genTag = currentLang === 'el' ? 'Γενικό Τεστ' : 'General Test';
+      const genMeta = currentLang === 'el' ? 'Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τεστ' : 'Select which units to include in the test';
+
+      card.innerHTML = `
+        <div>
+          <span class="unit-tag" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">${genTag}</span>
+          <h3 class="quiz-card-title">${genTitle}</h3>
+        </div>
+        <div class="quiz-meta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>${genMeta}</span>
+        </div>
+      `;
+      dashboardSection.appendChild(card);
+    }
+
+    // Sound toggle function
+    soundToggle.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) {
+        soundToggle.classList.remove('muted');
+        soundOnIcon.classList.remove('hidden');
+        soundMutedIcon.classList.add('hidden');
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } else {
+        soundToggle.classList.add('muted');
+        soundOnIcon.classList.add('hidden');
+        soundMutedIcon.classList.remove('hidden');
+      }
+    });
+
+    // Timer Toggles listeners
+    timerEnableUnitCheckbox.addEventListener('change', () => {
+      timerDurationUnitContainer.style.display = timerEnableUnitCheckbox.checked ? 'flex' : 'none';
+    });
+    timerEnableGeneralCheckbox.addEventListener('change', () => {
+      timerDurationGeneralContainer.style.display = timerEnableGeneralCheckbox.checked ? 'flex' : 'none';
+    });
+
+    // Order Selection Logic
+    function promptOrderSelection(quizIdx) {
+      selectedQuizIndexForOrder = quizIdx;
+      const quiz = QUIZZES[quizIdx];
+      const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+      orderQuizTitle.textContent = displayTitle;
+      
+      const totalQuestions = quiz.questions.length;
+      quizQuestionCountInput.max = totalQuestions;
+      quizQuestionCountInput.value = totalQuestions;
+      quizQuestionCountMaxLabel.textContent = currentLang === 'el' ? `(Μέγιστο: ${totalQuestions})` : `(Maximum: ${totalQuestions})`;
+      
+      validateQuizQuestionCount();
+
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.remove('hidden');
+    }
+
+    originalOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'original');
+    });
+
+    randomOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'random');
+    });
+
+    orderBackBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // Custom General Test Configuration Selection
+    let selectedUnitsForTest = new Set([0]); // Default all selected
+    
+    function initUnitsSelectionList() {
+      const listContainer = document.getElementById('unitsSelectionList');
+      listContainer.innerHTML = '';
+      
+      QUIZZES.slice(0, 1).forEach((quiz, index) => {
+        const item = document.createElement('div');
+        item.className = 'unit-selection-item' + (selectedUnitsForTest.has(index) ? ' selected' : '');
+        
+        let unitName = "";
+        if (currentLang === 'el') {
+          unitName = `Ενότητα ${indexToUnitLabel[index]}`;
+        } else {
+          unitName = `Unit ${indexToUnitLabel[index]}`;
+        }
+
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        const shortTitle = displayTitle
+          .replace(/Ενότητα \d+:\s*/, "")
+          .replace(/Unit \d+:\s*/, "");
+
+        const questionsText = currentLang === 'el' ? 'ερωτήσεις' : 'questions';
+
+        item.innerHTML = `
+          <div>
+            <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-main); margin-bottom: 2px;">${unitName}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); max-width: 480px; line-height: 1.4;">${shortTitle} (${quiz.questions.length} ${questionsText})</div>
+          </div>
+          <div class="checkbox-indicator">${selectedUnitsForTest.has(index) ? '✔' : ''}</div>
+        `;
+        
+        item.addEventListener('click', () => {
+          if (selectedUnitsForTest.has(index)) {
+            selectedUnitsForTest.delete(index);
+            item.classList.remove('selected');
+            item.querySelector('.checkbox-indicator').textContent = '';
+          } else {
+            selectedUnitsForTest.add(index);
+            item.classList.add('selected');
+            item.querySelector('.checkbox-indicator').textContent = '✔';
+          }
+          updateStartBtnState();
+        });
+        
+        listContainer.appendChild(item);
+      });
+      updateStartBtnState();
+    }
+    
+    function updateStartBtnState() {
+      if (selectedUnitsForTest.size === 1) {
+        toggleAllUnitsBtn.textContent = currentLang === 'el' ? 'Αποεπιλογή Όλων' : 'Deselect All';
+        toggleAllUnitsBtn.style.color = 'var(--error)';
+      } else {
+        toggleAllUnitsBtn.textContent = currentLang === 'el' ? 'Επιλογή Όλων' : 'Select All';
+        toggleAllUnitsBtn.style.color = 'var(--primary)';
+      }
+      
+      updateGeneralQuestionCountInput();
+    }
+    
+    toggleAllUnitsBtn.addEventListener('click', () => {
+      if (selectedUnitsForTest.size === 1) {
+        selectedUnitsForTest.clear();
+      } else {
+        selectedUnitsForTest = new Set([0]);
+      }
+      initUnitsSelectionList();
+    });
+
+    function validateQuizQuestionCount() {
+      const val = parseInt(quizQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1;
+      originalOrderBtn.disabled = !isValid;
+      randomOrderBtn.disabled = !isValid;
+    }
+    quizQuestionCountInput.addEventListener('input', validateQuizQuestionCount);
+    quizQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(quizQuestionCountInput.value);
+      const maxQ = parseInt(quizQuestionCountInput.max) || 1;
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > maxQ) val = maxQ;
+      quizQuestionCountInput.value = val;
+      validateQuizQuestionCount();
+    });
+
+    function validateGeneralQuestionCount() {
+      const val = parseInt(generalQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1 && selectedUnitsForTest.size > 0;
+      startConfiguredTestBtn.disabled = !isValid;
+    }
+    generalQuestionCountInput.addEventListener('input', validateGeneralQuestionCount);
+    generalQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(generalQuestionCountInput.value);
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > totalAvailable) val = totalAvailable;
+      generalQuestionCountInput.value = val;
+      validateGeneralQuestionCount();
+    });
+
+    function updateGeneralQuestionCountInput() {
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      
+      generalQuestionCountInput.max = totalAvailable;
+      generalQuestionCountMaxLabel.textContent = currentLang === 'el' ? `(Μέγιστο: ${totalAvailable})` : `(Maximum: ${totalAvailable})`;
+      
+      let currentVal = parseInt(generalQuestionCountInput.value);
+      if (currentVal > totalAvailable) {
+        generalQuestionCountInput.value = totalAvailable;
+      }
+      
+      validateGeneralQuestionCount();
+    }
+
+    function promptTestConfiguration() {
+      initUnitsSelectionList();
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.add('hidden');
+      testConfigSection.classList.remove('hidden');
+    }
+
+    startConfiguredTestBtn.addEventListener('click', () => {
+      testConfigSection.classList.add('hidden');
+      startQuiz(1, 'random');
+    });
+
+    configBackBtn.addEventListener('click', () => {
+      testConfigSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // === Anti-Cheat System ===
+    const antiCheatUnitCheckbox = document.getElementById('antiCheatUnitCheckbox');
+    const antiCheatGeneralCheckbox = document.getElementById('antiCheatGeneralCheckbox');
+    let antiCheatEnabled = false;
+    let antiCheatActive = false;
+    let cheatViolationReason = null;
+    function antiCheatOnVisibility() { if (document.hidden) triggerCheatViolation('tab'); }
+    function antiCheatOnBlur() { triggerCheatViolation('blur'); }
+    function antiCheatOnFs() { if (!document.fullscreenElement) triggerCheatViolation('fs'); }
+    function startAntiCheat() {
+      if (!antiCheatEnabled || antiCheatActive) return;
+      antiCheatActive = true;
+      cheatViolationReason = null;
+      document.addEventListener('visibilitychange', antiCheatOnVisibility);
+      window.addEventListener('blur', antiCheatOnBlur);
+      document.addEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+    function stopAntiCheat() {
+      if (!antiCheatActive) return;
+      antiCheatActive = false;
+      document.removeEventListener('visibilitychange', antiCheatOnVisibility);
+      window.removeEventListener('blur', antiCheatOnBlur);
+      document.removeEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    function triggerCheatViolation(reasonKey) {
+      if (!antiCheatActive || cheatViolationReason) return;
+      cheatViolationReason = reasonKey;
+      stopAntiCheat();
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      isTimerRunning = false;
+      correctCount = 0;
+      showResults();
+    }
+    function getCheatReasonText() {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      if (cheatViolationReason === 'tab') return t.cheatReasonTab;
+      if (cheatViolationReason === 'blur') return t.cheatReasonBlur;
+      if (cheatViolationReason === 'fs') return t.cheatReasonFs;
+      return '';
+    }
+
+    // Start Quiz
+    function startQuiz(quizIdx, orderType) {
+      currentOrderType = orderType;
+      const quiz = QUIZZES[quizIdx];
+
+      if (quizIdx === 1) {
+        currentShuffleOptions = shuffleOptionsGeneralCheckbox.checked;
+        
+        // Pool questions from selected units
+        let pool = [];
+        selectedUnitsForTest.forEach(idx => {
+          if (QUIZZES[idx]) {
+            pool = pool.concat(QUIZZES[idx].questions);
+          }
+        });
+        
+        let N = pool.length;
+        const countVal = parseInt(generalQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          N = Math.min(countVal, pool.length);
+        }
+        
+        let selectedQuestions = shuffleArray(pool).slice(0, N);
+        
+        // Shuffle options if checked
+        selectedQuestions = selectedQuestions.map(q => {
+          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+        });
+
+        const selectedUnitsLabels = Array.from(selectedUnitsForTest)
+          .sort((a,b) => a - b)
+          .map(i => indexToUnitLabel[i])
+          .join(', ');
+
+        const genTestTitleEl = currentLang === 'el'
+          ? `Γενικό Τεστ (${N} ερωτήσεις - Ενότητες: ${selectedUnitsLabels})`
+          : `General Test (${N} questions - Units: ${selectedUnitsLabels})`;
+
+        QUIZZES[1] = {
+          title: genTestTitleEl,
+          questions: selectedQuestions
+        };
+        
+        activeQuestions = selectedQuestions;
+      } else {
+        currentShuffleOptions = shuffleOptionsUnitCheckbox.checked;
+        
+        let tempQuestions = (orderType === 'random') ? shuffleArray(quiz.questions) : [...quiz.questions];
+        
+        // Shuffle options if checked
+        activeQuestions = tempQuestions.map(q => {
+          return currentShuffleOptions ? shuffleQuestionOptions(q) : { ...q };
+        });
+
+        // Slice to selected count
+        let limit = activeQuestions.length;
+        const countVal = parseInt(quizQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          limit = Math.min(countVal, activeQuestions.length);
+        }
+        activeQuestions = activeQuestions.slice(0, limit);
+      }
+
+      currentQuizIndex = quizIdx;
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      correctCount = 0;
+      isAnswered = false;
+
+      cheatViolationReason = null;
+      antiCheatEnabled = (quizIdx === 1) ? antiCheatGeneralCheckbox.checked : antiCheatUnitCheckbox.checked;
+      imagesEnabled = true; // K.O.K. images are part of the question - always shown
+      glossaryEnabled = (quizIdx === 1) ? glossaryGeneralCheckbox.checked : glossaryUnitCheckbox.checked;
+
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+
+      startAntiCheat();
+
+      if (currentQuizIndex === 1) {
+        quizUnitText.textContent = currentLang === 'el' ? "ΓΕΝΙΚΟ ΤΕΣΤ" : "GENERAL TEST";
+      } else {
+        const unitNameLabel = indexToUnitLabel[currentQuizIndex];
+        quizUnitText.textContent = currentLang === 'el' ? `ΕΝΟΤΗΤΑ ${unitNameLabel}` : `UNIT ${unitNameLabel}`;
+      }
+      
+      // Countdown Timer Start Logic
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      
+      const timerEnabled = (quizIdx === 1) ? timerEnableGeneralCheckbox.checked : timerEnableUnitCheckbox.checked;
+      const durationMinutes = (quizIdx === 1) ? parseInt(timerDurationGeneralInput.value) : parseInt(timerDurationUnitInput.value);
+      
+      if (timerEnabled && durationMinutes > 0) {
+        isTimerRunning = true;
+        quizTimerEnabled = true;
+        quizTimerTotalSeconds = durationMinutes * 60;
+        timeLeftSeconds = durationMinutes * 60;
+        quizTimerText.classList.remove('hidden');
+        timerCountdown.classList.remove('timer-warning');
+        updateTimerDisplay();
+        
+        timerInterval = setInterval(() => {
+          timeLeftSeconds--;
+          updateTimerDisplay();
+          
+          if (timeLeftSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isTimerRunning = false;
+            timeIsUp();
+          }
+        }, 1000);
+      } else {
+        isTimerRunning = false;
+        quizTimerEnabled = false;
+        quizTimerText.classList.add('hidden');
+      }
+      
+      loadQuestion();
+    }
+
+    // Timer Update Display Function
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeftSeconds / 60);
+      const seconds = timeLeftSeconds % 60;
+      const formatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      timerCountdown.textContent = formatted;
+      
+      if (timeLeftSeconds < 120) { // under 2 minutes
+        timerCountdown.classList.add('timer-warning');
+      } else {
+        timerCountdown.classList.remove('timer-warning');
+      }
+    }
+
+    // Time is Up auto submit
+    function timeIsUp() {
+      const alertMsg = currentLang === 'el' 
+        ? "Ο χρόνος έληξε! Το κουίζ θα υποβληθεί αυτόματα με τις απαντήσεις που έχετε δώσει έως τώρα." 
+        : "Time's up! The quiz will be submitted automatically with the answers you have provided so far.";
+      alert(alertMsg);
+      showResults();
+    }
+
+    // Load Question
+    // === Optional question image (Wikimedia Commons) ===
+        let imagesEnabled = true;
+    const _imgMemCache = {};
+    const IMG_CACHE_KEY = 'quizImageCache';
+    function getCachedImage(query) {
+      if (query in _imgMemCache) return _imgMemCache[query];
+      try {
+        const c = JSON.parse(sessionStorage.getItem(IMG_CACHE_KEY) || '{}');
+        if (query in c) { _imgMemCache[query] = c[query]; return c[query]; }
+      } catch (e) {}
+      return undefined;
+    }
+    function setCachedImage(query, url) {
+      _imgMemCache[query] = url;
+      try {
+        const c = JSON.parse(sessionStorage.getItem(IMG_CACHE_KEY) || '{}');
+        c[query] = url;
+        sessionStorage.setItem(IMG_CACHE_KEY, JSON.stringify(c));
+      } catch (e) {}
+    }
+    async function fetchQuestionImage(query) {
+      if (!query) return null;
+      const cached = getCachedImage(query);
+      if (cached !== undefined) return cached;
+      try {
+        const apiUrl = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrlimit=1'
+          + '&gsrsearch=' + encodeURIComponent(query)
+          + '&prop=imageinfo&iiprop=url%7Cmime&iiurlwidth=800&format=json&origin=*';
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const pages = data && data.query && data.query.pages;
+        if (!pages) { setCachedImage(query, null); return null; }
+        const first = Object.values(pages)[0];
+        const info = first && first.imageinfo && first.imageinfo[0];
+        if (!info) { setCachedImage(query, null); return null; }
+        const mime = (info.mime || '').toLowerCase();
+        if (mime && !mime.startsWith('image/')) { setCachedImage(query, null); return null; }
+        const imgUrl = info.thumburl || info.url || null;
+        setCachedImage(query, imgUrl);
+        return imgUrl;
+      } catch (e) {
+        setCachedImage(query, null);
+        return null;
+      }
+    }
+    const _STOP_WORDS = new Set([
+      'the','a','an','of','to','in','on','at','by','for','with','and','or','but','not','no','is','are','was','were','be','been','being','has','have','had','do','does','did','this','that','these','those','it','its','what','which','who','how','when','where','why','can','could','would','should','may','might','will','shall','must','also','more','less','very','so','as','if','than','then','only','just','all','any','some','each','every','one','two','three','four','five','about','into','from','out','over','under','again','here','there','both','few','most','other','same','too','my','your','his','her','our','their','you','he','she','we','they','them','him','us','me','following','mainly','describes','describe','term','study','studies','among','also',
+      'ο','η','το','οι','τα','του','της','των','τον','την','τους','τις','ενας','μια','ενα','και','αν','αλλα','για','με','σε','απο','στο','στα','στη','στην','στις','στους','στον','ως','που','πως','ποιος','ποια','ποιο','ποιοι','ποιες','τι','να','θα','δεν','μη','μην','ειναι','ηταν','εχει','ειχε','σου','μου','αυτο','αυτη','αυτος','αυτοι','αυτες','αυτα','εκεινο','εκεινη','εκεινος','ολος','ολη','ολο','οτι','οπως','καθε','μεσα','μεταξυ','μονο','πιο','πολυ','λιγο','περι','κατα','προς','αναμεσα','επι','μεχρι','ακομα','ακομη','επισης','πρωτος','πρωτη','πρωτο','δευτερος','δευτερη','δευτερο','τριτος','τριτη','τριτο','τεταρτος','τεταρτη','τεταρτο','πεμπτος','πεμπτη','πεμπτο','ποιο','ποιον','ποιαν','ορος','ορο','περιγραφει','περιγραφουν','κυριως','κατα','μεταξυ','σχεση','σχεσεις','επισημες','παρακατω','ακολουθο','ακολουθα','επομενο','επομενη','αυτος','αυτη','αυτο'
+    ]);
+    function _stripAccents(s) {
+      try { return s.normalize('NFD').replace(new RegExp('[\\u0300-\\u036f]', 'g'), ''); }
+      catch (e) { return s; }
+    }
+    function deriveImageQuery(question) {
+      if (!question) return '';
+      const raw = (question.text_en && question.text_en.length > 5) ? question.text_en : (question.text || '');
+      if (!raw) return '';
+      const cleaned = _stripAccents(raw.toLowerCase()).replace(/[^a-zα-ω0-9\s]/gi, ' ');
+      const tokens = cleaned.split(/\s+/).filter(t => t.length >= 4 && !_STOP_WORDS.has(t));
+      if (tokens.length < 2) return '';
+      return tokens.slice(0, 4).join(' ');
+    }
+
+    // Generic stop-words to discard before matching (added to existing _STOP_WORDS at runtime).
+    const _EXTRA_STOPS = ['what','which','who','whose','whom','use','uses','used','using','make','makes','made','making','take','takes','took','taken','taking','give','gives','gave','given','giving','find','finds','found','finding','see','sees','saw','seen','seeing','get','gets','got','getting','need','needs','needed','needing','want','wants','wanted','wanting','help','helps','helped','helping','show','shows','showed','shown','showing','include','includes','included','including','consider','considers','considered','considering','occur','occurs','occurred','occurring','during','within','because','since','through','though','follow','follows','followed','following','among','answer','answers','correct','wrong','right','below','above','before','after','their','they','there','these','those','them','this','that','than','then','very','also','only','just','well','more','most','many','much','some','such','same','than','then','here','what','where','when','how','why','call','calls','called','calling','work','works','worked','working','say','says','said','saying','tell','tells','told','telling','know','knows','knew','known','knowing','think','thinks','thought','thinking','come','comes','came','coming','look','looks','looked','looking','seem','seems','seemed','seeming','mainly','about','into','from','over','under','again','both','each','every','other','same','too','any','our','your','their','its','will','would','should','could','may','might','must','shall'];
+    _EXTRA_STOPS.forEach(w => _STOP_WORDS.add(w));
+
+    // Tiny stemmer: enough to bridge bats↔bat, puppies↔puppy, catches↔catch
+    function _stem(w) {
+      if (!w || w.length < 4) return w;
+      if (w.length > 4 && w.endsWith('ies')) return w.slice(0, -3) + 'y';
+      if (w.length > 4 && w.endsWith('sses')) return w.slice(0, -2);
+      if (w.length > 4 && w.endsWith('es')) return w.slice(0, -2);
+      if (w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1);
+      if (w.length > 6 && w.endsWith('ing')) return w.slice(0, -3);
+      if (w.length > 5 && w.endsWith('ed')) return w.slice(0, -2);
+      return w;
+    }
+
+    async function fetchBestQuestionImage(question) {
+      if (!question) return null;
+      // English text only — Wikipedia article matching needs English titles
+      const raw = (question.text_en && question.text_en.length > 5) ? question.text_en : '';
+      if (!raw) return null;
+      const cleaned = raw.toLowerCase().replace(/[^a-z0-9\s]/gi, ' ');
+      const tokensRaw = cleaned.split(/\s+/).filter(t => t.length >= 4 && !_STOP_WORDS.has(t));
+      if (!tokensRaw.length) return null;
+      const queryTerms = tokensRaw.slice(0, 4);
+      const cacheKey = 'wiki:' + queryTerms.join(' ');
+      const cached = getCachedImage(cacheKey);
+      if (cached !== undefined) return cached;
+
+      // Wikipedia opensearch -> page-summary thumbnail. Articles are curated, so
+      // the lead image on "Bat" is a real bat photo, not a bat-themed motorway.
+      // Progressive fallback: drop the rightmost term on no result; up to 3
+      // suggested titles per attempt are probed for a thumbnail.
+      let terms = queryTerms.slice();
+      while (terms.length > 0) {
+        const searchStr = terms.join(' ');
+        try {
+          const osUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&limit=3&format=json&origin=*&search=' + encodeURIComponent(searchStr);
+          const osRes = await fetch(osUrl);
+          if (osRes.ok) {
+            const osData = await osRes.json();
+            const titles = (osData && osData[1]) || [];
+            for (const title of titles) {
+              try {
+                const sumUrl = 'https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title);
+                const sumRes = await fetch(sumUrl);
+                if (!sumRes.ok) continue;
+                const sumData = await sumRes.json();
+                const img = (sumData.thumbnail && sumData.thumbnail.source)
+                  || (sumData.originalimage && sumData.originalimage.source);
+                if (img) { setCachedImage(cacheKey, img); return img; }
+              } catch (e) {}
+            }
+          }
+        } catch (e) {}
+        if (terms.length === 1) break;
+        terms = terms.slice(0, -1);
+      }
+
+      setCachedImage(cacheKey, null);
+      return null;
+    }
+
+    async function renderQuestionImage(question) {
+      const container = document.getElementById('questionImageContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      container.style.display = 'none';
+      if (!imagesEnabled) return;
+      const url = (question && question.image) ? question.image : null;
+      if (!url) return;
+      const img = new Image();
+      img.alt = (question.imageQuery || question.text || '').toString().slice(0, 120);
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => {
+        if (activeQuestions[currentQuestionIndex] !== question) return;
+        container.appendChild(img);
+        container.style.display = 'flex';
+      };
+      img.onerror = () => { container.innerHTML = ''; container.style.display = 'none'; };
+      img.src = url;
+    }
+
+    function loadQuestion() {
+      const q = activeQuestions[currentQuestionIndex];
+      isAnswered = false;
+      nextBtn.disabled = true;
+
+      const progressTemplate = currentLang === 'el' ? "Ερώτηση {current} από {total}" : "Question {current} of {total}";
+      progressText.textContent = progressTemplate.replace("{current}", currentQuestionIndex + 1).replace("{total}", activeQuestions.length);
+      const progressPercent = (currentQuestionIndex / activeQuestions.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+      questionTitle.textContent = qText;
+      renderQuestionImage(q);
+      hideExplanation();
+      optionsList.innerHTML = '';
+      
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        const markerChar = String.fromCharCode(65 + idx);
+        const optionText = currentLang === 'el' ? option : ((q.options_en && q.options_en[idx]) || option);
+        
+        btn.innerHTML = `
+          <span class="option-marker">${markerChar}</span>
+          <span>${optionText}</span>
+        `;
+        
+        btn.addEventListener('click', () => selectOption(idx, btn));
+        optionsList.appendChild(btn);
+      });
+
+      const nextBtnText = currentLang === 'el' ? "Επόμενο" : "Next";
+      const finishBtnText = currentLang === 'el' ? "Τέλος" : "Finish";
+      const isLastQuestion = (currentQuestionIndex === activeQuestions.length - 1);
+      nextBtn.innerHTML = `
+        <span>${isLastQuestion ? finishBtnText : nextBtnText}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      `;
+    }
+
+    // Select Option
+    function selectOption(optionIdx, buttonEl) {
+      if (isAnswered) return;
+      isAnswered = true;
+      userAnswers.push(optionIdx);
+      
+      const q = activeQuestions[currentQuestionIndex];
+      const correctIdx = q.correct_idx;
+      const isCorrect = (optionIdx === correctIdx);
+      
+      if (isCorrect) {
+        correctCount++;
+        buttonEl.classList.add('selected-correct');
+        playSound('correct');
+      } else {
+        buttonEl.classList.add('selected-incorrect');
+        buttonEl.classList.add('shake');
+        playSound('incorrect');
+        
+        const correctBtn = optionsList.children[correctIdx];
+        if (correctBtn) {
+          correctBtn.classList.add('correct-reveal');
+        }
+      }
+      
+      Array.from(optionsList.children).forEach(btn => {
+        btn.disabled = true;
+      });
+
+      showExplanation(q);
+      nextBtn.disabled = false;
+    }
+
+    // === Explanation (every Κ.Ο.Κ. question has one) ===
+    function hideExplanation() {
+      const box = document.getElementById('explanationBox');
+      if (box) box.classList.add('hidden');
+    }
+
+    function showExplanation(q) {
+      const box = document.getElementById('explanationBox');
+      const txt = document.getElementById('explanationText');
+      if (!box || !txt) return;
+      const text = (q && q.explanation) ? q.explanation : '';
+      if (!text) { box.classList.add('hidden'); return; }
+      txt.textContent = text;
+      box.classList.remove('hidden');
+    }
+
+    // Next Question Button Click
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      
+      if (currentQuestionIndex < activeQuestions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    // === Glossary highlighting in results review ===
+    const glossaryUnitCheckbox = document.getElementById('glossaryUnitCheckbox');
+    const glossaryGeneralCheckbox = document.getElementById('glossaryGeneralCheckbox');
+    let glossaryEnabled = false;
+    const GLOSSARY = {"el": ["Cyber Kill Chain", "MITRE ATT&CK", "reconnaissance", "weaponization", "delivery", "exploitation", "installation", "command and control", "exfiltration", "phishing", "watering-hole", "backdoor", "payload", "SQL injection", "DNS tunneling", "SPF", "DKIM", "DMARC", "File Integrity Monitoring", "persistence"], "en": ["Cyber Kill Chain", "MITRE ATT&CK", "reconnaissance", "weaponization", "delivery", "exploitation", "installation", "command and control", "exfiltration", "phishing", "watering-hole", "backdoor", "payload", "SQL injection", "DNS tunneling", "SPF", "DKIM", "DMARC", "File Integrity Monitoring", "persistence"]};
+    function _escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function highlightGlossary(text, lang) {
+      if (!text || !glossaryEnabled) return text;
+      const terms = (GLOSSARY[lang] || []);
+      if (!terms.length) return text;
+      // Longest-first so multi-word phrases match before their constituent words
+      const sorted = [...terms].sort((a, b) => b.length - a.length);
+      const pattern = sorted.map(_escapeRegex).join('|');
+      // Word boundaries that work across Greek + Latin: a letter/digit MUST NOT
+      // sit immediately before or after the match (Unicode-aware via \p{L}\p{N}).
+      let re;
+      try {
+        re = new RegExp('(?<![\\p{L}\\p{N}])(' + pattern + ')(?![\\p{L}\\p{N}])', 'giu');
+      } catch (e) {
+        // Fallback for older engines without lookbehind/property escapes
+        re = new RegExp('\\b(' + pattern + ')\\b', 'gi');
+      }
+      return text.replace(re, '<span class="glossary-term">$1</span>');
+    }
+
+    // Show Results
+    function showResults() {
+      stopAntiCheat();
+      // Clear countdown interval
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      isTimerRunning = false;
+
+      if (cheatViolationReason) { correctCount = 0; }
+
+      quizSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+
+      const quiz = QUIZZES[currentQuizIndex];
+
+
+
+      const totalQuestions = activeQuestions.length;
+      const scorePercent = Math.round((correctCount / totalQuestions) * 100);
+      
+      scoreNumber.textContent = `${scorePercent}%`;
+      
+      const strokeOffset = 440 - (440 * scorePercent) / 100;
+      setTimeout(() => {
+        scoreFill.style.strokeDashoffset = strokeOffset;
+      }, 100);
+      
+      const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+      resultsQuizTitle.textContent = displayTitle;
+
+      if (cheatViolationReason) {
+        const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+        resultFeedbackTitle.textContent = t.cheatViolationTitle;
+        resultFeedbackText.textContent = t.cheatReasonPrefix + getCheatReasonText();
+      } else if (scorePercent === 100) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Άριστα! 🎉" : "Perfect! 🎉";
+        resultFeedbackText.textContent = currentLang === 'el' 
+          ? "Απαντήσατε σωστά σε όλες τις ερωτήσεις! Έχετε κατανοήσει πλήρως την ενότητα αυτή."
+          : "You answered all questions correctly! You have fully understood this unit.";
+      } else if (scorePercent >= 80) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Εξαιρετική Προσπάθεια! ✨" : "Excellent Effort! ✨";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Πρωτοφανής γνώση του αντικειμένου!`
+          : `You got ${correctCount} out of ${totalQuestions} correct answers. Outstanding knowledge of the subject!`;
+      } else if (scorePercent >= 50) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Πολύ Καλά! 👍" : "Well Done! 👍";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Έχετε καλή βάση, αλλά μπορείτε να βελτιωθείτε.`
+          : `You got ${correctCount} out of ${totalQuestions} correct answers. Good foundation, but there is room for improvement.`;
+      } else {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Χρειάζεται Μελέτη! 📚" : "Needs Study! 📚";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε μόνο ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Σας προτείνουμε να ξαναδιαβάσετε τις σημειώσεις και να δοκιμάσετε ξανά.`
+          : `You got only ${correctCount} out of ${totalQuestions} correct answers. We suggest you re-read the notes and try again.`;
+      }
+      
+      // Show time used if a timer was enabled for this quiz
+      const _rtt = document.getElementById('resultTimeText');
+      if (_rtt) {
+        if (quizTimerEnabled) {
+          const used = Math.max(0, quizTimerTotalSeconds - Math.max(0, timeLeftSeconds));
+          const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+          const lbl = currentLang === 'el' ? 'Χρόνος' : 'Time';
+          _rtt.textContent = lbl + ': ' + fmt(used) + ' / ' + fmt(quizTimerTotalSeconds);
+          _rtt.classList.remove('hidden');
+        } else {
+          _rtt.classList.add('hidden');
+        }
+      }
+
+      reviewContainer.innerHTML = '';
+      activeQuestions.forEach((q, idx) => {
+        const userChoiceIdx = userAnswers[idx];
+        const correctIdx = q.correct_idx;
+        const isUserCorrect = (userChoiceIdx === correctIdx);
+        
+        const reviewItem = document.createElement('div');
+        reviewItem.className = 'review-item';
+        
+        const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+        
+        let optionsMarkup = '';
+        q.options.forEach((opt, optIdx) => {
+          const optMarker = String.fromCharCode(65 + optIdx);
+          let optClass = 'review-opt-neutral';
+          let statusIndicator = '';
+          
+          if (optIdx === correctIdx) {
+            optClass = 'review-opt-correct';
+            statusIndicator = currentLang === 'el' ? ' (Σωστό)' : ' (Correct)';
+          } else if (userChoiceIdx !== undefined && optIdx === userChoiceIdx && !isUserCorrect) {
+            optClass = 'review-opt-incorrect';
+            statusIndicator = currentLang === 'el' ? ' (Η επιλογή σας)' : ' (Your choice)';
+          }
+          
+          const optText = currentLang === 'el' ? opt : ((q.options_en && q.options_en[optIdx]) || opt);
+          optionsMarkup += `
+            <div class="review-opt ${optClass}">
+              <span class="review-opt-marker">${optMarker}.</span>
+              <span>${highlightGlossary(optText, currentLang)}${statusIndicator}</span>
+            </div>
+          `;
+        });
+        
+        let qStatusText = '';
+        if (userChoiceIdx === undefined) {
+          qStatusText = currentLang === 'el' 
+            ? ' <span style="color: var(--error); font-size: 0.85rem; font-weight: 600;">(Δεν απαντήθηκε λόγω χρόνου)</span>'
+            : ' <span style="color: var(--error); font-size: 0.85rem; font-weight: 600;">(Not answered due to time limit)</span>';
+        }
+        
+        const escapedTitle = quiz.title.replace(/'/g, "\'");
+        const escapedQText = qText.replace(/'/g, "\'");
+        
+        const reportBtnText = currentLang === 'el' ? 'Αναφορά' : 'Report';
+        reviewItem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;">
+            <div class="review-item-q">${idx + 1}. ${highlightGlossary(qText, currentLang)}${qStatusText}</div>
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="reportQuestion('${escapedTitle}', '${idx + 1}', '${escapedQText}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <span>${reportBtnText}</span>
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${optionsMarkup}
+          </div>
+        `;
+        reviewContainer.appendChild(reviewItem);
+      });
+
+      const attemptFp = currentQuizIndex + ':' + userAnswers.join(',') + ':' + correctCount + ':' + totalQuestions;
+      if (showResults._lastFp !== attemptFp) {
+        showResults._lastFp = attemptFp;
+        recordQuizAttempt({
+          ts: Date.now(),
+          topic: 'hackviser',
+          topicTitleEl: 'Διατροφή ζώων συντροφιάς',
+          topicTitleEn: 'Companion Animal Nutrition',
+          quizTitleEl: quiz.title,
+          quizTitleEn: (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title),
+          scorePercent: scorePercent,
+          correctCount: correctCount,
+          totalQuestions: totalQuestions
+        });
+      }
+      renderHistoryForCurrentQuiz();
+    }
+
+    const QUIZ_HISTORY_KEY = 'quizProgressHistory';
+    function loadQuizHistory() {
+      try { return JSON.parse(safeStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function recordQuizAttempt(entry) {
+      const arr = loadQuizHistory();
+      arr.push(entry);
+      try { safeStorage.setItem(QUIZ_HISTORY_KEY, JSON.stringify(arr)); } catch (e) {}
+    }
+    function renderHistoryForCurrentQuiz() {
+      const title = document.getElementById('historyTitle');
+      const list = document.getElementById('historyList');
+      if (!title || !list) return;
+      title.textContent = currentLang === 'el' ? 'Ιστορικό για αυτό το κουίζ' : 'History for this quiz';
+      const quiz = QUIZZES[currentQuizIndex];
+      if (!quiz) { list.innerHTML = ''; return; }
+      const entries = loadQuizHistory().filter(e => e.topic === 'diatrofi' && e.quizTitleEl === quiz.title);
+      if (!entries.length) {
+        list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9rem;">${currentLang === 'el' ? 'Δεν υπάρχει ιστορικό ακόμη.' : 'No history yet.'}</div>`;
+        return;
+      }
+      entries.sort((a, b) => b.ts - a.ts);
+      const locale = currentLang === 'el' ? 'el-GR' : 'en-US';
+      list.innerHTML = entries.map(e => {
+        const dateStr = new Date(e.ts).toLocaleString(locale);
+        return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem;">
+          <span style="color: var(--text-muted);">${dateStr}</span>
+          <span style="font-weight: 600; color: var(--text-main);">${e.correctCount}/${e.totalQuestions} &middot; ${e.scorePercent}%</span>
+        </div>`;
+      }).join('');
+    }
+
+    // Google Form individual question report redirection
+    function reportQuestion(quizTitle, unitName, questionText) {
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const questionField = "entry.86795942";
+      
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quizTitle + " - " + unitName)}&${questionField}=${encodeURIComponent(questionText)}`;
+      window.open(prefillUrl, '_blank');
+    }
+
+    // Google Form general report button click listener
+    generalReportBtn.addEventListener('click', () => {
+      const quiz = QUIZZES[currentQuizIndex];
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quiz.title)}`;
+      window.open(prefillUrl, '_blank');
+    });
+
+    // Restart Quiz
+    restartBtn.addEventListener('click', () => {
+      startQuiz(currentQuizIndex, currentOrderType);
+    });
+
+    // Go Back to Dashboard
+    backBtn.addEventListener('click', () => {
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+      initDashboard();
+    });
+
+    // Save Results as PDF
+    pdfBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Initialize Page
+    applyTheme(currentTheme);
+    applyLanguage(currentLang);
+
+    // === Custom quiz from URL parameter (from quizess.html chat bot) ===
+    // If we were navigated here with ?customQuiz=<localStorageKey>, look up the
+    // generated quiz spec, push it onto QUIZZES, and auto-start it. Any failure
+    // silently falls through to the normal dashboard.
+    (function() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const cqKey = params.get('customQuiz');
+        if (!cqKey) return;
+        const raw = safeStorage.getItem(cqKey);
+        if (!raw) return;
+        const spec = JSON.parse(raw);
+        if (!spec || !Array.isArray(spec.questions) || !spec.questions.length) return;
+        QUIZZES.push({
+          title: spec.title || 'Custom Quiz',
+          filename: 'custom',
+          questions: spec.questions
+        });
+        setTimeout(function() {
+          try { startQuiz(QUIZZES.length - 1, 'original'); } catch (e) {}
+        }, 0);
+      } catch (e) {}
+    })();
+  </script>
+</body>
+</html>
