@@ -871,7 +871,7 @@
       <a href="index.html" class="nav-link" data-translate="navHome">Αρχική</a>
       <a href="quizess.html" class="nav-link active" data-translate="navQuizzes">Κουίζ</a>
     </div>
-    <h1 class="page-title" data-translate="courseTitle">Διατροφή ζώων συντροφιάς</h1>
+    <h1 class="page-title" data-translate="courseTitle">Κ.Ο.Κ. — Κατηγορία Β</h1>
     <a href="quizess.html" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-top: -5px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" data-translate="navBackToHub">← Επιστροφή στις Θεματικές Ενότητες</a>
   </header>
 
@@ -1127,7 +1127,7 @@
       el: {
         navHome: "Αρχική",
         navQuizzes: "Κουίζ",
-        courseTitle: "Διατροφή ζώων συντροφιάς",
+        courseTitle: "Κ.Ο.Κ. — Κατηγορία Β",
         navBackToHub: "← Επιστροφή στις Θεματικές Ενότητες",
         orderDesc: "Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:",
         btnOriginal: "Αρχική Σειρά (Όπως στο έγγραφο)",
@@ -1160,7 +1160,7 @@
       en: {
         navHome: "Home",
         navQuizzes: "Quizzes",
-        courseTitle: "Companion Animal Nutrition",
+        courseTitle: "Greek Highway Code — Category B",
         navBackToHub: "← Back to Thematic Units",
         orderDesc: "Select the order in which you want the quiz questions to appear:",
         btnOriginal: "Original Order (As in the document)",
@@ -2270,8 +2270,8 @@
         recordQuizAttempt({
           ts: Date.now(),
           topic: 'kok',
-          topicTitleEl: 'Διατροφή ζώων συντροφιάς',
-          topicTitleEn: 'Companion Animal Nutrition',
+          topicTitleEl: 'Κ.Ο.Κ. — Κατηγορία Β',
+          topicTitleEn: 'Greek Highway Code — Category B',
           quizTitleEl: quiz.title,
           quizTitleEn: (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title),
           scorePercent: scorePercent,
@@ -2298,7 +2298,7 @@
       title.textContent = currentLang === 'el' ? 'Ιστορικό για αυτό το κουίζ' : 'History for this quiz';
       const quiz = QUIZZES[currentQuizIndex];
       if (!quiz) { list.innerHTML = ''; return; }
-      const entries = loadQuizHistory().filter(e => e.topic === 'diatrofi' && e.quizTitleEl === quiz.title);
+      const entries = loadQuizHistory().filter(e => e.topic === 'kok' && e.quizTitleEl === quiz.title);
       if (!entries.length) {
         list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9rem;">${currentLang === 'el' ? 'Δεν υπάρχει ιστορικό ακόμη.' : 'No history yet.'}</div>`;
         return;
