@@ -1481,6 +1481,30 @@
         </div>
       `;
       dashboardSection.appendChild(recapCard);
+
+      // Add LLM Attack Surface game card
+      const gameCard = document.createElement('div');
+      gameCard.className = 'card quiz-card';
+      gameCard.style.borderColor = '#a855f7';
+      gameCard.style.boxShadow = '0 10px 25px -5px rgba(168, 85, 247, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.3)';
+      gameCard.addEventListener('click', () => { window.location.href = 'llm_attack_game.html'; });
+
+      const gTitle = currentLang === 'el' ? 'LLM Attack Surface (παιχνίδι)' : 'LLM Attack Surface (game)';
+      const gMeta = currentLang === 'el'
+        ? 'Χτίσε την αρχιτεκτονική, βρες το σημείο επίθεσης, ονόμασε την επίθεση'
+        : 'Build the architecture, find the attack point, name the attack';
+
+      gameCard.innerHTML = `
+        <div>
+          <span class="unit-tag" style="background-color: rgba(168, 85, 247, 0.15); color: #a855f7;">Game</span>
+          <h3 class="quiz-card-title">${gTitle}</h3>
+        </div>
+        <div class="quiz-meta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6"></path><path d="M1 12h6m6 0h6"></path></svg>
+          <span>${gMeta}</span>
+        </div>
+      `;
+      dashboardSection.appendChild(gameCard);
     }
 
     // Sound toggle function

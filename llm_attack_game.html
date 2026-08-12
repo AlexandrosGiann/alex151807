@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LLM Attack Surface — Παιχνίδι | Αλέξανδρος Γιαννάκης</title>
+<style>
+  :root{
+    --bg:#0f172a; --card-bg:#1e293b; --border-color:#334155;
+    --text-main:#f8fafc; --text-muted:#94a3b8; --primary:#38bdf8;
+    --success:#10b981; --danger:#ef4444; --warning:#f59e0b; --purple:#a855f7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);
+       color:var(--text-main);padding:26px 16px 80px}
+  .wrap{max-width:1100px;margin:0 auto}
+  .top-nav{text-align:center;margin-bottom:16px}
+  .top-nav a{color:var(--text-muted);text-decoration:none;margin:0 10px;font-size:.94rem}
+  .top-nav a:hover{color:var(--primary)}
+  h1.page-title{text-align:center;color:var(--primary);margin:0 0 6px;font-size:clamp(1.5rem,4vw,2.2rem)}
+  .subtitle{text-align:center;color:var(--text-muted);margin:0 auto 22px;max-width:760px;
+            line-height:1.6;font-size:.95rem}
+
+  .panel{background:var(--card-bg);border:1px solid var(--border-color);
+         border-radius:16px;padding:18px;margin-bottom:16px}
+  .panel-h{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;
+           color:var(--text-muted);font-weight:700;margin:0 0 12px}
+
+  /* architecture picker */
+  .arch-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+  .arch-card{background:#0b1220;border:1px solid var(--border-color);border-radius:12px;
+             padding:14px;cursor:pointer;transition:all .16s ease;text-align:left}
+  .arch-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+  .arch-card h3{margin:0 0 5px;font-size:1rem}
+  .arch-card p{margin:0;font-size:.8rem;color:var(--text-muted);line-height:1.5}
+  .arch-card .lvl{display:inline-block;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+        font-weight:700;padding:2px 8px;border-radius:999px;margin-bottom:7px}
+  .lvl.low{background:rgba(16,185,129,.16);color:var(--success)}
+  .lvl.med{background:rgba(56,189,248,.16);color:var(--primary)}
+  .lvl.high{background:rgba(245,158,11,.16);color:var(--warning)}
+  .lvl.vhigh{background:rgba(239,68,68,.16);color:var(--danger)}
+  .arch-card .done-badge{float:right;color:var(--success);font-weight:700;font-size:.8rem}
+
+  /* stage bar */
+  .stages{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .stage{flex:1;min-width:150px;padding:9px 12px;border-radius:10px;background:#0b1220;
+         border:1px solid var(--border-color);font-size:.82rem;color:var(--text-muted)}
+  .stage.on{border-color:var(--primary);color:var(--text-main);background:rgba(56,189,248,.1)}
+  .stage.ok{border-color:var(--success);color:var(--success)}
+  .stage b{display:block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+
+  /* diagram */
+  .diagram{background:#0b1220;border:1px solid var(--border-color);border-radius:12px;padding:16px}
+  .drow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:stretch;margin-bottom:12px}
+  .drow:last-child{margin-bottom:0}
+  .drow-label{width:100%;text-align:center;font-size:.72rem;letter-spacing:.07em;
+              text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+  .node{min-width:132px;min-height:52px;border:1px solid var(--border-color);border-radius:10px;
+        background:var(--card-bg);display:flex;align-items:center;justify-content:center;
+        padding:9px 12px;font-size:.84rem;text-align:center;position:relative}
+  .node.flowish{border-style:dashed;background:rgba(30,41,59,.5)}
+  .node.blank{border-color:var(--primary);border-style:dashed;color:var(--text-muted);
+              background:rgba(56,189,248,.05)}
+  .node.blank.over{background:rgba(56,189,248,.18)}
+  .node.filled{border-color:var(--primary);border-style:solid}
+  .node.ok{border-color:var(--success)}
+  .node.bad{border-color:var(--danger)}
+  .node input{width:100%;background:transparent;border:0;color:var(--text-main);
+              font-family:inherit;font-size:.84rem;text-align:center;outline:none}
+  .node .fix{position:absolute;bottom:-16px;left:0;right:0;font-size:.7rem;color:var(--success)}
+  .node.hot{cursor:pointer}
+  .node.hot:hover{border-color:var(--warning);box-shadow:0 0 0 2px rgba(245,158,11,.18)}
+  .node.found{border-color:var(--danger);background:rgba(239,68,68,.1)}
+  .node.found::after{content:'⚑';position:absolute;top:3px;right:6px;font-size:.75rem;color:var(--danger)}
+  .node.safe{opacity:.55}
+  .arrow{display:flex;align-items:center;color:var(--text-muted);font-size:1.1rem;padding:0 2px}
+  .extra{border-style:dotted;background:rgba(168,85,247,.07)}
+
+  /* word bank */
+  #bank{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
+  .word{background:#0b1220;border:1px solid var(--primary);color:var(--text-main);
+        border-radius:9px;padding:7px 12px;cursor:grab;font-size:.83rem;user-select:none}
+  .word.sel{background:var(--primary);color:#06283d;font-weight:700}
+  .word.used{display:none}
+
+  /* quiz modal */
+  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.78);display:flex;
+            align-items:center;justify-content:center;padding:18px;z-index:50}
+  .modal{background:var(--card-bg);border:1px solid var(--border-color);border-radius:16px;
+         max-width:620px;width:100%;padding:22px;max-height:88vh;overflow:auto}
+  .modal h3{margin:0 0 4px;font-size:1.05rem}
+  .modal .why{color:var(--text-muted);font-size:.84rem;margin:0 0 14px;line-height:1.55}
+  .qtext{font-size:.98rem;line-height:1.6;margin:0 0 14px}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opt-btn{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#0b1220;
+           border:1px solid var(--border-color);border-radius:10px;padding:11px 13px;
+           cursor:pointer;color:var(--text-main);font-family:inherit;font-size:.88rem;line-height:1.45}
+  .opt-btn:hover:not(:disabled){border-color:var(--primary)}
+  .opt-btn .mk{flex:0 0 22px;height:22px;border-radius:6px;background:rgba(56,189,248,.15);
+               color:var(--primary);font-weight:700;font-size:.76rem;display:flex;
+               align-items:center;justify-content:center}
+  .opt-btn.right{border-color:var(--success);background:rgba(16,185,129,.12)}
+  .opt-btn.wrong{border-color:var(--danger);background:rgba(239,68,68,.12)}
+  .feedback{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:.88rem;line-height:1.55}
+  .feedback.good{background:rgba(16,185,129,.1);border-left:4px solid var(--success)}
+  .feedback.bad{background:rgba(239,68,68,.1);border-left:4px solid var(--danger)}
+
+  .btn{background:var(--primary);color:#06283d;border:0;border-radius:10px;padding:10px 20px;
+       font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border-color)}
+  .btn-ghost:hover:not(:disabled){color:var(--text-main);border-color:var(--primary)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .hint{margin-top:12px;padding:11px 14px;border-radius:10px;font-size:.86rem;line-height:1.55;
+        background:rgba(245,158,11,.1);border-left:4px solid var(--warning)}
+  .surface-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .surface-list button{text-align:left;background:#0b1220;border:1px solid var(--border-color);
+        border-radius:10px;padding:10px 13px;cursor:pointer;color:var(--text-main);
+        font-family:inherit;font-size:.87rem}
+  .surface-list button:hover{border-color:var(--primary)}
+  .surface-list button.done{opacity:.5;border-color:var(--success)}
+  .prog{font-size:.85rem;color:var(--text-muted)}
+  .hidden{display:none !important}
+  .float-btns{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:10px}
+  .fbtn{width:44px;height:44px;border-radius:50%;background:var(--card-bg);
+        border:1px solid var(--border-color);color:var(--text-muted);font-weight:700;
+        cursor:pointer;font-family:inherit}
+  .fbtn:hover{color:var(--text-main);border-color:var(--primary)}
+  @media (max-width:620px){ .node{min-width:112px;font-size:.78rem} .arrow{display:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-nav">
+    <a href="index.html" data-i18n="navHome">Αρχική</a>
+    <a href="quizess.html" data-i18n="navQuiz">Κουίζ</a>
+    <a href="quizzes_hackviser.html" data-i18n="navCore">Hackviser CORE</a>
+  </div>
+
+  <h1 class="page-title" data-i18n="title">LLM Attack Surface</h1>
+  <p class="subtitle" data-i18n="subtitle">
+    Χτίσε την αρχιτεκτονική, βρες πού μπορεί να επιτεθεί κάποιος και αναγνώρισε την επίθεση.
+    Κάθε σημείο διασύνδεσης είναι και μια επιφάνεια επίθεσης.
+  </p>
+
+  <!-- PICK -->
+  <div id="pickView">
+    <div class="panel">
+      <p class="panel-h" data-i18n="pickArch">Διάλεξε αρχιτεκτονική</p>
+      <div class="arch-grid" id="archGrid"></div>
+    </div>
+  </div>
+
+  <!-- PLAY -->
+  <div id="playView" class="hidden">
+    <div class="stages">
+      <div class="stage" id="stA"><b data-i18n="stageA">Στάδιο Α</b><span data-i18n="stageAtxt">Χτίσε την αρχιτεκτονική</span></div>
+      <div class="stage" id="stB"><b data-i18n="stageB">Στάδιο Β</b><span data-i18n="stageBtxt">Βρες σημείο επίθεσης</span></div>
+      <div class="stage" id="stC"><b data-i18n="stageC">Στάδιο Γ</b><span data-i18n="stageCtxt">Ποια επίθεση;</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <h2 id="archName" style="margin:0;font-size:1.1rem"></h2>
+        <span class="prog" id="progText"></span>
+      </div>
+      <div class="diagram" id="diagram"></div>
+      <div id="hintSlot"></div>
+    </div>
+
+    <div class="panel" id="bankPanel">
+      <p class="panel-h" data-i18n="bankH">Στοιχεία</p>
+      <div id="bank"></div>
+      <p style="color:var(--text-muted);font-size:.8rem;margin:10px 0 0" data-i18n="bankHint">
+        Σύρε ένα στοιχείο στο κουτί του — ή πάτησέ το και μετά πάτα το κουτί.</p>
+    </div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <button class="btn" id="checkBtn" data-i18n="checkBtn">Έλεγχος αρχιτεκτονικής</button>
+          <button class="btn btn-ghost" id="clearBtn" data-i18n="clearBtn">Καθαρισμός</button>
+        </div>
+        <button class="btn btn-ghost" id="backBtn" data-i18n="backBtn">← Αρχιτεκτονικές</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="float-btns"><button class="fbtn" id="langBtn">EN</button></div>
+<div id="modalRoot"></div>
+
+<script>
+/* =====================  DATA  =====================
+   Conceptual attack-surface material: vulnerability classes and trust
+   boundaries only - no payloads or exploitation steps. */
+const ARCHS = [
+{
+  id:'standalone', name:'Standalone LLM', level:'low',
+  tagEl:'Χωρίς εξωτερικά δεδομένα ή εργαλεία.',
+  tagEn:'No external data sources, no tool access.',
+  rows:[
+    {lEl:'Ροή',lEn:'Flow',arrows:true,items:[
+      {id:'standalone_user',label:'User'},
+      {id:'standalone_app',label:'Application (Web/API)'},
+      {id:'standalone_llm',label:'LLM Model'}]},
+    {lEl:'Μηνύματα',lEn:'Messages',flowish:true,items:[
+      {id:'standalone_user_to_app',label:'User Request'},
+      {id:'standalone_app_to_llm',label:'Combined Prompt'},
+      {id:'standalone_llm_to_app',label:'Model Response'}]}
+  ],
+  extras:[],
+  attacks:[
+    {id:'standalone_input',targets:['standalone_user_to_app'],attack:'Prompt Injection',
+     tEl:'Είσοδος χρήστη / όριο εντολών',tEn:'User input / prompt boundary',
+     rEl:'Κείμενο ελεγχόμενο από τον χρήστη μπαίνει στο ίδιο context με έμπιστες εντολές.',
+     rEn:'User-controlled text enters the same model context as trusted instructions.',
+     qEl:'Ένας χρήστης υποβάλλει εντολές φτιαγμένες ώστε να παρακάμψουν τις προβλεπόμενες οδηγίες συστήματος. Ποια επίθεση ταιριάζει;',
+     qEn:"A user submits crafted instructions designed to override the application's intended system instructions. Which attack best matches this point?",
+     oEl:['Prompt Injection','RAG Poisoning','Tool Shadowing','Confused Deputy'],
+     oEn:['Prompt Injection','RAG Poisoning','Tool Shadowing','Confused Deputy'],c:0,
+     eEl:'Το direct prompt injection στοχεύει το όριο ανάμεσα στην είσοδο του χρήστη και τις έμπιστες εντολές του μοντέλου.',
+     eEn:'Direct prompt injection targets the instruction boundary between user-controlled input and trusted model instructions.'},
+    {id:'standalone_system_prompt',targets:['standalone_app'],attack:'System Prompt Extraction',
+     tEl:'Εφαρμογή / system prompt',tEn:'Application / system prompt',
+     rEl:'Κρυφές οδηγίες περιλαμβάνονται στο context και μπορεί να αποκαλυφθούν.',
+     rEn:'Hidden instructions are included in the model context and may be disclosed.',
+     qEl:'Ένας επιτιθέμενος προσπαθεί να κάνει το μοντέλο να αποκαλύψει τις κρυφές οδηγίες που ορίζουν τη συμπεριφορά του. Τι επίθεση είναι αυτή;',
+     qEn:'An attacker attempts to make the model reveal the hidden instructions that define its behavior. What attack is this?',
+     oEl:['Model Poisoning','System Prompt Extraction','SSRF','Chunk Boundary Attack'],
+     oEn:['Model Poisoning','System Prompt Extraction','SSRF','Chunk Boundary Attack'],c:1,
+     eEl:'Ο στόχος είναι το εμπιστευτικό system prompt που περιλαμβάνεται στο context του μοντέλου.',
+     eEn:"The target is the confidential system prompt included in the model's context."},
+    {id:'standalone_parameters',targets:['standalone_app'],attack:'Parameter Manipulation',
+     tEl:'Παράμετροι inference στο API',tEn:'Application / API parameters',
+     rEl:'Εκτεθειμένες παράμετροι μπορούν να αλλάξουν τη συμπεριφορά του μοντέλου.',
+     rEn:'Exposed inference parameters can influence model behavior.',
+     qEl:'Η εφαρμογή επιτρέπει στον χρήστη να επηρεάζει ρυθμίσεις όπως το μήκος εξόδου ή τη δειγματοληψία. Ποιος κίνδυνος ταιριάζει;',
+     qEn:'The application lets a user influence settings such as output length or sampling behavior. Which risk best matches this attack surface?',
+     oEl:['Parameter Manipulation','Tool Shadowing','Confused Deputy','Vector Database Poisoning'],
+     oEn:['Parameter Manipulation','Tool Shadowing','Confused Deputy','Vector Database Poisoning'],c:0,
+     eEl:'Εκτεθειμένες ή ανεπαρκώς περιορισμένες παράμετροι inference μπορούν να αλλάξουν συμπεριφορά ή κατανάλωση πόρων.',
+     eEn:'Exposed or insufficiently restricted inference parameters can be manipulated to change model behavior or resource usage.'},
+    {id:'standalone_model_data',targets:['standalone_llm'],attack:'Training Data Extraction',
+     tEl:'Δεδομένα εκπαίδευσης',tEn:'LLM Model / training data',
+     rEl:'Το μοντέλο μπορεί να αναπαράγει απομνημονευμένες πληροφορίες.',
+     rEn:'The model may reproduce memorized information from training data.',
+     qEl:'Ένα μοντέλο αναπαράγει απροσδόκητα ευαίσθητο κείμενο που απομνημόνευσε κατά την εκπαίδευση. Ποια κατηγορία περιγράφει καλύτερα;',
+     qEn:'A model unexpectedly reproduces sensitive text memorized during training. Which attack category best describes this?',
+     oEl:['Training Data Extraction','Tool Poisoning','Orchestration Hijacking','Resource Exhaustion'],
+     oEn:['Training Data Extraction','Tool Poisoning','Orchestration Hijacking','Resource Exhaustion'],c:0,
+     eEl:'Ο επιτιθέμενος προσπαθεί να ανακτήσει πληροφορίες απομνημονευμένες στα δεδομένα εκπαίδευσης.',
+     eEn:"The attacker is attempting to recover information memorized in the model's training data."},
+    {id:'standalone_model_behavior',targets:['standalone_llm'],attack:'Model Fingerprinting',
+     tEl:'Συμπεριφορά μοντέλου',tEn:'LLM Model / behavior',
+     rEl:'Οι αποκρίσεις μπορεί να αποκαλύψουν οικογένεια ή έκδοση μοντέλου.',
+     rEn:'Behavioral responses may reveal model family/version characteristics.',
+     qEl:'Ένας επιτιθέμενος μελετά μοτίβα αποκρίσεων για να καταλάβει ποιο μοντέλο ή ποια έκδοση τρέχει. Πώς λέγεται αυτό;',
+     qEn:'An attacker studies response patterns to identify which model or model version is running. What is this called?',
+     oEl:['Model Fingerprinting','Data Exfiltration via Retrieval','RAG Poisoning','Memory Poisoning'],
+     oEn:['Model Fingerprinting','Data Exfiltration via Retrieval','RAG Poisoning','Memory Poisoning'],c:0,
+     eEl:'Το model fingerprinting χρησιμοποιεί παρατηρήσιμη συμπεριφορά για να συμπεράνει στοιχεία για το υποκείμενο μοντέλο.',
+     eEn:'Model fingerprinting uses observable behavior to infer information about the underlying model.'}
+  ]
+},
+{
+  id:'rag', name:'RAG', level:'med',
+  tagEl:'Ανάκτηση από εξωτερική βάση γνώσης.',
+  tagEn:'Retrieval-Augmented Generation over an external knowledge base.',
+  rows:[
+    {lEl:'Ροή ερωτήματος',lEn:'Query flow',arrows:true,items:[
+      {id:'rag_user',label:'User'},
+      {id:'rag_app',label:'App Server'},
+      {id:'rag_embedding',label:'Embedding Model'},
+      {id:'rag_vector_db',label:'Vector DB'}]},
+    {lEl:'Παραγωγή',lEn:'Generation',items:[{id:'rag_llm',label:'LLM Model'}]},
+    {lEl:'Αγωγοί',lEn:'Pipelines',flowish:true,items:[
+      {id:'rag_retrieval',label:'Retrieval Engine'},
+      {id:'rag_context_merge',label:'System Prompt + Retrieved Docs + User Query'},
+      {id:'rag_chunking',label:'Chunking Pipeline'}]}
+  ],
+  extras:[],
+  attacks:[
+    {id:'rag_documents',targets:['rag_chunking'],attack:'RAG Poisoning',
+     tEl:'Βάση γνώσης / εισαγωγή εγγράφων',tEn:'Knowledge base / document ingestion',
+     rEl:'Κακόβουλο περιεχόμενο μπορεί να μπει στο σώμα ανάκτησης.',
+     rEn:'Malicious content can enter the retrieval corpus.',
+     qEl:'Ένας επιτιθέμενος καταφέρνει να τοποθετήσει κακόβουλο έγγραφο στη βάση γνώσης, ώστε να ανακτηθεί αργότερα στο context. Ποια επίθεση είναι;',
+     qEn:"An attacker manages to place a malicious document inside the application's knowledge base so that it is later retrieved into the model context. Which attack is this?",
+     oEl:['RAG Poisoning','Model Fingerprinting','Excessive Agency','Tool Shadowing'],
+     oEn:['RAG Poisoning','Model Fingerprinting','Excessive Agency','Tool Shadowing'],c:0,
+     eEl:'Το RAG poisoning στοχεύει την εξωτερική πηγή γνώσης, ώστε κακόβουλο περιεχόμενο να ανακτηθεί και να περάσει στο LLM.',
+     eEn:'RAG poisoning targets the external knowledge source so malicious content is retrieved and passed to the LLM.'},
+    {id:'rag_chunking',targets:['rag_chunking'],attack:'Chunk Boundary Attack',
+     tEl:'Αγωγός τεμαχισμού',tEn:'Chunking pipeline',
+     rEl:'Το κακόβουλο περιεχόμενο σπάει, ώστε οι έλεγχοι να βλέπουν θραύσματα.',
+     rEn:'Malicious content can be split so controls see fragments instead of the full instruction.',
+     qEl:'Κακόβουλο περιεχόμενο μοιράζεται σε chunks, ώστε το καθένα να φαίνεται αθώο αλλά μαζί να γίνονται επικίνδυνα. Ποια επίθεση είναι;',
+     qEn:'Malicious content is divided across document chunks so that individual chunks appear harmless but become dangerous when combined in context. Which attack is this?',
+     oEl:['Chunk Boundary Attack','SSRF','Excessive Agency','Rug Pull Attack'],
+     oEn:['Chunk Boundary Attack','SSRF','Excessive Agency','Rug Pull Attack'],c:0,
+     eEl:'Η επίθεση εκμεταλλεύεται τον τρόπο που τα έγγραφα τεμαχίζονται και ανασυντίθενται μέσω της ανάκτησης.',
+     eEn:'The attack abuses the way documents are split and later reassembled through retrieval.'},
+    {id:'rag_retrieval',targets:['rag_retrieval'],attack:'Knowledge Conflict Exploitation',
+     tEl:'Αγωγός ανάκτησης',tEn:'Retrieval pipeline',
+     rEl:'Σύγκρουση ανάμεσα στο ανακτημένο περιεχόμενο και τη γνώση του μοντέλου.',
+     rEn:'Conflicts between retrieved content and model knowledge can be exploited.',
+     qEl:'Τα ανακτημένα έγγραφα αντιφάσκουν με την υπάρχουσα γνώση του μοντέλου και ο επιτιθέμενος εκμεταλλεύεται σκόπιμα αυτή τη διαφωνία. Τι ταιριάζει;',
+     qEn:"Retrieved documents contradict the model's existing knowledge, and an attacker intentionally exploits that disagreement. Which attack best matches?",
+     oEl:['Knowledge Conflict Exploitation','System Prompt Extraction','Rug Pull Attack','Code Execution Escape'],
+     oEn:['Knowledge Conflict Exploitation','System Prompt Extraction','Rug Pull Attack','Code Execution Escape'],c:0,
+     eEl:'Η επίθεση εκμεταλλεύεται την ανάγκη του μοντέλου να αποφασίσει ποια πηγή πληροφορίας να εμπιστευτεί.',
+     eEn:"The attack exploits the model's need to decide which source of information to trust."},
+    {id:'rag_embedding',targets:['rag_embedding'],attack:'Embedding Space Manipulation',
+     tEl:'Επίπεδο embedding / ομοιότητας',tEn:'Embedding / similarity layer',
+     rEl:'Ειδικά φτιαγμένο περιεχόμενο επηρεάζει τη σημασιολογική ανάκτηση.',
+     rEn:'Crafted content can manipulate semantic retrieval behavior.',
+     qEl:'Ένας επιτιθέμενος φτιάχνει περιεχόμενο ειδικά για να επηρεάσει τη σημασιολογική ομοιότητα και την κατάταξη ανάκτησης. Ποιο ταιριάζει;',
+     qEn:'An attacker crafts content specifically to influence semantic similarity and retrieval ranking. What is the best match?',
+     oEl:['Embedding Space Manipulation','Password Spraying','Orchestration Hijacking','Parameter Manipulation'],
+     oEn:['Embedding Space Manipulation','Password Spraying','Orchestration Hijacking','Parameter Manipulation'],c:0,
+     eEl:'Ο επιτιθέμενος στοχεύει τον τρόπο που το περιεχόμενο αναπαρίσταται και επιλέγεται στον χώρο των embeddings.',
+     eEn:'The attacker is targeting how content is represented and selected in embedding space.'},
+    {id:'rag_vector_db',targets:['rag_vector_db'],attack:'Data Exfiltration via Retrieval',
+     tEl:'Vector DB / ευαίσθητα έγγραφα',tEn:'Vector DB / sensitive documents',
+     rEl:'Ευαίσθητο περιεχόμενο μπορεί να ανακτηθεί και να εκτεθεί μέσω απαντήσεων.',
+     rEn:'Sensitive content may be retrieved and exposed through model responses.',
+     qEl:'Ένας χρήστης διαμορφώνει ερωτήματα που κάνουν ευαίσθητα έγγραφα της βάσης γνώσης να ανακτηθούν και να αποκαλυφθούν μέσω του μοντέλου. Τι είναι αυτό;',
+     qEn:'A user crafts queries that cause sensitive documents in the knowledge base to be retrieved and revealed through the model. What is this?',
+     oEl:['Data Exfiltration via Retrieval','Tool Poisoning','Confused Deputy','Model Fingerprinting'],
+     oEn:['Data Exfiltration via Retrieval','Tool Poisoning','Confused Deputy','Model Fingerprinting'],c:0,
+     eEl:'Το σύστημα ανάκτησης γίνεται μονοπάτι έκθεσης ευαίσθητων δεδομένων της βάσης γνώσης.',
+     eEn:'The retrieval system becomes a path for exposing sensitive data stored in the knowledge base.'}
+  ]
+},
+{
+  id:'agent', name:'LLM Agent', level:'high',
+  tagEl:'Με εργαλεία, μνήμη και βρόχο ReAct.',
+  tagEn:'Tools, memory and a ReAct loop.',
+  rows:[
+    {lEl:'Ροή',lEn:'Flow',arrows:true,items:[
+      {id:'agent_user',label:'User'},
+      {id:'agent_runtime',label:'Agent Runtime'},
+      {id:'agent_llm',label:'LLM Model'}]},
+    {lEl:'Κατάσταση',lEn:'State',items:[
+      {id:'agent_tools',label:'Tool Registry'},
+      {id:'agent_memory',label:'Memory'}]},
+    {lEl:'Εργαλεία',lEn:'Tools',items:[
+      {id:'agent_web',label:'Web Search'},
+      {id:'agent_database',label:'Database Query'},
+      {id:'agent_code',label:'Code Execution'},
+      {id:'agent_email',label:'Email Sending'},
+      {id:'agent_files',label:'File Operations'},
+      {id:'agent_api',label:'API Calls'}]}
+  ],
+  extras:[{id:'agent_loop_x',label:'Agent Loop (ReAct): Observe → Think → Act → Repeat'}],
+  attacks:[
+    {id:'agent_permissions',targets:['agent_tools'],attack:'Excessive Agency',
+     tEl:'Δικαιώματα εργαλείων',tEn:'Tool Registry / permissions',
+     rEl:'Ο agent μπορεί να έχει περισσότερες δυνατότητες από όσες χρειάζεται.',
+     rEn:'The agent may have more capabilities than required.',
+     qEl:'Ένας βοηθός χρειάζεται μόνο πρόσβαση ανάγνωσης σε μια βάση, αλλά έχει δικαιώματα ανάγνωσης, ενημέρωσης και διαγραφής. Ποιος κίνδυνος περιγράφει καλύτερα;',
+     qEn:'An assistant only needs read access to a database but has read, update, and delete permissions. Which risk best describes this?',
+     oEl:['Excessive Agency','Model Fingerprinting','Chunk Boundary Attack','Tool Shadowing'],
+     oEn:['Excessive Agency','Model Fingerprinting','Chunk Boundary Attack','Tool Shadowing'],c:0,
+     eEl:'Το μοντέλο έχει περισσότερα δικαιώματα από όσα χρειάζεται, παραβιάζοντας την αρχή του ελάχιστου προνομίου.',
+     eEn:'The model has more permissions than required, violating the Principle of Least Privilege.'},
+    {id:'agent_tool_calls',targets:['agent_runtime'],attack:'Tool Abuse via Prompt Injection',
+     tEl:'Επιλογή και κλήση εργαλείων',tEn:'Agent Runtime → Tools',
+     rEl:'Το prompt injection μπορεί να επηρεάσει την επιλογή ή τις παραμέτρους εργαλείου.',
+     rEn:'Prompt injection can influence tool selection or parameters.',
+     qEl:'Κακόβουλες οδηγίες κάνουν το μοντέλο να καλέσει ένα επιτρεπόμενο εργαλείο για μη προβλεπόμενη ενέργεια. Τι ταιριάζει;',
+     qEn:'Malicious instructions cause the model to invoke an allowed tool for an unintended action. Which attack best matches?',
+     oEl:['Tool Abuse via Prompt Injection','Data and Model Poisoning','Model Fingerprinting','Rug Pull Attack'],
+     oEn:['Tool Abuse via Prompt Injection','Data and Model Poisoning','Model Fingerprinting','Rug Pull Attack'],c:0,
+     eEl:'Το prompt αλλάζει τη συμπεριφορά χρήσης εργαλείων, παρότι το ίδιο το εργαλείο είναι νόμιμο.',
+     eEn:"The prompt changes the model's tool-use behavior even though the tool itself is legitimate."},
+    {id:'agent_web',targets:['agent_web'],attack:'SSRF',
+     tEl:'Εργαλείο με πρόσβαση HTTP',tEn:'Web/HTTP-capable tool',
+     rEl:'Μπορεί να γίνουν αιτήματα προς μη προβλεπόμενους εσωτερικούς πόρους.',
+     rEn:'Requests to unintended internal resources may be possible.',
+     qEl:'Ένας agent με πρόσβαση HTTP παρασύρεται να ζητήσει πόρο δικτύου που δεν θα έπρεπε να είναι προσβάσιμος μέσω εισόδου χρήστη. Ποια κατηγορία ταιριάζει;',
+     qEn:'An agent with HTTP access is manipulated into requesting a network resource that should not be reachable through normal user input. Which vulnerability class best matches?',
+     oEl:['SSRF','Prompt Leakage','Model Fingerprinting','Chunk Boundary Attack'],
+     oEn:['SSRF','Prompt Leakage','Model Fingerprinting','Chunk Boundary Attack'],c:0,
+     eEl:'Ο agent στην πλευρά του διακομιστή χρησιμοποιείται για μη προβλεπόμενα εξερχόμενα ή εσωτερικά αιτήματα.',
+     eEn:'The server-side agent is being used to make unintended outbound or internal requests.'},
+    {id:'agent_code',targets:['agent_code'],attack:'Code Execution Escape',
+     tEl:'Απομόνωση εκτέλεσης κώδικα',tEn:'Code Execution tool',
+     rEl:'Ένα παραβιασμένο workflow μπορεί να επιχειρήσει διαφυγή από την απομόνωση.',
+     rEn:'A compromised tool workflow may attempt to escape isolation.',
+     qEl:'Ένας επιτιθέμενος στοχεύει το όριο απομόνωσης του περιβάλλοντος εκτέλεσης κώδικα ενός agent. Ποιος κίνδυνος ταιριάζει;',
+     qEn:"An attacker targets the isolation boundary of an agent's code-execution environment. Which risk best matches?",
+     oEl:['Code Execution Escape','RAG Poisoning','Knowledge Conflict Exploitation','Tool Shadowing'],
+     oEn:['Code Execution Escape','RAG Poisoning','Knowledge Conflict Exploitation','Tool Shadowing'],c:0,
+     eEl:'Ο στόχος είναι το sandbox ή το όριο απομόνωσης γύρω από την εκτέλεση κώδικα.',
+     eEn:'The target is the sandbox or isolation boundary around code execution.'},
+    {id:'agent_loop',targets:['agent_loop_x'],attack:'Resource Exhaustion',
+     tEl:'Βρόχος ReAct',tEn:'ReAct / iteration loop',
+     rEl:'Επαναλαμβανόμενες ενέργειες μπορούν να καταναλώσουν απεριόριστους πόρους.',
+     rEn:'Repeated actions can consume unbounded resources.',
+     qEl:'Ένας agent παρασύρεται να επαναλαμβάνει ενέργειες επ’ άπειρον, καταναλώνοντας υπολογιστικούς πόρους ή κλήσεις API. Τι ταιριάζει;',
+     qEn:'An agent is tricked into repeating actions indefinitely and consuming compute or API calls. Which attack best matches?',
+     oEl:['Resource Exhaustion','System Prompt Extraction','Model Fingerprinting','Confused Deputy'],
+     oEn:['Resource Exhaustion','System Prompt Extraction','Model Fingerprinting','Confused Deputy'],c:0,
+     eEl:'Ο επιτιθέμενος καταχράται τον βρόχο του agent για να καταναλώσει πόρους χωρίς χρήσιμη συνθήκη τερματισμού.',
+     eEn:'The attacker abuses the agent loop to consume resources without a useful stopping condition.'}
+  ]
+},
+{
+  id:'multi', name:'Multi-Agent System', level:'vhigh',
+  tagEl:'Orchestrator με εξειδικευμένους agents.',
+  tagEn:'Orchestrator delegating to specialized agents.',
+  rows:[
+    {lEl:'Συντονισμός',lEn:'Coordination',arrows:true,items:[
+      {id:'multi_user',label:'User'},
+      {id:'multi_orchestrator',label:'Orchestrator Agent'}]},
+    {lEl:'Εξειδικευμένοι agents',lEn:'Specialized agents',items:[
+      {id:'multi_research',label:'Research Agent'},
+      {id:'multi_analysis',label:'Analysis Agent'},
+      {id:'multi_action',label:'Action Agent'}]},
+    {lEl:'Εργαλεία',lEn:'Tools',items:[
+      {id:'multi_web_tools',label:'Web Search Tools'},
+      {id:'multi_data_tools',label:'Data Process Tools'},
+      {id:'multi_action_tools',label:'Email / Database Tools'}]},
+    {lEl:'Κοινά',lEn:'Shared',flowish:true,items:[
+      {id:'multi_agent_boundary',label:'Inter-Agent Communication'},
+      {id:'multi_shared_memory',label:'Shared Memory / Shared State'}]}
+  ],
+  extras:[],
+  attacks:[
+    {id:'multi_privilege_boundary',targets:['multi_action'],attack:'Confused Deputy',
+     tEl:'Όριο χαμηλού → υψηλού προνομίου',tEn:'Low-privilege → high-privilege agent boundary',
+     rEl:'Ένας agent μπορεί να πείσει άλλον να κάνει ό,τι δεν μπορεί ο ίδιος.',
+     rEn:'One agent may convince another to perform actions it cannot perform itself.',
+     qEl:'Ένας research agent χαμηλού προνομίου κάνει έναν action agent υψηλότερου προνομίου να εκτελέσει ενέργεια που ο ίδιος δεν θα μπορούσε. Τι επίθεση είναι;',
+     qEn:'A low-privilege research agent causes a higher-privilege action agent to perform an operation the research agent could not perform itself. What attack is this?',
+     oEl:['Confused Deputy','RAG Poisoning','Parameter Manipulation','System Prompt Extraction'],
+     oEn:['Confused Deputy','RAG Poisoning','Parameter Manipulation','System Prompt Extraction'],c:0,
+     eEl:'Ένα στοιχείο χαμηλότερου προνομίου καταχράται την εξουσία ενός πιο προνομιούχου στοιχείου.',
+     eEn:'A lower-privilege component abuses the authority of a more privileged component.'},
+    {id:'multi_agent_messages',targets:['multi_agent_boundary'],attack:'Agent-to-Agent Prompt Injection',
+     tEl:'Επικοινωνία μεταξύ agents',tEn:'Agent-to-agent communication',
+     rEl:'Κακόβουλες οδηγίες μπορούν να διαδοθούν από agent σε agent.',
+     rEn:'Malicious instructions can propagate between agents.',
+     qEl:'Κακόβουλες οδηγίες επεξεργάζονται από έναν agent και προωθούνται ως έμπιστη πληροφορία σε άλλον. Τι ταιριάζει;',
+     qEn:'Malicious instructions are processed by one agent and then forwarded as trusted information to another agent. Which attack best matches?',
+     oEl:['Agent-to-Agent Prompt Injection','Model Fingerprinting','Chunk Boundary Attack','Resource Exhaustion'],
+     oEn:['Agent-to-Agent Prompt Injection','Model Fingerprinting','Chunk Boundary Attack','Resource Exhaustion'],c:0,
+     eEl:'Οι ενσωματωμένες οδηγίες διαδίδονται μέσω της επικοινωνίας μεταξύ των agents.',
+     eEn:'The injected instructions propagate through inter-agent communication.'},
+    {id:'multi_trust_boundary',targets:['multi_agent_boundary'],attack:'Trust Boundary Violation',
+     tEl:'Εμπιστοσύνη μεταξύ agents',tEn:'Inter-agent trust',
+     rEl:'Οι agents μπορεί να εμπιστεύονται τα αποτελέσματα των άλλων χωρίς έλεγχο.',
+     rEn:"Agents may trust each other's outputs without independent validation.",
+     qEl:'Ένας agent δέχεται την έξοδο άλλου agent ως έμπιστη, χωρίς να επικυρώσει την πηγή ή το νόημα. Τι πρόβλημα ασφάλειας είναι αυτό;',
+     qEn:"One agent accepts another agent's output as trustworthy without validating the source or meaning. What security problem does this represent?",
+     oEl:['Trust Boundary Violation','Tool Shadowing','Parameter Manipulation','Training Data Extraction'],
+     oEn:['Trust Boundary Violation','Tool Shadowing','Parameter Manipulation','Training Data Extraction'],c:0,
+     eEl:'Το σύστημα δημιουργεί μεταβατική σχέση εμπιστοσύνης χωρίς επαρκή επαλήθευση.',
+     eEn:'The system creates a transitive trust relationship without adequate verification.'},
+    {id:'multi_orchestrator',targets:['multi_orchestrator'],attack:'Orchestration Hijacking',
+     tEl:'Κεντρικός συντονιστής',tEn:'Orchestrator Agent',
+     rEl:'Η παραβίαση του συντονιστή επηρεάζει όλη τη ροή εργασίας.',
+     rEn:'Compromise of the central coordinator can influence the whole workflow.',
+     qEl:'Αν ένας επιτιθέμενος αποκτήσει έλεγχο στο στοιχείο που αναθέτει εργασίες σε όλους τους εξειδικευμένους agents, ποια επίθεση περιγράφει την κατάσταση;',
+     qEn:'If an attacker gains control over the component that delegates tasks to all specialized agents, which attack best describes the situation?',
+     oEl:['Orchestration Hijacking','RAG Poisoning','SSRF','Model Fingerprinting'],
+     oEn:['Orchestration Hijacking','RAG Poisoning','SSRF','Model Fingerprinting'],c:0,
+     eEl:'Ο orchestrator ελέγχει την ανάθεση και τη συγκέντρωση αποτελεσμάτων, άρα η παραβίασή του επηρεάζει όλη τη ροή.',
+     eEn:'The orchestrator controls delegation and aggregation, so compromising it can affect the entire workflow.'},
+    {id:'multi_shared_memory',targets:['multi_shared_memory'],attack:'Memory Poisoning',
+     tEl:'Κοινή μνήμη',tEn:'Shared Memory',
+     rEl:'Δηλητηριασμένη κοινή κατάσταση επηρεάζει πολλούς agents.',
+     rEn:'Poisoned shared state can affect multiple agents.',
+     qEl:'Ένας επιτιθέμενος εισάγει παραπλανητική κατάσταση σε μνήμη κοινή για πολλούς agents, ώστε οι μετέπειτα αποφάσεις να επηρεαστούν. Ποια επίθεση είναι;',
+     qEn:'An attacker inserts misleading state into memory shared by multiple agents so later decisions are influenced by it. Which attack is this?',
+     oEl:['Memory Poisoning','Tool Shadowing','Parameter Manipulation','Chunk Boundary Attack'],
+     oEn:['Memory Poisoning','Tool Shadowing','Parameter Manipulation','Chunk Boundary Attack'],c:0,
+     eEl:'Η δηλητηριασμένη κοινή μνήμη μπορεί να παραμείνει και να επηρεάσει πολλούς agents ή μελλοντικά βήματα.',
+     eEn:'Poisoned shared memory can persist and influence multiple agents or future steps.'}
+  ]
+},
+{
+  id:'mcp', name:'MCP', level:'high',
+  tagEl:'Τυποποιημένο οικοσύστημα εργαλείων.',
+  tagEn:'Model Context Protocol tool ecosystem.',
+  rows:[
+    {lEl:'Ροή',lEn:'Flow',arrows:true,items:[
+      {id:'mcp_user',label:'User'},
+      {id:'mcp_client',label:'MCP Client'},
+      {id:'mcp_llm',label:'LLM Model'}]},
+    {lEl:'Διακομιστές MCP',lEn:'MCP Servers',items:[
+      {id:'mcp_files',label:'MCP Server (Files)'},
+      {id:'mcp_database',label:'MCP Server (Database)'},
+      {id:'mcp_web',label:'MCP Server (Web)'}]},
+    {lEl:'Πρωτόκολλο',lEn:'Protocol',flowish:true,items:[
+      {id:'mcp_discovery',label:'Tool Discovery / Tool Descriptions'},
+      {id:'mcp_results',label:'Tool Results'}]}
+  ],
+  extras:[],
+  attacks:[
+    {id:'mcp_tool_description',targets:['mcp_discovery'],attack:'Tool Poisoning',
+     tEl:'Περιγραφές εργαλείων',tEn:'Tool descriptions',
+     rEl:'Κακόβουλος διακομιστής μπορεί να διαφημίσει παραπλανητικές οδηγίες.',
+     rEn:'A malicious server can advertise deceptive instructions or capabilities.',
+     qEl:'Ένας κακόβουλος MCP server δημοσιεύει περιγραφή εργαλείου που περιέχει κρυφές οδηγίες, ώστε το μοντέλο να αποκαλύψει ευαίσθητο context. Τι επίθεση είναι;',
+     qEn:'A malicious MCP server publishes a tool description containing hidden instructions designed to make the model disclose sensitive context. What attack is this?',
+     oEl:['Tool Poisoning','Model Fingerprinting','Chunk Boundary Attack','Resource Exhaustion'],
+     oEn:['Tool Poisoning','Model Fingerprinting','Chunk Boundary Attack','Resource Exhaustion'],c:0,
+     eEl:'Η επίθεση καταχράται τα μεταδεδομένα εργαλείων που διαβάζει το μοντέλο όταν αποφασίζει πώς να τα χρησιμοποιήσει.',
+     eEn:'The attack abuses the tool metadata that the model reads when deciding how to use tools.'},
+    {id:'mcp_tool_names',targets:['mcp_discovery'],attack:'Tool Shadowing',
+     tEl:'Ονόματα εργαλείων μεταξύ διακομιστών',tEn:'Tool discovery across servers',
+     rEl:'Κακόβουλος διακομιστής μπορεί να διαφημίσει συγκρουόμενο όνομα εργαλείου.',
+     rEn:'A malicious server can advertise a conflicting tool name.',
+     qEl:'Ένας κακόβουλος MCP server διαφημίζει εργαλείο με το ίδιο όνομα με ένα νόμιμο, ώστε οι κλήσεις να κατευθυνθούν λάθος. Ποια επίθεση είναι;',
+     qEn:'A malicious MCP server advertises a tool with the same name as a legitimate tool so calls may be misdirected. Which attack is this?',
+     oEl:['Tool Shadowing','RAG Poisoning','System Prompt Extraction','SSRF'],
+     oEn:['Tool Shadowing','RAG Poisoning','System Prompt Extraction','SSRF'],c:0,
+     eEl:'Ένα κακόβουλο εργαλείο προσπαθεί να υποδυθεί ή να παρακάμψει την ταυτότητα ενός νόμιμου εργαλείου.',
+     eEn:'A malicious tool attempts to impersonate or override a legitimate tool identity.'},
+    {id:'mcp_server_trust',targets:['mcp_files','mcp_database','mcp_web'],attack:'Rug Pull Attack',
+     tEl:'Έμπιστος διακομιστής MCP',tEn:'Trusted MCP server',
+     rEl:'Ένας αρχικά αθώος διακομιστής μπορεί αργότερα να αλλάξει συμπεριφορά.',
+     rEn:'A previously benign server can later change its behavior or metadata.',
+     qEl:'Ένας MCP server συμπεριφέρεται αρχικά με ασφάλεια, κερδίζει εμπιστοσύνη και αργότερα αλλάζει κακόβουλα τη συμπεριφορά ή τις περιγραφές του. Πώς λέγεται;',
+     qEn:'An MCP server behaves safely at first, gains trust, and later changes its tool behavior or descriptions maliciously. What is this called?',
+     oEl:['Rug Pull Attack','Confused Deputy','Training Data Extraction','Parameter Manipulation'],
+     oEn:['Rug Pull Attack','Confused Deputy','Training Data Extraction','Parameter Manipulation'],c:0,
+     eEl:'Ο διακομιστής αλλάζει αφού έχει ήδη εδραιωθεί η εμπιστοσύνη.',
+     eEn:'The server changes after trust has already been established.'},
+    {id:'mcp_cross_server',targets:['mcp_results'],attack:'Cross-Server Attack',
+     tEl:'Έξοδοι εργαλείων μεταξύ διακομιστών',tEn:'Tool outputs / cross-server context',
+     rEl:'Η έξοδος ενός διακομιστή επηρεάζει τη χρήση άλλου.',
+     rEn:'Output from one server can influence how the model uses another server.',
+     qEl:'Ένας MCP server επιστρέφει περιεχόμενο με οδηγίες που επηρεάζουν το πώς το LLM αλληλεπιδρά με άλλον MCP server. Τι ταιριάζει;',
+     qEn:'One MCP server returns content containing instructions that influence how the LLM interacts with another MCP server. Which attack best matches?',
+     oEl:['Cross-Server Attack','Model Fingerprinting','Knowledge Conflict Exploitation','Parameter Manipulation'],
+     oEn:['Cross-Server Attack','Model Fingerprinting','Knowledge Conflict Exploitation','Parameter Manipulation'],c:0,
+     eEl:'Η επίθεση διασχίζει το όριο εμπιστοσύνης ανάμεσα σε ξεχωριστούς MCP servers μέσω εξόδου ορατής στο μοντέλο.',
+     eEn:'The attack crosses the trust boundary between separate MCP servers through model-visible tool output.'}
+  ]
+}
+];
+
+/* =====================  i18n  ===================== */
+const I18N={
+ el:{navHome:'Αρχική',navQuiz:'Κουίζ',navCore:'Hackviser CORE',title:'LLM Attack Surface',
+  subtitle:'Χτίσε την αρχιτεκτονική, βρες πού μπορεί να επιτεθεί κάποιος και αναγνώρισε την επίθεση. Κάθε σημείο διασύνδεσης είναι και μια επιφάνεια επίθεσης.',
+  pickArch:'Διάλεξε αρχιτεκτονική',stageA:'Στάδιο Α',stageAtxt:'Χτίσε την αρχιτεκτονική',
+  stageB:'Στάδιο Β',stageBtxt:'Βρες σημείο επίθεσης',stageC:'Στάδιο Γ',stageCtxt:'Ποια επίθεση;',
+  bankH:'Στοιχεία',bankHint:'Σύρε ένα στοιχείο στο κουτί του — ή πάτησέ το και μετά πάτα το κουτί.',
+  checkBtn:'Έλεγχος αρχιτεκτονικής',clearBtn:'Καθαρισμός',backBtn:'← Αρχιτεκτονικές',
+  askAttack:'Πού θα μπορούσε να επιτεθεί κάποιος; Πάτα ένα στοιχείο του διαγράμματος.',
+  notSurface:'Αυτό το στοιχείο ανήκει στην αρχιτεκτονική, αλλά δεν είναι μία από τις επιφάνειες επίθεσης αυτής της άσκησης. Δοκίμασε άλλο όριο εμπιστοσύνης ή στοιχείο.',
+  alreadyFound:'Το βρήκες ήδη αυτό. Ψάξε άλλη επιφάνεια.',
+  chooseSurface:'Αυτό το στοιχείο έχει περισσότερες από μία επιφάνειες. Ποια σε ενδιαφέρει;',
+  correct:'Σωστά — η επίθεση ταιριάζει με την επιλεγμένη επιφάνεια.',
+  wrong:'Όχι ακριβώς. Σκέψου τι ελέγχει ή τι εμπιστεύεται το στοιχείο που διάλεξες.',
+  found:'βρέθηκαν',surfaces:'επιφάνειες',close:'Κλείσιμο',next:'Συνέχεια',
+  archDone:'Ολοκλήρωσες αυτή την αρχιτεκτονική!',allFound:'Βρήκες και τις',
+  backToArch:'Επιλογή άλλης αρχιτεκτονικής',fixHint:'Λάθος θέσεις — δες τα κόκκινα κουτιά.',
+  archOk:'Η αρχιτεκτονική είναι σωστή. Προχώρα στο Στάδιο Β.',
+  incomplete:'Συμπλήρωσε πρώτα όλα τα κουτιά.',why:'Γιατί είναι επιφάνεια επίθεσης'},
+ en:{navHome:'Home',navQuiz:'Quizzes',navCore:'Hackviser CORE',title:'LLM Attack Surface',
+  subtitle:'Build the architecture, find where an attacker could strike, and name the attack. Every integration point is an attack surface.',
+  pickArch:'Pick an architecture',stageA:'Stage A',stageAtxt:'Build the architecture',
+  stageB:'Stage B',stageBtxt:'Choose an attack point',stageC:'Stage C',stageCtxt:'Which attack?',
+  bankH:'Components',bankHint:'Drag a component into its box — or tap it, then tap the box.',
+  checkBtn:'Check architecture',clearBtn:'Clear',backBtn:'← Architectures',
+  askAttack:'Where could an attacker target this architecture? Click a component.',
+  notSurface:'That component is part of the architecture, but it is not one of the attack surfaces configured for this challenge. Try another trust boundary or component.',
+  alreadyFound:'You already found that one. Look for another surface.',
+  chooseSurface:'This component has more than one surface. Which one?',
+  correct:'Correct — this attack matches the selected attack surface.',
+  wrong:'Not quite. Think about what the selected component controls or trusts.',
+  found:'found',surfaces:'surfaces',close:'Close',next:'Continue',
+  archDone:'Architecture complete!',allFound:'You found all',
+  backToArch:'Pick another architecture',fixHint:'Some boxes are wrong — check the red ones.',
+  archOk:'The architecture is correct. Move on to Stage B.',
+  incomplete:'Fill in every box first.',why:'Why it is an attack surface'}
+};
+let lang='el';
+try{ lang=localStorage.getItem('lang')||'el'; }catch(e){}
+const t=k=>(I18N[lang]&&I18N[lang][k])||I18N.el[k]||k;
+const $=id=>document.getElementById(id);
+
+/* =====================  STATE  ===================== */
+let arch=null, stage='A', slots=[], selectedWord=null, solved=new Set(), done=new Set();
+try{ done=new Set(JSON.parse(localStorage.getItem('llmGameDone')||'[]')); }catch(e){}
+function saveDone(){ try{ localStorage.setItem('llmGameDone',JSON.stringify([...done])); }catch(e){} }
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function allItems(a){ return a.rows.flatMap(r=>r.items); }
+function attacksFor(nodeId){ return arch.attacks.filter(x=>x.targets.indexOf(nodeId)>=0); }
+
+/* =====================  PICKER  ===================== */
+function renderPicker(){
+  const g=$('archGrid'); g.innerHTML='';
+  ARCHS.forEach(a=>{
+    const c=document.createElement('button'); c.className='arch-card';
+    const lv={low:'low',med:'med',high:'high',vhigh:'vhigh'}[a.level];
+    c.innerHTML='<span class="lvl '+lv+'">'+a.level.replace('vhigh','very high')+'</span>'+
+      (done.has(a.id)?'<span class="done-badge">✓</span>':'')+
+      '<h3>'+a.name+'</h3><p>'+(lang==='el'?a.tagEl:a.tagEn)+'</p>'+
+      '<p style="margin-top:6px;opacity:.75">'+allItems(a).length+' components · '+a.attacks.length+' '+t('surfaces')+'</p>';
+    c.addEventListener('click',()=>startArch(a));
+    g.appendChild(c);
+  });
+}
+
+/* =====================  STAGE A  ===================== */
+function startArch(a){
+  arch=a; stage='A'; solved=new Set(); selectedWord=null;
+  $('archName').textContent=a.name;
+  $('pickView').classList.add('hidden');
+  $('playView').classList.remove('hidden');
+  $('bankPanel').classList.remove('hidden');
+  $('checkBtn').classList.remove('hidden');
+  $('clearBtn').classList.remove('hidden');
+  $('hintSlot').innerHTML='';
+  buildDiagram(); buildBank(); paintStages(); updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildDiagram(){
+  const d=$('diagram'); d.innerHTML=''; slots=[];
+  arch.rows.forEach(row=>{
+    const rd=document.createElement('div'); rd.className='drow';
+    const lab=document.createElement('div'); lab.className='drow-label';
+    lab.textContent=lang==='el'?row.lEl:row.lEn; rd.appendChild(lab);
+    row.items.forEach((it,i)=>{
+      if(row.arrows && i>0){ const ar=document.createElement('div'); ar.className='arrow'; ar.textContent='→'; rd.appendChild(ar); }
+      const n=document.createElement('div');
+      n.className='node'+(row.flowish?' flowish':'');
+      n.dataset.id=it.id;
+      if(stage==='A'){
+        n.classList.add('blank'); n.textContent='';
+        const rec={id:it.id,label:it.label,el:n,placed:null};
+        n.addEventListener('dragover',e=>{e.preventDefault();n.classList.add('over');});
+        n.addEventListener('dragleave',()=>n.classList.remove('over'));
+        n.addEventListener('drop',e=>{e.preventDefault();n.classList.remove('over');
+          const w=document.querySelector('.word[data-wid="'+e.dataTransfer.getData('text/plain')+'"]');
+          if(w) place(w,rec);});
+        n.addEventListener('click',()=>{ if(selectedWord) place(selectedWord,rec); else if(rec.placed) unplace(rec); });
+        slots.push(rec);
+      }else{
+        n.textContent=it.label;
+        n.classList.add('hot');
+        if(arch.attacks.some(x=>x.targets.indexOf(it.id)>=0 && solved.has(x.id))
+           && attacksFor(it.id).every(x=>solved.has(x.id))) n.classList.add('found');
+        n.addEventListener('click',()=>onNodeClick(it.id));
+      }
+      rd.appendChild(n);
+    });
+    d.appendChild(rd);
+  });
+  if(arch.extras.length){
+    const rd=document.createElement('div'); rd.className='drow';
+    arch.extras.forEach(ex=>{
+      const n=document.createElement('div'); n.className='node extra flowish'; n.dataset.id=ex.id;
+      n.textContent=ex.label; n.style.minWidth='260px';
+      if(stage!=='A'){ n.classList.add('hot');
+        if(attacksFor(ex.id).length && attacksFor(ex.id).every(x=>solved.has(x.id))) n.classList.add('found');
+        n.addEventListener('click',()=>onNodeClick(ex.id)); }
+      rd.appendChild(n);
+    });
+    d.appendChild(rd);
+  }
+}
+
+function buildBank(){
+  const b=$('bank'); b.innerHTML=''; selectedWord=null;
+  if(stage!=='A'){ b.innerHTML=''; return; }
+  shuffle(allItems(arch)).forEach((it,i)=>{
+    const w=document.createElement('div'); w.className='word'; w.textContent=it.label;
+    w.draggable=true; w.dataset.wid='w'+i; w.dataset.txt=it.label;
+    w.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',w.dataset.wid);});
+    w.addEventListener('click',()=>{
+      if(selectedWord===w){w.classList.remove('sel');selectedWord=null;return;}
+      if(selectedWord) selectedWord.classList.remove('sel');
+      selectedWord=w; w.classList.add('sel');
+    });
+    b.appendChild(w);
+  });
+}
+function place(wordEl,rec){
+  if(rec.placed) unplace(rec);
+  rec.placed=wordEl.dataset.txt; rec.wordEl=wordEl;
+  wordEl.classList.add('used');
+  rec.el.textContent=rec.placed;
+  rec.el.classList.remove('blank','ok','bad'); rec.el.classList.add('filled');
+  if(selectedWord){selectedWord.classList.remove('sel');selectedWord=null;}
+  updateProgress();
+}
+function unplace(rec){
+  if(!rec.placed) return;
+  if(rec.wordEl) rec.wordEl.classList.remove('used');
+  rec.placed=null; rec.wordEl=null;
+  rec.el.textContent=''; rec.el.classList.remove('filled','ok','bad'); rec.el.classList.add('blank');
+  updateProgress();
+}
+function checkArchitecture(){
+  if(slots.some(s=>!s.placed)){ showHint(t('incomplete'),'warn'); return; }
+  let ok=0;
+  slots.forEach(s=>{
+    const good=s.placed===s.label;
+    s.el.classList.toggle('ok',good); s.el.classList.toggle('bad',!good);
+    const old=s.el.querySelector('.fix'); if(old) old.remove();
+    if(!good){ const f=document.createElement('small'); f.className='fix'; f.textContent='✓ '+s.label; s.el.appendChild(f); }
+    if(good) ok++;
+  });
+  if(ok===slots.length){ toStageB(); }
+  else showHint(t('fixHint'),'warn');
+}
+
+/* =====================  STAGE B  ===================== */
+function toStageB(){
+  stage='B';
+  $('bankPanel').classList.add('hidden');
+  $('checkBtn').classList.add('hidden');
+  $('clearBtn').classList.add('hidden');
+  buildDiagram(); paintStages(); updateProgress();
+  showHint(t('archOk')+' '+t('askAttack'),'ok');
+}
+function onNodeClick(nodeId){
+  const list=attacksFor(nodeId);
+  if(!list.length){ showHint(t('notSurface'),'warn'); return; }
+  const open=list.filter(x=>!solved.has(x.id));
+  if(!open.length){ showHint(t('alreadyFound'),'warn'); return; }
+  if(open.length===1){ openQuiz(open[0]); return; }
+  openChooser(open,list);
+}
+function openChooser(open,all){
+  modal(function(box){
+    box.innerHTML='<h3>'+t('chooseSurface')+'</h3><div class="surface-list"></div>';
+    const l=box.querySelector('.surface-list');
+    all.forEach(a=>{
+      const b=document.createElement('button');
+      b.textContent=(lang==='el'?a.tEl:a.tEn)+(solved.has(a.id)?'  ✓':'');
+      if(solved.has(a.id)) b.className='done';
+      else b.addEventListener('click',()=>{ closeModal(); openQuiz(a); });
+      l.appendChild(b);
+    });
+    const f=document.createElement('div'); f.className='row'; f.style.marginTop='14px';
+    const c=document.createElement('button'); c.className='btn btn-ghost'; c.textContent=t('close');
+    c.addEventListener('click',closeModal); f.appendChild(c); box.appendChild(f);
+  });
+}
+
+/* =====================  STAGE C  ===================== */
+function openQuiz(a){
+  stage='C'; paintStages();
+  modal(function(box){
+    box.innerHTML='';
+    const h=document.createElement('h3'); h.textContent=lang==='el'?a.tEl:a.tEn; box.appendChild(h);
+    const why=document.createElement('p'); why.className='why';
+    why.textContent=t('why')+': '+(lang==='el'?a.rEl:a.rEn); box.appendChild(why);
+    const q=document.createElement('p'); q.className='qtext'; q.textContent=lang==='el'?a.qEl:a.qEn; box.appendChild(q);
+    const opts=document.createElement('div'); opts.className='opts';
+    const labels=lang==='el'?a.oEl:a.oEn;
+    labels.forEach((txt,i)=>{
+      const b=document.createElement('button'); b.className='opt-btn';
+      b.innerHTML='<span class="mk">'+String.fromCharCode(65+i)+'</span><span>'+txt+'</span>';
+      b.addEventListener('click',()=>answer(a,i,opts,box));
+      opts.appendChild(b);
+    });
+    box.appendChild(opts);
+  });
+}
+function answer(a,idx,optsEl,box){
+  const btns=Array.from(optsEl.children);
+  btns.forEach(b=>b.disabled=true);
+  const good=idx===a.c;
+  btns[idx].classList.add(good?'right':'wrong');
+  if(!good) btns[a.c].classList.add('right');
+  const fb=document.createElement('div');
+  fb.className='feedback '+(good?'good':'bad');
+  fb.innerHTML='<b>'+(good?t('correct'):t('wrong'))+'</b><br>'+
+    '<span style="opacity:.9">'+(lang==='el'?a.eEl:a.eEn)+'</span>'+
+    '<br><br><b>'+a.attack+'</b>';
+  box.appendChild(fb);
+  const row=document.createElement('div'); row.className='row'; row.style.marginTop='14px';
+  const n=document.createElement('button'); n.className='btn'; n.textContent=t('next');
+  n.addEventListener('click',()=>{
+    closeModal();
+    if(good){ solved.add(a.id); buildDiagram(); updateProgress();
+      if(solved.size===arch.attacks.length) finishArch(); }
+    else { stage='B'; paintStages(); }
+  });
+  row.appendChild(n); box.appendChild(row);
+  box.scrollTop=box.scrollHeight;
+}
+
+/* =====================  FINISH  ===================== */
+function finishArch(){
+  done.add(arch.id); saveDone(); stage='done'; paintStages();
+  modal(function(box){
+    box.innerHTML='<h3>🎉 '+t('archDone')+'</h3>'+
+      '<p class="why">'+t('allFound')+' '+arch.attacks.length+' '+t('surfaces')+' — '+arch.name+'.</p>'+
+      '<div class="surface-list">'+arch.attacks.map(a=>
+        '<button class="done" style="cursor:default"><b>'+a.attack+'</b><br><span style="opacity:.75;font-size:.85em">'+
+        (lang==='el'?a.tEl:a.tEn)+'</span></button>').join('')+'</div>';
+    const row=document.createElement('div'); row.className='row'; row.style.marginTop='14px';
+    const b=document.createElement('button'); b.className='btn'; b.textContent=t('backToArch');
+    b.addEventListener('click',()=>{ closeModal(); backToPicker(); });
+    row.appendChild(b); box.appendChild(row);
+  });
+}
+function backToPicker(){
+  $('playView').classList.add('hidden'); $('pickView').classList.remove('hidden');
+  renderPicker(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* =====================  UI BITS  ===================== */
+function paintStages(){
+  const map={A:['on','',''],B:['ok','on',''],C:['ok','ok','on'],done:['ok','ok','ok']};
+  const st=map[stage]||map.A;
+  ['stA','stB','stC'].forEach((id,i)=>{ $(id).className='stage'+(st[i]?' '+st[i]:''); });
+}
+function updateProgress(){
+  if(stage==='A'){
+    const f=slots.filter(s=>s.placed).length;
+    $('progText').textContent=f+' / '+slots.length;
+  }else{
+    $('progText').textContent=solved.size+' / '+arch.attacks.length+' '+t('surfaces')+' '+t('found');
+  }
+}
+function showHint(msg,kind){
+  const s=$('hintSlot');
+  s.innerHTML='<div class="hint"'+(kind==='ok'?' style="background:rgba(16,185,129,.1);border-left-color:var(--success)"':'')+'>'+msg+'</div>';
+}
+function modal(build){
+  closeModal();
+  const bd=document.createElement('div'); bd.className='backdrop'; bd.id='backdrop';
+  const box=document.createElement('div'); box.className='modal';
+  bd.appendChild(box); build(box);
+  bd.addEventListener('click',e=>{ if(e.target===bd) closeModal(); });
+  $('modalRoot').appendChild(bd);
+}
+function closeModal(){ const b=$('backdrop'); if(b) b.remove(); }
+
+/* =====================  WIRING  ===================== */
+$('checkBtn').addEventListener('click',checkArchitecture);
+$('clearBtn').addEventListener('click',()=>{ slots.forEach(unplace); $('hintSlot').innerHTML=''; buildBank(); });
+$('backBtn').addEventListener('click',backToPicker);
+$('langBtn').addEventListener('click',()=>{
+  lang=lang==='el'?'en':'el';
+  try{ localStorage.setItem('lang',lang); }catch(e){}
+  applyI18n();
+  if(!$('playView').classList.contains('hidden')){ buildDiagram(); if(stage==='A') buildBank(); updateProgress(); }
+  else renderPicker();
+});
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(I18N[lang]&&I18N[lang][k]) el.textContent=I18N[lang][k];
+  });
+  $('langBtn').textContent=lang==='el'?'EN':'EL';
+  document.documentElement.lang=lang;
+}
+applyI18n();
+renderPicker();
+</script>
+</body>
+</html>
