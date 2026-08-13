@@ -297,12 +297,15 @@ const SETS = [
       {label:'123', answer:'NTP'},
       {label:'143', answer:'IMAP4', alias:['imap']},
       {label:'161', answer:'SNMP'},
+      {label:'264', answer:'BGMP'},
       {label:'389', answer:'LDAP'},
       {label:'443', answer:'HTTPS'},
       {label:'445', answer:'SMB'},
       {label:'636', answer:'LDAPS'},
       {label:'989, 990', answer:'FTPS'},
+      {label:'1701', answer:'L2TP'},
       {label:'1720', answer:'H.323', alias:['h323']},
+      {label:'1723', answer:'PPTP'},
       {label:'3306', answer:'MySQL'},
       {label:'3389', answer:'RDP'},
       {label:'5060, 5061', answer:'SIP'},
@@ -358,6 +361,50 @@ const SETS = [
       {label:'LLM08:2025', answer:'Vector and Embedding Weaknesses', alias:['vector and embeddings weaknesses']},
       {label:'LLM09:2025', answer:'Misinformation'},
       {label:'LLM10:2025', answer:'Unbounded Consumption'},
+    ]
+  },
+  {
+    id:'hallucinations', titleEl:'Τύποι Παραισθήσεων (Hallucinations)', titleEn:'Types of Hallucinations',
+    noteEl:'Ταίριαξε την περιγραφή με τον τύπο παραίσθησης.',
+    noteEn:'Match each description to its hallucination type.',
+    two:true,
+    items:[
+      {label:'Λάθος γεγονότα / στοιχεία', answer:'Factual Hallucinations'},
+      {label:'Επινοημένα πρόσωπα, προϊόντα ή πακέτα', answer:'Fabricated Entities'},
+      {label:'Ανοησία με απόλυτη σιγουριά', answer:'Confident Nonsense'},
+      {label:'Επινοημένες πηγές ή παραπομπές', answer:'Source Hallucinations'},
+    ]
+  },
+  {
+    id:'extraction', titleEl:'Τεχνικές Εξαγωγής System Prompt', titleEn:'System Prompt Extraction Techniques',
+    noteEl:'Σε ποια κατηγορία ανήκει κάθε τεχνική; (Direct / Indirect / Advanced)',
+    noteEn:'Which category does each technique belong to? (Direct / Indirect / Advanced)',
+    two:true,
+    items:[
+      {label:'Simple direct requests', answer:'Direct'},
+      {label:'Reframing requests', answer:'Direct'},
+      {label:'Behavioral inference', answer:'Indirect'},
+      {label:'Prompt leakage through examples', answer:'Indirect'},
+      {label:'Token-by-token extraction', answer:'Indirect'},
+      {label:'Encoding and format tricks', answer:'Indirect'},
+      {label:'Multi-turn extraction', answer:'Indirect'},
+      {label:'Prompt injection for extraction', answer:'Advanced'},
+      {label:'Extraction via output manipulation', answer:'Advanced'},
+    ]
+  },
+  {
+    id:'disclosure', titleEl:'Κατηγορίες Sensitive Information Disclosure', titleEn:'Sensitive Information Disclosure Categories',
+    noteEl:'Ταίριαξε την περιγραφή με την κατηγορία διαρροής.',
+    noteEn:'Match each description to its disclosure category.',
+    two:true,
+    items:[
+      {label:'Το μοντέλο αναπαράγει δεδομένα εκπαίδευσης', answer:'Training Data Memorization'},
+      {label:'Δεδομένα ενός χρήστη εμφανίζονται σε άλλον', answer:'Cross-User Data Leakage'},
+      {label:'Προσωπικά δεδομένα μέσα στην απάντηση του μοντέλου', answer:'PII Leakage Through Model Responses'},
+      {label:'Το μοντέλο συμπεραίνει προσωπικά στοιχεία που δεν δόθηκαν', answer:'PII Inference'},
+      {label:'Έκθεση κλειδιών API και διαπιστευτηρίων', answer:'API Key and Credential Exposure'},
+      {label:'Μηνύματα σφάλματος αποκαλύπτουν εσωτερικές λεπτομέρειες', answer:'Information Disclosure Through Error Messages'},
+      {label:'Ευαίσθητα στοιχεία στα μεταδεδομένα του μοντέλου', answer:'Sensitive Information in Model Metadata'},
     ]
   },
 ];
