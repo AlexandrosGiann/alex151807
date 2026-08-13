@@ -1221,18 +1221,16 @@
 
     // Shuffle Options Helper
     function shuffleQuestionOptions(question) {
-      let optionsWithIndices = question.options.map((opt, idx) => ({
-        text: opt,
-        isCorrect: (idx === question.correct_idx)
-      }));
-      let shuffled = shuffleArray(optionsWithIndices);
-      let newOptions = shuffled.map(item => item.text);
-      let newCorrectIdx = shuffled.findIndex(item => item.isCorrect);
-      return {
-        text: question.text,
-        options: newOptions,
-        correct_idx: newCorrectIdx
-      };
+      // Keep every other field (explanation, text_en, qid, image...) and shuffle
+      // options_en with the SAME permutation so the two languages stay aligned.
+      let order = shuffleArray(question.options.map((_, idx) => idx));
+      let out = { ...question };
+      out.options = order.map(i => question.options[i]);
+      out.correct_idx = order.indexOf(question.correct_idx);
+      if (Array.isArray(question.options_en)) {
+        out.options_en = order.map(i => question.options_en[i]);
+      }
+      return out;
     }
 
     // Initialize Dashboard

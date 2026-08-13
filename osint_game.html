@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OSINT Investigator — Παιχνίδι | Αλέξανδρος Γιαννάκης</title>
+<style>
+  :root{--bg:#0f172a;--card-bg:#1e293b;--border-color:#334155;--text-main:#f8fafc;
+        --text-muted:#94a3b8;--primary:#38bdf8;--success:#10b981;--danger:#ef4444;
+        --warning:#f59e0b;--purple:#a855f7}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text-main);padding:26px 16px 80px}
+  .wrap{max-width:1100px;margin:0 auto}
+  .top-nav{text-align:center;margin-bottom:16px}
+  .top-nav a{color:var(--text-muted);text-decoration:none;margin:0 10px;font-size:.94rem}
+  .top-nav a:hover{color:var(--primary)}
+  h1.page-title{text-align:center;color:var(--primary);margin:0 0 6px;font-size:clamp(1.5rem,4vw,2.2rem)}
+  .subtitle{text-align:center;color:var(--text-muted);margin:0 auto 22px;max-width:760px;line-height:1.6;font-size:.95rem}
+  .panel{background:var(--card-bg);border:1px solid var(--border-color);border-radius:16px;padding:18px;margin-bottom:16px}
+  .panel-h{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin:0 0 12px}
+  .mode-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+  .mode-card{background:#0b1220;border:1px solid var(--border-color);border-radius:12px;padding:14px;cursor:pointer;transition:all .16s ease;text-align:left}
+  .mode-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+  .mode-card h3{margin:0 0 5px;font-size:1rem}
+  .mode-card p{margin:0;font-size:.8rem;color:var(--text-muted);line-height:1.5}
+  .mode-card .badge{display:inline-block;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:2px 8px;border-radius:999px;margin-bottom:7px;background:rgba(56,189,248,.16);color:var(--primary)}
+  .mode-card .done-badge{float:right;color:var(--success);font-weight:700;font-size:.8rem}
+  .stages{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .stage{flex:1;min-width:150px;padding:9px 12px;border-radius:10px;background:#0b1220;border:1px solid var(--border-color);font-size:.82rem;color:var(--text-muted)}
+  .stage.on{border-color:var(--primary);color:var(--text-main);background:rgba(56,189,248,.1)}
+  .stage.ok{border-color:var(--success);color:var(--success)}
+  .stage b{display:block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+  /* cycle build */
+  .slots{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .slot{display:flex;border:1px solid var(--border-color);border-radius:10px;overflow:hidden;background:#0b1220;min-height:46px}
+  .slot-label{flex:0 0 auto;min-width:48px;display:flex;align-items:center;justify-content:center;background:rgba(56,189,248,.12);color:var(--primary);font-weight:700;font-size:.85rem;border-right:1px solid var(--border-color)}
+  .slot-drop{flex:1;display:flex;align-items:center;padding:6px 10px;font-size:.88rem;color:var(--text-muted)}
+  .slot-drop.over{background:rgba(56,189,248,.14)}
+  .slot-drop .placed{background:rgba(56,189,248,.16);border:1px solid var(--primary);border-radius:7px;padding:5px 10px;color:var(--text-main);cursor:pointer;font-size:.85rem}
+  .slot.ok{border-color:var(--success)} .slot.ok .slot-label{background:rgba(16,185,129,.15);color:var(--success)}
+  .slot.bad{border-color:var(--danger)} .slot.bad .slot-label{background:rgba(239,68,68,.15);color:var(--danger)}
+  .fix{display:block;font-size:.76rem;color:var(--success);margin-top:3px}
+  #bank{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
+  .word{background:#0b1220;border:1px solid var(--primary);color:var(--text-main);border-radius:9px;padding:7px 12px;cursor:grab;font-size:.85rem;user-select:none}
+  .word.sel{background:var(--primary);color:#06283d;font-weight:700}
+  .word.used{display:none}
+  /* scenario + tools */
+  .scenario{background:rgba(168,85,247,.08);border-left:4px solid var(--purple);border-radius:10px;padding:13px 15px;margin-bottom:14px}
+  .scenario .lbl{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--purple);display:block;margin-bottom:5px}
+  .scenario p{margin:0;line-height:1.6;font-size:.95rem}
+  .tools{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .tool{background:#0b1220;border:1px solid var(--border-color);border-radius:10px;padding:11px 13px;cursor:pointer;font-family:inherit;color:var(--text-main);text-align:left;font-size:.86rem;transition:all .14s ease}
+  .tool:hover{border-color:var(--warning)}
+  .tool .purpose{display:block;font-size:.74rem;color:var(--text-muted);margin-top:3px;line-height:1.4}
+  .tool.solved{border-color:var(--success);opacity:.55}
+  .tool.wrongpick{border-color:var(--danger)}
+  .hint{margin-top:12px;padding:11px 14px;border-radius:10px;font-size:.86rem;line-height:1.55;background:rgba(245,158,11,.1);border-left:4px solid var(--warning)}
+  .hint.ok{background:rgba(16,185,129,.1);border-left-color:var(--success)}
+  /* modal */
+  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.78);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+  .modal{background:var(--card-bg);border:1px solid var(--border-color);border-radius:16px;max-width:620px;width:100%;padding:22px;max-height:88vh;overflow:auto}
+  .modal h3{margin:0 0 10px;font-size:1.05rem}
+  .qtext{font-size:.98rem;line-height:1.6;margin:0 0 14px}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opt-btn{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#0b1220;border:1px solid var(--border-color);border-radius:10px;padding:11px 13px;cursor:pointer;color:var(--text-main);font-family:inherit;font-size:.88rem;line-height:1.45}
+  .opt-btn:hover:not(:disabled){border-color:var(--primary)}
+  .opt-btn .mk{flex:0 0 22px;height:22px;border-radius:6px;background:rgba(56,189,248,.15);color:var(--primary);font-weight:700;font-size:.76rem;display:flex;align-items:center;justify-content:center}
+  .opt-btn.right{border-color:var(--success);background:rgba(16,185,129,.12)}
+  .opt-btn.wrong{border-color:var(--danger);background:rgba(239,68,68,.12)}
+  .feedback{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:.88rem;line-height:1.55}
+  .feedback.good{background:rgba(16,185,129,.1);border-left:4px solid var(--success)}
+  .feedback.bad{background:rgba(239,68,68,.1);border-left:4px solid var(--danger)}
+  .example{font-family:monospace;font-size:.84rem;background:#0b1220;border:1px solid var(--border-color);border-radius:8px;padding:8px 11px;margin-top:10px;display:block;overflow-x:auto;color:var(--primary)}
+  .btn{background:var(--primary);color:#06283d;border:0;border-radius:10px;padding:10px 20px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border-color)}
+  .btn-ghost:hover:not(:disabled){color:var(--text-main);border-color:var(--primary)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .prog{font-size:.85rem;color:var(--text-muted)}
+  .xp{font-weight:700;color:var(--warning)}
+  .hidden{display:none !important}
+  .float-btns{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:10px}
+  .fbtn{width:44px;height:44px;border-radius:50%;background:var(--card-bg);border:1px solid var(--border-color);color:var(--text-muted);font-weight:700;cursor:pointer;font-family:inherit}
+  .fbtn:hover{color:var(--text-main);border-color:var(--primary)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-nav">
+    <a href="index.html" data-i18n="navHome">Αρχική</a>
+    <a href="quizess.html" data-i18n="navQuiz">Κουίζ</a>
+    <a href="quizzes_hackviser.html" data-i18n="navCore">Hackviser CORE</a>
+  </div>
+  <h1 class="page-title" data-i18n="title">OSINT Investigator</h1>
+  <p class="subtitle" data-i18n="subtitle">
+    Τι πληροφορία χρειάζεσαι; Ποια κατηγορία OSINT την περιέχει; Ποιο εργαλείο τη δίνει;
+    Χτίσε τον κύκλο, διάλεξε τη σωστή πηγή και απάντησε στο mini quiz.
+  </p>
+
+  <div id="pickView">
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <p class="panel-h" style="margin:0" data-i18n="pickMode">Διάλεξε πρόκληση</p>
+        <span class="prog">XP: <span class="xp" id="xpTotal">0</span></span>
+      </div>
+      <div class="mode-grid" id="modeGrid"></div>
+    </div>
+  </div>
+
+  <div id="playView" class="hidden">
+    <div class="stages">
+      <div class="stage" id="stA"><b data-i18n="stageA">Στάδιο Α</b><span data-i18n="stageAtxt">Δομή</span></div>
+      <div class="stage" id="stB"><b data-i18n="stageB">Στάδιο Β</b><span data-i18n="stageBtxt">Διάλεξε πηγή/εργαλείο</span></div>
+      <div class="stage" id="stC"><b data-i18n="stageC">Στάδιο Γ</b><span data-i18n="stageCtxt">Mini quiz</span></div>
+    </div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px">
+        <h2 id="modeName" style="margin:0;font-size:1.1rem"></h2>
+        <span class="prog" id="progText"></span>
+      </div>
+      <div id="stageArea"></div>
+      <div id="hintSlot"></div>
+    </div>
+    <div class="panel" id="bankPanel">
+      <p class="panel-h" data-i18n="bankH">Φάσεις</p>
+      <div id="bank"></div>
+    </div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <button class="btn" id="checkBtn" data-i18n="checkBtn">Έλεγχος σειράς</button>
+          <button class="btn btn-ghost" id="clearBtn" data-i18n="clearBtn">Καθαρισμός</button>
+        </div>
+        <button class="btn btn-ghost" id="backBtn" data-i18n="backBtn">← Προκλήσεις</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="float-btns"><button class="fbtn" id="langBtn">EN</button></div>
+<div id="modalRoot"></div>
+
+<script>
+/* ================= DATA (all tools, examples and quizzes from the spec) ============= */
+const T=(id,n,pEl,pEn)=>({id:id,name:n,pEl:pEl,pEn:pEn});
+const MODES=[
+{
+ id:'cycle',name:'OSINT Cycle',tagEl:'Χτίσε τις 5 φάσεις με τη σειρά.',tagEn:'Build the 5 phases in order.',
+ build:[{label:'1',answer:'Direction'},{label:'2',answer:'Collection'},{label:'3',answer:'Analysis'},
+        {label:'4',answer:'Evaluation'},{label:'5',answer:'Dissemination'}],
+ tools:[],
+ scenarios:[
+  {quiz:{qEl:'Ποια είναι η πρώτη φάση του κύκλου OSINT;',qEn:'What is the first phase of the OSINT cycle?',
+    oEl:['Collection','Analysis','Direction','Dissemination'],oEn:['Collection','Analysis','Direction','Dissemination'],c:2,
+    eEl:'Το Direction ορίζει στόχο, σκοπό, εύρος και προτεραιότητες πριν ξεκινήσει η συλλογή.',
+    eEn:'Direction identifies the target, purpose, scope, goals and priorities before collection starts.'}},
+  {quiz:{qEl:'Ποια φάση μετατρέπει τα συλλεγμένα δεδομένα σε ουσιαστικά αποτελέσματα, οργανώνοντας και συσχετίζοντάς τα;',
+    qEn:'Which phase converts collected data into meaningful results by organizing and correlating it?',
+    oEl:['Direction','Analysis','Dissemination','Collection'],oEn:['Direction','Analysis','Dissemination','Collection'],c:1,
+    eEl:'Η Analysis οργανώνει, συσχετίζει και εξετάζει τα δεδομένα ώστε να προκύψουν ουσιαστικά συμπεράσματα.',
+    eEn:'Analysis organizes, correlates and examines the collected data into meaningful results.'}},
+  {quiz:{qEl:'Σε ποια φάση αναφέρονται και κοινοποιούνται τα ευρήματα στους προοριζόμενους αποδέκτες;',
+    qEn:'In which phase are findings reported and shared with the intended users?',
+    oEl:['Evaluation','Collection','Dissemination','Direction'],oEn:['Evaluation','Collection','Dissemination','Direction'],c:2,
+    eEl:'Η Dissemination είναι η παράδοση: αναφορά και κοινοποίηση των ευρημάτων στο κοινό που τα χρειάζεται.',
+    eEn:'Dissemination reports and shares the findings with the intended audience.'}}
+ ]
+},
+{
+ id:'dorks',name:'Google Dorking',tagEl:'Διάλεξε τον σωστό τελεστή για κάθε στόχο.',tagEn:'Pick the right operator for each objective.',
+ tools:[T('site','site:','Αναζήτηση μέσα σε site','Search within a site'),
+        T('filetype','filetype:','Τύπος αρχείου','Specific file type'),
+        T('intitle','intitle:','Λέξεις στον τίτλο','Words in the title'),
+        T('inurl','inurl:','Λέξεις στο URL','Words in the URL'),
+        T('cache','cache:','Σελίδες από cache','Pages from Google cache'),
+        T('link','link:','Σελίδες που συνδέονται','Pages linking to a page'),
+        T('related','related:','Παρόμοια sites','Similar sites'),
+        T('intext','intext:','Λέξεις στο κείμενο','Words in page text'),
+        T('define','define:','Ορισμός λέξης','Definition of a word'),
+        T('exact','"keyword"','Ακριβής φράση','Exact phrase'),
+        T('range','..','Εύρος αριθμών','Numeric range'),
+        T('info','info:','Πληροφορίες site','Info about a site')],
+ scenarios:[
+  {sEl:'Ψάξε μόνο μέσα στο example.com.',sEn:'Search only within example.com.',valid:['site'],example:'site:example.com',
+   quiz:{qEl:'Ποιο Google dork ψάχνει μέσα σε ένα συγκεκριμένο domain;',qEn:'Which Google dork searches within one specific domain?',
+    oEl:['inurl:','site:','link:','related:'],oEn:['inurl:','site:','link:','related:'],c:1,
+    eEl:'Ο τελεστής site: περιορίζει τα αποτελέσματα σε ένα site ή domain.',eEn:'site: restricts results to one site or domain.'}},
+  {sEl:'Βρες αρχεία PDF που περιέχουν τη λέξη confidential.',sEn:'Search for PDF files containing the word confidential.',valid:['filetype'],example:'filetype:pdf "confidential"',
+   quiz:{qEl:'Ποιος τελεστής ψάχνει για συγκεκριμένο τύπο αρχείου;',qEn:'Which operator searches for a specific file type?',
+    oEl:['filetype:','intitle:','cache:','define:'],oEn:['filetype:','intitle:','cache:','define:'],c:0,
+    eEl:'Ο τελεστής filetype: φιλτράρει με βάση την επέκταση του αρχείου, π.χ. filetype:pdf.',eEn:'filetype: filters by file extension, e.g. filetype:pdf.'}},
+  {sEl:'Βρες σελίδες που συνδέονται με μια συγκεκριμένη σελίδα.',sEn:'Find pages that link to a specific page.',valid:['link'],example:'link:example.com',
+   quiz:{qEl:'Ποιος τελεστής βρίσκει σελίδες που συνδέονται με μια σελίδα;',qEn:'Which operator finds pages that link to a specific page?',
+    oEl:['related:','site:','link:','intext:'],oEn:['related:','site:','link:','intext:'],c:2,
+    eEl:'Ο τελεστής link: επιστρέφει σελίδες με σύνδεσμο προς τον στόχο. (Στην πράξη η Google τον έχει αποσύρει.)',
+    eEn:'link: returns pages linking to the target. (In practice Google has retired it.)'}},
+  {sEl:'Δες την αποθηκευμένη έκδοση μιας σελίδας από την Google.',sEn:"View the version of a page stored in Google's cache.",valid:['cache'],example:'cache:example.com',
+   quiz:{qEl:'Ποιος τελεστής εμφανίζει σελίδες αποθηκευμένες στην cache της Google;',qEn:"Which operator displays pages stored in Google's cache?",
+    oEl:['cache:','site:','filetype:','allinurl:'],oEn:['cache:','site:','filetype:','allinurl:'],c:0,
+    eEl:'Ο τελεστής cache: έδειχνε το αποθηκευμένο αντίγραφο. (Καταργήθηκε από την Google το 2024.)',
+    eEn:'cache: showed the stored copy. (Removed by Google in 2024.)'}},
+  {sEl:'Βρες αρχεία PDF με έτη από το 2020 έως το 2023.',sEn:'Search for PDF files containing years from 2020 through 2023.',valid:['range'],example:'filetype:pdf 2020..2023',
+   quiz:{qEl:'Ποιος τελεστής ψάχνει σε εύρος αριθμών;',qEn:'Which operator searches a numeric range?',
+    oEl:['*','..','OR','-keyword'],oEn:['*','..','OR','-keyword'],c:1,
+    eEl:'Δύο τελείες ανάμεσα σε δύο αριθμούς ορίζουν εύρος, π.χ. 2020..2023.',eEn:'Two dots between numbers define a range, e.g. 2020..2023.'}}
+ ]
+},
+{
+ id:'social',name:'Social & Username',tagEl:'Ταυτότητες και επαγγελματικά προφίλ.',tagEn:'Identities and professional profiles.',
+ tools:[T('instant','InstantUsername','Έλεγχος username σε εφαρμογές','Check a username across apps'),
+        T('sherlock','Sherlock','Ίδιο username σε πολλές πλατφόρμες','Same username across many platforms'),
+        T('rocket','RocketReach','Επαγγελματικά στοιχεία επικοινωνίας','Professional contact information'),
+        T('linkedin','LinkedIn','Εργαζόμενοι, ρόλοι, εταιρείες','Employees, roles, companies')],
+ scenarios:[
+  {sEl:'Θες ευρεία εικόνα της παρουσίας ενός στόχου, ψάχνοντας το ίδιο username σε πολλά sites.',
+   sEn:"You want a broad view of a target's online presence by searching the same username across many sites.",
+   valid:['sherlock','instant'],example:'https://instantusername.com/?q=hacker',
+   quiz:{qEl:'Ποιο εργαλείο χρησιμοποιείται ειδικά για να βρεις το ίδιο username σε πολλές πλατφόρμες;',
+    qEn:'Which tool is specifically used to find the same username across many platforms?',
+    oEl:['ExifTool','Sherlock','DNSDumpster','Shodan'],oEn:['ExifTool','Sherlock','DNSDumpster','Shodan'],c:1,
+    eEl:'Το Sherlock ελέγχει ένα username σε μεγάλο πλήθος πλατφορμών.',eEn:'Sherlock checks one username across a large set of platforms.'}},
+  {sEl:'Θες επαγγελματικά στοιχεία επικοινωνίας για ένα πρόσωπο ή μια εταιρεία.',
+   sEn:'You want professional contact information for a person or company.',valid:['rocket'],example:'RocketReach',
+   quiz:{qEl:'Ποιο εργαλείο δίνει επαγγελματικά στοιχεία όπως email, τηλέφωνα και προφίλ;',
+    qEn:'Which tool is used for professional and contact information such as email addresses, phone numbers, and social profiles?',
+    oEl:['RocketReach','TinEye','Ahmia','Whois'],oEn:['RocketReach','TinEye','Ahmia','Whois'],c:0,
+    eEl:'Το RocketReach συγκεντρώνει επαγγελματικά στοιχεία επικοινωνίας.',eEn:'RocketReach aggregates professional contact details.'}}
+ ]
+},
+{
+ id:'image',name:'Image OSINT',tagEl:'Πηγή εικόνας και μεταδεδομένα.',tagEn:'Image provenance and metadata.',
+ tools:[T('gimages','Google Images','Αντίστροφη αναζήτηση','Reverse image search'),
+        T('tineye','TinEye','Ιστορικό εικόνας','Image history and older versions'),
+        T('pimeyes','PimEyes','Παρόμοια ανθρώπινα πρόσωπα','Visually similar faces'),
+        T('exif','ExifTool','Μεταδεδομένα αρχείων','Metadata from images/videos')],
+ scenarios:[
+  {sEl:'Θες να βρεις πού έχει εμφανιστεί στο διαδίκτυο μια φωτογραφία προφίλ.',
+   sEn:'Determine where a profile photo has previously appeared on the internet.',valid:['gimages','tineye'],example:'Reverse Image Search',
+   quiz:{qEl:'Ποια τεχνική προσδιορίζει πού έχει χρησιμοποιηθεί μια εικόνα στο διαδίκτυο;',
+    qEn:'What technique determines where an image has been used on the internet?',
+    oEl:['Metadata Analysis','Reverse Image Search','Active Scanning','Watermark Analysis'],
+    oEn:['Metadata Analysis','Reverse Image Search','Active Scanning','Watermark Analysis'],c:1,
+    eEl:'Η αντίστροφη αναζήτηση εικόνας εντοπίζει πού αλλού εμφανίζεται η ίδια εικόνα.',eEn:'Reverse image search finds where the same image appears elsewhere.'}},
+  {sEl:'Θες το μοντέλο κάμερας, την ημερομηνία λήψης και τη θέση GPS που είναι αποθηκευμένα μέσα σε μια εικόνα.',
+   sEn:'Find the camera model, capture date, and GPS position stored inside an image.',valid:['exif'],example:'exiftool IMG_8153.JPG',
+   quiz:{qEl:'Ποιο εργαλείο εξάγει μεταδεδομένα όπως μοντέλο κάμερας, ημερομηνία και GPS;',
+    qEn:'Which tool extracts metadata such as camera model, date, and GPS information?',
+    oEl:['ExifTool','Shodan','Hunter.io','Whois'],oEn:['ExifTool','Shodan','Hunter.io','Whois'],c:0,
+    eEl:'Το ExifTool διαβάζει τα ενσωματωμένα μεταδεδομένα EXIF του αρχείου.',eEn:'ExifTool reads the embedded EXIF metadata of the file.'}},
+  {sEl:'Ψάχνεις άλλες δημόσιες εικόνες με οπτικά παρόμοιο ανθρώπινο πρόσωπο.',
+   sEn:'Search for other public images containing a visually similar human face.',valid:['pimeyes'],example:'PimEyes',
+   quiz:{qEl:'Ποιο πεδίο μεταδεδομένων δίνει απευθείας γεωγραφικές συντεταγμένες;',
+    qEn:'Which metadata field directly provides geographic coordinates?',
+    oEl:['MIME Type','Lens Model','GPS Position','File Type'],oEn:['MIME Type','Lens Model','GPS Position','File Type'],c:2,
+    eEl:'Το πεδίο GPS Position δίνει απευθείας γεωγραφικό πλάτος και μήκος.',eEn:'GPS Position directly provides latitude and longitude.'}}
+ ]
+},
+{
+ id:'web',name:'Web Recon',tagEl:'Domain, ιστορικό και τεχνολογίες.',tagEn:'Domain, history and technologies.',
+ tools:[T('whois','Whois','Στοιχεία καταχώρισης domain','Domain registration information'),
+        T('wayback','Wayback Machine','Ιστορικές εκδόσεις ιστότοπων','Historical website versions'),
+        T('wappa','Wappalyzer','Τεχνολογίες ιστότοπου','Website technologies'),
+        T('whatruns','WhatRuns','Τεχνολογίες ιστότοπου','Website technologies'),
+        T('curl','curl','Κεφαλίδες HTTP','HTTP headers'),
+        T('robots','robots.txt','Κανόνες crawler και sitemap','Crawler rules and sitemap')],
+ scenarios:[
+  {sEl:'Θες στοιχεία καταχώρισης domain: ημερομηνία δημιουργίας, name servers, πάροχο.',
+   sEn:'Find domain registration details such as creation date, name servers, and provider information.',valid:['whois'],example:'whois google.com',
+   quiz:{qEl:'Ποιο εργαλείο χρησιμοποιείται για ερώτημα στοιχείων καταχώρισης domain;',
+    qEn:'Which tool is used to query domain registration information?',
+    oEl:['Whois','ExifTool','Ahmia','TinEye'],oEn:['Whois','ExifTool','Ahmia','TinEye'],c:0,
+    eEl:'Το whois επιστρέφει τα στοιχεία καταχώρισης ενός domain.',eEn:'whois returns the registration record of a domain.'}},
+  {sEl:'Θες να δεις παλαιότερη έκδοση ενός ιστότοπου από συγκεκριμένη ημερομηνία.',
+   sEn:'View an older version of a website from a historical date.',valid:['wayback'],example:'https://web.archive.org/',
+   quiz:{qEl:'Ποια υπηρεσία χρησιμοποιείται για να δεις ιστορικές εκδόσεις ιστότοπων;',
+    qEn:'Which service is used to view historical versions of websites?',
+    oEl:['DNSDumpster','Wayback Machine','Hunter.io','Shodan'],oEn:['DNSDumpster','Wayback Machine','Hunter.io','Shodan'],c:1,
+    eEl:'Το Wayback Machine (web.archive.org) κρατά αρχειοθετημένα στιγμιότυπα σελίδων.',eEn:'The Wayback Machine keeps archived snapshots of pages.'}},
+  {sEl:'Θες να δεις τις κεφαλίδες HTTP για να καταλάβεις ποιος web server τρέχει.',
+   sEn:'Inspect HTTP headers to identify the web server.',valid:['curl'],example:'curl --head https://wordpress.org',
+   quiz:{qEl:'Τι αποκαλύπτει το server: nginx σε μια κεφαλίδα απόκρισης HTTP;',
+    qEn:'What does server: nginx in an HTTP response header reveal?',
+    oEl:['Τον ιδιοκτήτη του domain','Το λογισμικό του web server','Τον resolver DNS','Τα μεταδεδομένα εικόνας'],
+    oEn:['The domain owner','The web server software','The DNS resolver','The image metadata'],c:1,
+    eEl:'Η κεφαλίδα server δηλώνει το λογισμικό που εξυπηρετεί τη σελίδα.',eEn:'The server header states the software serving the page.'}},
+  {sEl:'Θες κανόνες crawler, απαγορευμένα μονοπάτια και θέσεις sitemap.',
+   sEn:'Identify crawler rules, disallowed paths, and sitemap locations.',valid:['robots'],example:'curl --get https://www.youtube.com/robots.txt',
+   quiz:{qEl:'Ποια εντολή επιστρέφει μόνο τις κεφαλίδες HTTP στο παράδειγμα της εκπαίδευσης;',
+    qEn:'Which command retrieves only HTTP headers in the example from the training?',
+    oEl:['curl --head','host','dig','whois'],oEn:['curl --head','host','dig','whois'],c:0,
+    eEl:'Το curl --head ζητά μόνο τις κεφαλίδες, χωρίς το σώμα της απόκρισης.',eEn:'curl --head requests only the headers, without the body.'}}
+ ]
+},
+{
+ id:'dns',name:'DNS Enumeration',tagEl:'Ανάλυση ονομάτων και εγγραφών.',tagEn:'Name resolution and records.',
+ tools:[T('dnsdump','DNSDumpster','Χαρτογράφηση DNS','DNS reconnaissance and mapping'),
+        T('host','host','Απλά ερωτήματα DNS','Simple DNS queries'),
+        T('dig','dig','Προχωρημένα ερωτήματα DNS','Advanced DNS queries')],
+ scenarios:[
+  {sEl:'Θες γρήγορη ανάλυση DNS και να δεις IPv4, IPv6 και mail server.',
+   sEn:'Perform quick DNS resolution and view IPv4, IPv6, and mail-server information.',valid:['host'],example:'host youtube.com',
+   quiz:{qEl:'Ποια εντολή είναι το απλούστερο εργαλείο ερωτημάτων DNS;',qEn:'Which command is the simpler DNS query tool?',
+    oEl:['dig','host','curl','whois'],oEn:['dig','host','curl','whois'],c:1,
+    eEl:'Το host δίνει γρήγορη, συνοπτική ανάλυση ονόματος.',eEn:'host gives quick, concise name resolution.'}},
+  {sEl:'Θες λεπτομερές ερώτημα DNS με QUESTION, ANSWER, resolver και χρόνο απόκρισης.',
+   sEn:'Perform a detailed DNS query and inspect the QUESTION, ANSWER, resolver, and query time.',valid:['dig'],example:'dig youtube.com',
+   quiz:{qEl:'Ποιο εργαλείο δίνει πιο προχωρημένες επιλογές και αναλυτική έξοδο DNS;',
+    qEn:'Which tool provides more advanced DNS query options and detailed output?',
+    oEl:['Sherlock','Hunter.io','dig','TinEye'],oEn:['Sherlock','Hunter.io','dig','TinEye'],c:2,
+    eEl:'Το dig δίνει πλήρη ανάλυση της απόκρισης DNS.',eEn:'dig gives a full breakdown of the DNS response.'}},
+  {sEl:'Θες ευρύτερο χάρτη DNS για ένα domain.',sEn:'Build a broader DNS map for a domain.',valid:['dnsdump'],example:'DNSDumpster',
+   quiz:{qEl:'Στο DNS, ποιος τύπος εγγραφής προσδιορίζει τους διακομιστές αλληλογραφίας;',
+    qEn:'In DNS, what type of information identifies mail servers?',
+    oEl:['MX records','GPS records','HTTP headers','EXIF records'],oEn:['MX records','GPS records','HTTP headers','EXIF records'],c:0,
+    eEl:'Οι εγγραφές MX δηλώνουν ποιοι διακομιστές δέχονται email για το domain.',eEn:'MX records declare which servers accept mail for the domain.'}}
+ ]
+},
+{
+ id:'search',name:'Shodan & Censys',tagEl:'Συσκευές και υπηρεσίες στο διαδίκτυο.',tagEn:'Internet-exposed devices and services.',
+ tools:[T('country','country:','Φίλτρο χώρας','Country filter'),
+        T('port','port:','Φίλτρο θύρας','Port filter'),
+        T('os','os:','Φίλτρο λειτουργικού','Operating system filter'),
+        T('org','org:','Φίλτρο οργανισμού','Organization filter'),
+        T('city','city:','Φίλτρο πόλης','City filter'),
+        T('vuln','vuln:','Φίλτρο ευπάθειας','Vulnerability filter')],
+ scenarios:[
+  {sEl:'Βρες συσκευές στη Γερμανία.',sEn:'Find devices in Germany.',valid:['country'],example:'country:DE',
+   quiz:{qEl:'Ποια παράμετρος φιλτράρει ανά χώρα στο Shodan;',qEn:'What parameter filters by country in Shodan?',
+    oEl:['geo:','location:','country:','nation:'],oEn:['geo:','location:','country:','nation:'],c:2,
+    eEl:'Το country: δέχεται κωδικό χώρας δύο γραμμάτων, π.χ. country:DE.',eEn:'country: takes a two-letter country code, e.g. country:DE.'}},
+  {sEl:'Βρες συσκευές που εκθέτουν τη θύρα 22.',sEn:'Find devices exposing port 22.',valid:['port'],example:'port:22',
+   quiz:{qEl:'Ποια μηχανή αναζήτησης χρησιμοποιείται για συσκευές, υπηρεσίες, θύρες, προϊόντα και οργανισμούς στο διαδίκτυο;',
+    qEn:'Which search engine is commonly used to search internet-connected devices, services, ports, products, and organizations?',
+    oEl:['Shodan','TinEye','RocketReach','Ahmia'],oEn:['Shodan','TinEye','RocketReach','Ahmia'],c:0,
+    eEl:'Το Shodan ευρετηριάζει εκτεθειμένες συσκευές και υπηρεσίες.',eEn:'Shodan indexes exposed devices and services.'}},
+  {sEl:'Βρες συσκευές που τρέχουν Windows.',sEn:'Find devices using Windows.',valid:['os'],example:'os:Windows',
+   quiz:{qEl:'Ποια παράμετρος φιλτράρει ανά λειτουργικό σύστημα στο Shodan;',qEn:'What parameter filters by operating system in Shodan?',
+    oEl:['system:','os:','software:','platform:'],oEn:['system:','os:','software:','platform:'],c:1,
+    eEl:'Το os: περιορίζει τα αποτελέσματα σε συγκεκριμένο λειτουργικό, π.χ. os:Windows.',eEn:'os: restricts results to a specific OS, e.g. os:Windows.'}}
+ ]
+},
+{
+ id:'dark',name:'Leaked / Dark / Deep',tagEl:'Διαρροές και μη ευρετηριασμένο περιεχόμενο.',tagEn:'Breaches and non-indexed content.',
+ tools:[T('hibp','Have I Been Pwned','Έλεγχος email σε διαρροές','Check an email against breaches'),
+        T('hunter','Hunter.io','Εύρεση επαγγελματικών email','Find professional emails'),
+        T('tor','Tor','Πρόσβαση σε .onion','Access .onion services'),
+        T('ahmia','Ahmia','Αναζήτηση .onion','Search .onion sites'),
+        T('ddg','DuckDuckGo','Αναζήτηση με ιδιωτικότητα','Privacy-focused search')],
+ scenarios:[
+  {sEl:'Έλεγξε αν μια διεύθυνση email έχει εμφανιστεί σε γνωστές διαρροές δεδομένων.',
+   sEn:'Check whether an email address has appeared in known data breaches.',valid:['hibp'],example:'Have I Been Pwned',
+   quiz:{qEl:'Ποιο εργαλείο ελέγχει αν ένα email έχει εμφανιστεί σε διαρροή δεδομένων;',
+    qEn:'Which tool checks whether an email address has appeared in a data breach?',
+    oEl:['Tor','Have I Been Pwned','Ahmia','TinEye'],oEn:['Tor','Have I Been Pwned','Ahmia','TinEye'],c:1,
+    eEl:'Το Have I Been Pwned διασταυρώνει το email με γνωστές διαρροές.',eEn:'Have I Been Pwned cross-checks the email against known breaches.'}},
+  {sEl:'Ψάξε για ιστότοπους .onion στο δίκτυο Tor.',sEn:'Search for .onion websites.',valid:['ahmia'],example:'Ahmia',
+   quiz:{qEl:'Ποια μηχανή αναζήτησης χρησιμοποιείται για την εύρεση .onion sites στο δίκτυο Tor;',
+    qEn:'Which search engine is used to find .onion sites on the Tor network?',
+    oEl:['Hunter.io','Ahmia','Whois','ExifTool'],oEn:['Hunter.io','Ahmia','Whois','ExifTool'],c:1,
+    eEl:'Το Ahmia ευρετηριάζει κρυφές υπηρεσίες .onion.',eEn:'Ahmia indexes .onion hidden services.'}},
+  {sEl:'Θες αναζήτηση με έμφαση στην ιδιωτικότητα.',sEn:'Perform privacy-focused searching.',valid:['ddg'],example:'DuckDuckGo',
+   quiz:{qEl:'Ποια είναι η σχέση Deep Web και Dark Web;',qEn:'What is the relationship between the Deep Web and Dark Web?',
+    oEl:['Είναι ακριβώς το ίδιο πράγμα','Το Dark Web είναι μέρος του ευρύτερου Deep Web',
+         'Το Deep Web περιέχει μόνο παράνομο περιεχόμενο','Το Dark Web ευρετηριάζεται από όλες τις κανονικές μηχανές'],
+    oEn:['They are exactly the same thing','The Dark Web is part of the wider Deep Web',
+         'The Deep Web contains only illegal content','The Dark Web is indexed by all normal search engines'],c:1,
+    eEl:'Το Deep Web είναι ό,τι δεν ευρετηριάζεται από τις μηχανές· το Dark Web είναι ένα μικρό υποσύνολό του που απαιτεί ειδικό λογισμικό.',
+    eEn:'The Deep Web is everything not indexed by search engines; the Dark Web is a small subset requiring special software.'}}
+ ]
+},
+{
+ id:'framework',name:'OSINT Framework',tagEl:'Η οργανωμένη συλλογή εργαλείων.',tagEn:'The categorized tool collection.',
+ tools:[T('harvester','TheHarvester','Μεμονωμένο εργαλείο συλλογής','A single collection tool'),
+        T('onion','Onion Sites','Κρυφές υπηρεσίες','Hidden services'),
+        T('framework','OSINT Framework','Κατηγοριοποιημένη συλλογή πόρων','Categorized collection of resources'),
+        T('darkweb','Dark Web','Κατηγορία περιεχομένου','A content category')],
+ scenarios:[
+  {sEl:'Χρειάζεσαι ένα ενιαίο έργο που οργανώνει πολλά εργαλεία και πηγές OSINT σε κατηγορίες.',
+   sEn:'You need a single project that organizes many OSINT tools and resources into categories.',valid:['framework'],example:'OSINT Framework',
+   quiz:{qEl:'Ποιο έργο περιέχει κατηγοριοποιημένα εργαλεία και πόρους για συλλογή από ανοιχτές πηγές;',
+    qEn:'Which project contains categorized tools and resources for gathering information from open sources?',
+    oEl:['TheHarvester','Onion Sites','OSINT Framework','Dark Web'],oEn:['TheHarvester','Onion Sites','OSINT Framework','Dark Web'],c:2,
+    eEl:'Το OSINT Framework οργανώνει πηγές σε κατηγορίες: Email Search, Social Media, Domain Search, IP Tracking κ.ά.',
+    eEn:'The OSINT Framework organizes sources into categories: Email Search, Social Media, Domain Search, IP Tracking and more.'}}
+ ]
+}
+];
+
+/* ================= i18n ================= */
+const I18N={
+ el:{navHome:'Αρχική',navQuiz:'Κουίζ',navCore:'Hackviser CORE',title:'OSINT Investigator',
+  subtitle:'Τι πληροφορία χρειάζεσαι; Ποια κατηγορία OSINT την περιέχει; Ποιο εργαλείο τη δίνει; Χτίσε τον κύκλο, διάλεξε τη σωστή πηγή και απάντησε στο mini quiz.',
+  pickMode:'Διάλεξε πρόκληση',stageA:'Στάδιο Α',stageAtxt:'Δομή',stageB:'Στάδιο Β',stageBtxt:'Διάλεξε πηγή/εργαλείο',
+  stageC:'Στάδιο Γ',stageCtxt:'Mini quiz',bankH:'Φάσεις',checkBtn:'Έλεγχος σειράς',clearBtn:'Καθαρισμός',
+  backBtn:'← Προκλήσεις',scenarioLbl:'Σενάριο',pickTool:'Ποιο εργαλείο ή πηγή ταιριάζει;',
+  wrongTool:'Αυτό το εργαλείο ανήκει στο OSINT, αλλά δεν ταιριάζει καλύτερα σε αυτόν τον στόχο συλλογής. Σκέψου τι τύπο δεδομένων ψάχνεις.',
+  goodTool:'Σωστή πηγή. Τώρα το mini quiz.',correct:'Σωστά!',wrong:'Όχι ακριβώς. Ξαναδοκίμασε.',
+  next:'Συνέχεια',close:'Κλείσιμο',orderOk:'Σωστή σειρά! Προχώρα στα σενάρια.',orderBad:'Λάθος σειρά — δες τα κόκκινα.',
+  incomplete:'Συμπλήρωσε πρώτα όλες τις θέσεις.',done:'Ολοκλήρωσες την πρόκληση!',
+  backToModes:'Επιλογή άλλης πρόκλησης',example:'Παράδειγμα',scenariosLeft:'σενάρια'},
+ en:{navHome:'Home',navQuiz:'Quizzes',navCore:'Hackviser CORE',title:'OSINT Investigator',
+  subtitle:'What information do you need? Which OSINT category holds it? Which tool provides it? Build the cycle, pick the right source and answer the mini-quiz.',
+  pickMode:'Pick a challenge',stageA:'Stage A',stageAtxt:'Structure',stageB:'Stage B',stageBtxt:'Choose source/tool',
+  stageC:'Stage C',stageCtxt:'Mini quiz',bankH:'Phases',checkBtn:'Check order',clearBtn:'Clear',
+  backBtn:'← Challenges',scenarioLbl:'Scenario',pickTool:'Which tool or source fits?',
+  wrongTool:'That tool is part of OSINT, but it does not best match this information-gathering objective. Think about what type of data you are trying to obtain.',
+  goodTool:'Correct source identified. Now the mini-quiz.',correct:'Correct!',wrong:'Not quite. Try again.',
+  next:'Continue',close:'Close',orderOk:'Correct order! Move on to the scenarios.',orderBad:'Wrong order — check the red ones.',
+  incomplete:'Fill in every slot first.',done:'Challenge complete!',
+  backToModes:'Pick another challenge',example:'Example',scenariosLeft:'scenarios'}
+};
+let lang='el'; try{ lang=localStorage.getItem('lang')||'el'; }catch(e){}
+const t=k=>(I18N[lang]&&I18N[lang][k])||I18N.el[k]||k;
+const $=id=>document.getElementById(id);
+
+/* ================= STATE ================= */
+let mode=null,stage='A',slots=[],selectedWord=null,scIdx=0,xp=0,done=new Set();
+try{ done=new Set(JSON.parse(localStorage.getItem('osintDone')||'[]')); }catch(e){}
+try{ xp=parseInt(localStorage.getItem('osintXp')||'0')||0; }catch(e){}
+function save(){ try{ localStorage.setItem('osintDone',JSON.stringify([...done]));
+                      localStorage.setItem('osintXp',String(xp)); }catch(e){} }
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function addXp(n){ xp+=n; $('xpTotal').textContent=xp; save(); }
+
+/* ================= PICKER ================= */
+function renderPicker(){
+  $('xpTotal').textContent=xp;
+  const g=$('modeGrid'); g.innerHTML='';
+  MODES.forEach(m=>{
+    const c=document.createElement('button'); c.className='mode-card';
+    c.innerHTML='<span class="badge">'+(m.build?'Build + Quiz':'Scenario')+'</span>'+
+      (done.has(m.id)?'<span class="done-badge">✓</span>':'')+
+      '<h3>'+m.name+'</h3><p>'+(lang==='el'?m.tagEl:m.tagEn)+'</p>'+
+      '<p style="margin-top:6px;opacity:.75">'+m.scenarios.length+' '+t('scenariosLeft')+'</p>';
+    c.addEventListener('click',()=>startMode(m));
+    g.appendChild(c);
+  });
+}
+
+/* ================= MODE ================= */
+function startMode(m){
+  mode=m; scIdx=0; selectedWord=null;
+  $('modeName').textContent=m.name;
+  $('pickView').classList.add('hidden'); $('playView').classList.remove('hidden');
+  $('hintSlot').innerHTML='';
+  if(m.build){ stage='A'; renderBuild(); }
+  else { stage='B'; renderScenario(); }
+  paintStages(); updateProg();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderBuild(){
+  $('bankPanel').classList.remove('hidden');
+  $('checkBtn').classList.remove('hidden'); $('clearBtn').classList.remove('hidden');
+  const area=$('stageArea'); area.innerHTML=''; slots=[];
+  const grid=document.createElement('div'); grid.className='slots';
+  mode.build.forEach(it=>{
+    const slot=document.createElement('div'); slot.className='slot';
+    const lab=document.createElement('div'); lab.className='slot-label'; lab.textContent=it.label;
+    const drop=document.createElement('div'); drop.className='slot-drop';
+    const rec={label:it.label,answer:it.answer,slotEl:slot,dropEl:drop,placed:null};
+    drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over');});
+    drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+    drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('over');
+      const w=document.querySelector('.word[data-wid="'+e.dataTransfer.getData('text/plain')+'"]');
+      if(w) place(w,rec);});
+    drop.addEventListener('click',()=>{ if(selectedWord) place(selectedWord,rec); });
+    slot.appendChild(lab); slot.appendChild(drop); grid.appendChild(slot); slots.push(rec);
+  });
+  area.appendChild(grid);
+  const bank=$('bank'); bank.innerHTML='';
+  shuffle(mode.build.map(b=>b.answer)).forEach((txt,i)=>{
+    const w=document.createElement('div'); w.className='word'; w.textContent=txt;
+    w.draggable=true; w.dataset.wid='w'+i; w.dataset.txt=txt;
+    w.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',w.dataset.wid));
+    w.addEventListener('click',()=>{ if(selectedWord===w){w.classList.remove('sel');selectedWord=null;return;}
+      if(selectedWord) selectedWord.classList.remove('sel'); selectedWord=w; w.classList.add('sel'); });
+    bank.appendChild(w);
+  });
+}
+function place(wordEl,rec){
+  if(rec.placed) unplace(rec);
+  rec.placed=wordEl.dataset.txt; rec.wordEl=wordEl; wordEl.classList.add('used');
+  rec.dropEl.innerHTML='';
+  const chip=document.createElement('span'); chip.className='placed'; chip.textContent=rec.placed;
+  chip.addEventListener('click',()=>unplace(rec)); rec.dropEl.appendChild(chip);
+  if(selectedWord){selectedWord.classList.remove('sel');selectedWord=null;}
+  rec.slotEl.classList.remove('ok','bad');
+}
+function unplace(rec){
+  if(!rec.placed) return;
+  if(rec.wordEl) rec.wordEl.classList.remove('used');
+  rec.placed=null; rec.wordEl=null; rec.dropEl.innerHTML='';
+  rec.slotEl.classList.remove('ok','bad');
+}
+function checkOrder(){
+  if(slots.some(s=>!s.placed)){ hint(t('incomplete')); return; }
+  let ok=0;
+  slots.forEach(s=>{
+    const good=s.placed===s.answer;
+    s.slotEl.classList.toggle('ok',good); s.slotEl.classList.toggle('bad',!good);
+    const old=s.dropEl.querySelector('.fix'); if(old) old.remove();
+    if(!good){ const f=document.createElement('small'); f.className='fix'; f.textContent='✓ '+s.answer; s.dropEl.appendChild(f); }
+    if(good) ok++;
+  });
+  if(ok===slots.length){ addXp(100); stage='B'; $('bankPanel').classList.add('hidden');
+    $('checkBtn').classList.add('hidden'); $('clearBtn').classList.add('hidden');
+    hint(t('orderOk'),true); renderScenario(); paintStages(); }
+  else hint(t('orderBad'));
+}
+/* ---- Stage B ---- */
+function renderScenario(){
+  const area=$('stageArea'); area.innerHTML='';
+  const sc=mode.scenarios[scIdx];
+  if(!sc){ finishMode(); return; }
+  if(sc.sEl){
+    const box=document.createElement('div'); box.className='scenario';
+    box.innerHTML='<span class="lbl">'+t('scenarioLbl')+' '+(scIdx+1)+'/'+mode.scenarios.length+'</span><p>'+
+      (lang==='el'?sc.sEl:sc.sEn)+'</p>';
+    area.appendChild(box);
+  }
+  if(sc.valid && mode.tools.length){
+    const p=document.createElement('p'); p.className='panel-h'; p.textContent=t('pickTool'); area.appendChild(p);
+    const grid=document.createElement('div'); grid.className='tools';
+    mode.tools.forEach(tool=>{
+      const b=document.createElement('button'); b.className='tool';
+      b.innerHTML='<b>'+tool.name+'</b><span class="purpose">'+(lang==='el'?tool.pEl:tool.pEn)+'</span>';
+      b.addEventListener('click',()=>pickTool(tool,b,sc));
+      grid.appendChild(b);
+    });
+    area.appendChild(grid);
+  } else {
+    openQuiz(sc);   // cycle mode: straight to the quiz
+  }
+  updateProg();
+}
+function pickTool(tool,btn,sc){
+  if(sc.valid.indexOf(tool.id)>=0){
+    btn.classList.add('solved'); addXp(50); hint(t('goodTool'),true); openQuiz(sc);
+  } else {
+    btn.classList.add('wrongpick'); hint(t('wrongTool'));
+  }
+}
+/* ---- Stage C ---- */
+function openQuiz(sc){
+  stage='C'; paintStages();
+  const q=sc.quiz;
+  modal(function(box){
+    box.innerHTML='';
+    const h=document.createElement('h3'); h.textContent=mode.name; box.appendChild(h);
+    const p=document.createElement('p'); p.className='qtext'; p.textContent=lang==='el'?q.qEl:q.qEn; box.appendChild(p);
+    const opts=document.createElement('div'); opts.className='opts';
+    (lang==='el'?q.oEl:q.oEn).forEach((txt,i)=>{
+      const b=document.createElement('button'); b.className='opt-btn';
+      b.innerHTML='<span class="mk">'+String.fromCharCode(65+i)+'</span><span>'+txt+'</span>';
+      b.addEventListener('click',()=>answer(sc,q,i,opts,box));
+      opts.appendChild(b);
+    });
+    box.appendChild(opts);
+  });
+}
+function answer(sc,q,idx,optsEl,box){
+  const btns=Array.from(optsEl.children); btns.forEach(b=>b.disabled=true);
+  const good=idx===q.c;
+  btns[idx].classList.add(good?'right':'wrong');
+  if(!good) btns[q.c].classList.add('right');
+  const fb=document.createElement('div'); fb.className='feedback '+(good?'good':'bad');
+  fb.innerHTML='<b>'+(good?t('correct'):t('wrong'))+'</b><br><span style="opacity:.9">'+
+    (lang==='el'?q.eEl:q.eEn)+'</span>';
+  if(good && sc.example) fb.innerHTML+='<code class="example">'+t('example')+': '+sc.example+'</code>';
+  box.appendChild(fb);
+  const row=document.createElement('div'); row.className='row'; row.style.marginTop='14px';
+  const n=document.createElement('button'); n.className='btn'; n.textContent=good?t('next'):t('close');
+  n.addEventListener('click',()=>{
+    closeModal();
+    if(good){ addXp(50); scIdx++; $('hintSlot').innerHTML=''; stage='B'; paintStages(); renderScenario(); }
+    else { stage='B'; paintStages(); }
+  });
+  row.appendChild(n); box.appendChild(row);
+}
+function finishMode(){
+  done.add(mode.id); addXp(100); stage='done'; paintStages();
+  modal(function(box){
+    box.innerHTML='<h3>🎉 '+t('done')+'</h3><p class="qtext">'+mode.name+' — XP: '+xp+'</p>';
+    const row=document.createElement('div'); row.className='row';
+    const b=document.createElement('button'); b.className='btn'; b.textContent=t('backToModes');
+    b.addEventListener('click',()=>{ closeModal(); backToPicker(); });
+    row.appendChild(b); box.appendChild(row);
+  });
+}
+function backToPicker(){
+  $('playView').classList.add('hidden'); $('pickView').classList.remove('hidden');
+  renderPicker(); window.scrollTo({top:0,behavior:'smooth'});
+}
+/* ---- ui bits ---- */
+function paintStages(){
+  const map={A:['on','',''],B:[mode&&mode.build?'ok':'','on',''],C:[mode&&mode.build?'ok':'','ok','on'],done:['ok','ok','ok']};
+  const st=map[stage]||map.B;
+  ['stA','stB','stC'].forEach((id,i)=>{ $(id).className='stage'+(st[i]?' '+st[i]:''); });
+  $('stA').style.opacity = (mode && mode.build) ? '1' : '.4';
+}
+function updateProg(){
+  if(stage==='A') $('progText').textContent=slots.filter(s=>s.placed).length+' / '+slots.length;
+  else $('progText').textContent=Math.min(scIdx+1,mode.scenarios.length)+' / '+mode.scenarios.length+' '+t('scenariosLeft');
+}
+function hint(msg,ok){ $('hintSlot').innerHTML='<div class="hint'+(ok?' ok':'')+'">'+msg+'</div>'; }
+function modal(build){
+  closeModal();
+  const bd=document.createElement('div'); bd.className='backdrop'; bd.id='backdrop';
+  const box=document.createElement('div'); box.className='modal';
+  bd.appendChild(box); build(box);
+  bd.addEventListener('click',e=>{ if(e.target===bd) closeModal(); });
+  $('modalRoot').appendChild(bd);
+}
+function closeModal(){ const b=$('backdrop'); if(b) b.remove(); }
+
+$('checkBtn').addEventListener('click',checkOrder);
+$('clearBtn').addEventListener('click',()=>{ slots.forEach(unplace); $('hintSlot').innerHTML=''; });
+$('backBtn').addEventListener('click',backToPicker);
+$('langBtn').addEventListener('click',()=>{
+  lang=lang==='el'?'en':'el'; try{localStorage.setItem('lang',lang);}catch(e){}
+  applyI18n();
+  if(!$('playView').classList.contains('hidden')){ if(stage==='A') renderBuild(); else renderScenario(); }
+  else renderPicker();
+});
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(I18N[lang]&&I18N[lang][k]) el.textContent=I18N[lang][k];
+  });
+  $('langBtn').textContent=lang==='el'?'EN':'EL';
+  document.documentElement.lang=lang;
+}
+applyI18n(); renderPicker();
+</script>
+</body>
+</html>

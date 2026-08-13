@@ -407,6 +407,46 @@ const SETS = [
       {label:'Ευαίσθητα στοιχεία στα μεταδεδομένα του μοντέλου', answer:'Sensitive Information in Model Metadata'},
     ]
   },
+  {
+    id:'osintcycle', titleEl:'Κύκλος OSINT', titleEn:'OSINT Cycle',
+    noteEl:'Οι 5 φάσεις, με τη σειρά.',
+    noteEn:'The 5 phases, in order.',
+    items:[
+      {label:'1', answer:'Direction'},
+      {label:'2', answer:'Collection'},
+      {label:'3', answer:'Analysis'},
+      {label:'4', answer:'Evaluation'},
+      {label:'5', answer:'Dissemination'},
+    ]
+  },
+  {
+    id:'dorks', titleEl:'Google Dorks', titleEn:'Google Dorks',
+    noteEl:'Ποιος τελεστής κάνει την κάθε δουλειά;',
+    noteEn:'Which operator does each job?',
+    two:true,
+    items:[
+      {label:'Αναζήτηση μέσα σε συγκεκριμένο site', answer:'site:'},
+      {label:'Αναζήτηση συγκεκριμένου τύπου αρχείου', answer:'filetype:'},
+      {label:'Λέξεις στον τίτλο της σελίδας', answer:'intitle:'},
+      {label:'Λέξεις μέσα στο URL', answer:'inurl:'},
+      {label:'Σελίδες από την cache της Google', answer:'cache:'},
+      {label:'Σελίδες που συνδέονται με μια σελίδα', answer:'link:'},
+      {label:'Παρόμοια sites με ένα site', answer:'related:'},
+      {label:'Λέξεις μέσα στο κείμενο της σελίδας', answer:'intext:'},
+      {label:'ΟΛΕΣ οι λέξεις στον τίτλο', answer:'allintitle:'},
+      {label:'ΟΛΕΣ οι λέξεις στο URL', answer:'allinurl:'},
+      {label:'ΟΛΕΣ οι λέξεις στο κείμενο', answer:'allintext:'},
+      {label:'Ορισμός μιας λέξης', answer:'define:'},
+      {label:'Ακριβής φράση', answer:'"keyword"', alias:['keyword','quotes','""']},
+      {label:'Αποκλεισμός λέξης', answer:'-keyword', alias:['-','minus']},
+      {label:'Η μία ή η άλλη λέξη', answer:'OR'},
+      {label:'Μπαλαντέρ για οποιαδήποτε λέξη', answer:'*', alias:['wildcard','asterisk']},
+      {label:'Εύρος αριθμών', answer:'..', alias:['range']},
+      {label:'Πληροφορίες για ένα site', answer:'info:'},
+      {label:'Χάρτης μιας τοποθεσίας', answer:'maps:'},
+      {label:'Στοιχεία μετοχής εταιρείας', answer:'stocks:'},
+    ]
+  },
 ];
 
 /* =====================  i18n  ===================== */
@@ -454,11 +494,14 @@ function norm(s){
   return String(s||'').toLowerCase().replace(/&/g,' and ')
     .replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
 }
+function rawnorm(s){ return String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,' '); }
 function matches(item, val){
+  // Raw comparison first: symbol-only answers such as * and .. normalize to an
+  // empty string, so they can only be matched on their literal form.
+  const raw = rawnorm(val);
   const v = norm(val);
-  if(!v) return false;
-  if(v === norm(item.answer)) return true;
-  return (item.alias||[]).some(a => norm(a) === v);
+  const cands = [item.answer].concat(item.alias || []);
+  return cands.some(a => (raw && raw === rawnorm(a)) || (v && v === norm(a)));
 }
 function shuffle(a){
   a = a.slice();
