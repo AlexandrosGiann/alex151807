@@ -166,7 +166,7 @@ const MODES=[
  ]
 },
 {
- id:'dorks',name:'Google Dorking',tagEl:'Διάλεξε τον σωστό τελεστή για κάθε στόχο.',tagEn:'Pick the right operator for each objective.',
+ id:'dorks',kind:'dork',name:'Google Dorking',tagEl:'Διάλεξε τον σωστό τελεστή για κάθε στόχο.',tagEn:'Pick the right operator for each objective.',
  tools:[T('site','site:','Αναζήτηση μέσα σε site','Search within a site'),
         T('filetype','filetype:','Τύπος αρχείου','Specific file type'),
         T('intitle','intitle:','Λέξεις στον τίτλο','Words in the title'),
@@ -205,7 +205,7 @@ const MODES=[
  ]
 },
 {
- id:'social',name:'Social & Username',tagEl:'Ταυτότητες και επαγγελματικά προφίλ.',tagEn:'Identities and professional profiles.',
+ id:'social',kind:'tool',name:'Social & Username',tagEl:'Ταυτότητες και επαγγελματικά προφίλ.',tagEn:'Identities and professional profiles.',
  tools:[T('instant','InstantUsername','Έλεγχος username σε εφαρμογές','Check a username across apps'),
         T('sherlock','Sherlock','Ίδιο username σε πολλές πλατφόρμες','Same username across many platforms'),
         T('rocket','RocketReach','Επαγγελματικά στοιχεία επικοινωνίας','Professional contact information'),
@@ -227,7 +227,7 @@ const MODES=[
  ]
 },
 {
- id:'image',name:'Image OSINT',tagEl:'Πηγή εικόνας και μεταδεδομένα.',tagEn:'Image provenance and metadata.',
+ id:'image',kind:'tool',name:'Image OSINT',tagEl:'Πηγή εικόνας και μεταδεδομένα.',tagEn:'Image provenance and metadata.',
  tools:[T('gimages','Google Images','Αντίστροφη αναζήτηση','Reverse image search'),
         T('tineye','TinEye','Ιστορικό εικόνας','Image history and older versions'),
         T('pimeyes','PimEyes','Παρόμοια ανθρώπινα πρόσωπα','Visually similar faces'),
@@ -255,7 +255,7 @@ const MODES=[
  ]
 },
 {
- id:'web',name:'Web Recon',tagEl:'Domain, ιστορικό και τεχνολογίες.',tagEn:'Domain, history and technologies.',
+ id:'web',kind:'tool',name:'Web Recon',tagEl:'Domain, ιστορικό και τεχνολογίες.',tagEn:'Domain, history and technologies.',
  tools:[T('whois','Whois','Στοιχεία καταχώρισης domain','Domain registration information'),
         T('wayback','Wayback Machine','Ιστορικές εκδόσεις ιστότοπων','Historical website versions'),
         T('wappa','Wappalyzer','Τεχνολογίες ιστότοπου','Website technologies'),
@@ -291,7 +291,7 @@ const MODES=[
  ]
 },
 {
- id:'dns',name:'DNS Enumeration',tagEl:'Ανάλυση ονομάτων και εγγραφών.',tagEn:'Name resolution and records.',
+ id:'dns',kind:'tool',name:'DNS Enumeration',tagEl:'Ανάλυση ονομάτων και εγγραφών.',tagEn:'Name resolution and records.',
  tools:[T('dnsdump','DNSDumpster','Χαρτογράφηση DNS','DNS reconnaissance and mapping'),
         T('host','host','Απλά ερωτήματα DNS','Simple DNS queries'),
         T('dig','dig','Προχωρημένα ερωτήματα DNS','Advanced DNS queries')],
@@ -315,7 +315,7 @@ const MODES=[
  ]
 },
 {
- id:'search',name:'Shodan & Censys',tagEl:'Συσκευές και υπηρεσίες στο διαδίκτυο.',tagEn:'Internet-exposed devices and services.',
+ id:'search',kind:'filter',name:'Shodan & Censys',tagEl:'Συσκευές και υπηρεσίες στο διαδίκτυο.',tagEn:'Internet-exposed devices and services.',
  tools:[T('country','country:','Φίλτρο χώρας','Country filter'),
         T('port','port:','Φίλτρο θύρας','Port filter'),
         T('os','os:','Φίλτρο λειτουργικού','Operating system filter'),
@@ -339,7 +339,7 @@ const MODES=[
  ]
 },
 {
- id:'dark',name:'Leaked / Dark / Deep',tagEl:'Διαρροές και μη ευρετηριασμένο περιεχόμενο.',tagEn:'Breaches and non-indexed content.',
+ id:'dark',kind:'tool',name:'Leaked / Dark / Deep',tagEl:'Διαρροές και μη ευρετηριασμένο περιεχόμενο.',tagEn:'Breaches and non-indexed content.',
  tools:[T('hibp','Have I Been Pwned','Έλεγχος email σε διαρροές','Check an email against breaches'),
         T('hunter','Hunter.io','Εύρεση επαγγελματικών email','Find professional emails'),
         T('tor','Tor','Πρόσβαση σε .onion','Access .onion services'),
@@ -368,7 +368,7 @@ const MODES=[
  ]
 },
 {
- id:'framework',name:'OSINT Framework',tagEl:'Η οργανωμένη συλλογή εργαλείων.',tagEn:'The categorized tool collection.',
+ id:'framework',kind:'tool',name:'OSINT Framework',tagEl:'Η οργανωμένη συλλογή εργαλείων.',tagEn:'The categorized tool collection.',
  tools:[T('harvester','TheHarvester','Μεμονωμένο εργαλείο συλλογής','A single collection tool'),
         T('onion','Onion Sites','Κρυφές υπηρεσίες','Hidden services'),
         T('framework','OSINT Framework','Κατηγοριοποιημένη συλλογή πόρων','Categorized collection of resources'),
@@ -396,7 +396,8 @@ const I18N={
   goodTool:'Σωστή πηγή. Τώρα το mini quiz.',correct:'Σωστά!',wrong:'Όχι ακριβώς. Ξαναδοκίμασε.',
   next:'Συνέχεια',close:'Κλείσιμο',orderOk:'Σωστή σειρά! Προχώρα στα σενάρια.',orderBad:'Λάθος σειρά — δες τα κόκκινα.',
   incomplete:'Συμπλήρωσε πρώτα όλες τις θέσεις.',done:'Ολοκλήρωσες την πρόκληση!',
-  backToModes:'Επιλογή άλλης πρόκλησης',example:'Παράδειγμα',scenariosLeft:'σενάρια'},
+  backToModes:'Επιλογή άλλης πρόκλησης',example:'Παράδειγμα',scenariosLeft:'σενάρια',
+  showHints:'Βοήθεια',hintsShown:'Βοήθεια ενεργή',firstTry:'Σωστό με την πρώτη! +25 XP bonus. Τώρα το mini quiz.'},
  en:{navHome:'Home',navQuiz:'Quizzes',navCore:'Hackviser CORE',title:'OSINT Investigator',
   subtitle:'What information do you need? Which OSINT category holds it? Which tool provides it? Build the cycle, pick the right source and answer the mini-quiz.',
   pickMode:'Pick a challenge',stageA:'Stage A',stageAtxt:'Structure',stageB:'Stage B',stageBtxt:'Choose source/tool',
@@ -406,7 +407,8 @@ const I18N={
   goodTool:'Correct source identified. Now the mini-quiz.',correct:'Correct!',wrong:'Not quite. Try again.',
   next:'Continue',close:'Close',orderOk:'Correct order! Move on to the scenarios.',orderBad:'Wrong order — check the red ones.',
   incomplete:'Fill in every slot first.',done:'Challenge complete!',
-  backToModes:'Pick another challenge',example:'Example',scenariosLeft:'scenarios'}
+  backToModes:'Pick another challenge',example:'Example',scenariosLeft:'scenarios',
+  showHints:'Hint',hintsShown:'Hints on',firstTry:'First try! +25 XP bonus. Now the mini-quiz.'}
 };
 let lang='el'; try{ lang=localStorage.getItem('lang')||'el'; }catch(e){}
 const t=k=>(I18N[lang]&&I18N[lang][k])||I18N.el[k]||k;
@@ -414,6 +416,7 @@ const $=id=>document.getElementById(id);
 
 /* ================= STATE ================= */
 let mode=null,stage='A',slots=[],selectedWord=null,scIdx=0,xp=0,done=new Set();
+let candidates=[],hintsUsed=false,wrongThisScenario=false;
 try{ done=new Set(JSON.parse(localStorage.getItem('osintDone')||'[]')); }catch(e){}
 try{ xp=parseInt(localStorage.getItem('osintXp')||'0')||0; }catch(e){}
 function save(){ try{ localStorage.setItem('osintDone',JSON.stringify([...done]));
@@ -511,6 +514,7 @@ function renderScenario(){
   const area=$('stageArea'); area.innerHTML='';
   const sc=mode.scenarios[scIdx];
   if(!sc){ finishMode(); return; }
+  hintsUsed=false; wrongThisScenario=false;
   if(sc.sEl){
     const box=document.createElement('div'); box.className='scenario';
     box.innerHTML='<span class="lbl">'+t('scenarioLbl')+' '+(scIdx+1)+'/'+mode.scenarios.length+'</span><p>'+
@@ -518,25 +522,63 @@ function renderScenario(){
     area.appendChild(box);
   }
   if(sc.valid && mode.tools.length){
-    const p=document.createElement('p'); p.className='panel-h'; p.textContent=t('pickTool'); area.appendChild(p);
-    const grid=document.createElement('div'); grid.className='tools';
-    mode.tools.forEach(tool=>{
+    const head=document.createElement('div'); head.className='row';
+    head.style.cssText='justify-content:space-between;margin-bottom:10px';
+    const p=document.createElement('p'); p.className='panel-h'; p.style.margin='0';
+    p.textContent=t('pickTool');
+    const hb=document.createElement('button'); hb.className='btn btn-ghost'; hb.id='hintBtn';
+    hb.style.cssText='padding:6px 12px;font-size:.8rem';
+    hb.textContent=t('showHints');
+    head.appendChild(p); head.appendChild(hb); area.appendChild(head);
+
+    const grid=document.createElement('div'); grid.className='tools'; grid.id='toolGrid';
+    // Candidates = this scenario's valid tools + decoys of the same kind drawn
+    // from the other modes, so the choice is not a 3-way giveaway.
+    candidates = buildCandidates(sc);
+    candidates.forEach(tool=>{
       const b=document.createElement('button'); b.className='tool';
-      b.innerHTML='<b>'+tool.name+'</b><span class="purpose">'+(lang==='el'?tool.pEl:tool.pEn)+'</span>';
+      // purposes stay hidden until the player asks for hints
+      b.innerHTML='<b>'+tool.name+'</b><span class="purpose hidden">'+(lang==='el'?tool.pEl:tool.pEn)+'</span>';
       b.addEventListener('click',()=>pickTool(tool,b,sc));
       grid.appendChild(b);
     });
     area.appendChild(grid);
+    hb.addEventListener('click',()=>{
+      hintsUsed=true;
+      grid.querySelectorAll('.purpose').forEach(el=>el.classList.remove('hidden'));
+      hb.disabled=true; hb.textContent=t('hintsShown');
+    });
   } else {
     openQuiz(sc);   // cycle mode: straight to the quiz
   }
   updateProg();
 }
+// Decoys of the same kind from the other modes: a wrong pick has to be ruled
+// out on knowledge, not by there only being three buttons on screen.
+function buildCandidates(sc){
+  const valid = mode.tools.filter(tl=>sc.valid.indexOf(tl.id)>=0);
+  const own   = mode.tools.filter(tl=>sc.valid.indexOf(tl.id)<0);
+  const pool  = MODES.filter(m=>m!==mode && m.kind===mode.kind)
+                     .flatMap(m=>m.tools)
+                     .filter(tl=>!mode.tools.some(o=>o.id===tl.id));
+  const target = Math.min(12, Math.max(8, valid.length + 6));
+  let pick = valid.concat(shuffle(own));
+  pick = pick.concat(shuffle(pool)).slice(0, target);
+  // guarantee every valid tool survived the slice
+  valid.forEach(v=>{ if(!pick.some(x=>x.id===v.id)) pick[pick.length-1]=v; });
+  return shuffle(pick);
+}
 function pickTool(tool,btn,sc){
   if(sc.valid.indexOf(tool.id)>=0){
-    btn.classList.add('solved'); addXp(50); hint(t('goodTool'),true); openQuiz(sc);
+    btn.classList.add('solved');
+    addXp(50);
+    if(!wrongThisScenario && !hintsUsed){ addXp(25); hint(t('firstTry'),true); }
+    else hint(t('goodTool'),true);
+    openQuiz(sc);
   } else {
-    btn.classList.add('wrongpick'); hint(t('wrongTool'));
+    wrongThisScenario=true;
+    btn.classList.add('wrongpick'); btn.disabled=true;
+    hint(t('wrongTool'));
   }
 }
 /* ---- Stage C ---- */
