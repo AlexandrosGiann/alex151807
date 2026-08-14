@@ -502,6 +502,134 @@ const SETS = [
       {label:'Κρυπτογραφεί αρχεία και ζητά λύτρα', answer:'Ransomware'},
     ]
   },
+  {
+    id:'cryptoapps', titleEl:'Εφαρμογές Κρυπτολογίας', titleEn:'Applications of Cryptology',
+    noteEl:'Πού εφαρμόζεται η κρυπτολογία;', noteEn:'Where cryptology is applied.',
+    two:true,
+    items:[
+      {label:'Προστασία επικοινωνιών σε μεταφορά', answer:'Communication Security'},
+      {label:'Προστασία δεδομένων σε αποθήκευση', answer:'Data Storage Security'},
+      {label:'Επαλήθευση ταυτότητας χρηστών', answer:'Authentication'},
+      {label:'Ασφάλεια τραπεζικών και πληρωμών', answer:'Financial Transactions'},
+      {label:'Κρατικές και στρατιωτικές χρήσεις', answer:'Government and Military Applications'},
+    ]
+  },
+  {
+    id:'cryptanalysis4', titleEl:'Τεχνικές Κρυπτανάλυσης (4)', titleEn:'Cryptanalysis Techniques (4)',
+    noteEl:'Οι τέσσερις βασικές τεχνικές.', noteEn:'The four core techniques.',
+    two:true,
+    items:[
+      {label:'Δοκιμή κάθε δυνατού συνδυασμού', answer:'Brute Force Attacks'},
+      {label:'Δοκιμή έτοιμης λίστας πιθανών κωδικών', answer:'Dictionary Attacks'},
+      {label:'Μέτρηση χρόνου, ισχύος ή εκπομπών της υλοποίησης', answer:'Side-Channel Attacks'},
+      {label:'Εκμετάλλευση στατιστικών μοτίβων', answer:'Statistical Attacks'},
+    ]
+  },
+  {
+    id:'cryptoimport', titleEl:'Σημασία Κρυπτογραφίας & Κρυπτανάλυσης', titleEn:'Importance of Cryptography and Cryptanalysis',
+    noteEl:'Οι τρεις λόγοι.', noteEn:'The three reasons.',
+    items:[
+      {label:'Προστασία δεδομένων και συστημάτων', answer:'Security'},
+      {label:'Εμπιστοσύνη στην ορθότητα των πληροφοριών', answer:'Reliability'},
+      {label:'Βελτίωση αλγορίθμων μέσα από τον έλεγχό τους', answer:'Development'},
+    ]
+  },
+  {
+    id:'symmalgo', titleEl:'Συμμετρικοί Αλγόριθμοι', titleEn:'Symmetric Encryption Algorithms',
+    noteEl:'Block cipher ή stream cipher;', noteEn:'Block cipher or stream cipher?',
+    two:true,
+    items:[
+      {label:'DES', answer:'Block Cipher'},
+      {label:'3DES', answer:'Block Cipher'},
+      {label:'AES', answer:'Block Cipher'},
+      {label:'RC4', answer:'Stream Cipher'},
+      {label:'Salsa20', answer:'Stream Cipher'},
+      {label:'ChaCha20', answer:'Stream Cipher'},
+    ]
+  },
+  {
+    id:'blockmodes', titleEl:'Τρόποι Λειτουργίας Block Cipher', titleEn:'Block Cipher Modes of Operation',
+    noteEl:'Ταίριαξε την περιγραφή με τον τρόπο λειτουργίας.', noteEn:'Match each description to its mode.',
+    two:true,
+    items:[
+      {label:'Κάθε μπλοκ ανεξάρτητα — ίδιο μπλοκ δίνει ίδιο κρυπτογράφημα', answer:'ECB Mode'},
+      {label:'Κάθε μπλοκ συνδυάζεται με το προηγούμενο κρυπτογράφημα', answer:'CBC Mode'},
+      {label:'Παράγει ροή κλειδιού ανατροφοδοτώντας την έξοδο', answer:'OFB Mode'},
+      {label:'Χρησιμοποιεί αυξανόμενο μετρητή για τη ροή κλειδιού', answer:'CTR Mode'},
+    ]
+  },
+  {
+    id:'asymmalgo', titleEl:'Ασύμμετροι Αλγόριθμοι', titleEn:'Asymmetric Encryption Algorithms',
+    noteEl:'Ταίριαξε την περιγραφή με τον αλγόριθμο.', noteEn:'Match each description to its algorithm.',
+    two:true,
+    items:[
+      {label:'Βασίζεται στην παραγοντοποίηση μεγάλων πρώτων', answer:'RSA'},
+      {label:'Ίδια ασφάλεια με πολύ μικρότερα κλειδιά (ελλειπτικές καμπύλες)', answer:'ECC'},
+      {label:'Βασίζεται στο πρόβλημα του διακριτού λογαρίθμου', answer:'ElGamal'},
+      {label:'Πρότυπο αποκλειστικά για ψηφιακές υπογραφές', answer:'DSA'},
+    ]
+  },
+  {
+    id:'pki', titleEl:'Public Key Infrastructure (PKI)', titleEn:'Public Key Infrastructure',
+    noteEl:'Ποιος κάνει τι στο PKI;', noteEn:'Who does what in a PKI?',
+    two:true,
+    items:[
+      {label:'Εκδίδει και υπογράφει τα πιστοποιητικά', answer:'Certificate Authorities'},
+      {label:'Επαληθεύει την ταυτότητα πριν την έκδοση', answer:'Registration Authorities'},
+      {label:'Συνδέουν δημόσιο κλειδί με ταυτότητα', answer:'Digital Certificates'},
+      {label:'Αποθηκεύουν και διαθέτουν τα πιστοποιητικά', answer:'Certificate Repositories'},
+    ]
+  },
+  {
+    id:'hashalgo', titleEl:'Αλγόριθμοι Hash', titleEn:'Hash Algorithms',
+    noteEl:'Ταίριαξε την περιγραφή με τον αλγόριθμο.', noteEn:'Match each description to its algorithm.',
+    two:true,
+    items:[
+      {label:'128 bit — σπασμένος, δεν χρησιμοποιείται για ασφάλεια', answer:'MD5'},
+      {label:'160 bit — σπασμένος με πρακτική σύγκρουση το 2017', answer:'SHA-1'},
+      {label:'Οικογένεια με SHA-256 και SHA-512', answer:'SHA-2'},
+      {label:'Νεότερο πρότυπο με διαφορετική εσωτερική δομή (Keccak)', answer:'SHA-3'},
+      {label:'160 bit, ευρωπαϊκής σχεδίασης', answer:'RIPEMD-160'},
+    ]
+  },
+  {
+    id:'digsig', titleEl:'Αλγόριθμοι Ψηφιακής Υπογραφής', titleEn:'Digital Signature Algorithms',
+    noteEl:'Οι τρεις αλγόριθμοι υπογραφής.', noteEn:'The three signature algorithms.',
+    two:true,
+    items:[
+      {label:'Υπογραφή με τον ίδιο αλγόριθμο που κάνει και κρυπτογράφηση', answer:'RSA'},
+      {label:'Πρότυπο υπογραφής βασισμένο σε διακριτό λογάριθμο', answer:'DSA'},
+      {label:'Υπογραφή με ελλειπτικές καμπύλες', answer:'ECDSA'},
+    ]
+  },
+  {
+    id:'cryptoproto', titleEl:'Κρυπτογραφικά Πρωτόκολλα', titleEn:'Important Cryptographic Protocols',
+    noteEl:'Ταίριαξε την περιγραφή με το πρωτόκολλο.', noteEn:'Match each description to its protocol.',
+    two:true,
+    items:[
+      {label:'Ασφαλίζει την κίνηση HTTPS στο web', answer:'SSL/TLS'},
+      {label:'Ασφαλίζει την κίνηση σε επίπεδο IP (VPN)', answer:'IPsec'},
+      {label:'Ασφαλής απομακρυσμένη πρόσβαση σε κέλυφος', answer:'SSH'},
+      {label:'Κρυπτογράφηση και υπογραφή email και αρχείων', answer:'PGP'},
+      {label:'Ταυτοποίηση σε δίκτυο με εισιτήρια (tickets)', answer:'Kerberos'},
+      {label:'Εξουσιοδότηση πρόσβασης χωρίς κοινοποίηση κωδικού', answer:'OAuth'},
+    ]
+  },
+  {
+    id:'cryptanalysis8', titleEl:'Τύποι Κρυπτανάλυσης (8)', titleEn:'Types of Cryptanalysis',
+    noteEl:'Ταίριαξε την περιγραφή με τον τύπο επίθεσης.', noteEn:'Match each description to its attack type.',
+    two:true,
+    items:[
+      {label:'Δοκιμή όλων των δυνατών κλειδιών', answer:'Brute Force Attacks'},
+      {label:'Δοκιμή λίστας πιθανών κωδικών', answer:'Dictionary Attacks'},
+      {label:'Διαρροή από χρόνο, κατανάλωση ισχύος ή θόρυβο', answer:'Side-Channel Attacks'},
+      {label:'Ο επιτιθέμενος έχει ζεύγη καθαρού και κρυπτογραφημένου', answer:'Known Plaintext Attacks'},
+      {label:'Μέτρηση συχνότητας εμφάνισης συμβόλων', answer:'Frequency Analysis'},
+      {label:'Μελέτη πώς διαφορές εισόδου επηρεάζουν την έξοδο', answer:'Differential Cryptanalysis'},
+      {label:'Προσέγγιση του κρυπταλγορίθμου με γραμμικές σχέσεις', answer:'Linear Cryptanalysis'},
+      {label:'Παρεμβολή τρίτου ανάμεσα στα δύο μέρη', answer:'Man-in-the-Middle Attacks'},
+    ]
+  },
 ];
 
 /* =====================  i18n  ===================== */
