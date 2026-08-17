@@ -1438,6 +1438,28 @@
         </div>
       `;
       dashboardSection.appendChild(card);
+
+      // Add Terms card (drag-and-drop / typing glossary practice)
+      const termsCard = document.createElement('div');
+      termsCard.className = 'card quiz-card';
+      termsCard.style.borderColor = 'var(--primary)';
+      termsCard.style.boxShadow = '0 10px 25px -5px rgba(56, 189, 248, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.3)';
+      termsCard.addEventListener('click', () => { window.location.href = 'aws_terms.html'; });
+      const tTitle = currentLang === 'el' ? 'Ορολογίες (σύρε ή γράψε)' : 'Terms (drag or type)';
+      const tMeta = currentLang === 'el'
+        ? 'Υπηρεσίες, έννοιες και συγκρίσεις για το CLF-C02'
+        : 'Services, concepts and comparisons for CLF-C02';
+      termsCard.innerHTML = `
+        <div>
+          <span class="unit-tag">${currentLang === 'el' ? 'Ορολογίες' : 'Terms'}</span>
+          <h3 class="quiz-card-title">${tTitle}</h3>
+        </div>
+        <div class="quiz-meta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>${tMeta}</span>
+        </div>
+      `;
+      dashboardSection.appendChild(termsCard);
     }
 
     // Sound toggle function

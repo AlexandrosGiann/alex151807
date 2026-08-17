@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AWS Cloud Practitioner — Ορολογίες | Αλέξανδρος Γιαννάκης</title>
+<style>
+  :root{
+    --bg:#0f172a; --card-bg:#1e293b; --border-color:#334155;
+    --text-main:#f8fafc; --text-muted:#94a3b8; --primary:#38bdf8;
+    --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);
+       color:var(--text-main);padding:26px 16px 70px}
+  .wrap{max-width:1080px;margin:0 auto}
+  .top-nav{text-align:center;margin-bottom:16px}
+  .top-nav a{color:var(--text-muted);text-decoration:none;margin:0 10px;font-size:.94rem}
+  .top-nav a:hover{color:var(--primary)}
+  h1.page-title{text-align:center;color:var(--primary);margin:0 0 6px;
+                font-size:clamp(1.5rem,4vw,2.2rem)}
+  .subtitle{text-align:center;color:var(--text-muted);margin:0 auto 24px;max-width:720px;
+            line-height:1.6;font-size:.95rem}
+
+  .panel{background:var(--card-bg);border:1px solid var(--border-color);
+         border-radius:16px;padding:18px;margin-bottom:18px}
+  .panel-h{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;
+           color:var(--text-muted);font-weight:700;margin:0 0 12px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#0b1220;color:var(--text-muted);border:1px solid var(--border-color);
+        border-radius:999px;padding:8px 15px;cursor:pointer;font-size:.86rem;
+        font-family:inherit;transition:all .16s ease}
+  .chip:hover{color:var(--text-main);border-color:var(--primary)}
+  .chip.on{background:var(--primary);color:#06283d;border-color:var(--primary);font-weight:700}
+  .chip .cnt{opacity:.7;font-size:.78em;margin-left:5px}
+
+  .opts{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .opt{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--text-muted)}
+  .opt input[type=checkbox]{accent-color:var(--primary);width:17px;height:17px;cursor:pointer}
+  .opt input[type=number]{width:66px;background:#0b1220;color:var(--text-main);
+        border:1px solid var(--border-color);border-radius:8px;padding:6px 8px;font-family:inherit}
+  .seg{display:inline-flex;border:1px solid var(--border-color);border-radius:10px;overflow:hidden}
+  .seg button{background:#0b1220;color:var(--text-muted);border:0;padding:8px 15px;
+        cursor:pointer;font-family:inherit;font-size:.86rem}
+  .seg button.on{background:var(--primary);color:#06283d;font-weight:700}
+
+  .btn{background:var(--primary);color:#06283d;border:0;border-radius:10px;padding:11px 22px;
+       font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border-color)}
+  .btn-ghost:hover:not(:disabled){color:var(--text-main);border-color:var(--primary)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  /* timer */
+  .timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.05rem;
+         color:var(--primary);padding:6px 12px;border:1px solid var(--border-color);
+         border-radius:10px;background:#0b1220}
+  .timer.low{color:var(--danger);border-color:var(--danger)}
+
+  /* word bank */
+  #bank{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+  .word{background:#0b1220;border:1px solid var(--primary);color:var(--text-main);
+        border-radius:9px;padding:8px 13px;cursor:grab;font-size:.87rem;user-select:none;
+        transition:transform .12s ease,opacity .12s ease}
+  .word:active{cursor:grabbing}
+  .word.sel{background:var(--primary);color:#06283d;font-weight:700;transform:scale(1.04)}
+  .word.used{display:none}
+
+  /* set + slots */
+  .set{margin-bottom:22px}
+  .set-title{font-size:1rem;font-weight:700;margin:0 0 4px;color:var(--text-main)}
+  .set-note{font-size:.8rem;color:var(--text-muted);margin:0 0 10px}
+  .slots{display:grid;gap:8px}
+  .slots.two{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .slot{display:flex;align-items:stretch;gap:0;border:1px solid var(--border-color);
+        border-radius:10px;overflow:hidden;background:#0b1220;min-height:44px}
+  .slot-label{flex:0 0 auto;min-width:92px;display:flex;align-items:center;justify-content:center;
+        background:rgba(56,189,248,.12);color:var(--primary);font-weight:700;font-size:.82rem;
+        padding:8px 10px;border-right:1px solid var(--border-color);text-align:center}
+  .slot-drop{flex:1;display:flex;align-items:center;padding:6px 10px;min-height:42px;
+        font-size:.88rem;color:var(--text-muted)}
+  .slot-drop.over{background:rgba(56,189,248,.14)}
+  .slot-drop .placed{background:rgba(56,189,248,.16);border:1px solid var(--primary);
+        border-radius:7px;padding:5px 10px;color:var(--text-main);cursor:pointer;font-size:.86rem}
+  .slot-drop input{width:100%;background:transparent;border:0;color:var(--text-main);
+        font-family:inherit;font-size:.88rem;outline:none;padding:4px 0}
+  .slot.ok{border-color:var(--success)}
+  .slot.ok .slot-label{background:rgba(16,185,129,.15);color:var(--success)}
+  .slot.bad{border-color:var(--danger)}
+  .slot.bad .slot-label{background:rgba(239,68,68,.15);color:var(--danger)}
+  .fix{display:block;font-size:.78rem;color:var(--success);margin-top:3px}
+
+  .score-box{text-align:center;padding:18px}
+  .score-num{font-size:2.4rem;font-weight:800;color:var(--primary);margin:0}
+  .score-sub{color:var(--text-muted);margin:6px 0 0;font-size:.92rem}
+
+  .hidden{display:none !important}
+  .float-btns{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:10px}
+  .fbtn{width:44px;height:44px;border-radius:50%;background:var(--card-bg);
+        border:1px solid var(--border-color);color:var(--text-muted);font-weight:700;
+        cursor:pointer;font-family:inherit}
+  .fbtn:hover{color:var(--text-main);border-color:var(--primary)}
+  @media (max-width:600px){
+    .slot-label{min-width:74px;font-size:.76rem}
+    .slots.two{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-nav">
+    <a href="index.html" data-i18n="navHome">Αρχική</a>
+    <a href="quizess.html" data-i18n="navQuiz">Κουίζ</a>
+    <a href="quizzes_aws.html" data-i18n="navCore">AWS Quiz</a>
+  </div>
+
+  <h1 class="page-title" data-i18n="title">AWS Cloud Practitioner — Ορολογίες</h1>
+  <p class="subtitle" data-i18n="subtitle">
+    Ταίριαξε κάθε περιγραφή με τη σωστή ορολογία AWS. Σύρε τις λέξεις ή γράψε την απάντηση — εξάσκηση για το CLF-C02.
+  </p>
+
+  <!-- SETUP -->
+  <div id="setupView">
+    <div class="panel">
+      <p class="panel-h" data-i18n="pickSets">Διάλεξε σύνολα</p>
+      <div class="chips" id="setChips"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-ghost" id="allBtn" data-i18n="selectAll">Επιλογή όλων</button>
+        <button class="btn btn-ghost" id="noneBtn" data-i18n="clearAll">Καθαρισμός</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="panel-h" data-i18n="optionsH">Ρυθμίσεις</p>
+      <div class="opts">
+        <div class="opt">
+          <span data-i18n="modeLabel">Τρόπος:</span>
+          <div class="seg" id="modeSeg">
+            <button data-mode="drag" class="on" data-i18n="modeDrag">Σύρσιμο</button>
+            <button data-mode="type" data-i18n="modeType">Πληκτρολόγηση</button>
+          </div>
+        </div>
+        <label class="opt">
+          <input type="checkbox" id="shuffleChk" checked>
+          <span data-i18n="shuffleLabel">Ανακάτεμα σειράς</span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" id="timerChk">
+          <span data-i18n="timerLabel">Χρονόμετρο</span>
+        </label>
+        <label class="opt" id="timerMinsWrap" style="opacity:.45">
+          <input type="number" id="timerMins" value="5" min="1" max="90" disabled>
+          <span data-i18n="minsLabel">λεπτά</span>
+        </label>
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="startBtn" data-i18n="startBtn">Έναρξη</button>
+        <span id="pickSummary" style="color:var(--text-muted);font-size:.88rem"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAY -->
+  <div id="playView" class="hidden">
+    <div class="panel" id="bankPanel">
+      <div class="row" style="justify-content:space-between;margin-bottom:10px">
+        <p class="panel-h" style="margin:0" data-i18n="bankH">Λέξεις</p>
+        <div class="row">
+          <span class="timer hidden" id="timerBox">00:00</span>
+          <span id="remainCount" style="color:var(--text-muted);font-size:.85rem"></span>
+        </div>
+      </div>
+      <div id="bank"></div>
+      <p style="color:var(--text-muted);font-size:.8rem;margin:10px 0 0" id="dragHint"
+         data-i18n="dragHint">Σύρε μια λέξη σε ένα κουτί — ή πάτησέ τη και μετά πάτα το κουτί.</p>
+    </div>
+
+    <div id="board"></div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <button class="btn" id="checkBtn" data-i18n="checkBtn">Έλεγχος</button>
+          <button class="btn btn-ghost" id="retryBtn" data-i18n="retryBtn">Καθαρισμός</button>
+        </div>
+        <button class="btn btn-ghost" id="backBtn" data-i18n="backBtn">← Ρυθμίσεις</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultView" class="hidden">
+    <div class="panel score-box">
+      <p class="score-num" id="scoreNum">0%</p>
+      <p class="score-sub" id="scoreSub"></p>
+      <div class="row" style="justify-content:center;margin-top:14px">
+        <button class="btn" id="againBtn" data-i18n="againBtn">Ξανά</button>
+        <button class="btn btn-ghost" id="reviewBtn" data-i18n="reviewBtn">Δες τις απαντήσεις</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="float-btns">
+  <button class="fbtn" id="langBtn">EN</button>
+</div>
+
+<script>
+/* =====================  DATA  =====================
+   Corrections applied vs. the list as first written:
+   - Cyber Kill Chain: added the missing 7th stage "Actions on Objectives"
+   - LLM05: "Insecure" -> "Improper Output Handling"  (Improper is the 2025 name)
+   - LLM06: "Exceeded"  -> "Excessive Agency"
+   - LLM08: "Embeddings" -> "Embedding" (singular)
+   - A03/A04: "Failure" -> "Failures" (plural, as in Module 6)
+*/
+const SETS = [
+ {
+  "id": "recognition",
+  "titleEl": "Αναγνώριση Υπηρεσίας (Exam)",
+  "titleEn": "Service Recognition (Exam)",
+  "noteEl": "Αν δεις αυτό στην ερώτηση — ποια υπηρεσία;",
+  "noteEn": "If you see this in the question — which service?",
+  "two": true,
+  "items": [
+   {
+    "label": "Virtual server",
+    "answer": "EC2",
+    "alias": [
+     "Amazon EC2"
+    ]
+   },
+   {
+    "label": "Object storage",
+    "answer": "S3",
+    "alias": [
+     "Amazon S3"
+    ]
+   },
+   {
+    "label": "Virtual disk για EC2",
+    "answer": "EBS",
+    "alias": [
+     "Amazon EBS"
+    ]
+   },
+   {
+    "label": "Shared file system",
+    "answer": "EFS",
+    "alias": [
+     "Amazon EFS"
+    ]
+   },
+   {
+    "label": "Relational database",
+    "answer": "RDS",
+    "alias": [
+     "Amazon RDS",
+     "RDS / Aurora"
+    ]
+   },
+   {
+    "label": "NoSQL database",
+    "answer": "DynamoDB",
+    "alias": [
+     "Amazon DynamoDB"
+    ]
+   },
+   {
+    "label": "Cache / in-memory",
+    "answer": "ElastiCache",
+    "alias": [
+     "Amazon ElastiCache"
+    ]
+   },
+   {
+    "label": "DNS",
+    "answer": "Route 53",
+    "alias": [
+     "Amazon Route 53",
+     "Route53"
+    ]
+   },
+   {
+    "label": "CDN",
+    "answer": "CloudFront",
+    "alias": [
+     "Amazon CloudFront"
+    ]
+   },
+   {
+    "label": "Ιδιωτικό virtual network",
+    "answer": "VPC",
+    "alias": [
+     "Amazon VPC"
+    ]
+   },
+   {
+    "label": "Αποκλειστική σύνδεση από on-premises",
+    "answer": "Direct Connect",
+    "alias": [
+     "AWS Direct Connect"
+    ]
+   },
+   {
+    "label": "Κρυπτογραφημένη σύνδεση μέσω Internet",
+    "answer": "VPN",
+    "alias": [
+     "AWS VPN"
+    ]
+   },
+   {
+    "label": "Serverless functions",
+    "answer": "Lambda",
+    "alias": [
+     "AWS Lambda"
+    ]
+   },
+   {
+    "label": "Serverless containers",
+    "answer": "Fargate",
+    "alias": [
+     "AWS Fargate"
+    ]
+   },
+   {
+    "label": "Managed Kubernetes",
+    "answer": "EKS",
+    "alias": [
+     "Amazon EKS"
+    ]
+   },
+   {
+    "label": "Container orchestration",
+    "answer": "ECS",
+    "alias": [
+     "Amazon ECS"
+    ]
+   },
+   {
+    "label": "Container registry",
+    "answer": "ECR",
+    "alias": [
+     "Amazon ECR"
+    ]
+   },
+   {
+    "label": "Permissions / πρόσβαση",
+    "answer": "IAM",
+    "alias": [
+     "AWS IAM"
+    ]
+   },
+   {
+    "label": "Encryption keys",
+    "answer": "KMS",
+    "alias": [
+     "AWS KMS"
+    ]
+   },
+   {
+    "label": "Secrets και passwords",
+    "answer": "Secrets Manager",
+    "alias": [
+     "AWS Secrets Manager"
+    ]
+   },
+   {
+    "label": "DDoS protection",
+    "answer": "Shield",
+    "alias": [
+     "AWS Shield"
+    ]
+   },
+   {
+    "label": "Web application firewall",
+    "answer": "WAF",
+    "alias": [
+     "AWS WAF"
+    ]
+   },
+   {
+    "label": "Threat detection",
+    "answer": "GuardDuty",
+    "alias": [
+     "Amazon GuardDuty"
+    ]
+   },
+   {
+    "label": "Vulnerability scanning",
+    "answer": "Inspector",
+    "alias": [
+     "Amazon Inspector"
+    ]
+   },
+   {
+    "label": "Ευαίσθητα δεδομένα στο S3",
+    "answer": "Macie",
+    "alias": [
+     "Amazon Macie"
+    ]
+   },
+   {
+    "label": "Compliance reports",
+    "answer": "Artifact",
+    "alias": [
+     "AWS Artifact"
+    ]
+   },
+   {
+    "label": "Monitoring και metrics",
+    "answer": "CloudWatch",
+    "alias": [
+     "Amazon CloudWatch"
+    ]
+   },
+   {
+    "label": "Ιστορικό API calls / audit",
+    "answer": "CloudTrail",
+    "alias": [
+     "AWS CloudTrail"
+    ]
+   },
+   {
+    "label": "Configuration των resources",
+    "answer": "Config",
+    "alias": [
+     "AWS Config"
+    ]
+   },
+   {
+    "label": "Recommendations και best practices",
+    "answer": "Trusted Advisor",
+    "alias": [
+     "AWS Trusted Advisor"
+    ]
+   },
+   {
+    "label": "Infrastructure as Code",
+    "answer": "CloudFormation",
+    "alias": [
+     "AWS CloudFormation"
+    ]
+   },
+   {
+    "label": "Message queue",
+    "answer": "SQS",
+    "alias": [
+     "Amazon SQS"
+    ]
+   },
+   {
+    "label": "Notifications / pub-sub",
+    "answer": "SNS",
+    "alias": [
+     "Amazon SNS"
+    ]
+   },
+   {
+    "label": "Event bus",
+    "answer": "EventBridge",
+    "alias": [
+     "Amazon EventBridge"
+    ]
+   },
+   {
+    "label": "Orchestration workflows",
+    "answer": "Step Functions",
+    "alias": [
+     "AWS Step Functions"
+    ]
+   },
+   {
+    "label": "SQL queries πάνω σε S3",
+    "answer": "Athena",
+    "alias": [
+     "Amazon Athena"
+    ]
+   },
+   {
+    "label": "ETL / data integration",
+    "answer": "Glue",
+    "alias": [
+     "AWS Glue"
+    ]
+   },
+   {
+    "label": "Streaming data σε πραγματικό χρόνο",
+    "answer": "Kinesis",
+    "alias": [
+     "Amazon Kinesis"
+    ]
+   },
+   {
+    "label": "Data warehouse",
+    "answer": "Redshift",
+    "alias": [
+     "Amazon Redshift"
+    ]
+   },
+   {
+    "label": "BI dashboards",
+    "answer": "QuickSight",
+    "alias": [
+     "Amazon QuickSight"
+    ]
+   },
+   {
+    "label": "Μεταφορά βάσεων δεδομένων",
+    "answer": "DMS",
+    "alias": [
+     "AWS DMS"
+    ]
+   },
+   {
+    "label": "Ανάλυση κόστους που ήδη ξοδεύτηκε",
+    "answer": "Cost Explorer",
+    "alias": [
+     "AWS Cost Explorer"
+    ]
+   },
+   {
+    "label": "Ειδοποιήσεις υπέρβασης προϋπολογισμού",
+    "answer": "AWS Budgets",
+    "alias": [
+     "Budgets"
+    ]
+   },
+   {
+    "label": "Εκτίμηση μελλοντικού κόστους",
+    "answer": "Pricing Calculator",
+    "alias": [
+     "AWS Pricing Calculator"
+    ]
+   },
+   {
+    "label": "Διαχείριση πολλών AWS accounts",
+    "answer": "AWS Organizations",
+    "alias": [
+     "Organizations"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "concepts",
+  "titleEl": "Έννοιες Cloud",
+  "titleEn": "Cloud Concepts",
+  "noteEl": "Ταίριαξε την περιγραφή με τον όρο.",
+  "noteEn": "Match each description to its term.",
+  "two": true,
+  "items": [
+   {
+    "label": "Δυναμική αύξηση/μείωση πόρων ανάλογα με τη ζήτηση",
+    "answer": "Elasticity"
+   },
+   {
+    "label": "Ικανότητα του συστήματος να αυξήσει την υπολογιστική ισχύ",
+    "answer": "Scalability"
+   },
+   {
+    "label": "Γρήγορη δημιουργία, αλλαγή και δοκιμή υποδομής",
+    "answer": "Agility"
+   },
+   {
+    "label": "Παραμένει διαθέσιμο ακόμη κι αν αποτύχει component",
+    "answer": "High Availability"
+   },
+   {
+    "label": "Συνεχίζει να λειτουργεί παρά την αποτυχία, χωρίς διακοπή",
+    "answer": "Fault Tolerance"
+   },
+   {
+    "label": "Επαναφορά υπηρεσιών μετά από σοβαρό outage",
+    "answer": "Disaster Recovery"
+   },
+   {
+    "label": "Συνέχιση κρίσιμων λειτουργιών σε σοβαρό πρόβλημα",
+    "answer": "Business Continuity"
+   },
+   {
+    "label": "Χρόνος ταξιδιού ενός request από άκρο σε άκρο",
+    "answer": "Latency"
+   },
+   {
+    "label": "Επιλογή σωστού μεγέθους πόρου για αποφυγή κόστους",
+    "answer": "Rightsizing"
+   }
+  ]
+ },
+ {
+  "id": "economics",
+  "titleEl": "Οικονομικά του Cloud",
+  "titleEn": "Cloud Economics",
+  "noteEl": "Ταίριαξε την περιγραφή με τον όρο.",
+  "noteEn": "Match each description to its term.",
+  "two": true,
+  "items": [
+   {
+    "label": "Μεγάλη προκαταβολική επένδυση σε hardware",
+    "answer": "CAPEX",
+    "alias": [
+     "Capital Expenditure"
+    ]
+   },
+   {
+    "label": "Λειτουργικά έξοδα με βάση τη χρήση",
+    "answer": "OPEX",
+    "alias": [
+     "Operational Expenditure"
+    ]
+   },
+   {
+    "label": "Πληρώνεις μόνο όσο χρησιμοποιείς",
+    "answer": "Pay-as-you-go",
+    "alias": [
+     "pay as you go"
+    ]
+   },
+   {
+    "label": "Κόστος που μεταβάλλεται με τη χρήση",
+    "answer": "Variable Expense"
+   },
+   {
+    "label": "Σταθερό ή προκαταβολικό κόστος",
+    "answer": "Fixed Expense"
+   },
+   {
+    "label": "Χαμηλότερο κόστος ανά μονάδα λόγω τεράστιας κλίμακας",
+    "answer": "Economies of Scale"
+   }
+  ]
+ },
+ {
+  "id": "scaling",
+  "titleEl": "Τρόποι Κλιμάκωσης",
+  "titleEn": "Scaling",
+  "noteEl": "Πάνω ή έξω;",
+  "noteEn": "Up or out?",
+  "two": true,
+  "items": [
+   {
+    "label": "Αύξηση πόρων σε υπάρχοντα server (2 GB → 32 GB RAM)",
+    "answer": "Vertical Scaling",
+    "alias": [
+     "scale up",
+     "vertical"
+    ]
+   },
+   {
+    "label": "Προσθήκη περισσότερων servers (2 → 20 instances)",
+    "answer": "Horizontal Scaling",
+    "alias": [
+     "scale out",
+     "horizontal"
+    ]
+   },
+   {
+    "label": "Μοιράζει την κίνηση σε πολλούς πόρους",
+    "answer": "Elastic Load Balancing",
+    "alias": [
+     "ELB",
+     "Load Balancer"
+    ]
+   },
+   {
+    "label": "Αυξομειώνει αυτόματα τους πόρους με τη ζήτηση",
+    "answer": "Auto Scaling"
+   }
+  ]
+ },
+ {
+  "id": "global",
+  "titleEl": "Παγκόσμια Υποδομή",
+  "titleEn": "Global Infrastructure",
+  "noteEl": "Ταίριαξε την περιγραφή με τον όρο.",
+  "noteEn": "Match each description to its term.",
+  "two": true,
+  "items": [
+   {
+    "label": "Γεωγραφική περιοχή με υποδομή AWS (π.χ. eu-west-1)",
+    "answer": "Region",
+    "alias": [
+     "AWS Region"
+    ]
+   },
+   {
+    "label": "Ανεξάρτητα data centers μέσα σε μία Region",
+    "answer": "Availability Zone",
+    "alias": [
+     "AZ"
+    ]
+   },
+   {
+    "label": "Χρήση πολλών AZ — κυρίως για High Availability",
+    "answer": "Multi-AZ"
+   },
+   {
+    "label": "Χρήση πολλών Regions — DR και παγκόσμια παρουσία",
+    "answer": "Multi-Region"
+   },
+   {
+    "label": "Τοποθεσία κοντά στον τελικό χρήστη (CloudFront)",
+    "answer": "Edge Location"
+   },
+   {
+    "label": "Απαίτηση τα δεδομένα να μένουν σε συγκεκριμένη χώρα",
+    "answer": "Data Sovereignty"
+   }
+  ]
+ },
+ {
+  "id": "pillars",
+  "titleEl": "Well-Architected — 6 Pillars",
+  "titleEn": "Well-Architected — 6 Pillars",
+  "noteEl": "Ταίριαξε την περιγραφή με τον πυλώνα.",
+  "noteEn": "Match each description to its pillar.",
+  "two": true,
+  "items": [
+   {
+    "label": "Αποτελεσματική λειτουργία, monitoring και βελτίωση",
+    "answer": "Operational Excellence"
+   },
+   {
+    "label": "Προστασία συστημάτων, εφαρμογών και δεδομένων",
+    "answer": "Security"
+   },
+   {
+    "label": "Σωστή λειτουργία και ανάκαμψη από αποτυχίες",
+    "answer": "Reliability"
+   },
+   {
+    "label": "Αποδοτική χρήση υπολογιστικών πόρων",
+    "answer": "Performance Efficiency"
+   },
+   {
+    "label": "Αποφυγή περιττών εξόδων",
+    "answer": "Cost Optimization"
+   },
+   {
+    "label": "Μείωση περιβαλλοντικού αντίκτυπου",
+    "answer": "Sustainability"
+   }
+  ]
+ },
+ {
+  "id": "ec2types",
+  "titleEl": "Τύποι EC2 Instance",
+  "titleEn": "EC2 Instance Types",
+  "noteEl": "Για ποιο workload;",
+  "noteEn": "For which workload?",
+  "two": true,
+  "items": [
+   {
+    "label": "Ισορροπία compute, memory και networking",
+    "answer": "General Purpose"
+   },
+   {
+    "label": "Workloads με έντονη χρήση CPU",
+    "answer": "Compute Optimized"
+   },
+   {
+    "label": "Workloads που απαιτούν πολλή RAM",
+    "answer": "Memory Optimized"
+   },
+   {
+    "label": "Workloads με μεγάλες απαιτήσεις storage I/O",
+    "answer": "Storage Optimized"
+   },
+   {
+    "label": "Χρήση GPU ή άλλων επιταχυντών",
+    "answer": "Accelerated Computing"
+   },
+   {
+    "label": "Template από το οποίο δημιουργείται instance",
+    "answer": "AMI",
+    "alias": [
+     "Amazon Machine Image"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "ec2pricing",
+  "titleEl": "Μοντέλα Τιμολόγησης EC2",
+  "titleEn": "EC2 Pricing Models",
+  "noteEl": "Ταίριαξε την περιγραφή με το μοντέλο.",
+  "noteEn": "Match each description to its model.",
+  "two": true,
+  "items": [
+   {
+    "label": "Χωρίς δέσμευση — για απρόβλεπτα workloads",
+    "answer": "On-Demand Instances",
+    "alias": [
+     "On-Demand"
+    ]
+   },
+   {
+    "label": "Δέσμευση διάρκειας με μειωμένο κόστος",
+    "answer": "Reserved Instances",
+    "alias": [
+     "Reserved",
+     "RI"
+    ]
+   },
+   {
+    "label": "Δέσμευση σε επίπεδο χρήσης/δαπάνης για 1 ή 3 χρόνια",
+    "answer": "Savings Plans"
+   },
+   {
+    "label": "Πλεονάζον capacity με μεγάλη έκπτωση — μπορεί να διακοπεί",
+    "answer": "Spot Instances",
+    "alias": [
+     "Spot"
+    ]
+   },
+   {
+    "label": "Instance σε hardware αφιερωμένο σε έναν πελάτη",
+    "answer": "Dedicated Instance"
+   },
+   {
+    "label": "Ολόκληρος φυσικός host αφιερωμένος — για licensing/compliance",
+    "answer": "Dedicated Host"
+   },
+   {
+    "label": "Δέσμευση capacity σε συγκεκριμένο AZ",
+    "answer": "Capacity Reservation"
+   }
+  ]
+ },
+ {
+  "id": "storagemodels",
+  "titleEl": "Μοντέλα Αποθήκευσης",
+  "titleEn": "Storage Models",
+  "noteEl": "Ποιο μοντέλο και ποια υπηρεσία;",
+  "noteEn": "Which model and service?",
+  "two": true,
+  "items": [
+   {
+    "label": "Αποθήκευση ως αντικείμενα — S3",
+    "answer": "Object Storage"
+   },
+   {
+    "label": "Blocks για virtual disks — EBS",
+    "answer": "Block Storage"
+   },
+   {
+    "label": "Κοινόχρηστο filesystem — EFS/FSx",
+    "answer": "File Storage"
+   },
+   {
+    "label": "Container μέσα στο S3",
+    "answer": "Bucket"
+   },
+   {
+    "label": "Μοναδικό όνομα/διαδρομή ενός object",
+    "answer": "Object Key"
+   },
+   {
+    "label": "Προσωρινό τοπικό storage στον φυσικό host — εφήμερο",
+    "answer": "Instance Store"
+   },
+   {
+    "label": "Συνδέει on-premises με AWS storage (hybrid)",
+    "answer": "Storage Gateway",
+    "alias": [
+     "AWS Storage Gateway"
+    ]
+   },
+   {
+    "label": "Backup ενός EBS volume",
+    "answer": "Snapshot"
+   }
+  ]
+ },
+ {
+  "id": "s3classes",
+  "titleEl": "Κλάσεις Αποθήκευσης S3",
+  "titleEn": "S3 Storage Classes",
+  "noteEl": "Ταίριαξε την περιγραφή με την κλάση.",
+  "noteEn": "Match each description to its class.",
+  "two": true,
+  "items": [
+   {
+    "label": "Για συχνή πρόσβαση",
+    "answer": "S3 Standard",
+    "alias": [
+     "Standard"
+    ]
+   },
+   {
+    "label": "Αυτόματη μετακίνηση μεταξύ tiers ανάλογα με τη χρήση",
+    "answer": "S3 Intelligent-Tiering",
+    "alias": [
+     "Intelligent-Tiering"
+    ]
+   },
+   {
+    "label": "Σπάνια πρόσβαση, σε πολλά AZ",
+    "answer": "S3 Standard-IA",
+    "alias": [
+     "Standard-IA"
+    ]
+   },
+   {
+    "label": "Σπάνια πρόσβαση, σε ένα μόνο AZ",
+    "answer": "S3 One Zone-IA",
+    "alias": [
+     "One Zone-IA"
+    ]
+   },
+   {
+    "label": "Αρχειοθέτηση με δυνατότητα ανάκτησης",
+    "answer": "S3 Glacier Flexible Retrieval",
+    "alias": [
+     "Glacier Flexible Retrieval"
+    ]
+   },
+   {
+    "label": "Πολύ μακροχρόνιο αρχείο, πολύ σπάνια πρόσβαση",
+    "answer": "S3 Glacier Deep Archive",
+    "alias": [
+     "Glacier Deep Archive"
+    ]
+   },
+   {
+    "label": "Κανόνες αυτόματης μετακίνησης ή διαγραφής",
+    "answer": "Lifecycle Policy"
+   }
+  ]
+ },
+ {
+  "id": "databases",
+  "titleEl": "Βάσεις Δεδομένων",
+  "titleEn": "Databases",
+  "noteEl": "Ποια υπηρεσία για ποια ανάγκη;",
+  "noteEn": "Which service for which need?",
+  "two": true,
+  "items": [
+   {
+    "label": "Managed σχεσιακές βάσεις (SQL)",
+    "answer": "Amazon RDS",
+    "alias": [
+     "RDS"
+    ]
+   },
+   {
+    "label": "AWS relational engine συμβατό με MySQL/PostgreSQL",
+    "answer": "Amazon Aurora",
+    "alias": [
+     "Aurora"
+    ]
+   },
+   {
+    "label": "Fully managed NoSQL key-value",
+    "answer": "Amazon DynamoDB",
+    "alias": [
+     "DynamoDB"
+    ]
+   },
+   {
+    "label": "In-memory caching",
+    "answer": "Amazon ElastiCache",
+    "alias": [
+     "ElastiCache"
+    ]
+   },
+   {
+    "label": "Document database",
+    "answer": "Amazon DocumentDB",
+    "alias": [
+     "DocumentDB"
+    ]
+   },
+   {
+    "label": "Graph database — σχέσεις",
+    "answer": "Amazon Neptune",
+    "alias": [
+     "Neptune"
+    ]
+   },
+   {
+    "label": "Data warehouse για analytics",
+    "answer": "Amazon Redshift",
+    "alias": [
+     "Redshift"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "vpc",
+  "titleEl": "Δομικά Στοιχεία VPC",
+  "titleEn": "VPC Components",
+  "noteEl": "Ταίριαξε την περιγραφή με το στοιχείο.",
+  "noteEn": "Match each description to its component.",
+  "two": true,
+  "items": [
+   {
+    "label": "Το δικό σου ιδιωτικό δίκτυο μέσα στο AWS",
+    "answer": "VPC"
+   },
+   {
+    "label": "Τρόπος καθορισμού εύρους IP (10.0.0.0/16)",
+    "answer": "CIDR"
+   },
+   {
+    "label": "Τμήμα ενός VPC",
+    "answer": "Subnet"
+   },
+   {
+    "label": "Subnet με διαδρομή προς Internet Gateway",
+    "answer": "Public Subnet"
+   },
+   {
+    "label": "Subnet χωρίς άμεση εισερχόμενη πρόσβαση από Internet",
+    "answer": "Private Subnet"
+   },
+   {
+    "label": "Συνδέει το VPC με το Internet",
+    "answer": "Internet Gateway",
+    "alias": [
+     "IGW"
+    ]
+   },
+   {
+    "label": "Επιτρέπει εξερχόμενη πρόσβαση από private subnet",
+    "answer": "NAT Gateway",
+    "alias": [
+     "NAT"
+    ]
+   },
+   {
+    "label": "Καθορίζει πού κατευθύνεται η κίνηση",
+    "answer": "Route Table"
+   }
+  ]
+ },
+ {
+  "id": "sgnacl",
+  "titleEl": "Security Group vs NACL",
+  "titleEn": "Security Group vs NACL",
+  "noteEl": "Ποιο ισχύει για ποιο;",
+  "noteEn": "Which applies to which?",
+  "two": true,
+  "items": [
+   {
+    "label": "Firewall σε επίπεδο instance/resource",
+    "answer": "Security Group"
+   },
+   {
+    "label": "Firewall σε επίπεδο subnet",
+    "answer": "Network ACL",
+    "alias": [
+     "NACL"
+    ]
+   },
+   {
+    "label": "Stateful — θυμάται τη σύνδεση",
+    "answer": "Security Group"
+   },
+   {
+    "label": "Stateless — κάθε πακέτο ξεχωριστά",
+    "answer": "Network ACL",
+    "alias": [
+     "NACL"
+    ]
+   },
+   {
+    "label": "Έχει μόνο allow rules",
+    "answer": "Security Group"
+   },
+   {
+    "label": "Έχει allow και deny rules",
+    "answer": "Network ACL",
+    "alias": [
+     "NACL"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "iam",
+  "titleEl": "IAM & Ταυτότητα",
+  "titleEn": "IAM & Identity",
+  "noteEl": "Ταίριαξε την περιγραφή με τον όρο.",
+  "noteEn": "Match each description to its term.",
+  "two": true,
+  "items": [
+   {
+    "label": "Ταυτότητα για συγκεκριμένο χρήστη ή εφαρμογή",
+    "answer": "IAM User"
+   },
+   {
+    "label": "Σύνολο IAM users",
+    "answer": "IAM Group"
+   },
+   {
+    "label": "Ταυτότητα με προσωρινά permissions που αναλαμβάνεται",
+    "answer": "IAM Role"
+   },
+   {
+    "label": "JSON έγγραφο που καθορίζει permissions",
+    "answer": "IAM Policy"
+   },
+   {
+    "label": "Ποιος είσαι;",
+    "answer": "Authentication",
+    "alias": [
+     "AuthN"
+    ]
+   },
+   {
+    "label": "Τι επιτρέπεται να κάνεις;",
+    "answer": "Authorization",
+    "alias": [
+     "AuthZ"
+    ]
+   },
+   {
+    "label": "Το αρχικό account με πλήρη πρόσβαση — όχι για καθημερινή χρήση",
+    "answer": "Root User",
+    "alias": [
+     "Root"
+    ]
+   },
+   {
+    "label": "Περισσότεροι από ένας παράγοντες ταυτοποίησης",
+    "answer": "MFA",
+    "alias": [
+     "Multi-Factor Authentication"
+    ]
+   },
+   {
+    "label": "Credentials για programmatic access",
+    "answer": "Access Keys"
+   },
+   {
+    "label": "Χρήση υπάρχοντος identity system για πρόσβαση στο AWS",
+    "answer": "Federation"
+   },
+   {
+    "label": "Μόνο τα ελάχιστα αναγκαία δικαιώματα",
+    "answer": "Principle of Least Privilege",
+    "alias": [
+     "Least Privilege"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "orgs",
+  "titleEl": "AWS Organizations",
+  "titleEn": "AWS Organizations",
+  "noteEl": "Ταίριαξε την περιγραφή με τον όρο.",
+  "noteEn": "Match each description to its term.",
+  "two": true,
+  "items": [
+   {
+    "label": "Το κεντρικό account του organization",
+    "answer": "Management Account"
+   },
+   {
+    "label": "Account μέσα στο organization",
+    "answer": "Member Account"
+   },
+   {
+    "label": "Ομαδοποιεί accounts",
+    "answer": "Organizational Unit",
+    "alias": [
+     "OU"
+    ]
+   },
+   {
+    "label": "Θέτει permission guardrails σε accounts ή OUs",
+    "answer": "Service Control Policy",
+    "alias": [
+     "SCP"
+    ]
+   },
+   {
+    "label": "Ενοποιημένη χρέωση πολλών accounts",
+    "answer": "Consolidated Billing"
+   }
+  ]
+ },
+ {
+  "id": "security",
+  "titleEl": "Υπηρεσίες Ασφάλειας",
+  "titleEn": "Security Services",
+  "noteEl": "Ποια υπηρεσία κάνει τι;",
+  "noteEn": "Which service does what?",
+  "two": true,
+  "items": [
+   {
+    "label": "Διαχείριση encryption keys",
+    "answer": "AWS KMS",
+    "alias": [
+     "KMS"
+    ]
+   },
+   {
+    "label": "Αποθήκευση passwords και credentials",
+    "answer": "AWS Secrets Manager",
+    "alias": [
+     "Secrets Manager"
+    ]
+   },
+   {
+    "label": "Διαχείριση SSL/TLS certificates",
+    "answer": "AWS Certificate Manager",
+    "alias": [
+     "ACM"
+    ]
+   },
+   {
+    "label": "Προστασία από κακόβουλα HTTP requests",
+    "answer": "AWS WAF",
+    "alias": [
+     "WAF"
+    ]
+   },
+   {
+    "label": "Προστασία από DDoS",
+    "answer": "AWS Shield",
+    "alias": [
+     "Shield"
+    ]
+   },
+   {
+    "label": "Εντοπισμός απειλών από ανάλυση δραστηριότητας",
+    "answer": "Amazon GuardDuty",
+    "alias": [
+     "GuardDuty"
+    ]
+   },
+   {
+    "label": "Σάρωση ευπαθειών σε workloads",
+    "answer": "Amazon Inspector",
+    "alias": [
+     "Inspector"
+    ]
+   },
+   {
+    "label": "Εντοπισμός ευαίσθητων δεδομένων στο S3",
+    "answer": "Amazon Macie",
+    "alias": [
+     "Macie"
+    ]
+   },
+   {
+    "label": "Κεντρική εικόνα security findings",
+    "answer": "AWS Security Hub",
+    "alias": [
+     "Security Hub"
+    ]
+   },
+   {
+    "label": "Διερεύνηση περιστατικών ασφάλειας",
+    "answer": "Amazon Detective",
+    "alias": [
+     "Detective"
+    ]
+   },
+   {
+    "label": "Κεντρική διαχείριση firewall policies",
+    "answer": "AWS Firewall Manager",
+    "alias": [
+     "Firewall Manager"
+    ]
+   },
+   {
+    "label": "Πρόσβαση σε compliance reports",
+    "answer": "AWS Artifact",
+    "alias": [
+     "Artifact"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "monitoring",
+  "titleEl": "Παρακολούθηση & Διακυβέρνηση",
+  "titleEn": "Monitoring & Governance",
+  "noteEl": "Ποια υπηρεσία για ποια ερώτηση;",
+  "noteEn": "Which service answers which question?",
+  "two": true,
+  "items": [
+   {
+    "label": "Metrics, logs και alarms",
+    "answer": "Amazon CloudWatch",
+    "alias": [
+     "CloudWatch"
+    ]
+   },
+   {
+    "label": "Ποιος έκανε τι και πότε — ιστορικό API",
+    "answer": "AWS CloudTrail",
+    "alias": [
+     "CloudTrail"
+    ]
+   },
+   {
+    "label": "Ιστορικό configuration των resources",
+    "answer": "AWS Config",
+    "alias": [
+     "Config"
+    ]
+   },
+   {
+    "label": "Συστάσεις best practices",
+    "answer": "AWS Trusted Advisor",
+    "alias": [
+     "Trusted Advisor"
+    ]
+   },
+   {
+    "label": "Events που επηρεάζουν τις υπηρεσίες σου",
+    "answer": "AWS Health Dashboard",
+    "alias": [
+     "Health Dashboard"
+    ]
+   },
+   {
+    "label": "Συστάσεις rightsizing για compute",
+    "answer": "AWS Compute Optimizer",
+    "alias": [
+     "Compute Optimizer"
+    ]
+   },
+   {
+    "label": "Δημιουργία υποδομής από templates",
+    "answer": "AWS CloudFormation",
+    "alias": [
+     "CloudFormation"
+    ]
+   },
+   {
+    "label": "Αριθμητική μέτρηση, π.χ. CPU utilization",
+    "answer": "Metric"
+   },
+   {
+    "label": "Ενεργοποιείται όταν ένα metric περάσει όριο",
+    "answer": "Alarm"
+   }
+  ]
+ },
+ {
+  "id": "serverless",
+  "titleEl": "Serverless & Containers",
+  "titleEn": "Serverless & Containers",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "Εκτελεί κώδικα χωρίς διαχείριση servers",
+    "answer": "AWS Lambda",
+    "alias": [
+     "Lambda"
+    ]
+   },
+   {
+    "label": "Serverless compute για containers",
+    "answer": "AWS Fargate",
+    "alias": [
+     "Fargate"
+    ]
+   },
+   {
+    "label": "Orchestration containers της AWS",
+    "answer": "Amazon ECS",
+    "alias": [
+     "ECS"
+    ]
+   },
+   {
+    "label": "Managed Kubernetes",
+    "answer": "Amazon EKS",
+    "alias": [
+     "EKS"
+    ]
+   },
+   {
+    "label": "Repository για container images",
+    "answer": "Amazon ECR",
+    "alias": [
+     "ECR"
+    ]
+   },
+   {
+    "label": "Πακέτο εφαρμογής μαζί με τις εξαρτήσεις της",
+    "answer": "Container"
+   }
+  ]
+ },
+ {
+  "id": "integration",
+  "titleEl": "Υπηρεσίες Διασύνδεσης",
+  "titleEn": "Integration Services",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "Ουρά μηνυμάτων για decoupling",
+    "answer": "Amazon SQS",
+    "alias": [
+     "SQS"
+    ]
+   },
+   {
+    "label": "Pub/Sub — ένα μήνυμα σε πολλούς subscribers",
+    "answer": "Amazon SNS",
+    "alias": [
+     "SNS"
+    ]
+   },
+   {
+    "label": "Event bus για event-driven εφαρμογές",
+    "answer": "Amazon EventBridge",
+    "alias": [
+     "EventBridge"
+    ]
+   },
+   {
+    "label": "Ενορχήστρωση ροών εργασίας",
+    "answer": "AWS Step Functions",
+    "alias": [
+     "Step Functions"
+    ]
+   },
+   {
+    "label": "Δημιουργία και διαχείριση APIs",
+    "answer": "Amazon API Gateway",
+    "alias": [
+     "API Gateway"
+    ]
+   },
+   {
+    "label": "Αποστολή email",
+    "answer": "Amazon SES",
+    "alias": [
+     "SES"
+    ]
+   },
+   {
+    "label": "Cloud contact center",
+    "answer": "Amazon Connect",
+    "alias": [
+     "Connect"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "analytics",
+  "titleEl": "Αναλυτική",
+  "titleEn": "Analytics",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "SQL ερωτήματα απευθείας πάνω σε S3",
+    "answer": "Amazon Athena",
+    "alias": [
+     "Athena"
+    ]
+   },
+   {
+    "label": "Data integration / ETL",
+    "answer": "AWS Glue",
+    "alias": [
+     "Glue"
+    ]
+   },
+   {
+    "label": "Ροή δεδομένων σε πραγματικό χρόνο",
+    "answer": "Amazon Kinesis",
+    "alias": [
+     "Kinesis"
+    ]
+   },
+   {
+    "label": "Data warehouse",
+    "answer": "Amazon Redshift",
+    "alias": [
+     "Redshift"
+    ]
+   },
+   {
+    "label": "Business Intelligence και dashboards",
+    "answer": "Amazon QuickSight",
+    "alias": [
+     "QuickSight"
+    ]
+   },
+   {
+    "label": "Επεξεργασία big data",
+    "answer": "Amazon EMR",
+    "alias": [
+     "EMR"
+    ]
+   },
+   {
+    "label": "Αναζήτηση και ανάλυση",
+    "answer": "Amazon OpenSearch Service",
+    "alias": [
+     "OpenSearch"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "aiml",
+  "titleEl": "Υπηρεσίες AI / ML",
+  "titleEn": "AI / ML Services",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "Build, train και deploy ML μοντέλων",
+    "answer": "Amazon SageMaker AI",
+    "alias": [
+     "SageMaker"
+    ]
+   },
+   {
+    "label": "Ανάλυση εικόνας και βίντεο",
+    "answer": "Amazon Rekognition",
+    "alias": [
+     "Rekognition"
+    ]
+   },
+   {
+    "label": "Κείμενο σε ομιλία",
+    "answer": "Amazon Polly",
+    "alias": [
+     "Polly"
+    ]
+   },
+   {
+    "label": "Ομιλία σε κείμενο",
+    "answer": "Amazon Transcribe",
+    "alias": [
+     "Transcribe"
+    ]
+   },
+   {
+    "label": "Αυτόματη μετάφραση",
+    "answer": "Amazon Translate",
+    "alias": [
+     "Translate"
+    ]
+   },
+   {
+    "label": "Επεξεργασία φυσικής γλώσσας / ανάλυση κειμένου",
+    "answer": "Amazon Comprehend",
+    "alias": [
+     "Comprehend"
+    ]
+   },
+   {
+    "label": "Chatbots και συνομιλιακές διεπαφές",
+    "answer": "Amazon Lex",
+    "alias": [
+     "Lex"
+    ]
+   },
+   {
+    "label": "Εξαγωγή κειμένου από σαρωμένα έγγραφα",
+    "answer": "Amazon Textract",
+    "alias": [
+     "Textract"
+    ]
+   },
+   {
+    "label": "Έξυπνη εταιρική αναζήτηση",
+    "answer": "Amazon Kendra",
+    "alias": [
+     "Kendra"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "migration",
+  "titleEl": "Υπηρεσίες Μετάβασης",
+  "titleEn": "Migration Services",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "Κεντρική παρακολούθηση migrations",
+    "answer": "AWS Migration Hub",
+    "alias": [
+     "Migration Hub"
+    ]
+   },
+   {
+    "label": "Μεταφορά applications και servers",
+    "answer": "AWS Application Migration Service",
+    "alias": [
+     "Application Migration Service"
+    ]
+   },
+   {
+    "label": "Μεταφορά βάσεων δεδομένων",
+    "answer": "AWS DMS",
+    "alias": [
+     "DMS"
+    ]
+   },
+   {
+    "label": "Μετατροπή schema μεταξύ database engines",
+    "answer": "AWS SCT",
+    "alias": [
+     "SCT",
+     "Schema Conversion Tool"
+    ]
+   },
+   {
+    "label": "Φυσικές συσκευές για τεράστιο όγκο δεδομένων",
+    "answer": "AWS Snow Family",
+    "alias": [
+     "Snow Family"
+    ]
+   },
+   {
+    "label": "Συλλογή στοιχείων on-premises για σχεδιασμό",
+    "answer": "AWS Application Discovery Service",
+    "alias": [
+     "Application Discovery Service"
+    ]
+   },
+   {
+    "label": "Αξιολόγηση business case και κόστους migration",
+    "answer": "Migration Evaluator"
+   }
+  ]
+ },
+ {
+  "id": "cost",
+  "titleEl": "Διαχείριση Κόστους",
+  "titleEn": "Cost Management",
+  "noteEl": "Ποια υπηρεσία για ποια δουλειά;",
+  "noteEn": "Which service for which job?",
+  "two": true,
+  "items": [
+   {
+    "label": "Εκτίμηση κόστους μελλοντικής αρχιτεκτονικής",
+    "answer": "AWS Pricing Calculator",
+    "alias": [
+     "Pricing Calculator"
+    ]
+   },
+   {
+    "label": "Ανάλυση ιστορικού και τρέχοντος κόστους",
+    "answer": "AWS Cost Explorer",
+    "alias": [
+     "Cost Explorer"
+    ]
+   },
+   {
+    "label": "Όρια δαπανών με ειδοποιήσεις",
+    "answer": "AWS Budgets",
+    "alias": [
+     "Budgets"
+    ]
+   },
+   {
+    "label": "Λεπτομερής αναφορά κόστους και χρήσης",
+    "answer": "AWS Cost and Usage Report",
+    "alias": [
+     "CUR"
+    ]
+   },
+   {
+    "label": "Tags που κατανέμουν κόστος ανά τμήμα ή έργο",
+    "answer": "Cost Allocation Tags"
+   },
+   {
+    "label": "Key-value metadata πάνω σε resources",
+    "answer": "Tags"
+   }
+  ]
+ },
+ {
+  "id": "connectivity",
+  "titleEl": "Δικτύωση & Διασυνδεσιμότητα",
+  "titleEn": "Networking & Connectivity",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "DNS — μετατρέπει domain σε IP",
+    "answer": "Amazon Route 53",
+    "alias": [
+     "Route 53"
+    ]
+   },
+   {
+    "label": "CDN με edge locations",
+    "answer": "Amazon CloudFront",
+    "alias": [
+     "CloudFront"
+    ]
+   },
+   {
+    "label": "Αποκλειστική ιδιωτική φυσική σύνδεση",
+    "answer": "AWS Direct Connect",
+    "alias": [
+     "Direct Connect"
+    ]
+   },
+   {
+    "label": "Συνδέει on-premises δίκτυο με VPC",
+    "answer": "Site-to-Site VPN"
+   },
+   {
+    "label": "Συνδέει μεμονωμένους χρήστες",
+    "answer": "Client VPN"
+   },
+   {
+    "label": "Βελτιώνει performance μέσω του global network",
+    "answer": "AWS Global Accelerator",
+    "alias": [
+     "Global Accelerator"
+    ]
+   },
+   {
+    "label": "Ιδιωτική πρόσβαση σε υπηρεσίες χωρίς public Internet",
+    "answer": "AWS PrivateLink",
+    "alias": [
+     "PrivateLink"
+    ]
+   },
+   {
+    "label": "Κεντρικός κόμβος σύνδεσης πολλών VPC",
+    "answer": "AWS Transit Gateway",
+    "alias": [
+     "Transit Gateway"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "resilience",
+  "titleEl": "Ανθεκτικότητα",
+  "titleEn": "Resilience",
+  "noteEl": "Ταίριαξε την περιγραφή με τον όρο.",
+  "noteEn": "Match each description to its term.",
+  "two": true,
+  "items": [
+   {
+    "label": "Πόσο γρήγορα πρέπει να επανέλθει το σύστημα",
+    "answer": "RTO",
+    "alias": [
+     "Recovery Time Objective"
+    ]
+   },
+   {
+    "label": "Πόσα δεδομένα (σε χρόνο) αντέχουμε να χάσουμε",
+    "answer": "RPO",
+    "alias": [
+     "Recovery Point Objective"
+    ]
+   },
+   {
+    "label": "Component που, αν αποτύχει, ρίχνει όλο το σύστημα",
+    "answer": "Single Point of Failure",
+    "alias": [
+     "SPOF"
+    ]
+   },
+   {
+    "label": "Επιπλέον components για αποφυγή SPOF",
+    "answer": "Redundancy"
+   },
+   {
+    "label": "Αντίγραφο δεδομένων",
+    "answer": "Backup"
+   },
+   {
+    "label": "Επαναφορά από αντίγραφο",
+    "answer": "Restore"
+   }
+  ]
+ },
+ {
+  "id": "shared",
+  "titleEl": "Μοντέλο Κοινής Ευθύνης",
+  "titleEn": "Shared Responsibility Model",
+  "noteEl": "AWS ή πελάτης;",
+  "noteEn": "AWS or customer?",
+  "two": true,
+  "items": [
+   {
+    "label": "Φυσικά data centers και servers",
+    "answer": "AWS"
+   },
+   {
+    "label": "Υποδομή δικτύου και hypervisor",
+    "answer": "AWS"
+   },
+   {
+    "label": "Τα δεδομένα σου",
+    "answer": "Customer"
+   },
+   {
+    "label": "IAM permissions",
+    "answer": "Customer"
+   },
+   {
+    "label": "Patching του guest OS σε EC2",
+    "answer": "Customer"
+   },
+   {
+    "label": "Ρυθμίσεις κρυπτογράφησης και δικτύου",
+    "answer": "Customer"
+   }
+  ]
+ },
+ {
+  "id": "devtools",
+  "titleEl": "Developer & Frontend",
+  "titleEn": "Developer & Frontend",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "Build, compile και test κώδικα",
+    "answer": "AWS CodeBuild",
+    "alias": [
+     "CodeBuild"
+    ]
+   },
+   {
+    "label": "CI/CD pipeline orchestration",
+    "answer": "AWS CodePipeline",
+    "alias": [
+     "CodePipeline"
+    ]
+   },
+   {
+    "label": "Tracing κατανεμημένων εφαρμογών",
+    "answer": "AWS X-Ray",
+    "alias": [
+     "X-Ray"
+    ]
+   },
+   {
+    "label": "Ανάπτυξη και deployment web/mobile apps",
+    "answer": "AWS Amplify",
+    "alias": [
+     "Amplify"
+    ]
+   },
+   {
+    "label": "Managed GraphQL APIs",
+    "answer": "AWS AppSync",
+    "alias": [
+     "AppSync"
+    ]
+   },
+   {
+    "label": "Virtual desktops",
+    "answer": "Amazon WorkSpaces",
+    "alias": [
+     "WorkSpaces"
+    ]
+   },
+   {
+    "label": "Streaming εφαρμογών σε χρήστες",
+    "answer": "Amazon AppStream 2.0",
+    "alias": [
+     "AppStream"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "othercompute",
+  "titleEl": "Άλλες Υπηρεσίες Compute",
+  "titleEn": "Other Compute Services",
+  "noteEl": "Ταίριαξε την περιγραφή με την υπηρεσία.",
+  "noteEn": "Match each description to its service.",
+  "two": true,
+  "items": [
+   {
+    "label": "Εύκολο deployment εφαρμογών — η AWS χειρίζεται την υποδομή",
+    "answer": "AWS Elastic Beanstalk",
+    "alias": [
+     "Elastic Beanstalk"
+    ]
+   },
+   {
+    "label": "Απλοποιημένο hosting για μικρά workloads",
+    "answer": "Amazon Lightsail",
+    "alias": [
+     "Lightsail"
+    ]
+   },
+   {
+    "label": "Εκτέλεση batch workloads",
+    "answer": "AWS Batch",
+    "alias": [
+     "Batch"
+    ]
+   },
+   {
+    "label": "Υποδομή AWS μέσα στις εγκαταστάσεις σου",
+    "answer": "AWS Outposts",
+    "alias": [
+     "Outposts"
+    ]
+   },
+   {
+    "label": "Σύνδεση και διαχείριση IoT συσκευών",
+    "answer": "AWS IoT Core",
+    "alias": [
+     "IoT Core"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support",
+  "titleEl": "Υποστήριξη & Πόροι",
+  "titleEn": "Support & Resources",
+  "noteEl": "Ταίριαξε την περιγραφή με τον πόρο.",
+  "noteEn": "Match each description to its resource.",
+  "two": true,
+  "items": [
+   {
+    "label": "Community Q&A της AWS",
+    "answer": "AWS re:Post",
+    "alias": [
+     "re:Post"
+    ]
+   },
+   {
+    "label": "Κατάλογος λογισμικού τρίτων",
+    "answer": "AWS Marketplace",
+    "alias": [
+     "Marketplace"
+    ]
+   },
+   {
+    "label": "Οδηγίες, στρατηγικές και patterns",
+    "answer": "AWS Prescriptive Guidance",
+    "alias": [
+     "Prescriptive Guidance"
+    ]
+   },
+   {
+    "label": "Ειδικοί της AWS για έργα μετασχηματισμού",
+    "answer": "AWS Professional Services",
+    "alias": [
+     "Professional Services"
+    ]
+   },
+   {
+    "label": "Δίκτυο συνεργατών",
+    "answer": "AWS Partner Network",
+    "alias": [
+     "APN"
+    ]
+   },
+   {
+    "label": "Πλαίσιο σχεδιασμού cloud transformation",
+    "answer": "AWS Cloud Adoption Framework",
+    "alias": [
+     "AWS CAF",
+     "CAF"
+    ]
+   }
+  ]
+ }
+];
+
+/* =====================  i18n  ===================== */
+const I18N = {
+  el:{ navHome:'Αρχική', navQuiz:'Κουίζ', navCore:'AWS Quiz',
+    title:'AWS Cloud Practitioner — Ορολογίες',
+    subtitle:'Ταίριαξε κάθε περιγραφή με τη σωστή ορολογία AWS. Σύρε τις λέξεις ή γράψε την απάντηση — εξάσκηση για το CLF-C02.',
+    pickSets:'Διάλεξε σύνολα', selectAll:'Επιλογή όλων', clearAll:'Καθαρισμός',
+    optionsH:'Ρυθμίσεις', modeLabel:'Τρόπος:', modeDrag:'Σύρσιμο', modeType:'Πληκτρολόγηση',
+    shuffleLabel:'Ανακάτεμα σειράς', timerLabel:'Χρονόμετρο', minsLabel:'λεπτά',
+    startBtn:'Έναρξη', bankH:'Λέξεις', checkBtn:'Έλεγχος', retryBtn:'Καθαρισμός',
+    backBtn:'← Ρυθμίσεις', againBtn:'Ξανά', reviewBtn:'Δες τις απαντήσεις',
+    dragHint:'Σύρε μια λέξη σε ένα κουτί — ή πάτησέ τη και μετά πάτα το κουτί.',
+    typeHint:'Γράψε την απάντηση σε κάθε κουτί.',
+    remaining:'έμειναν', pickOne:'Διάλεξε τουλάχιστον ένα σύνολο.',
+    scoreSub:'σωστά από', timeUp:'Ο χρόνος τελείωσε!' },
+  en:{ navHome:'Home', navQuiz:'Quizzes', navCore:'AWS Quiz',
+    title:'AWS Cloud Practitioner — Ορολογίες',
+    subtitle:'Match each description to the right AWS term. Drag the words or type the answer — CLF-C02 practice.',
+    pickSets:'Pick sets', selectAll:'Select all', clearAll:'Clear',
+    optionsH:'Options', modeLabel:'Mode:', modeDrag:'Drag', modeType:'Type',
+    shuffleLabel:'Shuffle order', timerLabel:'Timer', minsLabel:'minutes',
+    startBtn:'Start', bankH:'Words', checkBtn:'Check', retryBtn:'Clear',
+    backBtn:'← Options', againBtn:'Again', reviewBtn:'Show answers',
+    dragHint:'Drag a word onto a box — or tap the word, then tap the box.',
+    typeHint:'Type the answer in each box.',
+    remaining:'left', pickOne:'Pick at least one set.',
+    scoreSub:'correct out of', timeUp:'Time is up!' },
+};
+// Brave/Chromium can throw a SecurityError on localStorage under file://
+let lang = 'el';
+try { lang = localStorage.getItem('lang') || 'el'; } catch(e) {}
+const t = k => (I18N[lang] && I18N[lang][k]) || I18N.el[k] || k;
+
+/* =====================  STATE  ===================== */
+let picked = new Set(SETS.map(s=>s.id));
+let mode = 'drag';
+let slots = [];          // {setId,label,answer,alias,placed,el}
+let selectedWord = null; // DOM node
+let timerId = null, secsLeft = 0;
+
+/* =====================  HELPERS  ===================== */
+const $ = id => document.getElementById(id);
+function norm(s){
+  return String(s||'').toLowerCase().replace(/&/g,' and ')
+    .replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+}
+function rawnorm(s){ return String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,' '); }
+function matches(item, val){
+  // Raw comparison first: symbol-only answers such as * and .. normalize to an
+  // empty string, so they can only be matched on their literal form.
+  const raw = rawnorm(val);
+  const v = norm(val);
+  const cands = [item.answer].concat(item.alias || []);
+  return cands.some(a => (raw && raw === rawnorm(a)) || (v && v === norm(a)));
+}
+function shuffle(a){
+  a = a.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(I18N[lang] && I18N[lang][k]) el.textContent = I18N[lang][k];
+  });
+  $('langBtn').textContent = lang==='el' ? 'EN' : 'EL';
+  document.documentElement.lang = lang;
+  buildChips(); updateSummary();
+  $('dragHint').textContent = mode==='drag' ? t('dragHint') : t('typeHint');
+}
+
+/* =====================  SETUP  ===================== */
+function buildChips(){
+  const bar = $('setChips'); bar.innerHTML='';
+  SETS.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='chip'+(picked.has(s.id)?' on':'');
+    b.innerHTML = (lang==='el'?s.titleEl:s.titleEn)+'<span class="cnt">'+s.items.length+'</span>';
+    b.addEventListener('click',()=>{
+      if(picked.has(s.id)) picked.delete(s.id); else picked.add(s.id);
+      buildChips(); updateSummary();
+    });
+    bar.appendChild(b);
+  });
+}
+function updateSummary(){
+  const n = SETS.filter(s=>picked.has(s.id)).reduce((a,s)=>a+s.items.length,0);
+  $('pickSummary').textContent = picked.size ? (n+' '+(lang==='el'?'θέσεις':'slots')) : t('pickOne');
+  $('startBtn').disabled = picked.size===0;
+}
+
+/* =====================  BOARD  ===================== */
+function buildBoard(){
+  const board = $('board'); board.innerHTML=''; slots=[];
+  const doShuffle = $('shuffleChk').checked;
+
+  SETS.filter(s=>picked.has(s.id)).forEach(s=>{
+    const wrap=document.createElement('div'); wrap.className='set panel';
+    const h=document.createElement('p'); h.className='set-title';
+    h.textContent = lang==='el'?s.titleEl:s.titleEn; wrap.appendChild(h);
+    const note=document.createElement('p'); note.className='set-note';
+    note.textContent = lang==='el'?s.noteEl:s.noteEn; wrap.appendChild(note);
+
+    const grid=document.createElement('div');
+    grid.className='slots'+(s.two?' two':'');
+    const items = doShuffle ? shuffle(s.items) : s.items;
+
+    items.forEach(it=>{
+      const slot=document.createElement('div'); slot.className='slot';
+      const lab=document.createElement('div'); lab.className='slot-label'; lab.textContent=it.label;
+      const drop=document.createElement('div'); drop.className='slot-drop';
+      const rec={setId:s.id,label:it.label,answer:it.answer,alias:it.alias||[],
+                 placed:null,slotEl:slot,dropEl:drop};
+
+      if(mode==='type'){
+        const inp=document.createElement('input');
+        inp.type='text'; inp.autocomplete='off'; inp.spellcheck=false;
+        inp.setAttribute('aria-label',it.label);
+        drop.appendChild(inp); rec.input=inp;
+      }else{
+        drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over');});
+        drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+        drop.addEventListener('drop',e=>{
+          e.preventDefault(); drop.classList.remove('over');
+          const w=document.querySelector('.word[data-wid="'+e.dataTransfer.getData('text/plain')+'"]');
+          if(w) placeWord(w,rec);
+        });
+        drop.addEventListener('click',()=>{ if(selectedWord) placeWord(selectedWord,rec); });
+      }
+      slot.appendChild(lab); slot.appendChild(drop); grid.appendChild(slot);
+      slots.push(rec);
+    });
+    wrap.appendChild(grid); board.appendChild(wrap);
+  });
+
+  buildBank();
+  $('dragHint').textContent = mode==='drag' ? t('dragHint') : t('typeHint');
+  $('bankPanel').classList.toggle('hidden', mode==='type' && false);
+  $('bank').classList.toggle('hidden', mode==='type');
+  updateRemaining();
+}
+
+function buildBank(){
+  const bank=$('bank'); bank.innerHTML=''; selectedWord=null;
+  if(mode==='type'){ updateRemaining(); return; }
+  const words = shuffle(slots.map((s,i)=>({txt:s.answer,i:i})));
+  words.forEach((w,idx)=>{
+    const el=document.createElement('div');
+    el.className='word'; el.textContent=w.txt; el.draggable=true;
+    el.dataset.wid='w'+idx; el.dataset.txt=w.txt;
+    el.addEventListener('dragstart',e=>{
+      e.dataTransfer.setData('text/plain',el.dataset.wid);
+      e.dataTransfer.effectAllowed='move';
+    });
+    el.addEventListener('click',()=>{
+      if(selectedWord===el){ el.classList.remove('sel'); selectedWord=null; return; }
+      if(selectedWord) selectedWord.classList.remove('sel');
+      selectedWord=el; el.classList.add('sel');
+    });
+    bank.appendChild(el);
+  });
+}
+
+function placeWord(wordEl, rec){
+  if(rec.placed) returnWord(rec);            // free the slot first
+  rec.placed = wordEl.dataset.txt;
+  wordEl.classList.add('used');
+  rec.wordEl = wordEl;
+  rec.dropEl.innerHTML='';
+  const chip=document.createElement('span');
+  chip.className='placed'; chip.textContent=rec.placed;
+  chip.title = lang==='el'?'Κλικ για αφαίρεση':'Click to remove';
+  chip.addEventListener('click',()=>returnWord(rec));
+  rec.dropEl.appendChild(chip);
+  if(selectedWord){ selectedWord.classList.remove('sel'); selectedWord=null; }
+  rec.slotEl.classList.remove('ok','bad');
+  updateRemaining();
+}
+function returnWord(rec){
+  if(!rec.placed) return;
+  if(rec.wordEl) rec.wordEl.classList.remove('used');
+  rec.placed=null; rec.wordEl=null; rec.dropEl.innerHTML='';
+  rec.slotEl.classList.remove('ok','bad');
+  updateRemaining();
+}
+function updateRemaining(){
+  if(mode==='type'){ $('remainCount').textContent=''; return; }
+  const left = slots.filter(s=>!s.placed).length;
+  $('remainCount').textContent = left+' '+t('remaining');
+}
+
+/* =====================  TIMER  ===================== */
+function startTimer(mins){
+  secsLeft = mins*60;
+  $('timerBox').classList.remove('hidden');
+  paintTimer();
+  timerId = setInterval(()=>{
+    secsLeft--; paintTimer();
+    if(secsLeft<=0){ clearInterval(timerId); timerId=null; checkAll(true); }
+  },1000);
+}
+function paintTimer(){
+  const m=Math.floor(secsLeft/60), s=secsLeft%60;
+  const box=$('timerBox');
+  box.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  box.classList.toggle('low', secsLeft<=30);
+}
+function stopTimer(){ if(timerId){clearInterval(timerId);timerId=null;} $('timerBox').classList.add('hidden'); }
+
+/* =====================  CHECK  ===================== */
+function checkAll(auto){
+  let ok=0;
+  slots.forEach(rec=>{
+    const val = mode==='type' ? (rec.input?rec.input.value:'') : (rec.placed||'');
+    const good = matches(rec,val);
+    rec.slotEl.classList.toggle('ok',good);
+    rec.slotEl.classList.toggle('bad',!good);
+    const old=rec.dropEl.querySelector('.fix'); if(old) old.remove();
+    if(!good){
+      const f=document.createElement('small'); f.className='fix'; f.textContent='✓ '+rec.answer;
+      rec.dropEl.appendChild(f);
+    }
+    if(good) ok++;
+  });
+  stopTimer();
+  const pct = slots.length ? Math.round(ok/slots.length*100) : 0;
+  $('scoreNum').textContent = pct+'%';
+  $('scoreSub').textContent = (auto? t('timeUp')+' ' : '') + ok+' '+t('scoreSub')+' '+slots.length;
+  $('resultView').classList.remove('hidden');
+  $('resultView').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* =====================  WIRING  ===================== */
+$('allBtn').addEventListener('click',()=>{picked=new Set(SETS.map(s=>s.id));buildChips();updateSummary();});
+$('noneBtn').addEventListener('click',()=>{picked=new Set();buildChips();updateSummary();});
+document.querySelectorAll('#modeSeg button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); mode=b.dataset.mode;
+    $('dragHint').textContent = mode==='drag' ? t('dragHint') : t('typeHint');
+  });
+});
+$('timerChk').addEventListener('change',e=>{
+  $('timerMins').disabled = !e.target.checked;
+  $('timerMinsWrap').style.opacity = e.target.checked ? '1' : '.45';
+});
+$('startBtn').addEventListener('click',()=>{
+  if(!picked.size) return;
+  buildBoard();
+  $('setupView').classList.add('hidden');
+  $('playView').classList.remove('hidden');
+  $('resultView').classList.add('hidden');
+  stopTimer();
+  if($('timerChk').checked){
+    const m=Math.max(1,Math.min(90,parseInt($('timerMins').value)||5));
+    startTimer(m);
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+$('checkBtn').addEventListener('click',()=>checkAll(false));
+$('retryBtn').addEventListener('click',()=>{
+  slots.forEach(rec=>{
+    rec.slotEl.classList.remove('ok','bad');
+    const f=rec.dropEl.querySelector('.fix'); if(f) f.remove();
+    if(mode==='type'){ if(rec.input) rec.input.value=''; } else returnWord(rec);
+  });
+  $('resultView').classList.add('hidden');
+});
+$('backBtn').addEventListener('click',()=>{
+  stopTimer();
+  $('playView').classList.add('hidden');
+  $('resultView').classList.add('hidden');
+  $('setupView').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+$('againBtn').addEventListener('click',()=>{ $('retryBtn').click(); buildBank();
+  if($('timerChk').checked){ stopTimer();
+    startTimer(Math.max(1,Math.min(90,parseInt($('timerMins').value)||5))); }
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+$('reviewBtn').addEventListener('click',()=>{
+  $('board').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('langBtn').addEventListener('click',()=>{
+  lang = lang==='el'?'en':'el';
+  try{ localStorage.setItem('lang',lang); }catch(e){}
+  applyI18n();
+  if(!$('playView').classList.contains('hidden')) buildBoard();
+});
+
+applyI18n();
+buildChips();
+updateSummary();
+</script>
+</body>
+</html>
