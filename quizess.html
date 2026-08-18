@@ -1256,6 +1256,24 @@
                 </div>
             </a>
 
+            <!-- CATEGORY 9: Μεσαιωνική Ιστορία -->
+            <a href="quizzes_mesaionas.html" class="card category-card">
+                <div>
+                    <span class="unit-tag" data-translate="tagActive">Ενεργό</span>
+                    <h2 class="category-title" data-translate="titleMes">Μεσαιωνική Ιστορία</h2>
+                    <p class="category-desc" data-translate="descMes">
+                        Χρονολόγηση του Μεσαίωνα, Βίκινγκ και Νορμανδοί, Βυζάντιο, σχίσματα και σταυροφορίες, Ιερά Εξέταση και ισλαμικός κόσμος.
+                    </p>
+                </div>
+                <div>
+                    <div class="category-meta">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <span data-translate="metaMes">6 Κουίζ + Γενικό Τεστ</span>
+                    </div>
+                    <div class="btn-action" data-translate="startBtn">Έναρξη Κουίζ</div>
+                </div>
+            </a>
+
             <!-- CATEGORY 8: AWS Ορολογίες -->
             <a href="aws_terms.html" class="card category-card">
                 <div>
@@ -1452,6 +1470,10 @@
                 titleHackviser: "Hackviser CORE",
                 descHackviser: "Τα modules του Hackviser CORE: βασικές αρχές, Cyber Kill Chain, αντιμετώπιση περιστατικών, δίκτυα, web, OWASP Top 10:2025, ασφάλεια LLM, OSINT, social engineering και κρυπτολογία, με επεξήγηση σε κάθε ερώτηση.",
                 metaHackviser: "10 Κουίζ + Γενικό Τεστ",
+                titleMes: "Μεσαιωνική Ιστορία",
+                descMes: "Χρονολόγηση του Μεσαίωνα, Βίκινγκ και Νορμανδοί, Βυζάντιο, σχίσματα και σταυροφορίες, Ιερά Εξέταση και ισλαμικός κόσμος.",
+                metaMes: "6 Κουίζ + Γενικό Τεστ",
+                topicMes: "Μεσαιωνική Ιστορία",
                 titleSyn: "Συντήρηση Πολιτισμικής Κληρονομιάς",
                 descSyn: "Εξέλιξη και ηθική της συντήρησης, βαθμοί επέμβασης, και Μνημεία Παγκόσμιας Κληρονομιάς της UNESCO.",
                 metaSyn: "2 Κουίζ + Γενικό Τεστ",
@@ -1573,6 +1595,10 @@
                 titleHackviser: "Hackviser CORE",
                 descHackviser: "The Hackviser CORE modules: fundamentals, Cyber Kill Chain, incident response, networking, web, OWASP Top 10:2025, LLM security, OSINT, social engineering and cryptology, with an explanation for every question.",
                 metaHackviser: "10 Quizzes + General Test",
+                titleMes: "Medieval History",
+                descMes: "Timeline of the Middle Ages, Vikings and Normans, Byzantium, schisms and crusades, the Inquisition and the Islamic world.",
+                metaMes: "6 Quizzes + General Test",
+                topicMes: "Medieval History",
                 titleSyn: "Conservation of Cultural Heritage",
                 descSyn: "Evolution and ethics of conservation, degrees of intervention, and UNESCO World Heritage Sites.",
                 metaSyn: "2 Quizzes + General Test",
@@ -1819,6 +1845,7 @@
             { topicKey: 'diatrofi', file: 'quizzes_diatrofi.html', labelKey: 'topicDiatrofi' },
             { topicKey: 'kok', file: 'quizzes_kok.html', labelKey: 'topicKok' },
             { topicKey: 'syntirisi', file: 'quizzes_syntirisi.html', labelKey: 'topicSyn' },
+            { topicKey: 'mesaionas', file: 'quizzes_mesaionas.html', labelKey: 'topicMes' },
             { topicKey: 'hackviser', file: 'quizzes_hackviser.html', labelKey: 'topicHackviser' }
         ];
         const SEARCH_MAX_RESULTS = 30;
@@ -2392,7 +2419,8 @@
             { file: 'quizzes_diatrofi.html', titleKey: 'titleDiatrofi' },
             { file: 'quizzes_kok.html', titleKey: 'titleKok' },
             { file: 'quizzes_hackviser.html', titleKey: 'titleHackviser' },
-            { file: 'quizzes_syntirisi.html', titleKey: 'titleSyn' }
+            { file: 'quizzes_syntirisi.html', titleKey: 'titleSyn' },
+            { file: 'quizzes_mesaionas.html', titleKey: 'titleMes' }
         ];
         const downloadModal = document.getElementById('downloadModal');
         const downloadListEl = document.getElementById('downloadList');
@@ -3230,7 +3258,7 @@
                 perTopic[k].sum += (e.scorePercent || 0);
                 perTopic[k].n++;
             });
-            const topicKey = { noisi: 'topicNoisi', nomothesia: 'topicNomothesia', euzwia: 'topicEuzwia', aws: 'topicAws', diatrofi: 'topicDiatrofi', kok: 'topicKok', hackviser: 'topicHackviser', syntirisi: 'topicSyn' };
+            const topicKey = { noisi: 'topicNoisi', nomothesia: 'topicNomothesia', euzwia: 'topicEuzwia', aws: 'topicAws', diatrofi: 'topicDiatrofi', kok: 'topicKok', hackviser: 'topicHackviser', syntirisi: 'topicSyn', mesaionas: 'topicMes' };
             const topicsHtml = Object.keys(perTopic).map(k => {
                 const s = perTopic[k];
                 const label = t[topicKey[k]] || k;
@@ -4072,7 +4100,8 @@
                     diatrofi: { labelKey: 'topicDiatrofi', file: 'quizzes_diatrofi.html' },
         kok: { labelKey: 'topicKok', file: 'quizzes_kok.html' },
         hackviser: { labelKey: 'topicHackviser', file: 'quizzes_hackviser.html' },
-        syntirisi: { labelKey: 'topicSyn', file: 'quizzes_syntirisi.html' }
+        syntirisi: { labelKey: 'topicSyn', file: 'quizzes_syntirisi.html' },
+        mesaionas: { labelKey: 'topicMes', file: 'quizzes_mesaionas.html' }
                 };
 
                 // Quiz list: prefer SEARCH_INDEX (full curriculum); fall back to

@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Μεσαιωνική Ιστορία — Recap | Αλέξανδρος Γιαννάκης</title>
+<style>
+  :root{
+    --bg:#0f172a; --card-bg:#1e293b; --border-color:#334155;
+    --text-main:#f8fafc; --text-muted:#94a3b8; --primary:#38bdf8;
+    --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);
+       color:var(--text-main);padding:26px 16px 70px}
+  .wrap{max-width:1080px;margin:0 auto}
+  .top-nav{text-align:center;margin-bottom:16px}
+  .top-nav a{color:var(--text-muted);text-decoration:none;margin:0 10px;font-size:.94rem}
+  .top-nav a:hover{color:var(--primary)}
+  h1.page-title{text-align:center;color:var(--primary);margin:0 0 6px;
+                font-size:clamp(1.5rem,4vw,2.2rem)}
+  .subtitle{text-align:center;color:var(--text-muted);margin:0 auto 24px;max-width:720px;
+            line-height:1.6;font-size:.95rem}
+
+  .panel{background:var(--card-bg);border:1px solid var(--border-color);
+         border-radius:16px;padding:18px;margin-bottom:18px}
+  .panel-h{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;
+           color:var(--text-muted);font-weight:700;margin:0 0 12px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#0b1220;color:var(--text-muted);border:1px solid var(--border-color);
+        border-radius:999px;padding:8px 15px;cursor:pointer;font-size:.86rem;
+        font-family:inherit;transition:all .16s ease}
+  .chip:hover{color:var(--text-main);border-color:var(--primary)}
+  .chip.on{background:var(--primary);color:#06283d;border-color:var(--primary);font-weight:700}
+  .chip .cnt{opacity:.7;font-size:.78em;margin-left:5px}
+
+  .opts{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .opt{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--text-muted)}
+  .opt input[type=checkbox]{accent-color:var(--primary);width:17px;height:17px;cursor:pointer}
+  .opt input[type=number]{width:66px;background:#0b1220;color:var(--text-main);
+        border:1px solid var(--border-color);border-radius:8px;padding:6px 8px;font-family:inherit}
+  .seg{display:inline-flex;border:1px solid var(--border-color);border-radius:10px;overflow:hidden}
+  .seg button{background:#0b1220;color:var(--text-muted);border:0;padding:8px 15px;
+        cursor:pointer;font-family:inherit;font-size:.86rem}
+  .seg button.on{background:var(--primary);color:#06283d;font-weight:700}
+
+  .btn{background:var(--primary);color:#06283d;border:0;border-radius:10px;padding:11px 22px;
+       font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border-color)}
+  .btn-ghost:hover:not(:disabled){color:var(--text-main);border-color:var(--primary)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  /* timer */
+  .timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.05rem;
+         color:var(--primary);padding:6px 12px;border:1px solid var(--border-color);
+         border-radius:10px;background:#0b1220}
+  .timer.low{color:var(--danger);border-color:var(--danger)}
+
+  /* word bank */
+  #bank{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+  .word{background:#0b1220;border:1px solid var(--primary);color:var(--text-main);
+        border-radius:9px;padding:8px 13px;cursor:grab;font-size:.87rem;user-select:none;
+        transition:transform .12s ease,opacity .12s ease}
+  .word:active{cursor:grabbing}
+  .word.sel{background:var(--primary);color:#06283d;font-weight:700;transform:scale(1.04)}
+  .word.used{display:none}
+
+  /* set + slots */
+  .set{margin-bottom:22px}
+  .set-title{font-size:1rem;font-weight:700;margin:0 0 4px;color:var(--text-main)}
+  .set-note{font-size:.8rem;color:var(--text-muted);margin:0 0 10px}
+  .slots{display:grid;gap:8px}
+  .slots.two{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .slot{display:flex;align-items:stretch;gap:0;border:1px solid var(--border-color);
+        border-radius:10px;overflow:hidden;background:#0b1220;min-height:44px}
+  .slot-label{flex:0 0 auto;min-width:92px;display:flex;align-items:center;justify-content:center;
+        background:rgba(56,189,248,.12);color:var(--primary);font-weight:700;font-size:.82rem;
+        padding:8px 10px;border-right:1px solid var(--border-color);text-align:center}
+  .slot-drop{flex:1;display:flex;align-items:center;padding:6px 10px;min-height:42px;
+        font-size:.88rem;color:var(--text-muted)}
+  .slot-drop.over{background:rgba(56,189,248,.14)}
+  .slot-drop .placed{background:rgba(56,189,248,.16);border:1px solid var(--primary);
+        border-radius:7px;padding:5px 10px;color:var(--text-main);cursor:pointer;font-size:.86rem}
+  .slot-drop input{width:100%;background:transparent;border:0;color:var(--text-main);
+        font-family:inherit;font-size:.88rem;outline:none;padding:4px 0}
+  .slot.ok{border-color:var(--success)}
+  .slot.ok .slot-label{background:rgba(16,185,129,.15);color:var(--success)}
+  .slot.bad{border-color:var(--danger)}
+  .slot.bad .slot-label{background:rgba(239,68,68,.15);color:var(--danger)}
+  .fix{display:block;font-size:.78rem;color:var(--success);margin-top:3px}
+
+  .score-box{text-align:center;padding:18px}
+  .score-num{font-size:2.4rem;font-weight:800;color:var(--primary);margin:0}
+  .score-sub{color:var(--text-muted);margin:6px 0 0;font-size:.92rem}
+
+  .violation{margin-top:12px;padding:12px 15px;border-radius:10px;font-size:.9rem;line-height:1.55;
+        background:rgba(239,68,68,.12);border-left:4px solid var(--danger)}
+  .hist-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .hist-row{display:flex;justify-content:space-between;align-items:center;gap:10px;
+        padding:10px 14px;background:#0b1220;border:1px solid var(--border-color);
+        border-radius:10px;font-size:.87rem}
+  .hist-row .when{color:var(--text-muted)}
+  .hist-row .what{color:var(--text-muted);font-size:.82rem}
+  .hist-row .sc{font-weight:700;color:var(--text-main)}
+  .hist-row.viol{border-color:var(--danger)}
+  .hidden{display:none !important}
+  .float-btns{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:10px}
+  .fbtn{width:44px;height:44px;border-radius:50%;background:var(--card-bg);
+        border:1px solid var(--border-color);color:var(--text-muted);font-weight:700;
+        cursor:pointer;font-family:inherit}
+  .fbtn:hover{color:var(--text-main);border-color:var(--primary)}
+  @media (max-width:600px){
+    .slot-label{min-width:74px;font-size:.76rem}
+    .slots.two{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-nav">
+    <a href="index.html" data-i18n="navHome">Αρχική</a>
+    <a href="quizess.html" data-i18n="navQuiz">Κουίζ</a>
+    <a href="quizzes_mesaionas.html" data-i18n="navCore">Quiz Μεσαίωνα</a>
+  </div>
+
+  <h1 class="page-title" data-i18n="title">Μεσαιωνική Ιστορία — Recap</h1>
+  <p class="subtitle" data-i18n="subtitle">
+    Ταίριαξε κάθε περιγραφή με το σωστό πρόσωπο, γεγονός ή χρονολογία του Μεσαίωνα.
+  </p>
+
+  <!-- SETUP -->
+  <div id="setupView">
+    <div class="panel">
+      <p class="panel-h" data-i18n="pickSets">Διάλεξε σύνολα</p>
+      <div class="chips" id="setChips"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-ghost" id="allBtn" data-i18n="selectAll">Επιλογή όλων</button>
+        <button class="btn btn-ghost" id="noneBtn" data-i18n="clearAll">Καθαρισμός</button>
+      </div>
+    </div>
+
+    <div class="panel" id="historyPanel">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <p class="panel-h" style="margin:0" data-i18n="historyH">Ιστορικό</p>
+        <button class="btn btn-ghost" id="clearHistBtn" style="padding:6px 12px;font-size:.8rem"
+                data-i18n="clearHist">Εκκαθάριση</button>
+      </div>
+      <div class="hist-list" id="histList"></div>
+    </div>
+
+    <div class="panel">
+      <p class="panel-h" data-i18n="optionsH">Ρυθμίσεις</p>
+      <div class="opts">
+        <div class="opt">
+          <span data-i18n="modeLabel">Τρόπος:</span>
+          <div class="seg" id="modeSeg">
+            <button data-mode="drag" class="on" data-i18n="modeDrag">Σύρσιμο</button>
+            <button data-mode="type" data-i18n="modeType">Πληκτρολόγηση</button>
+          </div>
+        </div>
+        <label class="opt">
+          <input type="checkbox" id="shuffleChk" checked>
+          <span data-i18n="shuffleLabel">Ανακάτεμα σειράς</span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" id="timerChk">
+          <span data-i18n="timerLabel">Χρονόμετρο</span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" id="antiCheatChk">
+          <span data-i18n="antiCheatLabel">Ανίχνευση εξαπάτησης</span>
+        </label>
+        <label class="opt" id="timerMinsWrap" style="opacity:.45">
+          <input type="number" id="timerMins" value="5" min="1" max="90" disabled>
+          <span data-i18n="minsLabel">λεπτά</span>
+        </label>
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="startBtn" data-i18n="startBtn">Έναρξη</button>
+        <span id="pickSummary" style="color:var(--text-muted);font-size:.88rem"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAY -->
+  <div id="playView" class="hidden">
+    <div class="panel" id="bankPanel">
+      <div class="row" style="justify-content:space-between;margin-bottom:10px">
+        <p class="panel-h" style="margin:0" data-i18n="bankH">Λέξεις</p>
+        <div class="row">
+          <span class="timer hidden" id="timerBox">00:00</span>
+          <span id="remainCount" style="color:var(--text-muted);font-size:.85rem"></span>
+        </div>
+      </div>
+      <div id="bank"></div>
+      <p style="color:var(--text-muted);font-size:.8rem;margin:10px 0 0" id="dragHint"
+         data-i18n="dragHint">Σύρε μια λέξη σε ένα κουτί — ή πάτησέ τη και μετά πάτα το κουτί.</p>
+    </div>
+
+    <div id="board"></div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <button class="btn" id="checkBtn" data-i18n="checkBtn">Έλεγχος</button>
+          <button class="btn btn-ghost" id="retryBtn" data-i18n="retryBtn">Καθαρισμός</button>
+        </div>
+        <button class="btn btn-ghost" id="backBtn" data-i18n="backBtn">← Ρυθμίσεις</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultView" class="hidden">
+    <div class="panel score-box">
+      <p class="score-num" id="scoreNum">0%</p>
+      <p class="score-sub" id="scoreSub"></p>
+      <div id="violationSlot"></div>
+      <div class="row" style="justify-content:center;margin-top:14px">
+        <button class="btn" id="againBtn" data-i18n="againBtn">Ξανά</button>
+        <button class="btn btn-ghost" id="reviewBtn" data-i18n="reviewBtn">Δες τις απαντήσεις</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="float-btns">
+  <button class="fbtn" id="langBtn">EN</button>
+</div>
+
+<script>
+/* =====================  DATA  =====================
+   Corrections applied vs. the list as first written:
+   - Cyber Kill Chain: added the missing 7th stage "Actions on Objectives"
+   - LLM05: "Insecure" -> "Improper Output Handling"  (Improper is the 2025 name)
+   - LLM06: "Exceeded"  -> "Excessive Agency"
+   - LLM08: "Embeddings" -> "Embedding" (singular)
+   - A03/A04: "Failure" -> "Failures" (plural, as in Module 6)
+*/
+const SETS = [
+ {
+  "id": "periods",
+  "titleEl": "Περίοδοι του Μεσαίωνα",
+  "titleEn": "Periods of the Middle Ages",
+  "noteEl": "Ταίριαξε τη χρονολογία με την περίοδο.",
+  "noteEn": "Match each date range to its period.",
+  "two": true,
+  "items": [
+   {
+    "label": "500–1500 — η συνολική μεσαιωνική περίοδος",
+    "answer": "Middle Ages",
+    "alias": [
+     "μεσαίωνας"
+    ]
+   },
+   {
+    "label": "400–1000 — το πρώτο μέρος του Μεσαίωνα",
+    "answer": "Dark Ages",
+    "alias": [
+     "σκοτεινοί αιώνες"
+    ]
+   },
+   {
+    "label": "1000–1300 — αστικοποίηση, σταυροφορίες, νέα πανεπιστήμια",
+    "answer": "High Middle Ages",
+    "alias": [
+     "ύστερος μεσαίωνας"
+    ]
+   },
+   {
+    "label": "1300–1500 — πανώλη, πόλεμος, σχίσμα",
+    "answer": "Late Middle Ages",
+    "alias": [
+     "όψιμος μεσαίωνας"
+    ]
+   },
+   {
+    "label": "Η τριμερής διαίρεση της ευρωπαϊκής ιστορίας",
+    "answer": "Ancient, Medieval, Modern",
+    "alias": [
+     "αρχαία μεσαιωνική νεότερη"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "fallrome",
+  "titleEl": "Πτώση της Ρώμης & Αγγλία",
+  "titleEn": "Fall of Rome & England",
+  "noteEl": "Ταίριαξε το γεγονός με τη χρονολογία ή το πρόσωπο.",
+  "noteEn": "Match each event to its date or figure.",
+  "two": true,
+  "items": [
+   {
+    "label": "Διαίρεσε πρώτος την αυτοκρατορία σε Ανατολή και Δύση",
+    "answer": "Diocletian",
+    "alias": [
+     "διοκλητιανός"
+    ]
+   },
+   {
+    "label": "410 — λεηλάτησε τη Ρώμη με τους Βησιγότθους",
+    "answer": "Alaric",
+    "alias": [
+     "αλάριχος"
+    ]
+   },
+   {
+    "label": "476 — ο τελευταίος Ρωμαίος αυτοκράτορας",
+    "answer": "Romulus Augustulus",
+    "alias": [
+     "ρωμύλος αυγουστύλος"
+    ]
+   },
+   {
+    "label": "476 — ο Γερμανός που ανακηρύχθηκε βασιλιάς",
+    "answer": "Odoacer",
+    "alias": [
+     "οδόακρος"
+    ]
+   },
+   {
+    "label": "410 — απέσυρε τον ρωμαϊκό στρατό από τη Βρετανία",
+    "answer": "Honorius",
+    "alias": [
+     "ονώριος"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "kings",
+  "titleEl": "Βασιλείς & Βίκινγκ",
+  "titleEn": "Kings & Vikings",
+  "noteEl": "Ταίριαξε την περιγραφή με τον ηγεμόνα ή το γεγονός.",
+  "noteEn": "Match each description to its ruler or event.",
+  "two": true,
+  "items": [
+   {
+    "label": "757–96 — για αυτόν οι Βίκινγκ ήταν σκιά στον ορίζοντα",
+    "answer": "Offa",
+    "alias": [
+     "οφφα"
+    ]
+   },
+   {
+    "label": "871–99 — αγώνας ζωής και θανάτου με τους Βίκινγκ",
+    "answer": "Alfred the Great",
+    "alias": [
+     "άλφρεντ ο μέγας",
+     "alfred"
+    ]
+   },
+   {
+    "label": "924–39 — κατακτητής και αφομοιωτής των Βίκινγκ",
+    "answer": "Athelstan",
+    "alias": [
+     "άθελσταν"
+    ]
+   },
+   {
+    "label": "793 — η πρώτη επίθεση των Βίκινγκ",
+    "answer": "Lindisfarne"
+   },
+   {
+    "label": "Δημιούργησε την Αυτοκρατορία της Βόρειας Θάλασσας",
+    "answer": "Cnut",
+    "alias": [
+     "κνούτος",
+     "canute"
+    ]
+   },
+   {
+    "label": "1066 — ο τελευταίος Αγγλοσάξονας μονάρχης",
+    "answer": "Harold II",
+    "alias": [
+     "χάρολντ"
+    ]
+   },
+   {
+    "label": "1066 — ο νικητής του Χέιστινγκς",
+    "answer": "William the Conqueror",
+    "alias": [
+     "γουλιέλμος ο κατακτητής"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "hundredyears",
+  "titleEl": "Ο Εκατονταετής Πόλεμος",
+  "titleEn": "The Hundred Years War",
+  "noteEl": "Ταίριαξε την περίοδο ή το πρόσωπο.",
+  "noteEn": "Match each period or figure.",
+  "two": true,
+  "items": [
+   {
+    "label": "1337–1360",
+    "answer": "Edwardian War",
+    "alias": [
+     "εδουαρδιανός"
+    ]
+   },
+   {
+    "label": "1369–1389",
+    "answer": "Caroline War",
+    "alias": [
+     "καρολίνειος"
+    ]
+   },
+   {
+    "label": "1415–1429",
+    "answer": "Lancastrian War",
+    "alias": [
+     "λανκαστριανός"
+    ]
+   },
+   {
+    "label": "1429 κ.ε. — η ανάκαμψη της Γαλλίας",
+    "answer": "Joan of Arc",
+    "alias": [
+     "ιωάννα της λωραίνης",
+     "joan"
+    ]
+   },
+   {
+    "label": "1420 — έκανε τον Ερρίκο Ε΄ διάδοχο του γαλλικού θρόνου",
+    "answer": "Treaty of Troyes",
+    "alias": [
+     "συνθήκη του τρουά"
+    ]
+   },
+   {
+    "label": "1453 — το τελικό τέλος του πολέμου",
+    "answer": "Bordeaux",
+    "alias": [
+     "μπορντό"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "byzantium",
+  "titleEl": "Βυζαντινή Αυτοκρατορία",
+  "titleEn": "Byzantine Empire",
+  "noteEl": "Ταίριαξε την περιγραφή με το πρόσωπο ή τη χρονολογία.",
+  "noteEn": "Match each description to its figure or date.",
+  "two": true,
+  "items": [
+   {
+    "label": "330 — ίδρυσε τη «Νέα Ρώμη»",
+    "answer": "Constantine",
+    "alias": [
+     "κωνσταντίνος"
+    ]
+   },
+   {
+    "label": "Ανοικοδόμησε την Αγία Σοφία και κωδικοποίησε το ρωμαϊκό δίκαιο",
+    "answer": "Justinian",
+    "alias": [
+     "ιουστινιανός"
+    ]
+   },
+   {
+    "label": "Ο στρατηγός που κατέκτησε τη βανδαλική Βόρεια Αφρική",
+    "answer": "Belisarius",
+    "alias": [
+     "βελισάριος"
+    ]
+   },
+   {
+    "label": "1071 — ήττα και απώλεια της κεντρικής Ανατολίας",
+    "answer": "Seljuks",
+    "alias": [
+     "σελτζούκοι"
+    ]
+   },
+   {
+    "label": "Ζήτησε βοήθεια από τον Πάπα και προκάλεσε την Α΄ Σταυροφορία",
+    "answer": "Alexius",
+    "alias": [
+     "αλέξιος"
+    ]
+   },
+   {
+    "label": "1204 — ο «Λατίνος αυτοκράτορας» μετά τη Δ΄ Σταυροφορία",
+    "answer": "Baldwin of Flanders",
+    "alias": [
+     "βαλδουίνος"
+    ]
+   },
+   {
+    "label": "1453 — ο Οθωμανός σουλτάνος που άλωσε την Πόλη",
+    "answer": "Mehmed II",
+    "alias": [
+     "μεχμέτ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "churches",
+  "titleEl": "Δυτική vs Ανατολική Εκκλησία",
+  "titleEn": "Western vs Eastern Church",
+  "noteEl": "Σε ποια Εκκλησία ανήκει το καθένα;",
+  "noteEn": "Which Church does each belong to?",
+  "two": true,
+  "items": [
+   {
+    "label": "Επικεφαλής ο Πάπας",
+    "answer": "Western",
+    "alias": [
+     "δυτική",
+     "roman catholic"
+    ]
+   },
+   {
+    "label": "Επικεφαλής ο Πατριάρχης Κωνσταντινουπόλεως",
+    "answer": "Eastern",
+    "alias": [
+     "ανατολική"
+    ]
+   },
+   {
+    "label": "Γλώσσα τα λατινικά",
+    "answer": "Western",
+    "alias": [
+     "δυτική"
+    ]
+   },
+   {
+    "label": "Γλώσσα τα ελληνικά",
+    "answer": "Eastern",
+    "alias": [
+     "ανατολική"
+    ]
+   },
+   {
+    "label": "Άζυμος άρτος στη θεία κοινωνία",
+    "answer": "Western",
+    "alias": [
+     "δυτική"
+    ]
+   },
+   {
+    "label": "Ένζυμος άρτος στη θεία κοινωνία",
+    "answer": "Eastern",
+    "alias": [
+     "ανατολική"
+    ]
+   },
+   {
+    "label": "Απαγόρευσε τον γάμο των ιερέων το 1139",
+    "answer": "Western",
+    "alias": [
+     "δυτική"
+    ]
+   },
+   {
+    "label": "Επέτρεπε τον γάμο των ιερέων",
+    "answer": "Eastern",
+    "alias": [
+     "ανατολική"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "schisms",
+  "titleEl": "Σχίσματα",
+  "titleEn": "Schisms",
+  "noteEl": "Ταίριαξε την περιγραφή με το σχίσμα.",
+  "noteEn": "Match each description to its schism.",
+  "two": true,
+  "items": [
+   {
+    "label": "863 — Φώτιος και Πάπας Νικόλαος Α΄ αλληλοαφορίζονται",
+    "answer": "Photian Schism",
+    "alias": [
+     "φώτειο σχίσμα"
+    ]
+   },
+   {
+    "label": "1054 — Μιχαήλ Α΄ και Πάπας Λέων Θ΄, οριστικός χωρισμός",
+    "answer": "Great Schism",
+    "alias": [
+     "μεγάλο σχίσμα",
+     "east-west schism"
+    ]
+   },
+   {
+    "label": "1378–1417 — δύο και μετά τρεις ανταγωνιστές πάπες",
+    "answer": "Great Papal Schism",
+    "alias": [
+     "μεγάλο παπικό σχίσμα"
+    ]
+   },
+   {
+    "label": "1309–1377 — η παπική έδρα εκτός Ρώμης",
+    "answer": "Avignon Papacy",
+    "alias": [
+     "αβινιόν",
+     "avignon"
+    ]
+   },
+   {
+    "label": "1417 — ο πάπας που ένωσε ξανά την Εκκλησία",
+    "answer": "Martin V",
+    "alias": [
+     "μαρτίνος"
+    ]
+   },
+   {
+    "label": "Η σύνοδος που τερμάτισε το Παπικό Σχίσμα",
+    "answer": "Council of Constance",
+    "alias": [
+     "σύνοδος της κωνσταντίας"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "crusades",
+  "titleEl": "Οι Σταυροφορίες",
+  "titleEn": "The Crusades",
+  "noteEl": "Ταίριαξε το γεγονός με τη σταυροφορία.",
+  "noteEn": "Match each event to its crusade.",
+  "two": true,
+  "items": [
+   {
+    "label": "1099 — κατάληψη της Ιερουσαλήμ",
+    "answer": "First Crusade",
+    "alias": [
+     "α σταυροφορία",
+     "1st"
+    ]
+   },
+   {
+    "label": "Κηρύχθηκε από τον Ευγένιο Γ΄· νικητής ο Nur ed-Din",
+    "answer": "Second Crusade",
+    "alias": [
+     "β σταυροφορία",
+     "2nd"
+    ]
+   },
+   {
+    "label": "1187–1192 — Ριχάρδος ο Λεοντόκαρδος εναντίον Σαλαντίν",
+    "answer": "Third Crusade",
+    "alias": [
+     "γ σταυροφορία",
+     "3rd"
+    ]
+   },
+   {
+    "label": "1202–1204 — άλωση της Κωνσταντινούπολης",
+    "answer": "Fourth Crusade",
+    "alias": [
+     "δ σταυροφορία",
+     "4th"
+    ]
+   },
+   {
+    "label": "1219 — κατάληψη μόνο της Δαμιέττης",
+    "answer": "Fifth Crusade",
+    "alias": [
+     "ε σταυροφορία",
+     "5th"
+    ]
+   },
+   {
+    "label": "1228 — ο Φρειδερίκος Β΄ πήρε την Ιερουσαλήμ με διαπραγμάτευση",
+    "answer": "Sixth Crusade",
+    "alias": [
+     "στ σταυροφορία",
+     "6th"
+    ]
+   },
+   {
+    "label": "Ο πάπας που κήρυξε την Α΄ Σταυροφορία",
+    "answer": "Urban II",
+    "alias": [
+     "ουρβανός"
+    ]
+   },
+   {
+    "label": "Ο σουλτάνος που ανακατέλαβε την Ιερουσαλήμ το 1187",
+    "answer": "Saladin",
+    "alias": [
+     "σαλαντίν"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "reform",
+  "titleEl": "Αίρεση, Μεταρρύθμιση, Ιερά Εξέταση",
+  "titleEn": "Heresy, Reform, Inquisition",
+  "noteEl": "Ταίριαξε την περιγραφή με τον όρο.",
+  "noteEn": "Match each description to its term.",
+  "two": true,
+  "items": [
+   {
+    "label": "Το μοναστήρι που έγινε ανεξάρτητο και μητέρα μοναστικής αυτοκρατορίας",
+    "answer": "Cluny"
+   },
+   {
+    "label": "Ο πιο δυναμικός μεταρρυθμιστής πάπας του 11ου αιώνα",
+    "answer": "Gregory VII",
+    "alias": [
+     "γρηγόριος"
+    ]
+   },
+   {
+    "label": "1184 — η βούλα που δημιούργησε την επισκοπική Ιερά Εξέταση",
+    "answer": "Ad abolendam"
+   },
+   {
+    "label": "Το τάγμα από το οποίο προέρχονταν οι παπικοί ιεροεξεταστές",
+    "answer": "Dominicans",
+    "alias": [
+     "δομινικανοί"
+    ]
+   },
+   {
+    "label": "Ο ιεροεξεταστής της Ισπανικής Ιεράς Εξέτασης",
+    "answer": "Torquemada",
+    "alias": [
+     "τορκεμάδα"
+    ]
+   },
+   {
+    "label": "1119 — το τάγμα ένοπλων μοναχών για την προστασία προσκυνητών",
+    "answer": "Knights Templar",
+    "alias": [
+     "ναΐτες",
+     "templars"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "islam",
+  "titleEl": "Ο Ισλαμικός Κόσμος",
+  "titleEn": "The Islamic World",
+  "noteEl": "Ταίριαξε την περιγραφή με το πρόσωπο ή τον όρο.",
+  "noteEn": "Match each description to its figure or term.",
+  "two": true,
+  "items": [
+   {
+    "label": "622 — η μετακίνηση από τη Μέκκα στη Μεδίνα",
+    "answer": "Hijra",
+    "alias": [
+     "εγίρα",
+     "622"
+    ]
+   },
+   {
+    "label": "Ο πρώτος χαλίφης, επιλογή της σουνιτικής πλειοψηφίας",
+    "answer": "Abu Bakr",
+    "alias": [
+     "αμπού μπακρ"
+    ]
+   },
+   {
+    "label": "Ο ξάδελφος και γαμπρός του Μωάμεθ, τέταρτος χαλίφης",
+    "answer": "Ali",
+    "alias": [
+     "αλί"
+    ]
+   },
+   {
+    "label": "Η μερίδα που στήριξε τον Αλί",
+    "answer": "Shia",
+    "alias": [
+     "σιίτες"
+    ]
+   },
+   {
+    "label": "Η πλειοψηφία, από τη λέξη «παράδοση»",
+    "answer": "Sunni",
+    "alias": [
+     "σουνίτες"
+    ]
+   },
+   {
+    "label": "732 — εκεί σταμάτησε η προέλαση στη Δύση",
+    "answer": "Tours",
+    "alias": [
+     "τουρ"
+    ]
+   },
+   {
+    "label": "Η έννοια που αναπτύχθηκε τον 8ο–9ο αιώνα για να δικαιολογήσει τις κατακτήσεις",
+    "answer": "Jihad",
+    "alias": [
+     "τζιχάντ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "goldenage",
+  "titleEl": "Χρυσός Αιώνας του Ισλάμ",
+  "titleEn": "Islamic Golden Age",
+  "noteEl": "Ποιος λόγιος για ποιο επίτευγμα;",
+  "noteEn": "Which scholar for which achievement?",
+  "two": true,
+  "items": [
+   {
+    "label": "Απελευθέρωσε τη χημεία από τη δεισιδαιμονία",
+    "answer": "Jābir ibn Hayyān",
+    "alias": [
+     "jabir",
+     "τζαμπίρ"
+    ]
+   },
+   {
+    "label": "Πατέρας της άλγεβρας, από το έργο «al-jebr»",
+    "answer": "al-Khwarizmi",
+    "alias": [
+     "χουαρίζμι"
+    ]
+   },
+   {
+    "label": "Μέγιστος γιατρός του Ισλάμ, πατέρας της ψυχοθεραπείας",
+    "answer": "al-Rāzi",
+    "alias": [
+     "ραζί",
+     "al-razi"
+    ]
+   },
+   {
+    "label": "Συγγραφέας του ιατρικού «Κανόνα»",
+    "answer": "Ibn Sīna",
+    "alias": [
+     "ιμπν σίνα",
+     "avicenna"
+    ]
+   },
+   {
+    "label": "Πρώτη μαθηματική μελέτη φακών και διάθλασης",
+    "answer": "Ibn Sahl",
+    "alias": [
+     "ιμπν σαχλ"
+    ]
+   },
+   {
+    "label": "Βιβλίο της Οπτικής, camera obscura, ψευδαίσθηση της σελήνης",
+    "answer": "Ibn al-Haytham",
+    "alias": [
+     "αλχαζέν",
+     "alhazen"
+    ]
+   },
+   {
+    "label": "Διέταξε το πρώτο αστρονομικό παρατηρητήριο στη Βαγδάτη",
+    "answer": "al-Ma'mūn",
+    "alias": [
+     "μαμούν",
+     "al-mamun"
+    ]
+   }
+  ]
+ }
+];
+
+/* =====================  i18n  ===================== */
+const I18N = {
+  el:{ navHome:'Αρχική', navQuiz:'Κουίζ', navCore:'Quiz Μεσαίωνα',
+    title:'Μεσαιωνική Ιστορία — Recap',
+    subtitle:'Ταίριαξε κάθε περιγραφή με το σωστό πρόσωπο, γεγονός ή χρονολογία του Μεσαίωνα.',
+    pickSets:'Διάλεξε σύνολα', selectAll:'Επιλογή όλων', clearAll:'Καθαρισμός',
+    optionsH:'Ρυθμίσεις', modeLabel:'Τρόπος:', modeDrag:'Σύρσιμο', modeType:'Πληκτρολόγηση',
+    shuffleLabel:'Ανακάτεμα σειράς', timerLabel:'Χρονόμετρο', minsLabel:'λεπτά',
+    startBtn:'Έναρξη', bankH:'Λέξεις', checkBtn:'Έλεγχος', retryBtn:'Καθαρισμός',
+    backBtn:'← Ρυθμίσεις', againBtn:'Ξανά', reviewBtn:'Δες τις απαντήσεις',
+    dragHint:'Σύρε μια λέξη σε ένα κουτί — ή πάτησέ τη και μετά πάτα το κουτί.',
+    typeHint:'Γράψε την απάντηση σε κάθε κουτί.',
+    remaining:'έμειναν', pickOne:'Διάλεξε τουλάχιστον ένα σύνολο.',
+    scoreSub:'σωστά από', timeUp:'Ο χρόνος τελείωσε!',
+    antiCheatLabel:'Ανίχνευση εξαπάτησης', historyH:'Ιστορικό', clearHist:'Εκκαθάριση',
+    noHistory:'Δεν υπάρχει ιστορικό ακόμη. Ολοκλήρωσε μια εξάσκηση για να εμφανιστεί εδώ.',
+    setsWord:'σύνολα', cheatTitle:'Η εξάσκηση τερματίστηκε',
+    cheatTab:'Άλλαξες καρτέλα ή παράθυρο.', cheatBlur:'Το παράθυρο έχασε την εστίαση.',
+    cheatFs:'Βγήκες από την πλήρη οθόνη.', cheatFlag:'ακυρώθηκε' },
+  en:{ navHome:'Home', navQuiz:'Quizzes', navCore:'Quiz Μεσαίωνα',
+    title:'Μεσαιωνική Ιστορία — Recap',
+    subtitle:'Match each description to the right medieval figure, event or date.',
+    pickSets:'Pick sets', selectAll:'Select all', clearAll:'Clear',
+    optionsH:'Options', modeLabel:'Mode:', modeDrag:'Drag', modeType:'Type',
+    shuffleLabel:'Shuffle order', timerLabel:'Timer', minsLabel:'minutes',
+    startBtn:'Start', bankH:'Words', checkBtn:'Check', retryBtn:'Clear',
+    backBtn:'← Options', againBtn:'Again', reviewBtn:'Show answers',
+    dragHint:'Drag a word onto a box — or tap the word, then tap the box.',
+    typeHint:'Type the answer in each box.',
+    remaining:'left', pickOne:'Pick at least one set.',
+    scoreSub:'correct out of', timeUp:'Time is up!',
+    antiCheatLabel:'Cheating detection', historyH:'History', clearHist:'Clear',
+    noHistory:'No history yet. Finish a practice run to see it here.',
+    setsWord:'sets', cheatTitle:'Practice ended',
+    cheatTab:'You switched tab or window.', cheatBlur:'The window lost focus.',
+    cheatFs:'You left full screen.', cheatFlag:'voided' },
+};
+// Brave/Chromium can throw a SecurityError on localStorage under file://
+let lang = 'el';
+try { lang = localStorage.getItem('lang') || 'el'; } catch(e) {}
+const t = k => (I18N[lang] && I18N[lang][k]) || I18N.el[k] || k;
+
+/* =====================  STATE  ===================== */
+let picked = new Set(SETS.map(s=>s.id));
+let mode = 'drag';
+let slots = [];          // {setId,label,answer,alias,placed,el}
+let selectedWord = null; // DOM node
+let timerId = null, secsLeft = 0;
+let acEnabled=false, acActive=false, acReason=null, runStartedAt=0;
+
+/* =====================  HELPERS  ===================== */
+const $ = id => document.getElementById(id);
+function norm(s){
+  return String(s||'').toLowerCase().replace(/&/g,' and ')
+    .replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+}
+function rawnorm(s){ return String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,' '); }
+function matches(item, val){
+  // Raw comparison first: symbol-only answers such as * and .. normalize to an
+  // empty string, so they can only be matched on their literal form.
+  const raw = rawnorm(val);
+  const v = norm(val);
+  const cands = [item.answer].concat(item.alias || []);
+  return cands.some(a => (raw && raw === rawnorm(a)) || (v && v === norm(a)));
+}
+function shuffle(a){
+  a = a.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(I18N[lang] && I18N[lang][k]) el.textContent = I18N[lang][k];
+  });
+  $('langBtn').textContent = lang==='el' ? 'EN' : 'EL';
+  document.documentElement.lang = lang;
+  buildChips(); updateSummary();
+  $('dragHint').textContent = mode==='drag' ? t('dragHint') : t('typeHint');
+}
+
+/* =====================  SETUP  ===================== */
+function buildChips(){
+  const bar = $('setChips'); bar.innerHTML='';
+  SETS.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='chip'+(picked.has(s.id)?' on':'');
+    b.innerHTML = (lang==='el'?s.titleEl:s.titleEn)+'<span class="cnt">'+s.items.length+'</span>';
+    b.addEventListener('click',()=>{
+      if(picked.has(s.id)) picked.delete(s.id); else picked.add(s.id);
+      buildChips(); updateSummary();
+    });
+    bar.appendChild(b);
+  });
+}
+function updateSummary(){
+  const n = SETS.filter(s=>picked.has(s.id)).reduce((a,s)=>a+s.items.length,0);
+  $('pickSummary').textContent = picked.size ? (n+' '+(lang==='el'?'θέσεις':'slots')) : t('pickOne');
+  $('startBtn').disabled = picked.size===0;
+}
+
+/* =====================  BOARD  ===================== */
+function buildBoard(){
+  const board = $('board'); board.innerHTML=''; slots=[];
+  const doShuffle = $('shuffleChk').checked;
+
+  SETS.filter(s=>picked.has(s.id)).forEach(s=>{
+    const wrap=document.createElement('div'); wrap.className='set panel';
+    const h=document.createElement('p'); h.className='set-title';
+    h.textContent = lang==='el'?s.titleEl:s.titleEn; wrap.appendChild(h);
+    const note=document.createElement('p'); note.className='set-note';
+    note.textContent = lang==='el'?s.noteEl:s.noteEn; wrap.appendChild(note);
+
+    const grid=document.createElement('div');
+    grid.className='slots'+(s.two?' two':'');
+    const items = doShuffle ? shuffle(s.items) : s.items;
+
+    items.forEach(it=>{
+      const slot=document.createElement('div'); slot.className='slot';
+      const lab=document.createElement('div'); lab.className='slot-label'; lab.textContent=it.label;
+      const drop=document.createElement('div'); drop.className='slot-drop';
+      const rec={setId:s.id,label:it.label,answer:it.answer,alias:it.alias||[],
+                 placed:null,slotEl:slot,dropEl:drop};
+
+      if(mode==='type'){
+        const inp=document.createElement('input');
+        inp.type='text'; inp.autocomplete='off'; inp.spellcheck=false;
+        inp.setAttribute('aria-label',it.label);
+        drop.appendChild(inp); rec.input=inp;
+      }else{
+        drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over');});
+        drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+        drop.addEventListener('drop',e=>{
+          e.preventDefault(); drop.classList.remove('over');
+          const w=document.querySelector('.word[data-wid="'+e.dataTransfer.getData('text/plain')+'"]');
+          if(w) placeWord(w,rec);
+        });
+        drop.addEventListener('click',()=>{ if(selectedWord) placeWord(selectedWord,rec); });
+      }
+      slot.appendChild(lab); slot.appendChild(drop); grid.appendChild(slot);
+      slots.push(rec);
+    });
+    wrap.appendChild(grid); board.appendChild(wrap);
+  });
+
+  buildBank();
+  $('dragHint').textContent = mode==='drag' ? t('dragHint') : t('typeHint');
+  $('bankPanel').classList.toggle('hidden', mode==='type' && false);
+  $('bank').classList.toggle('hidden', mode==='type');
+  updateRemaining();
+}
+
+function buildBank(){
+  const bank=$('bank'); bank.innerHTML=''; selectedWord=null;
+  if(mode==='type'){ updateRemaining(); return; }
+  const words = shuffle(slots.map((s,i)=>({txt:s.answer,i:i})));
+  words.forEach((w,idx)=>{
+    const el=document.createElement('div');
+    el.className='word'; el.textContent=w.txt; el.draggable=true;
+    el.dataset.wid='w'+idx; el.dataset.txt=w.txt;
+    el.addEventListener('dragstart',e=>{
+      e.dataTransfer.setData('text/plain',el.dataset.wid);
+      e.dataTransfer.effectAllowed='move';
+    });
+    el.addEventListener('click',()=>{
+      if(selectedWord===el){ el.classList.remove('sel'); selectedWord=null; return; }
+      if(selectedWord) selectedWord.classList.remove('sel');
+      selectedWord=el; el.classList.add('sel');
+    });
+    bank.appendChild(el);
+  });
+}
+
+function placeWord(wordEl, rec){
+  if(rec.placed) returnWord(rec);            // free the slot first
+  rec.placed = wordEl.dataset.txt;
+  wordEl.classList.add('used');
+  rec.wordEl = wordEl;
+  rec.dropEl.innerHTML='';
+  const chip=document.createElement('span');
+  chip.className='placed'; chip.textContent=rec.placed;
+  chip.title = lang==='el'?'Κλικ για αφαίρεση':'Click to remove';
+  chip.addEventListener('click',()=>returnWord(rec));
+  rec.dropEl.appendChild(chip);
+  if(selectedWord){ selectedWord.classList.remove('sel'); selectedWord=null; }
+  rec.slotEl.classList.remove('ok','bad');
+  updateRemaining();
+}
+function returnWord(rec){
+  if(!rec.placed) return;
+  if(rec.wordEl) rec.wordEl.classList.remove('used');
+  rec.placed=null; rec.wordEl=null; rec.dropEl.innerHTML='';
+  rec.slotEl.classList.remove('ok','bad');
+  updateRemaining();
+}
+function updateRemaining(){
+  if(mode==='type'){ $('remainCount').textContent=''; return; }
+  const left = slots.filter(s=>!s.placed).length;
+  $('remainCount').textContent = left+' '+t('remaining');
+}
+
+/* =====================  TIMER  ===================== */
+function startTimer(mins){
+  secsLeft = mins*60;
+  $('timerBox').classList.remove('hidden');
+  paintTimer();
+  timerId = setInterval(()=>{
+    secsLeft--; paintTimer();
+    if(secsLeft<=0){ clearInterval(timerId); timerId=null; checkAll(true); }
+  },1000);
+}
+function paintTimer(){
+  const m=Math.floor(secsLeft/60), s=secsLeft%60;
+  const box=$('timerBox');
+  box.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  box.classList.toggle('low', secsLeft<=30);
+}
+function stopTimer(){ if(timerId){clearInterval(timerId);timerId=null;} $('timerBox').classList.add('hidden'); }
+
+/* =====================  ANTI-CHEAT  ===================== */
+function acOnVisibility(){ if(document.hidden) acViolate('tab'); }
+function acOnBlur(){ acViolate('blur'); }
+function acOnFs(){ if(!document.fullscreenElement) acViolate('fs'); }
+function startAntiCheat(){
+  if(!acEnabled || acActive) return;
+  acActive=true; acReason=null;
+  document.addEventListener('visibilitychange', acOnVisibility);
+  window.addEventListener('blur', acOnBlur);
+  document.addEventListener('fullscreenchange', acOnFs);
+  if(document.documentElement.requestFullscreen){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }
+}
+function stopAntiCheat(){
+  if(!acActive) return;
+  acActive=false;
+  document.removeEventListener('visibilitychange', acOnVisibility);
+  window.removeEventListener('blur', acOnBlur);
+  document.removeEventListener('fullscreenchange', acOnFs);
+  if(document.fullscreenElement && document.exitFullscreen){ document.exitFullscreen().catch(()=>{}); }
+}
+function acViolate(reason){
+  if(!acActive) return;
+  acReason = reason;
+  checkAll(false, true);
+}
+function acReasonText(){
+  return acReason==='tab' ? t('cheatTab') : acReason==='blur' ? t('cheatBlur') : t('cheatFs');
+}
+
+/* =====================  HISTORY  ===================== */
+const RECAP_HISTORY_KEY = 'mesaionasRecapHistory';
+function safeGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function safeSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function loadHistory(){
+  try{ return JSON.parse(safeGet(RECAP_HISTORY_KEY) || '[]'); }catch(e){ return []; }
+}
+function recordRun(entry){
+  const arr = loadHistory();
+  arr.push(entry);
+  while(arr.length > 50) arr.shift();          // keep the last 50 runs
+  safeSet(RECAP_HISTORY_KEY, JSON.stringify(arr));
+  renderHistory();
+}
+function renderHistory(){
+  const list = document.getElementById('histList');
+  if(!list) return;
+  const arr = loadHistory().slice().sort((a,b)=>b.ts-a.ts);
+  if(!arr.length){
+    list.innerHTML = '<div style="color:var(--text-muted);font-size:.88rem">'+t('noHistory')+'</div>';
+    return;
+  }
+  const locale = lang==='el' ? 'el-GR' : 'en-US';
+  list.innerHTML = arr.map(e=>{
+    const when = new Date(e.ts).toLocaleString(locale);
+    const mode = e.mode==='type' ? t('modeType') : t('modeDrag');
+    const viol = e.violated ? ' viol' : '';
+    const flag = e.violated ? ' · '+t('cheatFlag') : '';
+    return '<div class="hist-row'+viol+'">'+
+      '<span><span class="when">'+when+'</span>'+
+      '<br><span class="what">'+e.setCount+' '+t('setsWord')+' · '+mode+flag+'</span></span>'+
+      '<span class="sc">'+e.correct+'/'+e.total+' · '+e.percent+'%</span></div>';
+  }).join('');
+}
+
+/* =====================  CHECK  ===================== */
+function checkAll(auto, violated){
+  let ok=0;
+  slots.forEach(rec=>{
+    const val = mode==='type' ? (rec.input?rec.input.value:'') : (rec.placed||'');
+    const good = matches(rec,val);
+    rec.slotEl.classList.toggle('ok',good);
+    rec.slotEl.classList.toggle('bad',!good);
+    const old=rec.dropEl.querySelector('.fix'); if(old) old.remove();
+    if(!good){
+      const f=document.createElement('small'); f.className='fix'; f.textContent='✓ '+rec.answer;
+      rec.dropEl.appendChild(f);
+    }
+    if(good) ok++;
+  });
+  stopTimer();
+  stopAntiCheat();
+  const pct = slots.length ? Math.round(ok/slots.length*100) : 0;
+  $('scoreNum').textContent = pct+'%';
+  $('scoreSub').textContent = (auto? t('timeUp')+' ' : '') + ok+' '+t('scoreSub')+' '+slots.length;
+
+  const vs = $('violationSlot');
+  if (vs) {
+    vs.innerHTML = violated
+      ? '<div class="violation"><b>'+t('cheatTitle')+'</b><br>'+acReasonText()+'</div>'
+      : '';
+  }
+  recordRun({ ts: Date.now(), correct: ok, total: slots.length, percent: pct,
+              setCount: picked.size, mode: mode, violated: !!violated });
+
+  $('resultView').classList.remove('hidden');
+  $('resultView').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* =====================  WIRING  ===================== */
+$('allBtn').addEventListener('click',()=>{picked=new Set(SETS.map(s=>s.id));buildChips();updateSummary();});
+$('noneBtn').addEventListener('click',()=>{picked=new Set();buildChips();updateSummary();});
+document.querySelectorAll('#modeSeg button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); mode=b.dataset.mode;
+    $('dragHint').textContent = mode==='drag' ? t('dragHint') : t('typeHint');
+  });
+});
+$('timerChk').addEventListener('change',e=>{
+  $('timerMins').disabled = !e.target.checked;
+  $('timerMinsWrap').style.opacity = e.target.checked ? '1' : '.45';
+});
+$('startBtn').addEventListener('click',()=>{
+  if(!picked.size) return;
+  buildBoard();
+  $('setupView').classList.add('hidden');
+  $('playView').classList.remove('hidden');
+  $('resultView').classList.add('hidden');
+  stopTimer();
+  acEnabled = $('antiCheatChk').checked;
+  acReason = null;
+  runStartedAt = Date.now();
+  if(acEnabled) startAntiCheat();
+  if($('timerChk').checked){
+    const m=Math.max(1,Math.min(90,parseInt($('timerMins').value)||5));
+    startTimer(m);
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+$('checkBtn').addEventListener('click',()=>checkAll(false));
+$('retryBtn').addEventListener('click',()=>{
+  slots.forEach(rec=>{
+    rec.slotEl.classList.remove('ok','bad');
+    const f=rec.dropEl.querySelector('.fix'); if(f) f.remove();
+    if(mode==='type'){ if(rec.input) rec.input.value=''; } else returnWord(rec);
+  });
+  $('resultView').classList.add('hidden');
+});
+$('backBtn').addEventListener('click',()=>{
+  stopTimer(); stopAntiCheat();
+  $('playView').classList.add('hidden');
+  $('resultView').classList.add('hidden');
+  $('setupView').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+$('againBtn').addEventListener('click',()=>{ $('retryBtn').click(); buildBank();
+  if($('timerChk').checked){ stopTimer();
+    startTimer(Math.max(1,Math.min(90,parseInt($('timerMins').value)||5))); }
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+$('reviewBtn').addEventListener('click',()=>{
+  $('board').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('langBtn').addEventListener('click',()=>{
+  lang = lang==='el'?'en':'el';
+  try{ localStorage.setItem('lang',lang); }catch(e){}
+  applyI18n();
+  renderHistory();
+  if(!$('playView').classList.contains('hidden')) buildBoard();
+});
+
+$('clearHistBtn').addEventListener('click',()=>{
+  try{ localStorage.removeItem(RECAP_HISTORY_KEY); }catch(e){}
+  renderHistory();
+});
+
+applyI18n();
+buildChips();
+updateSummary();
+renderHistory();
+</script>
+</body>
+</html>

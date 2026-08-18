@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Μεσαιωνική Ιστορία | Αλέξανδρος Γιαννάκης</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: #1e293b;
+      --card-hover: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.15);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.15);
+      --error: #ef4444;
+      --error-glow: rgba(239, 68, 68, 0.15);
+      --border-color: #475569;
+      --font-outfit: 'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-inter);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link.active {
+      color: var(--primary);
+      background-color: var(--primary-glow);
+    }
+
+    .page-title {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8 0%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Card styling with glassmorphism */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+    }
+
+    /* Dashboard styling */
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 600px) {
+      .quiz-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .quiz-grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+    }
+
+    .quiz-card {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .quiz-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.1), 0 10px 10px -5px rgba(56, 189, 248, 0.04);
+      background-color: var(--card-hover);
+      border-color: var(--primary);
+    }
+
+    .unit-tag {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .quiz-card-title {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text-main);
+    }
+
+    .quiz-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Active Quiz Screen */
+    .hidden {
+      display: none !important;
+    }
+
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8 0%, #10b981 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .question-title {
+      font-family: var(--font-outfit);
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 25px;
+      color: var(--text-main);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px 20px;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-marker {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      margin-top: 1px;
+    }
+
+    .option-btn:hover:not(:disabled) .option-marker {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* State Styles for Options */
+    .option-btn.selected-correct {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-correct .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect {
+      background-color: var(--error-glow);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.selected-incorrect .option-marker {
+      background-color: var(--error);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.correct-reveal {
+      background-color: var(--success-glow);
+      border-color: var(--success);
+    }
+
+    .option-btn.correct-reveal .option-marker {
+      background-color: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .action-row {
+      margin-top: 30px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #000;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #7dd3fc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-main);
+    }
+
+    .order-option-btn {
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .order-option-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+    }
+    #randomOrderBtn:hover {
+      background-color: var(--success-glow) !important;
+      border-color: var(--success) !important;
+      color: white !important;
+    }
+    #originalOrderBtn:hover {
+      background-color: var(--primary-glow) !important;
+      border-color: var(--primary) !important;
+      color: white !important;
+    }
+
+    /* Unit Selection for General Test */
+    .unit-selection-item {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .unit-selection-item:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+      border-color: var(--primary);
+      transform: translateX(6px);
+    }
+    .unit-selection-item.selected {
+      background-color: var(--primary-glow);
+      border-color: var(--primary);
+    }
+    .checkbox-indicator {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: transparent;
+      background-color: rgba(0,0,0,0.3);
+    }
+    .unit-selection-item.selected .checkbox-indicator {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #0b0f19;
+    }
+
+    /* Shake animation for error state */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* Timer Pulsing Animation */
+    @keyframes timerPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+    .timer-warning {
+      color: var(--error) !important;
+      animation: timerPulse 1s infinite;
+    }
+
+    .results-quiz-title {
+      font-family: var(--font-outfit);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    /* Circular Score Summary Styling */
+    .results-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .score-circle-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 15px 0;
+    }
+
+    .score-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .score-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 12;
+    }
+
+    .score-fill {
+      fill: none;
+      stroke: var(--success);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+
+    .score-text-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .score-number {
+      font-family: var(--font-outfit);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .result-feedback-title {
+      font-family: var(--font-outfit);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .result-feedback-text {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 500px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Review Area */
+    .review-section {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .review-title-text {
+      font-family: var(--font-outfit);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .review-item {
+      background-color: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .review-item-q {
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .review-opt {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .review-opt-correct {
+      background-color: rgba(16, 185, 129, 0.08);
+      border: 1px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .review-opt-incorrect {
+      background-color: rgba(239, 68, 68, 0.08);
+      border: 1px solid var(--error);
+      color: #fca5a5;
+    }
+
+    .review-opt-neutral {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .review-opt-marker {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-top: 1px;
+    }
+
+    /* Custom audio control overlay */
+    .sound-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+
+    .sound-toggle:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .sound-toggle.muted {
+      opacity: 0.6;
+    }
+
+    /* Print styling to save beautifully as PDF */
+    @media print {
+      @page {
+        margin: 15mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      header, .nav-bar, .sound-toggle, .button-group, #dashboardSection, #quizSection, #orderSection, #testConfigSection {
+        display: none !important;
+      }
+      .results-quiz-title {
+        color: #000000 !important;
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+      }
+      .score-label {
+        color: #475569 !important;
+      }
+      .results-card {
+        background-color: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+      .card {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      /* Ensure SVG scores look good in print */
+      .score-bg {
+        stroke: #f1f5f9 !important;
+      }
+      .score-fill {
+        stroke: #10b981 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .score-number {
+        color: #000000 !important;
+      }
+      .result-feedback-title {
+        color: #000000 !important;
+      }
+      .result-feedback-text {
+        color: #475569 !important;
+      }
+      .review-title-text {
+        color: #000000 !important;
+        border-bottom-color: #cbd5e1 !important;
+      }
+      .review-item {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .review-item-q {
+        color: #000000 !important;
+      }
+      /* Hide individual report buttons in print */
+      .review-item button {
+        display: none !important;
+      }
+      .review-opt {
+        border-width: 1px !important;
+        border-style: solid !important;
+      }
+      .review-opt-correct {
+        background-color: #f0fdf4 !important;
+        border-color: #10b981 !important;
+        color: #14532d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-incorrect {
+        background-color: #fef2f2 !important;
+        border-color: #ef4444 !important;
+        color: #7f1d1d !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .review-opt-neutral {
+        background-color: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #475569 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    body.light-mode {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --card-hover: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.1);
+      --success: #059669;
+      --success-glow: rgba(5, 150, 105, 0.1);
+      --error: #dc2626;
+      --error-glow: rgba(220, 38, 38, 0.1);
+      --border-color: #cbd5e1;
+    }
+
+    /* Floating controls */
+    .floating-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .control-btn:hover {
+      color: var(--text-main);
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+  </style>
+
+  <style>
+    /* Question image - shown when a question has one */
+    .question-image-container {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 14px 0 18px;
+    }
+    .question-image-container img {
+      max-width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: rgba(0, 0, 0, 0.12);
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .question-image-container img { max-height: 220px; }
+    }
+
+    .text-answer-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .text-answer-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .text-answer-input {
+      flex: 1; min-width: 200px; background: rgba(0,0,0,0.25); color: var(--text-main);
+      border: 1px solid var(--border-color); border-radius: 10px;
+      padding: 12px 14px; font-family: inherit; font-size: 1rem; outline: none;
+    }
+    .text-answer-input:focus { border-color: var(--primary); }
+    .text-answer-input.ok { border-color: var(--success); }
+    .text-answer-input.bad { border-color: var(--danger); }
+    .text-expected {
+      font-size: 0.9rem; color: var(--success); margin: 0;
+    }
+    /* Explanation shown after the question is answered */
+    .explanation-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--primary);
+      background: rgba(56, 189, 248, 0.07);
+      animation: fadeIn 0.3s ease;
+    }
+    .explanation-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .explanation-text {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    /* Glossary highlight in results review */
+    .glossary-term {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+
+</head>
+<body>
+  <script>
+    (function() {
+      let theme = 'dark'; try { theme = localStorage.getItem('theme') || 'dark'; } catch (e) {}
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+      }
+    })();
+  </script>
+
+  <!-- Floating Control Buttons -->
+  <div class="floating-controls">
+    <!-- Sound Toggle -->
+    <button id="soundToggle" class="control-btn muted" title="Ενεργοποίηση/Απενεργοποίηση Ήχου / Toggle Sound">
+      <svg id="soundOnIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+      <svg id="soundMutedIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+    </button>
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="control-btn" title="Εναλλαγή Θέματος / Toggle Theme">
+      <svg id="themeSunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="themeMoonIcon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    <!-- Language Toggle -->
+    <button id="langToggle" class="control-btn" title="Αλλαγή Γλώσσας / Switch Language">EN</button>
+  </div>
+
+  <header>
+    <div class="nav-bar">
+      <a href="index.html" class="nav-link" data-translate="navHome">Αρχική</a>
+      <a href="quizess.html" class="nav-link active" data-translate="navQuizzes">Κουίζ</a>
+    </div>
+    <h1 class="page-title" data-translate="courseTitle">Μεσαιωνική Ιστορία — Τέχνη και Αρχιτεκτονική</h1>
+    <a href="quizess.html" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-top: -5px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" data-translate="navBackToHub">← Επιστροφή στις Θεματικές Ενότητες</a>
+  </header>
+
+  <main class="container">
+    
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection" class="quiz-grid">
+      <!-- Cards will be populated by JS -->
+    </section>
+
+    <!-- ORDER SELECTION SECTION -->
+    <section id="orderSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 550px; margin: 30px auto; align-items: center;">
+      <h2 id="orderQuizTitle" class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;">Όνομα Κουίζ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 420px; margin-bottom: 10px;" data-translate="orderDesc">
+        Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+        <button id="originalOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          <span data-translate="btnOriginal"><span data-translate="btnOriginal">Αρχική Σειρά (Όπως στο έγγραφο)</span></span>
+        </button>
+        <button id="randomOrderBtn" class="btn btn-outline order-option-btn" style="padding: 18px; justify-content: center; font-size: 1.05rem; display: flex; align-items: center; gap: 12px; border-radius: 12px; border-color: var(--success); color: var(--success); width: 100%;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+          <span data-translate="btnRandom"><span data-translate="btnRandom">Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)</span></span>
+        </button>
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="shuffleOptionsUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblShuffleOptions">Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
+      <!-- Countdown Timer Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="timerEnableUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+          <span data-translate="lblTimer">Ενεργοποίηση Χρονομέτρου</span>
+        </label>
+        <div id="timerDurationUnitContainer" style="display: none; align-items: center; gap: 6px;">
+          <input type="number" id="timerDurationUnitInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
+          <span data-translate="lblMinutes">λεπτά</span>
+        </div>
+      </div>
+
+      <!-- Anti-Cheat Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="antiCheatUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
+
+
+      <!-- Glossary Highlight Option -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main);">
+        <input type="checkbox" id="glossaryUnitCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
+      </label>
+
+      <!-- Adjustable Size Option -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap;">
+        <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="quizQuestionCountInput" min="1" value="10" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="quizQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
+      
+      <button id="orderBackBtn" class="btn btn-outline" style="margin-top: 15px; border-color: var(--border-color); color: var(--text-muted); padding: 10px 20px;" data-translate="btnBack">Επιστροφή</button>
+    </section>
+
+    <!-- TEST CONFIGURATION SECTION -->
+    <section id="testConfigSection" class="card hidden" style="text-align: center; display: flex; flex-direction: column; gap: 20px; max-width: 650px; margin: 30px auto; align-items: center;">
+      <h2 class="quiz-card-title" style="font-size: 1.6rem; line-height: 1.4; margin-bottom: 5px;" data-translate="configTitle">Παραμετροποίηση Γενικού Τεστ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; max-width: 500px; margin-bottom: 10px;" data-translate="configDesc">
+        Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τυχαίο τεστ. Θα επιλεγούν 30 τυχαίες ερωτήσεις από τις επιλεγμένες ενότητες.
+      </p>
+      
+      <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 5px;">
+        <button id="toggleAllUnitsBtn" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem; border-color: var(--border-color); color: var(--primary);" data-translate="toggleAllUnitsSelect">
+          Επιλογή Όλων
+        </button>
+      </div>
+
+      <div id="unitsSelectionList" style="display: flex; flex-direction: column; gap: 10px; width: 100%; text-align: left;">
+        <!-- Unit items will be populated by JS -->
+      </div>
+      
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 10px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="shuffleOptionsGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblShuffleOptions">Ανακάτεμα επιλογών απάντησης (A, B, C, D)</span>
+      </label>
+
+      <!-- Countdown Timer Option General -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+          <input type="checkbox" id="timerEnableGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+          <span data-translate="lblTimer">Ενεργοποίηση Χρονομέτρου</span>
+        </label>
+        <div id="timerDurationGeneralContainer" style="display: none; align-items: center; gap: 6px;">
+          <input type="number" id="timerDurationGeneralInput" value="30" min="1" max="180" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 8px; border-radius: 6px; width: 60px; text-align: center; font-weight: 600;">
+          <span data-translate="lblMinutes">λεπτά</span>
+        </div>
+      </div>
+
+      <!-- Anti-Cheat Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="antiCheatGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblAntiCheat">Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης</span>
+      </label>
+
+
+      <!-- Glossary Highlight Option General -->
+      <label class="toggle-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); align-self: flex-start;">
+        <input type="checkbox" id="glossaryGeneralCheckbox" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+        <span data-translate="lblGlossary">Χρωματισμός όρων-κλειδιών στα αποτελέσματα</span>
+      </label>
+
+      <!-- Adjustable Size Option General -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; font-size: 0.95rem; color: var(--text-main); flex-wrap: wrap; align-self: flex-start;">
+        <span style="font-weight: 500;" data-translate="lblQuestionsCount">Αριθμός Ερωτήσεων:</span>
+        <input type="number" id="generalQuestionCountInput" min="1" value="30" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-weight: 600; outline: none; width: 80px; text-align: center;">
+        <span id="generalQuestionCountMaxLabel" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+      </div>
+
+      <div style="display: flex; gap: 15px; margin-top: 15px; width: 100%; justify-content: center; flex-wrap: wrap;">
+        <button id="startConfiguredTestBtn" class="btn btn-primary" style="padding: 14px 28px; font-size: 1rem;" disabled data-translate="startGeneralTestBtn">
+          Έναρξη Τεστ
+        </button>
+        <button id="configBackBtn" class="btn btn-outline" style="padding: 14px 28px; font-size: 1rem; border-color: var(--border-color); color: var(--text-muted);" data-translate="btnBack">Επιστροφή</button>
+      </div>
+    </section>
+
+    <!-- ACTIVE QUIZ SECTION -->
+    <section id="quizSection" class="card hidden">
+      <div class="progress-section">
+        <div class="progress-header">
+          <span id="quizUnitText">ΕΝΟΤΗΤΑ 1</span>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="quizTimerText" class="hidden" style="font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 5px; font-family: monospace; font-size: 1rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span id="timerCountdown">30:00</span>
+            </span>
+            <span id="progressText">Ερώτηση 1 από 10</span>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+      
+      <div id="questionContainer">
+        <h2 id="questionTitle" class="question-title">Φόρτωση ερώτησης...</h2>
+        <div id="questionImageContainer" class="question-image-container" aria-hidden="true"></div>
+        <div id="optionsList" class="options-list">
+          <!-- Options will be populated by JS -->
+        </div>
+        <div id="explanationBox" class="explanation-box hidden">
+          <div class="explanation-title">Επεξήγηση</div>
+          <p id="explanationText" class="explanation-text"></p>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button id="nextBtn" class="btn btn-primary" disabled>
+          <span>Επόμενο</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section id="resultsSection" class="card results-card hidden">
+      <h1 id="resultsQuizTitle" class="results-quiz-title"></h1>
+      <div class="score-circle-wrapper">
+        <svg class="score-svg" viewBox="0 0 160 160">
+          <circle class="score-bg" cx="80" cy="80" r="70"></circle>
+          <circle id="scoreFill" class="score-fill" cx="80" cy="80" r="70"></circle>
+        </svg>
+        <div class="score-text-center">
+          <div id="scoreNumber" class="score-number">0%</div>
+          <div class="score-label" data-translate="scoreLabel">Σκορ</div>
+        </div>
+      </div>
+
+      <h2 id="resultFeedbackTitle" class="result-feedback-title">Συγχαρητήρια!</h2>
+      <p id="resultFeedbackText" class="result-feedback-text">Ολοκληρώσατε το κουίζ. Δείτε τις απαντήσεις σας παρακάτω.</p>
+      <p id="resultTimeText" class="result-feedback-text hidden" style="font-weight:600; color: var(--text-muted); margin-top:2px;"></p>
+
+      <div class="button-group">
+        <button id="restartBtn" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          <span data-translate="restartBtnText">Επανάληψη</span>
+        </button>
+        <button id="backBtn" class="btn btn-outline" data-translate="backBtnText">Επιστροφή στα Κουίζ</button>
+        <button id="pdfBtn" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span data-translate="pdfBtnText">Αποθήκευση ως PDF</span>
+        </button>
+        <button id="generalReportBtn" class="btn btn-outline" style="border-color: var(--error); color: #fca5a5;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span data-translate="generalReportBtnText">Αναφορά / Σχόλια</span>
+        </button>
+      </div>
+
+      <!-- Review Section -->
+      <div class="review-section">
+        <div id="historyBlock" style="margin-top: 10px; margin-bottom: 30px; width: 100%; text-align: left;">
+          <h3 id="historyTitle" class="review-title-text" data-translate="historyTitle" style="margin-bottom: 12px;">Ιστορικό για αυτό το κουίζ</h3>
+          <div id="historyList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+        <h3 class="review-title-text" data-translate="resultsTitle">Αναλυτικά Αποτελέσματα</h3>
+        <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 15px; text-align: left; width: 100%;">
+          <!-- Review items populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Embedded Quiz Data & Core Script -->
+  <script>
+    const QUIZZES = [{"title": "Ενότητα 1: Χρονολόγηση του Μεσαίωνα", "filename": "Μεσαιωνική Ιστορία", "questions": [{"text": "Ποιοι διαμόρφωσαν την έννοια του «Μεσαίωνα» και πότε;", "text_en": "Who developed the concept of the 'Middle Ages' and when?", "options": ["Οι Ρωμαίοι ιστορικοί του 5ου αιώνα", "Οι Ιταλοί ουμανιστές τον 14ο και 15ο αιώνα", "Οι Βυζαντινοί χρονογράφοι", "Οι Γερμανοί ιστορικοί του 19ου αιώνα"], "options_en": ["Roman historians of the 5th century", "Italian humanists during the 14th and 15th centuries", "Byzantine chroniclers", "German historians of the 19th century"], "correct_idx": 1, "explanation": "Οι Ιταλοί ουμανιστές επινόησαν την έννοια μιας «μέσης» εποχής ανάμεσα στην πτώση της Ρωμαϊκής Αυτοκρατορίας και τη δική τους εποχή, την Αναγέννηση."}, {"text": "Ποια χρονική έκταση αποδίδεται παραδοσιακά στη μεσαιωνική περίοδο;", "text_en": "What time span is traditionally attributed to the medieval period?", "options": ["Από το 300 έως το 1200", "Από το 500 έως το 1500", "Από το 400 έως το 1000", "Από το 800 έως το 1600"], "options_en": ["From 300 to 1200", "From 500 to 1500", "From 400 to 1000", "From 800 to 1600"], "correct_idx": 1, "explanation": "Ο Μεσαίωνας τοποθετείται παραδοσιακά στα χίλια χρόνια από το 500 έως το 1500."}, {"text": "Πώς έβλεπαν οι λόγιοι της Αναγέννησης τον Μεσαίωνα;", "text_en": "How did Renaissance scholars view the Middle Ages?", "options": ["Ως λαμπρή περίοδο δημιουργίας", "Ως ένα σκοτεινό «μεσοδιάστημα» που τους χώριζε από το ένδοξο κλασικό παρελθόν", "Ως συνέχεια της Ρωμαϊκής Αυτοκρατορίας", "Ως περίοδο θρησκευτικής ανοχής"], "options_en": ["As a brilliant period of creation", "As a dark 'middle' age separating them from a glorious Classical past", "As a continuation of the Roman Empire", "As a period of religious tolerance"], "correct_idx": 1, "explanation": "Σήμερα αντίθετα οι αιώνες αυτοί φαίνονται ως λαμπρή περίοδος, από την οποία αναδύθηκε ο σύγχρονος κόσμος με τα έθνη, τα φιλοσοφικά και πολιτικά συστήματα και τις μορφές τέχνης και αρχιτεκτονικής του."}, {"text": "Τι ονομάζεται «Σκοτεινοί Αιώνες» (Dark Ages);", "text_en": "What is referred to as the 'Dark Ages'?", "options": ["Ολόκληρος ο Μεσαίωνας, 500-1500", "Οι εξακόσιοι αιώνες μεταξύ 400 και 1000 μ.Χ., δηλαδή το πρώτο μέρος του Μεσαίωνα", "Η περίοδος 1300-1500", "Μόνο ο 14ος αιώνας"], "options_en": ["The whole Middle Ages, 500-1500", "The six hundred years between AD 400 and AD 1000, the first part of the Middle Ages", "The period 1300-1500", "Only the 14th century"], "correct_idx": 1, "explanation": "Παλαιότερα οι δύο όροι ταυτίζονταν· σήμερα οι «Σκοτεινοί Αιώνες» θεωρούνται μόνο το πρώτο μέρος του Μεσαίωνα, όταν η οικονομική και πνευματική δραστηριότητα υποχώρησε."}, {"text": "Ποια χρονική περίοδος αντιστοιχεί στον Ύστερο Μεσαίωνα (High Middle Ages);", "text_en": "Which period corresponds to the High Middle Ages?", "options": ["500-800", "800-1000", "1000-1300", "1300-1500"], "options_en": ["500-800", "800-1000", "1000-1300", "1300-1500"], "correct_idx": 2, "explanation": "Στα χρόνια 1000-1300 ο πληθυσμός αυξήθηκε, η κοινωνία αστικοποιήθηκε και εμφανίστηκαν νέα φιλοσοφικά ρεύματα και εκπαιδευτικά ιδρύματα. Ορόσημα είναι η Α΄ Σταυροφορία και η νορμανδική κατάκτηση της Αγγλίας."}, {"text": "Ποιο γεγονός του 1347 σημάδεψε τον Όψιμο Μεσαίωνα;", "text_en": "Which event of 1347 marked the Late Middle Ages?", "options": ["Η άλωση της Κωνσταντινούπολης", "Ο Μαύρος Θάνατος, που σκότωσε το μισό του ευρωπαϊκού πληθυσμού σε τέσσερα χρόνια", "Η έναρξη του Μεγάλου Σχίσματος", "Το ταξίδι του Κολόμβου"], "options_en": ["The fall of Constantinople", "The Black Death, which killed half the European population in four years", "The start of the Great Schism", "Columbus's voyage"], "correct_idx": 1, "explanation": "Το σοκ της απώλειας επιδεινώθηκε από τον πόλεμο, ιδίως τον Εκατονταετή Πόλεμο."}, {"text": "Ποια είναι η πιο ανθεκτική σχηματοποίηση της ευρωπαϊκής ιστορίας;", "text_en": "What is the most enduring periodisation scheme of European history?", "options": ["Αρχαία, μεσαιωνική, νεότερη", "Παγανιστική, χριστιανική, κοσμική", "Αγροτική, αστική, βιομηχανική", "Ανατολική, δυτική, βόρεια"], "options_en": ["Ancient, medieval, modern", "Pagan, Christian, secular", "Agrarian, urban, industrial", "Eastern, western, northern"], "correct_idx": 0, "explanation": "Κάθε περιοδολόγηση έχει στοιχείο ασυνέπειας, αλλά η τριμερής διαίρεση παρέμεινε η πιο ανθεκτική. Αργότερα οι ιστορικοί διέκριναν περαιτέρω σε πρώιμο, ύστερο και όψιμο Μεσαίωνα."}]}, {"title": "Ενότητα 2: Βασιλείς, Βίκινγκ και Νορμανδοί", "filename": "Μεσαιωνική Ιστορία", "questions": [{"text": "Ποιος αυτοκράτορας διαίρεσε πρώτος τη Ρωμαϊκή Αυτοκρατορία σε Ανατολικό και Δυτικό τμήμα;", "text_en": "Which emperor first divided the Roman Empire into Eastern and Western segments?", "options": ["Κωνσταντίνος", "Διοκλητιανός", "Θεοδόσιος", "Ονώριος"], "options_en": ["Constantine", "Diocletian", "Theodosius", "Honorius"], "correct_idx": 1, "explanation": "Ο Διοκλητιανός διαίρεσε την αυτοκρατορία σε δύο τμήματα, επιδιώκοντας σταθερότητα στον τεράστιο ρωμαϊκό κόσμο."}, {"text": "Ποιο γεγονός του 476 θεωρείται το τέλος της Δυτικής Ρωμαϊκής Αυτοκρατορίας;", "text_en": "Which event of 476 is considered the end of the Western Roman Empire?", "options": ["Η λεηλασία της Ρώμης από τον Αλάριχο", "Ο θάνατος του τελευταίου αυτοκράτορα Ρωμύλου Αυγουστύλου και η ανακήρυξη του Οδόακρου σε βασιλιά", "Η επίθεση των Βανδάλων", "Η αποχώρηση του στρατού από τη Βρετανία"], "options_en": ["Alaric's sack of Rome", "The death of the last emperor Romulus Augustulus and the Germanic Odoacer being declared king", "The Vandal attack", "The withdrawal of the army from Britain"], "correct_idx": 1, "explanation": "Το 410 ο Αλάριχος των Βησιγότθων λεηλάτησε τη Ρώμη και το 455 οι Βάνδαλοι απείλησαν την πόλη· το 476 όμως σηματοδοτεί το τυπικό τέλος."}, {"text": "Τι συνέβη το 410 στη Βρετανία;", "text_en": "What happened in Britain in 410?", "options": ["Έφτασαν οι πρώτοι Βίκινγκ", "Ο αυτοκράτορας Ονώριος απέσυρε τον ρωμαϊκό στρατό, αφήνοντας τον ντόπιο πληθυσμό να αμυνθεί μόνος", "Στέφθηκε ο πρώτος Άγγλος βασιλιάς", "Έγινε η μάχη του Χέιστινγκς"], "options_en": ["The first Vikings arrived", "Emperor Honorius pulled the Roman army out, leaving the indigenous population to defend themselves", "The first English king was crowned", "The Battle of Hastings took place"], "correct_idx": 1, "explanation": "Στα μέσα του 5ου αιώνα οι βασιλείς της ανατολικής Αγγλίας κάλεσαν Σάξονες μισθοφόρους· μαζί με τους Άγγλους από τη βορειοανατολική Γερμανία αποτέλεσαν τους Αγγλοσάξονες."}, {"text": "Ποια ήταν η πρώτη επίθεση των Βίκινγκ και πότε;", "text_en": "What was the first Viking attack and when?", "options": ["Η επιδρομή στο μοναστήρι του Lindisfarne το 793", "Η άλωση του Λονδίνου το 850", "Η μάχη του Χέιστινγκς το 1066", "Η κατάκτηση της Νορμανδίας το 911"], "options_en": ["The raid on the island monastery of Lindisfarne in 793", "The sack of London in 850", "The Battle of Hastings in 1066", "The conquest of Normandy in 911"], "correct_idx": 0, "explanation": "Οι Βίκινγκ ήταν νομάδες πολεμιστές από τη Σκανδιναβία. Στη δεκαετία του 860 ο «Μεγάλος Στρατός των Ειδωλολατρών» υπονόμευσε σοβαρά τα αγγλοσαξονικά βασίλεια."}, {"text": "Ποιος βασιλιάς δημιούργησε την «Αυτοκρατορία της Βόρειας Θάλασσας»;", "text_en": "Which king created the 'North Sea Empire'?", "options": ["Ο Άλφρεντ ο Μέγας", "Ο Άθελσταν", "Ο Κνούτος (Cnut) ο Μέγας", "Ο Οφφα"], "options_en": ["Alfred the Great", "Athelstan", "Cnut the Great", "Offa"], "correct_idx": 2, "explanation": "Ο Κνούτος έγινε ο ισχυρότερος ηγεμόνας της Δυτικής Ευρώπης ως βασιλιάς των τριών ενωμένων βασιλείων: Αγγλίας, Δανίας και Νορβηγίας."}, {"text": "Τι σηματοδοτεί η μάχη του Χέιστινγκς το 1066;", "text_en": "What does the Battle of Hastings in 1066 signify?", "options": ["Την αρχή της αγγλοσαξονικής κυριαρχίας", "Το τέλος της αγγλοσαξονικής Αγγλίας, με την πτώση του Χάρολντ Β΄ και τη νίκη του Γουλιέλμου της Νορμανδίας", "Τη νίκη των Βίκινγκ", "Την έναρξη του Εκατονταετούς Πολέμου"], "options_en": ["The beginning of Anglo-Saxon rule", "The end of Anglo-Saxon England, with Harold II falling and William of Normandy victorious", "A Viking victory", "The start of the Hundred Years' War"], "correct_idx": 1, "explanation": "Η κατάκτηση τερμάτισε πάνω από 400 χρόνια αγγλοσαξονικής κυριαρχίας. Η παλιά αριστοκρατία εξαλείφθηκε και οι γαίες δόθηκαν σε Νορμανδούς, ενώ μια γαλλόφωνη αριστοκρατία κυβέρνησε την Αγγλία για αιώνες."}, {"text": "Πόσο διήρκεσε ο Εκατονταετής Πόλεμος και σε πόσες περιόδους χωρίζεται;", "text_en": "How long did the Hundred Years' War last and into how many periods is it divided?", "options": ["1337-1453, σε τέσσερις περιόδους", "1300-1400, σε δύο περιόδους", "1350-1450, σε τρεις περιόδους", "1337-1400, σε πέντε περιόδους"], "options_en": ["1337-1453, four periods", "1300-1400, two periods", "1350-1450, three periods", "1337-1400, five periods"], "correct_idx": 0, "explanation": "Οι τέσσερις περίοδοι: Εδουαρδιανός Πόλεμος (1337-1360), Καρολίνειος (1369-1389), Λανκαστριανός (1415-1429) και η περίοδος ανάκαμψης της Γαλλίας μετά την Ιωάννα της Λωραίνης (1429 κ.ε.). Περιλάμβανε και περιόδους ειρήνης συνολικά 35 ετών."}, {"text": "Ποιο ήταν το τέλος της Ιωάννας της Λωραίνης;", "text_en": "What was the fate of Joan of Arc?", "options": ["Πέθανε στη μάχη το 1429", "Συνελήφθη από τους Βουργουνδούς το 1430 και κάηκε στην πυρά στη Ρουέν το 1431", "Έγινε βασίλισσα της Γαλλίας", "Εξορίστηκε στην Αγγλία"], "options_en": ["She died in battle in 1429", "She was captured by Burgundian troops in 1430 and burned at the stake in Rouen in 1431", "She became queen of France", "She was exiled to England"], "correct_idx": 1, "explanation": "Έγινε συν-αρχιστράτηγος του γαλλικού στρατού το 1429 και οι νίκες της έφεραν τους Γάλλους στην επίθεση. Το τελικό τέλος του πολέμου ήρθε το 1453."}]}, {"title": "Ενότητα 3: Η Βυζαντινή Αυτοκρατορία", "filename": "Μεσαιωνική Ιστορία", "questions": [{"text": "Πότε ιδρύθηκε η Κωνσταντινούπολη και πόσο διήρκεσε η Βυζαντινή Αυτοκρατορία;", "text_en": "When was Constantinople founded and how long did the Byzantine Empire last?", "options": ["Το 313, για 1000 χρόνια", "Το 330, για 1.123 χρόνια, μέχρι το 1453", "Το 395, για 900 χρόνια", "Το 476, για 800 χρόνια"], "options_en": ["313, for 1000 years", "330, for 1,123 years, until 1453", "395, for 900 years", "476, for 800 years"], "correct_idx": 1, "explanation": "Η πόλη εγκαινιάστηκε το 330 στη θέση της αρχαίας Βυζαντίου και ονομάστηκε εξαρχής «Νέα Ρώμη». Η αυτοκρατορία επιβίωσε σχεδόν 1000 χρόνια περισσότερο από το δυτικό μισό."}, {"text": "Ποια ήταν η επίσημη γλώσσα και η πολιτισμική βάση της Βυζαντινής Αυτοκρατορίας;", "text_en": "What was the official language and cultural basis of the Byzantine Empire?", "options": ["Τα λατινικά, με ρωμαϊκή βάση", "Τα αρχαία ελληνικά, με ελληνική πολιτισμική βάση", "Τα αραβικά", "Τα σλαβικά"], "options_en": ["Latin, with a Roman basis", "Ancient Greek, with a Greek cultural basis", "Arabic", "Slavic"], "correct_idx": 1, "explanation": "Η τέχνη και ο πολιτισμός επηρεάστηκαν βαθιά από τους κλασικούς Έλληνες. Ο Πατριάρχης Κωνσταντινουπόλεως ήταν ουσιαστικά ο «Πάπας της Ανατολής», αλλά υποτασσόταν στον αυτοκράτορα."}, {"text": "Ποια ήταν τα κύρια επιτεύγματα του Ιουστινιανού;", "text_en": "What were Justinian's main accomplishments?", "options": ["Η ίδρυση της Κωνσταντινούπολης", "Η ανακωδικοποίηση του ρωμαϊκού δικαίου και η ανοικοδόμηση της Αγίας Σοφίας", "Η νίκη επί των Οθωμανών", "Η μεταφορά της πρωτεύουσας στη Ρώμη"], "options_en": ["Founding Constantinople", "The recodification of Roman law and the construction of the Hagia Sophia", "Victory over the Ottomans", "Moving the capital to Rome"], "correct_idx": 1, "explanation": "Ο Ιουστινιάνειος Κώδικας, ο Πανδέκτης και οι Εισηγήσεις έγιναν η βάση κάθε μεταγενέστερου ρωμαϊκού δικαίου, τόσο στο Βυζάντιο όσο και στη μεσαιωνική Δύση."}, {"text": "Ποιος στρατηγός κατέκτησε τη βανδαλική Βόρεια Αφρική για τον Ιουστινιανό;", "text_en": "Which general conquered Vandal North Africa for Justinian?", "options": ["Ο Ηράκλειος", "Ο Βελισάριος", "Ο Ρωμανός", "Ο Αλέξιος"], "options_en": ["Heraclius", "Belisarius", "Romanus", "Alexius"], "correct_idx": 1, "explanation": "Ο Βελισάριος κατέκτησε γρήγορα τη Βόρεια Αφρική το 533-534. Η κατάκτηση της Ιταλίας από το 535 όμως ήταν μακρύς και αιματηρός αγώνας που εξάντλησε τους πόρους της αυτοκρατορίας."}, {"text": "Τι συνέβη το 1071 και ποια ήταν η συνέπεια;", "text_en": "What happened in 1071 and what was the consequence?", "options": ["Οι Βυζαντινοί νίκησαν τους Σελτζούκους", "Ο Ρωμανός ηττήθηκε από τους Σελτζούκους και οι Βυζαντινοί έχασαν την κεντρική Ανατολία", "Έπεσε η Κωνσταντινούπολη", "Ξεκίνησε η Δ΄ Σταυροφορία"], "options_en": ["The Byzantines defeated the Seljuks", "Romanus was defeated by the Seljuks and the Byzantines lost central Anatolia", "Constantinople fell", "The Fourth Crusade began"], "correct_idx": 1, "explanation": "Οι Σελτζούκοι είχαν ήδη καταλάβει την Αρμενία το 1067. Η αδυναμία του Βυζαντίου οδήγησε τον αυτοκράτορα Αλέξιο να ζητήσει βοήθεια από τον Πάπα Ουρβανό Β΄, ο οποίος κήρυξε την Α΄ Σταυροφορία."}, {"text": "Ποιο ήταν το αποτέλεσμα της Δ΄ Σταυροφορίας για την Κωνσταντινούπολη;", "text_en": "What was the outcome of the Fourth Crusade for Constantinople?", "options": ["Η πόλη ενισχύθηκε", "Οι Σταυροφόροι και οι Βενετοί κατέλαβαν, λεηλάτησαν και έκαψαν την πόλη, καταστρέφοντας το κεντρικό κράτος", "Οι Σταυροφόροι επέστρεψαν τα εδάφη", "Η πόλη παραδόθηκε στους Οθωμανούς"], "options_en": ["The city was strengthened", "The Crusaders and Venetians took, sacked and burned the city, demolishing the central government", "The Crusaders returned the territories", "The city was handed to the Ottomans"], "correct_idx": 1, "explanation": "Το κεντρικό κράτος που κρατούσε ενωμένη την αυτοκρατορία για σχεδόν χίλια χρόνια καταστράφηκε. Οι Σταυροφόροι έστησαν δικό τους αυτοκράτορα, τον Βαλδουίνο της Φλάνδρας, γνωστό ως «Λατίνο αυτοκράτορα»."}, {"text": "Πώς έπεσε τελικά η Κωνσταντινούπολη το 1453;", "text_en": "How did Constantinople finally fall in 1453?", "options": ["Με λιμό και παράδοση", "Ο Μεχμέτ Β΄ κατέλαβε το λιμάνι και διέρρηξε τα τείχη με τα νέα ισχυρά του κανόνια", "Με προδοσία των Βενετών", "Με σεισμό που γκρέμισε τα τείχη"], "options_en": ["Through famine and surrender", "Mehmed II took the harbour and broke through the walls with his powerful new cannons", "Through Venetian betrayal", "Through an earthquake that destroyed the walls"], "correct_idx": 1, "explanation": "Οι εναπομείναντες κάτοικοι κατέφυγαν στην Αγία Σοφία. Μετά την άλωση, βυζαντινές εκκλησίες μετατράπηκαν σε τζαμιά και τα ψηφιδωτά και οι τοιχογραφίες καλύφθηκαν με μπογιά."}]}, {"title": "Ενότητα 4: Ο Χριστιανικός Κόσμος και οι Σταυροφορίες", "filename": "Μεσαιωνική Ιστορία", "questions": [{"text": "Ποιες δύο πόλεις κυριαρχούσαν στον χριστιανικό κόσμο το 800;", "text_en": "Which two cities dominated the Christian world by 800?", "options": ["Ρώμη και Κωνσταντινούπολη", "Ιερουσαλήμ και Αντιόχεια", "Ρώμη και Αλεξάνδρεια", "Παρίσι και Άαχεν"], "options_en": ["Rome and Constantinople", "Jerusalem and Antioch", "Rome and Alexandria", "Paris and Aachen"], "correct_idx": 0, "explanation": "Οι διαφορές ανάμεσα στον δυτικό και τον ανατολικό πολιτισμό ήταν μεγάλες και γίνονταν ολοένα πιο έντονες."}, {"text": "Ποια διαφορά υπήρχε στη θεία κοινωνία και στον γάμο των ιερέων;", "text_en": "What difference existed in communion bread and clerical marriage?", "options": ["Και οι δύο Εκκλησίες χρησιμοποιούσαν ένζυμο άρτο", "Η Δυτική χρησιμοποιούσε άζυμο άρτο και απαγόρευσε τον γάμο των ιερέων το 1139· η Ανατολική ένζυμο άρτο και επέτρεπε τον γάμο", "Καμία διαφορά", "Η Ανατολική απαγόρευσε τον γάμο πρώτη"], "options_en": ["Both Churches used leavened bread", "The Western used unleavened bread and banned clerical marriage in 1139; the Eastern used leavened bread and allowed marriage", "No difference", "The Eastern banned marriage first"], "correct_idx": 1, "explanation": "Άλλες διαφορές: η Δύση στηριζόταν στην ερμηνεία του Πάπα και χρησιμοποιούσε τα λατινικά· η Ανατολή είχε πιο ακαδημαϊκή και φιλοσοφική στάση και χρησιμοποιούσε τα ελληνικά."}, {"text": "Τι ήταν το Φώτειο Σχίσμα;", "text_en": "What was the Photian Schism?", "options": ["Η οριστική διάσπαση του 1054", "Η πρώτη μεγάλη ρήξη το 863, όταν ο Πάπας Νικόλαος Α΄ αφόρισε τον Φώτιο και εκείνος ανταπέδωσε", "Η διαμάχη για τις εικόνες", "Η σύγκρουση με τους Φράγκους"], "options_en": ["The definitive split of 1054", "The first big falling out in 863, when Pope Nicholas I excommunicated Photios and Photios excommunicated the Pope in return", "The iconoclasm dispute", "The conflict with the Franks"], "correct_idx": 1, "explanation": "Ο Φώτιος διορίστηκε Πατριάρχης το 858 από τον αυτοκράτορα Μιχαήλ Γ΄, αν και δεν ήταν ιερέας. Η διαφωνία δεν επιλύθηκε ποτέ πραγματικά."}, {"text": "Τι πυροδότησε το Μεγάλο Σχίσμα του 1054;", "text_en": "What triggered the Great Schism of 1054?", "options": ["Η άλωση της Ρώμης", "Επιστολή του Πατριάρχη Μιχαήλ Α΄ προς τον Πάπα Λέοντα Θ΄, όπου τον προσφωνούσε «αδελφό» αντί για «πατέρα», δηλώνοντας ισοτιμία", "Η διαφωνία για τις Σταυροφορίες", "Η μεταφορά της παπικής έδρας στην Αβινιόν"], "options_en": ["The sack of Rome", "A letter from Patriarch Michael I to Pope Leo IX addressing him as 'brother' rather than 'father', indicating equality", "Disagreement over the Crusades", "The move of the papacy to Avignon"], "correct_idx": 1, "explanation": "Μετά τον θάνατο του Λέοντα Θ΄, ο καρδινάλιος Ουμβέρτος οδήγησε πρεσβεία στην Κωνσταντινούπολη. Ο Μιχαήλ αρνήθηκε συζήτηση, ακολούθησαν αμοιβαίοι αφορισμοί και οι δύο Εκκλησίες χωρίστηκαν οριστικά."}, {"text": "Πότε και με ποιον αναβίωσε ο Καρλομάγνος τον τίτλο του αυτοκράτορα;", "text_en": "When and with whom did Charlemagne revive the title of emperor?", "options": ["Το 771, με τον Πάπα Αδριανό", "Το 800, με τη συνεργασία του Πάπα Λέοντα Γ΄", "Το 814, μόνος του", "Το 843, με τον Πάπα Γρηγόριο"], "options_en": ["In 771, with Pope Hadrian", "In 800, with the cooperation of Pope Leo III", "In 814, on his own", "In 843, with Pope Gregory"], "correct_idx": 1, "explanation": "Ο Κάρολος έγινε ηγεμόνας των Φράγκων το 771. Ίδρυσε βασιλική κατοικία, εκκλησία και σχολή στο Άαχεν, που προσέλκυσε κορυφαία πνεύματα και τροφοδότησε πολιτισμική αναγέννηση."}, {"text": "Τι όριζε ο Θεοδοσιανός Κώδικας για τους Εβραίους;", "text_en": "What did the Theodosian Code establish regarding Jews?", "options": ["Πλήρη ισότητα με τους χριστιανούς", "Τους κατέτασσε ως Ρωμαίους πολίτες υπό ειδικούς περιορισμούς στις θρησκευτικές πρακτικές και τις κοινωνικές σχέσεις", "Την απαγόρευση του ιουδαϊσμού", "Την υποχρεωτική μετακίνησή τους"], "options_en": ["Full equality with Christians", "Classified them as Roman citizens living under special limitations on religious practices and social relationships", "A ban on Judaism", "Compulsory relocation"], "correct_idx": 1, "explanation": "Ο μεταγενέστερος Ιουστινιάνειος Κώδικας προχώρησε περισσότερο: επιχείρησε να απαγορεύσει τη μελέτη του Ταλμούδ και ο ιουδαϊσμός έπαψε να θεωρείται επιτρεπόμενη θρησκεία — αν και μεγάλο μέρος της νομοθεσίας δεν εφαρμόστηκε."}, {"text": "Πώς προσέλκυσε ο Πάπας Ουρβανός Β΄ τους ιππότες στην Α΄ Σταυροφορία;", "text_en": "How did Pope Urban II attract knights to the First Crusade?", "options": ["Με χρηματική αμοιβή", "Με προσφορά συγχωροχαρτιού: όλες οι αμαρτίες του σταυροφόρου θα σβήνονταν", "Με απειλή αφορισμού", "Με υπόσχεση γαιών στη Γαλλία"], "options_en": ["With monetary payment", "With an offer of indulgence: all a crusader's sins would be wiped away", "With the threat of excommunication", "With a promise of lands in France"], "correct_idx": 1, "explanation": "Αν και απευθυνόταν στις στρατιωτικές τάξεις, το μήνυμα άγγιξε όλα τα στρώματα — ηλικιωμένους, φτωχούς, γυναίκες και παιδιά — λόγω της ευκαιρίας για προσκύνημα."}, {"text": "Πώς έληξε η Γ΄ Σταυροφορία;", "text_en": "How did the Third Crusade end?", "options": ["Με ανακατάληψη της Ιερουσαλήμ", "Με τριετή συνθήκη ειρήνης το 1192: η Ιερουσαλήμ έμεινε στους μουσουλμάνους, αλλά το Outremer επιβίωσε στις παράκτιες πόλεις", "Με ολοκληρωτική ήττα των σταυροφόρων", "Με κατάληψη της Δαμασκού"], "options_en": ["With the recapture of Jerusalem", "With a three-year peace treaty in 1192: Jerusalem stayed in Muslim hands but Outremer survived in its coastal towns", "With total defeat of the crusaders", "With the capture of Damascus"], "correct_idx": 1, "explanation": "Ο Σαλαντίν είχε καταλάβει την Ιερουσαλήμ το 1187. Ο Ριχάρδος ο Λεοντόκαρδος και ο Φίλιππος Αύγουστος έφτασαν το 1191· η σταυροφορία έληξε ουσιαστικά ισόπαλη."}]}, {"title": "Ενότητα 5: Αίρεση, Μεταρρυθμίσεις και Ιερά Εξέταση", "filename": "Μεσαιωνική Ιστορία", "questions": [{"text": "Πώς ορίζεται η αίρεση (heresy);", "text_en": "How is heresy defined?", "options": ["Κάθε διαφωνία με τον ηγεμόνα", "Σφάλμα ή απόκλιση από την αποδεκτή χριστιανική πίστη ή πρακτική", "Η άρνηση πληρωμής φόρων", "Η μη συμμετοχή σε σταυροφορία"], "options_en": ["Any disagreement with the ruler", "An error or deviation from accepted Christian belief or practice", "Refusing to pay taxes", "Not joining a crusade"], "correct_idx": 1, "explanation": "Για να είναι αιρετικό το σφάλμα, ο ένοχος πρέπει να είναι ονομαστικά χριστιανός (βαπτισμένος). Ορισμένοι θεολόγοι απαιτούσαν επίσης να υπερασπίζεται το σφάλμα πεισματικά και δημόσια."}, {"text": "Πώς εξελίχθηκαν τα αιρετικά κινήματα μετά το 1150;", "text_en": "How did heretical movements evolve after 1150?", "options": ["Εξαφανίστηκαν εντελώς", "Από μικρές, τοπικές και σχετικά ακίνδυνες ομάδες, εμφανίστηκαν διεθνή κινήματα που προσηλύτιζαν ενεργά", "Έγιναν επίσημη θρησκεία", "Περιορίστηκαν στη Σκανδιναβία"], "options_en": ["They disappeared entirely", "From small, localised and relatively unthreatening groups, international movements arose that actively proselytised", "They became the official religion", "They were confined to Scandinavia"], "correct_idx": 1, "explanation": "Η επαναστικοποίηση της Ευρώπης και η άνοδος του λαϊκού αλφαβητισμού φαίνεται να ήταν οι κύριοι λόγοι της εξάπλωσης. Περιπλανώμενοι κήρυκες όπως ο Ερρίκος ο Μοναχός και ο Πέτρος του Bruis άνοιξαν τον δρόμο."}, {"text": "Τι έκανε το μοναστήρι του Cluny ουσιαστικά ανεξάρτητο;", "text_en": "What made the monastery of Cluny effectively independent?", "options": ["Η στρατιωτική του δύναμη", "Ο δούκας Γουλιέλμος Α΄ της Ακουιτανίας παραχώρησε στους μοναχούς το δικαίωμα να εκλέγουν οι ίδιοι τον ηγούμενό τους, λογοδοτώντας μόνο στην παπική έδρα", "Η γεωγραφική του απομόνωση μόνο", "Η άρνηση δωρεών"], "options_en": ["Its military power", "Duke William I of Aquitaine granted the monks the right to choose their own abbot, accountable only to the papacy", "Its geographic isolation alone", "Refusing donations"], "correct_idx": 1, "explanation": "Δεδομένης της απόστασης ανάμεσα στη Ρώμη και τη Βουργουνδία, η ρύθμιση αυτή κατέστησε το Cluny ελεύθερο από κάθε κοσμική ή επισκοπική δικαιοδοσία."}, {"text": "Πότε και με ποια παπική βούλα δημιουργήθηκε η επισκοπική Ιερά Εξέταση;", "text_en": "When and by which papal bull was the episcopal inquisition created?", "options": ["Το 1184, με τη βούλα Ad abolendam", "Το 1230, με τη βούλα Excommunicamus", "Το 1478, με τη βούλα Exigit sincerae", "Το 1054, με τη βούλα Humbertus"], "options_en": ["In 1184, by the bull Ad abolendam", "In 1230, by the bull Excommunicamus", "In 1478, by the bull Exigit sincerae", "In 1054, by the bull Humbertus"], "correct_idx": 0, "explanation": "Απαιτούσε από τους τοπικούς επισκόπους να ερευνούν τις πεποιθήσεις των κατοίκων. Αποκάλυπτε όμως την ταυτότητα του κατηγόρου στον κατηγορούμενο, κάτι που συχνά οδηγούσε σε φόνο του κατηγόρου και εμπόδιζε τη δίωξη."}, {"text": "Από ποιο τάγμα προέρχονταν συνήθως οι ιεροεξεταστές της παπικής Ιεράς Εξέτασης;", "text_en": "From which order were the papal inquisitors usually drawn?", "options": ["Από τους Βενεδικτίνους", "Από τους Δομινικανούς", "Από τους Κιστερκιανούς", "Από τους Ναΐτες"], "options_en": ["Benedictines", "Dominicans", "Cistercians", "Templars"], "correct_idx": 1, "explanation": "Οι Δομινικανοί ήταν επαιτικό τάγμα και, λόγω της δεινότητάς τους στη διαλεκτική, της κινητικότητας και της θεολογικής τους κατάρτισης, ήταν κατάλληλοι για ιεροεξεταστές. Η παπική Ιερά Εξέταση κρατούσε προσεκτικά γραπτά αρχεία."}, {"text": "Ποιο ήταν το χαρακτηριστικό των δικών της Ιεράς Εξέτασης;", "text_en": "What characterised inquisitorial trials?", "options": ["Ήταν δημόσιες με ενόρκους", "Διεξάγονταν μυστικά· ο κατηγορούμενος δεν μάθαινε τις συγκεκριμένες κατηγορίες και δεν υπήρχε δικαίωμα έφεσης", "Απαγορευόταν κάθε ανάκριση", "Διαρκούσαν το πολύ μία ημέρα"], "options_en": ["They were public with juries", "They were conducted in secret; the defendant was not told the specific charges and no appeal was available", "All interrogation was forbidden", "They lasted at most one day"], "correct_idx": 1, "explanation": "Ο κατηγορούμενος μπορούσε να κρατείται επ' αόριστον πριν τη δίκη. Επιτρεπόταν βασανισμός, και όποιος ομολογούσε υπό βασανιστήρια έπρεπε να επαναλάβει την ομολογία χωρίς αυτά — η ανάκληση οδηγούσε σε περισσότερα βασανιστήρια."}, {"text": "Πώς και πού ιδρύθηκε το Τάγμα των Ναϊτών;", "text_en": "How and where was the Order of the Templars founded?", "options": ["Στη Ρώμη το 1095", "Το 1119 στην Ιερουσαλήμ, όταν οι Γάλλοι ιππότες Hugues de Payens και Godfrey de Saint-Omer εγκαταστάθηκαν στο Όρος του Ναού", "Στην Κωνσταντινούπολη το 1204", "Στο Παρίσι το 1307"], "options_en": ["In Rome in 1095", "In 1119 in Jerusalem, when French knights Hugues de Payens and Godfrey de Saint-Omer established themselves on the Temple Mount", "In Constantinople in 1204", "In Paris in 1307"], "correct_idx": 1, "explanation": "Πήραν το όνομά τους από τη θέση τους — το τζαμί Al Aqsa, που θεωρούνταν η θέση του αρχικού ναού του Σολομώντα. Σκοπός τους ήταν ένα τάγμα ένοπλων μοναχών για την προστασία των προσκυνητών."}, {"text": "Πώς έληξε το Μεγάλο Παπικό Σχίσμα;", "text_en": "How did the Great Papal Schism end?", "options": ["Με τη Σύνοδο της Πίζας το 1409", "Με τη Σύνοδο της Κωνσταντίας, που καθαίρεσε και τους τρεις πάπες και εξέλεξε τον Μαρτίνο Ε΄ το 1417", "Με την επιστροφή στην Αβινιόν", "Με στρατιωτική επέμβαση"], "options_en": ["With the Council of Pisa in 1409", "With the Council of Constance, which removed all three popes and elected Martin V in 1417", "With a return to Avignon", "With military intervention"], "correct_idx": 1, "explanation": "Το Σχίσμα ξεκίνησε το 1378 με διπλή εκλογή: Ουρβανός ΣΤ΄ στη Ρώμη και Κλήμης Ζ΄ στην Αβινιόν. Η Σύνοδος της Πίζας το 1409 εξέλεξε τρίτο πάπα, επιδεινώνοντας το πρόβλημα. Η Κωνσταντία διακήρυξε το 1415 ότι όλοι οι χριστιανοί, ακόμη και οι πάπες, δεσμεύονται από τις αποφάσεις της."}]}, {"title": "Ενότητα 6: Ο Ισλαμικός Κόσμος", "filename": "Μεσαιωνική Ιστορία", "questions": [{"text": "Πού και πότε εμφανίστηκε το Ισλάμ;", "text_en": "Where and when did Islam emerge?", "options": ["Στην Περσία τον 6ο αιώνα", "Στην Αραβία, στα σύνορα της Βυζαντινής και της Περσικής Αυτοκρατορίας, στις αρχές του 7ου αιώνα", "Στην Αίγυπτο τον 8ο αιώνα", "Στη Συρία τον 5ο αιώνα"], "options_en": ["In Persia in the 6th century", "In Arabia, on the frontiers of the Byzantine and Persian Empires, in the early 7th century", "In Egypt in the 8th century", "In Syria in the 5th century"], "correct_idx": 1, "explanation": "Η Αραβία κατοικούνταν κυρίως από νομάδες της ερήμου χωρισμένους σε εκατοντάδες αντιμαχόμενες φυλές, με μόνιμους οικισμούς κοντά σε οάσεις, όπως οι εμπορικές πόλεις Μεδίνα και Μέκκα."}, {"text": "Ποια είναι τα βασικά χρονικά ορόσημα της ζωής του Μωάμεθ;", "text_en": "What are the key milestones of Muhammad's life?", "options": ["Γεννήθηκε το 500, πέθανε το 570", "Οράματα γύρω στο 610, αναχώρηση για τη Μεδίνα το 622, κατάληψη της Μέκκας το 630, θάνατος το 632", "Γεννήθηκε το 650, πέθανε το 700", "Οράματα το 590, θάνατος το 620"], "options_en": ["Born 500, died 570", "Visions circa 610, left for Medina in 622, captured Mecca in 630, died in 632", "Born 650, died 700", "Visions in 590, died in 620"], "correct_idx": 1, "explanation": "Ήταν έμπορος από τη Μέκκα, γεννημένος μεταξύ 570 και 580. Στον θάνατό του άφησε πίσω μια Αραβία ουσιαστικά ενωμένη γύρω από τη νέα μονοθεϊστική πίστη."}, {"text": "Πώς τοποθετούσε ο Μωάμεθ τον εαυτό του σε σχέση με τον Ιησού;", "text_en": "How did Muhammad position himself in relation to Jesus?", "options": ["Ως ενσάρκωση του Θεού", "Ως άνθρωπος, σε μια σειρά προφητών που περιλαμβάνει τον Ιησού, τον Μωυσή και τελικά τον Αβραάμ — και ως ο τελευταίος και μέγιστος", "Ως αδελφός του Ιησού", "Ως αντίπαλος όλων των προηγούμενων προφητών"], "options_en": ["As an incarnation of God", "As human, in a line of prophets including Jesus, Moses and ultimately Abraham — and as the last and greatest", "As Jesus's brother", "As an opponent of all previous prophets"], "correct_idx": 1, "explanation": "Σε αντίθεση με τη χριστιανική πίστη, οι μουσουλμάνοι αρνούνταν σταθερά κάθε αξίωση θεότητας για τον Μωάμεθ. Δίδασκε ότι το Ισλάμ ήταν η τελική εκπλήρωση του ιουδαϊσμού και του χριστιανισμού."}, {"text": "Πού σταμάτησε η μουσουλμανική προέλαση στη Δυτική Ευρώπη;", "text_en": "Where was the Muslim advance into Western Europe halted?", "options": ["Στη Ρώμη το 700", "Κοντά στην Τουρ (Tours) στη Γαλατία το 732, από τους Φράγκους", "Στη Βιέννη το 800", "Στο Γιβραλτάρ το 711"], "options_en": ["At Rome in 700", "Near Tours in Gaul in 732, by the Franks", "At Vienna in 800", "At Gibraltar in 711"], "correct_idx": 1, "explanation": "Το 711 οι μουσουλμανικοί στρατοί πέρασαν τα στενά του Γιβραλτάρ και ως το 716 κατέκτησαν μεγάλο μέρος της Ιβηρικής. Η κατάκτηση της Κρήτης και της Σικελίας το 827 και της Ταορμίνας το 902 σηματοδοτεί το τέλος της επέκτασης."}, {"text": "Ποια ήταν η αιτία του σχίσματος Σουνιτών–Σιιτών;", "text_en": "What caused the Sunni-Shia schism?", "options": ["Διαφωνία για το περιεχόμενο του Κορανίου", "Διαφωνία για το ποιος θα διαδεχόταν τον Μωάμεθ ως ηγέτης της ισλαμικής πίστης", "Διαφωνία για τη γλώσσα της λατρείας", "Διαφωνία για τη θέση της Μέκκας"], "options_en": ["Disagreement over the content of the Qur'an", "A dispute over who should succeed Muhammad as leader of the Islamic faith", "Disagreement over the language of worship", "Disagreement over Mecca's location"], "correct_idx": 1, "explanation": "Οι περισσότεροι θεωρούσαν ότι η κοινότητα έπρεπε να εκλέξει τον διάδοχο, ενώ μια μικρότερη ομάδα πίστευε ότι μόνο κάποιος από την οικογένεια του Μωάμεθ — ο ξάδελφος και γαμπρός του Αλί — έπρεπε να τον διαδεχθεί. Η πλειοψηφία των Σουνιτών επέλεξε τον Αμπού Μπακρ ως πρώτο χαλίφη· ο Αλί έγινε τελικά τέταρτος."}, {"text": "Ποιος θεωρείται «πατέρας της άλγεβρας» και γιατί;", "text_en": "Who is regarded as the 'father of algebra' and why?", "options": ["Ο Διόφαντος", "Ο Ibn Mūsa al-Khwarizmi, που παρουσίασε πρώτος την άλγεβρα ως αυτοτελή μαθηματικό κλάδο", "Ο Jābir ibn Hayyān", "Ο Ibn Sīna"], "options_en": ["Diophantus", "Ibn Mūsa al-Khwarizmi, who first set out algebra as a mathematical discipline in its own right", "Jābir ibn Hayyān", "Ibn Sīna"], "correct_idx": 1, "explanation": "Η λέξη «άλγεβρα» προέρχεται από το «al-jebr», τον τίτλο του έργου του. Για τον al-Khwarizmi ο άγνωστος είναι νέο είδος αντικειμένου που μπορεί να χειριστεί κανείς — εκεί βρίσκεται η πραγματική ισχύς της συμβολής του."}, {"text": "Ποιος θεωρείται ο μεγαλύτερος γιατρός του Ισλάμ και του Μεσαίωνα;", "text_en": "Who is regarded as the greatest physician of Islam and of the whole Middle Ages?", "options": ["Ο Ibn Sīna", "Ο al-Rāzi", "Ο al-Bīrūni", "Ο Ibn al-Haytham"], "options_en": ["Ibn Sīna", "Al-Rāzi", "Al-Bīrūni", "Ibn al-Haytham"], "correct_idx": 1, "explanation": "Ο al-Rāzi διηύθυνε την ψυχιατρική πτέρυγα του νοσοκομείου της Βαγδάτης, όταν στον χριστιανικό κόσμο οι ψυχικά ασθενείς θεωρούνταν δαιμονισμένοι, και αναγνωρίζεται ως πατέρας της ψυχολογίας και της ψυχοθεραπείας. Η ιατρική του εγκυκλοπαίδεια ονομάζεται Hawi· το αντίστοιχο έργο του Ibn Sīna είναι ο Κανών."}, {"text": "Ποια επιστημονική πειθαρχία λέγεται ότι γεννήθηκε πραγματικά στον μεσαιωνικό ισλαμικό κόσμο;", "text_en": "Which scientific discipline is said to have truly begun in the medieval Islamic world?", "options": ["Η αστρονομία", "Η χημεία", "Η γεωγραφία", "Η οπτική"], "options_en": ["Astronomy", "Chemistry", "Geography", "Optics"], "correct_idx": 1, "explanation": "Ο Jābir ibn Hayyān έκανε πολλά για να απελευθερώσει τη χημεία από τις δεισιδαιμονικές της καταβολές και να τη μετατρέψει σε πειραματική επιστήμη. Υπήρχε σαφής διάκριση ανάμεσα σε αλχημεία και χημεία ήδη από τότε."}]}];
+
+    const COURSE_NAME = "Μεσαιωνική Ιστορία";
+    const indexToUnitLabel = ["Ενότητα 1", "Ενότητα 2", "Ενότητα 3", "Ενότητα 4", "Ενότητα 5", "Ενότητα 6"];
+
+    // State Variables
+    let currentQuizIndex = -1;
+    let currentQuestionIndex = 0;
+    let userAnswers = []; // Store indices of user's chosen options
+    let correctCount = 0;
+    let isAnswered = false;
+    let soundEnabled = false; // Default off, user can toggle on
+    let currentOrderType = 'original'; // 'original' or 'random'
+    let activeQuestions = []; // Array of active questions (original order or shuffled)
+    let selectedQuizIndexForOrder = -1;
+    let currentShuffleOptions = false;
+    
+    // Safe storage: Brave/Chromium can throw SecurityError on localStorage under file://
+    const safeStorage = (function(){
+      try { const k='__ls_test__'; window.localStorage.setItem(k,'1'); window.localStorage.removeItem(k); return window.localStorage; }
+      catch(e){ const mem={}; return { getItem:function(k){return k in mem?mem[k]:null;}, setItem:function(k,v){mem[k]=String(v);}, removeItem:function(k){delete mem[k];} }; }
+    })();
+    // Theme and Language State Management
+    let currentTheme = safeStorage.getItem('theme') || 'dark';
+    let currentLang = safeStorage.getItem('lang') || 'el';
+
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeSunIcon = document.getElementById('themeSunIcon');
+    const themeMoonIcon = document.getElementById('themeMoonIcon');
+    const langToggleBtn = document.getElementById('langToggle');
+
+    // Language configuration
+    const TRANSLATIONS = {
+      el: {
+        navHome: "Αρχική",
+        navQuizzes: "Κουίζ",
+        courseTitle: "Μεσαιωνική Ιστορία — Τέχνη και Αρχιτεκτονική",
+        navBackToHub: "← Επιστροφή στις Θεματικές Ενότητες",
+        orderDesc: "Επιλέξτε τη σειρά με την οποία επιθυμείτε να εμφανιστούν οι ερωτήσεις του κουίζ:",
+        btnOriginal: "Αρχική Σειρά (Όπως στο έγγραφο)",
+        btnRandom: "Τυχαία Σειρά (Ανακατεμένες ερωτήσεις)",
+        lblShuffleOptions: "Ανακάτεμα επιλογών απάντησης (A, B, C, D)",
+        lblTimer: "Ενεργοποίηση Χρονομέτρου",
+        lblAntiCheat: "Ενεργοποίηση συστήματος ανίχνευσης εξαπάτησης (anti-cheat)",
+        lblImages: "Εμφάνιση εικόνων ερωτήσεων (Wikimedia Commons)",
+        lblGlossary: "Χρωματισμός όρων-κλειδιών στα αποτελέσματα",
+        cheatViolationTitle: "Ακυρώθηκε λόγω παραβίασης",
+        cheatReasonPrefix: "Λόγος: ",
+        cheatReasonTab: "Αλλαγή καρτέλας ή ελαχιστοποίηση παραθύρου",
+        cheatReasonBlur: "Απώλεια εστίασης παραθύρου",
+        cheatReasonFs: "Έξοδος από πλήρη οθόνη",
+        lblMinutes: "λεπτά",
+        lblQuestionsCount: "Αριθμός Ερωτήσεων:",
+        btnBack: "Επιστροφή",
+        configTitle: "Παραμετροποίηση Γενικού Τεστ",
+        configDesc: "Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τυχαίο τεστ. Θα επιλεγούν 30 τυχαίες ερωτήσεις από τις επιλεγμένες ενότητες.",
+        toggleAllUnitsSelect: "Επιλογή Όλων",
+        toggleAllUnitsDeselect: "Αποεπιλογή Όλων",
+        startGeneralTestBtn: "Έναρξη Τεστ",
+        scoreLabel: "Σκορ",
+        restartBtnText: "Επανάληψη",
+        backBtnText: "Επιστροφή στα Κουίζ",
+        pdfBtnText: "Αποθήκευση ως PDF",
+        generalReportBtnText: "Αναφορά / Σχόλια",
+        resultsTitle: "Αναλυτικά Αποτελέσματα"
+      },
+      en: {
+        navHome: "Home",
+        navQuizzes: "Quizzes",
+        courseTitle: "Medieval History — Art and Architecture",
+        navBackToHub: "← Back to Thematic Units",
+        orderDesc: "Select the order in which you want the quiz questions to appear:",
+        btnOriginal: "Original Order (As in the document)",
+        btnRandom: "Random Order (Shuffled questions)",
+        lblShuffleOptions: "Shuffle answer choices (A, B, C, D)",
+        lblTimer: "Enable Timer",
+        lblAntiCheat: "Enable anti-cheat detection",
+        lblImages: "Show question images (Wikimedia Commons)",
+        lblGlossary: "Highlight key terms in results",
+        cheatViolationTitle: "Invalidated due to violation",
+        cheatReasonPrefix: "Reason: ",
+        cheatReasonTab: "Tab switch or window minimized",
+        cheatReasonBlur: "Window focus loss",
+        cheatReasonFs: "Exited fullscreen",
+        lblMinutes: "minutes",
+        lblQuestionsCount: "Number of Questions:",
+        btnBack: "Back",
+        configTitle: "General Test Configuration",
+        configDesc: "Select which units to include in the general test. A total of 30 random questions will be selected from the chosen units.",
+        toggleAllUnitsSelect: "Select All",
+        toggleAllUnitsDeselect: "Deselect All",
+        startGeneralTestBtn: "Start Test",
+        scoreLabel: "Score",
+        restartBtnText: "Retry",
+        backBtnText: "Back to Quizzes",
+        pdfBtnText: "Save as PDF",
+        generalReportBtnText: "Report / Feedback",
+        resultsTitle: "Detailed Results"
+      }
+    };
+
+    const TITLE_TRANSLATIONS = {"en": {"Ενότητα 1: Χρονολόγηση του Μεσαίωνα": "Module 1: Timeline of the Middle Ages", "Ενότητα 2: Βασιλείς, Βίκινγκ και Νορμανδοί": "Module 2: Kings, Vikings and Normans", "Ενότητα 3: Η Βυζαντινή Αυτοκρατορία": "Module 3: The Byzantine Empire", "Ενότητα 4: Ο Χριστιανικός Κόσμος και οι Σταυροφορίες": "Module 4: The Christian World and the Crusades", "Ενότητα 5: Αίρεση, Μεταρρυθμίσεις και Ιερά Εξέταση": "Module 5: Heresy, Reform and Inquisition", "Ενότητα 6: Ο Ισλαμικός Κόσμος": "Module 6: The Islamic World"}};
+
+    function applyTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        themeSunIcon.classList.add('hidden');
+        themeMoonIcon.classList.remove('hidden');
+      } else {
+        document.body.classList.remove('light-mode');
+        themeSunIcon.classList.remove('hidden');
+        themeMoonIcon.classList.add('hidden');
+      }
+      safeStorage.setItem('theme', theme);
+      currentTheme = theme;
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    function applyLanguage(lang) {
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          el.textContent = TRANSLATIONS[lang][key];
+        }
+      });
+      langToggleBtn.textContent = lang === 'el' ? 'EN' : 'EL';
+      safeStorage.setItem('lang', lang);
+      currentLang = lang;
+      
+      // Update dynamic parts
+      initDashboard();
+      if (currentQuizIndex !== -1) {
+        const progressTemplate = currentLang === 'el' ? "Ερώτηση {current} από {total}" : "Question {current} of {total}";
+        progressText.textContent = progressTemplate.replace("{current}", currentQuestionIndex + 1).replace("{total}", activeQuestions.length);
+        
+        const nextBtnText = currentLang === 'el' ? "Επόμενο" : "Next";
+        const finishBtnText = currentLang === 'el' ? "Τέλος" : "Finish";
+        const isLastQuestion = (currentQuestionIndex === activeQuestions.length - 1);
+        nextBtn.innerHTML = `
+          <span>${isLastQuestion ? finishBtnText : nextBtnText}</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        `;
+      }
+      if (currentQuizIndex !== -1 && !quizSection.classList.contains('hidden')) {
+        const q = activeQuestions[currentQuestionIndex];
+        const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+        questionTitle.textContent = qText;
+        Array.from(optionsList.children).forEach((btn, idx) => {
+          const option = q.options[idx];
+          const optionText = currentLang === 'el' ? option : ((q.options_en && q.options_en[idx]) || option);
+          const textSpan = btn.querySelector('span:not(.option-marker)');
+          if (textSpan) {
+            textSpan.textContent = optionText;
+          }
+        });
+        
+        // Update quizUnitText
+        if (currentQuizIndex === 6) {
+          quizUnitText.textContent = currentLang === 'el' ? "ΓΕΝΙΚΟ ΤΕΣΤ" : "GENERAL TEST";
+        } else {
+          const unitNameLabel = indexToUnitLabel[currentQuizIndex];
+          quizUnitText.textContent = unitNameLabel.toUpperCase();
+        }
+      }
+      if (selectedQuizIndexForOrder !== -1 && !orderSection.classList.contains('hidden')) {
+        const quiz = QUIZZES[selectedQuizIndexForOrder];
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        orderQuizTitle.textContent = displayTitle;
+      }
+      if (!testConfigSection.classList.contains('hidden')) {
+        initUnitsSelectionList();
+      }
+      if (!resultsSection.classList.contains('hidden')) {
+        showResults();
+      }
+      updateStartBtnState();
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      applyLanguage(currentLang === 'el' ? 'en' : 'el');
+    });
+    
+    // Timer Variables
+    let timerInterval = null;
+    let timeLeftSeconds = 0;
+    let isTimerRunning = false;
+    let quizTimerEnabled = false;
+    let quizTimerTotalSeconds = 0;
+
+    // Sound Synthesis (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      if (!soundEnabled) return;
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      const now = audioCtx.currentTime;
+      
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.12, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === 'incorrect') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(146.83, now); // D3
+        osc.frequency.linearRampToValueAtTime(98.00, now + 0.25); // G2
+        gainNode.gain.setValueAtTime(0.001, now);
+        gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    }
+
+    // Elements
+    const dashboardSection = document.getElementById('dashboardSection');
+    const quizSection = document.getElementById('quizSection');
+    const resultsSection = document.getElementById('resultsSection');
+    const orderSection = document.getElementById('orderSection');
+    const orderQuizTitle = document.getElementById('orderQuizTitle');
+    const originalOrderBtn = document.getElementById('originalOrderBtn');
+    const randomOrderBtn = document.getElementById('randomOrderBtn');
+    const orderBackBtn = document.getElementById('orderBackBtn');
+    const testConfigSection = document.getElementById('testConfigSection');
+    const toggleAllUnitsBtn = document.getElementById('toggleAllUnitsBtn');
+    const unitsSelectionList = document.getElementById('unitsSelectionList');
+    const startConfiguredTestBtn = document.getElementById('startConfiguredTestBtn');
+    const configBackBtn = document.getElementById('configBackBtn');
+    const shuffleOptionsUnitCheckbox = document.getElementById('shuffleOptionsUnitCheckbox');
+    const shuffleOptionsGeneralCheckbox = document.getElementById('shuffleOptionsGeneralCheckbox');
+    
+    // Timer DOM references
+    const timerEnableUnitCheckbox = document.getElementById('timerEnableUnitCheckbox');
+    const timerDurationUnitContainer = document.getElementById('timerDurationUnitContainer');
+    const timerDurationUnitInput = document.getElementById('timerDurationUnitInput');
+    const timerEnableGeneralCheckbox = document.getElementById('timerEnableGeneralCheckbox');
+    const timerDurationGeneralContainer = document.getElementById('timerDurationGeneralContainer');
+    const timerDurationGeneralInput = document.getElementById('timerDurationGeneralInput');
+    const quizTimerText = document.getElementById('quizTimerText');
+    const timerCountdown = document.getElementById('timerCountdown');
+    const generalReportBtn = document.getElementById('generalReportBtn');
+    const quizQuestionCountInput = document.getElementById('quizQuestionCountInput');
+    const quizQuestionCountMaxLabel = document.getElementById('quizQuestionCountMaxLabel');
+    const generalQuestionCountInput = document.getElementById('generalQuestionCountInput');
+    const generalQuestionCountMaxLabel = document.getElementById('generalQuestionCountMaxLabel');
+    
+    const quizUnitText = document.getElementById('quizUnitText');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    
+    const questionTitle = document.getElementById('questionTitle');
+    const optionsList = document.getElementById('optionsList');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    const scoreNumber = document.getElementById('scoreNumber');
+    const scoreFill = document.getElementById('scoreFill');
+    const resultFeedbackTitle = document.getElementById('resultFeedbackTitle');
+    const resultFeedbackText = document.getElementById('resultFeedbackText');
+    const reviewContainer = document.getElementById('reviewContainer');
+    const resultsQuizTitle = document.getElementById('resultsQuizTitle');
+    
+    const restartBtn = document.getElementById('restartBtn');
+    const backBtn = document.getElementById('backBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
+    const soundToggle = document.getElementById('soundToggle');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundMutedIcon = document.getElementById('soundMutedIcon');
+
+    // Shuffle Helper (Fisher-Yates)
+    function shuffleArray(array) {
+      let shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Shuffle Options Helper
+    function shuffleQuestionOptions(question) {
+      // Keep every other field (explanation, text_en, qid, image...) and shuffle
+      // options_en with the SAME permutation so the two languages stay aligned.
+      let order = shuffleArray(question.options.map((_, idx) => idx));
+      let out = { ...question };
+      out.options = order.map(i => question.options[i]);
+      out.correct_idx = order.indexOf(question.correct_idx);
+      if (Array.isArray(question.options_en)) {
+        out.options_en = order.map(i => question.options_en[i]);
+      }
+      return out;
+    }
+
+    // Initialize Dashboard
+    function initDashboard() {
+      dashboardSection.innerHTML = '';
+      
+      QUIZZES.slice(0, 6).forEach((quiz, index) => {
+        const card = document.createElement('div');
+        card.className = 'card quiz-card';
+        card.addEventListener('click', () => promptOrderSelection(index));
+        
+        let unitText = "";
+        if (currentLang === 'el') {
+          unitText = `${indexToUnitLabel[index]}`;
+        } else {
+          unitText = `${indexToUnitLabel[index]}`;
+        }
+        
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        const questionsText = currentLang === 'el' ? 'Ερωτήσεις' : 'Questions';
+
+        card.innerHTML = `
+          <div>
+            <span class="unit-tag">${unitText}</span>
+            <h3 class="quiz-card-title">${displayTitle}</h3>
+          </div>
+          <div class="quiz-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>${quiz.questions.length} ${questionsText}</span>
+          </div>
+        `;
+        dashboardSection.appendChild(card);
+      });
+
+      // Add General Test Card (takes index 6)
+      const card = document.createElement('div');
+      card.className = 'card quiz-card';
+      card.style.borderColor = 'var(--success)';
+      card.style.boxShadow = '0 10px 25px -5px rgba(16, 185, 129, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.3)';
+      card.addEventListener('click', () => promptTestConfiguration());
+      
+      const genTitle = currentLang === 'el' ? 'Γενικό Τεστ (30 τυχαίες ερωτήσεις)' : 'General Test (30 random questions)';
+      const genTag = currentLang === 'el' ? 'Γενικό Τεστ' : 'General Test';
+      const genMeta = currentLang === 'el' ? 'Επιλέξτε ποιες ενότητες θέλετε να συμπεριληφθούν στο τεστ' : 'Select which units to include in the test';
+
+      card.innerHTML = `
+        <div>
+          <span class="unit-tag" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success);">${genTag}</span>
+          <h3 class="quiz-card-title">${genTitle}</h3>
+        </div>
+        <div class="quiz-meta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>${genMeta}</span>
+        </div>
+      `;
+      dashboardSection.appendChild(card);
+
+      // Add Recap card
+      const recapCard = document.createElement('div');
+      recapCard.className = 'card quiz-card';
+      recapCard.style.borderColor = 'var(--primary)';
+      recapCard.addEventListener('click', () => { window.location.href = 'mesaionas_recap.html'; });
+      const rT = currentLang === 'el' ? 'Recap (σύρε ή γράψε)' : 'Recap (drag or type)';
+      const rM = currentLang === 'el'
+        ? 'Περίοδοι, βασιλείς, σχίσματα, σταυροφορίες, Ισλάμ'
+        : 'Periods, kings, schisms, crusades, Islam';
+      recapCard.innerHTML = `
+        <div>
+          <span class="unit-tag">Recap</span>
+          <h3 class="quiz-card-title">${rT}</h3>
+        </div>
+        <div class="quiz-meta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>${rM}</span>
+        </div>
+      `;
+      dashboardSection.appendChild(recapCard);
+
+
+
+    }
+
+    // Sound toggle function
+    soundToggle.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) {
+        soundToggle.classList.remove('muted');
+        soundOnIcon.classList.remove('hidden');
+        soundMutedIcon.classList.add('hidden');
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } else {
+        soundToggle.classList.add('muted');
+        soundOnIcon.classList.add('hidden');
+        soundMutedIcon.classList.remove('hidden');
+      }
+    });
+
+    // Timer Toggles listeners
+    timerEnableUnitCheckbox.addEventListener('change', () => {
+      timerDurationUnitContainer.style.display = timerEnableUnitCheckbox.checked ? 'flex' : 'none';
+    });
+    timerEnableGeneralCheckbox.addEventListener('change', () => {
+      timerDurationGeneralContainer.style.display = timerEnableGeneralCheckbox.checked ? 'flex' : 'none';
+    });
+
+    // Order Selection Logic
+    function promptOrderSelection(quizIdx) {
+      selectedQuizIndexForOrder = quizIdx;
+      const quiz = QUIZZES[quizIdx];
+      const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+      orderQuizTitle.textContent = displayTitle;
+      
+      const totalQuestions = quiz.questions.length;
+      quizQuestionCountInput.max = totalQuestions;
+      quizQuestionCountInput.value = totalQuestions;
+      quizQuestionCountMaxLabel.textContent = currentLang === 'el' ? `(Μέγιστο: ${totalQuestions})` : `(Maximum: ${totalQuestions})`;
+      
+      validateQuizQuestionCount();
+
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.remove('hidden');
+    }
+
+    originalOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'original');
+    });
+
+    randomOrderBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      startQuiz(selectedQuizIndexForOrder, 'random');
+    });
+
+    orderBackBtn.addEventListener('click', () => {
+      orderSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // Custom General Test Configuration Selection
+    let selectedUnitsForTest = new Set([0, 1, 2, 3, 4, 5]); // Default all selected
+    
+    function initUnitsSelectionList() {
+      const listContainer = document.getElementById('unitsSelectionList');
+      listContainer.innerHTML = '';
+      
+      QUIZZES.slice(0, 6).forEach((quiz, index) => {
+        const item = document.createElement('div');
+        item.className = 'unit-selection-item' + (selectedUnitsForTest.has(index) ? ' selected' : '');
+        
+        let unitName = "";
+        if (currentLang === 'el') {
+          unitName = `${indexToUnitLabel[index]}`;
+        } else {
+          unitName = `${indexToUnitLabel[index]}`;
+        }
+
+        const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+        const shortTitle = displayTitle
+          .replace(/Ενότητα \d+:\s*/, "")
+          .replace(/Unit \d+:\s*/, "");
+
+        const questionsText = currentLang === 'el' ? 'ερωτήσεις' : 'questions';
+
+        item.innerHTML = `
+          <div>
+            <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-main); margin-bottom: 2px;">${unitName}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); max-width: 480px; line-height: 1.4;">${shortTitle} (${quiz.questions.length} ${questionsText})</div>
+          </div>
+          <div class="checkbox-indicator">${selectedUnitsForTest.has(index) ? '✔' : ''}</div>
+        `;
+        
+        item.addEventListener('click', () => {
+          if (selectedUnitsForTest.has(index)) {
+            selectedUnitsForTest.delete(index);
+            item.classList.remove('selected');
+            item.querySelector('.checkbox-indicator').textContent = '';
+          } else {
+            selectedUnitsForTest.add(index);
+            item.classList.add('selected');
+            item.querySelector('.checkbox-indicator').textContent = '✔';
+          }
+          updateStartBtnState();
+        });
+        
+        listContainer.appendChild(item);
+      });
+      updateStartBtnState();
+    }
+    
+    function updateStartBtnState() {
+      if (selectedUnitsForTest.size === 6) {
+        toggleAllUnitsBtn.textContent = currentLang === 'el' ? 'Αποεπιλογή Όλων' : 'Deselect All';
+        toggleAllUnitsBtn.style.color = 'var(--error)';
+      } else {
+        toggleAllUnitsBtn.textContent = currentLang === 'el' ? 'Επιλογή Όλων' : 'Select All';
+        toggleAllUnitsBtn.style.color = 'var(--primary)';
+      }
+      
+      updateGeneralQuestionCountInput();
+    }
+    
+    toggleAllUnitsBtn.addEventListener('click', () => {
+      if (selectedUnitsForTest.size === 6) {
+        selectedUnitsForTest.clear();
+      } else {
+        selectedUnitsForTest = new Set([0, 1, 2, 3, 4, 5]);
+      }
+      initUnitsSelectionList();
+    });
+
+    function validateQuizQuestionCount() {
+      const val = parseInt(quizQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1;
+      originalOrderBtn.disabled = !isValid;
+      randomOrderBtn.disabled = !isValid;
+    }
+    quizQuestionCountInput.addEventListener('input', validateQuizQuestionCount);
+    quizQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(quizQuestionCountInput.value);
+      const maxQ = parseInt(quizQuestionCountInput.max) || 1;
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > maxQ) val = maxQ;
+      quizQuestionCountInput.value = val;
+      validateQuizQuestionCount();
+    });
+
+    function validateGeneralQuestionCount() {
+      const val = parseInt(generalQuestionCountInput.value);
+      const isValid = !isNaN(val) && val >= 1 && selectedUnitsForTest.size > 0;
+      startConfiguredTestBtn.disabled = !isValid;
+    }
+    generalQuestionCountInput.addEventListener('input', validateGeneralQuestionCount);
+    generalQuestionCountInput.addEventListener('change', () => {
+      let val = parseInt(generalQuestionCountInput.value);
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > totalAvailable) val = totalAvailable;
+      generalQuestionCountInput.value = val;
+      validateGeneralQuestionCount();
+    });
+
+    function updateGeneralQuestionCountInput() {
+      let totalAvailable = 0;
+      selectedUnitsForTest.forEach(idx => {
+        if (QUIZZES[idx]) {
+          totalAvailable += QUIZZES[idx].questions.length;
+        }
+      });
+      
+      generalQuestionCountInput.max = totalAvailable;
+      generalQuestionCountMaxLabel.textContent = currentLang === 'el' ? `(Μέγιστο: ${totalAvailable})` : `(Maximum: ${totalAvailable})`;
+      
+      let currentVal = parseInt(generalQuestionCountInput.value);
+      if (currentVal > totalAvailable) {
+        generalQuestionCountInput.value = totalAvailable;
+      }
+      
+      validateGeneralQuestionCount();
+    }
+
+    function promptTestConfiguration() {
+      initUnitsSelectionList();
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      orderSection.classList.add('hidden');
+      testConfigSection.classList.remove('hidden');
+    }
+
+    startConfiguredTestBtn.addEventListener('click', () => {
+      testConfigSection.classList.add('hidden');
+      startQuiz(6, 'random');
+    });
+
+    configBackBtn.addEventListener('click', () => {
+      testConfigSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+    });
+
+    // === Anti-Cheat System ===
+    const antiCheatUnitCheckbox = document.getElementById('antiCheatUnitCheckbox');
+    const antiCheatGeneralCheckbox = document.getElementById('antiCheatGeneralCheckbox');
+    let antiCheatEnabled = false;
+    let antiCheatActive = false;
+    let cheatViolationReason = null;
+    function antiCheatOnVisibility() { if (document.hidden) triggerCheatViolation('tab'); }
+    function antiCheatOnBlur() { triggerCheatViolation('blur'); }
+    function antiCheatOnFs() { if (!document.fullscreenElement) triggerCheatViolation('fs'); }
+    function startAntiCheat() {
+      if (!antiCheatEnabled || antiCheatActive) return;
+      antiCheatActive = true;
+      cheatViolationReason = null;
+      document.addEventListener('visibilitychange', antiCheatOnVisibility);
+      window.addEventListener('blur', antiCheatOnBlur);
+      document.addEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+    function stopAntiCheat() {
+      if (!antiCheatActive) return;
+      antiCheatActive = false;
+      document.removeEventListener('visibilitychange', antiCheatOnVisibility);
+      window.removeEventListener('blur', antiCheatOnBlur);
+      document.removeEventListener('fullscreenchange', antiCheatOnFs);
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    function triggerCheatViolation(reasonKey) {
+      if (!antiCheatActive || cheatViolationReason) return;
+      cheatViolationReason = reasonKey;
+      stopAntiCheat();
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      isTimerRunning = false;
+      correctCount = 0;
+      showResults();
+    }
+    function getCheatReasonText() {
+      const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+      if (cheatViolationReason === 'tab') return t.cheatReasonTab;
+      if (cheatViolationReason === 'blur') return t.cheatReasonBlur;
+      if (cheatViolationReason === 'fs') return t.cheatReasonFs;
+      return '';
+    }
+
+    // Start Quiz
+    function startQuiz(quizIdx, orderType) {
+      currentOrderType = orderType;
+      const quiz = QUIZZES[quizIdx];
+
+      if (quizIdx === 6) {
+        currentShuffleOptions = shuffleOptionsGeneralCheckbox.checked;
+        
+        // Pool questions from selected units
+        let pool = [];
+        selectedUnitsForTest.forEach(idx => {
+          if (QUIZZES[idx]) {
+            pool = pool.concat(QUIZZES[idx].questions);
+          }
+        });
+        
+        let N = pool.length;
+        const countVal = parseInt(generalQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          N = Math.min(countVal, pool.length);
+        }
+        
+        let selectedQuestions = shuffleArray(pool).slice(0, N);
+        
+        // Shuffle options if checked
+        selectedQuestions = selectedQuestions.map(q => {
+          return (currentShuffleOptions && q.type !== 'text') ? shuffleQuestionOptions(q) : { ...q };
+        });
+
+        const selectedUnitsLabels = Array.from(selectedUnitsForTest)
+          .sort((a,b) => a - b)
+          .map(i => indexToUnitLabel[i])
+          .join(', ');
+
+        const genTestTitleEl = currentLang === 'el'
+          ? `Γενικό Τεστ (${N} ερωτήσεις - ${selectedUnitsLabels})`
+          : `General Test (${N} questions - ${selectedUnitsLabels})`;
+
+        QUIZZES[6] = {
+          title: genTestTitleEl,
+          questions: selectedQuestions
+        };
+        
+        activeQuestions = selectedQuestions;
+      } else {
+        currentShuffleOptions = shuffleOptionsUnitCheckbox.checked;
+        
+        let tempQuestions = (orderType === 'random') ? shuffleArray(quiz.questions) : [...quiz.questions];
+        
+        // Shuffle options if checked
+        activeQuestions = tempQuestions.map(q => {
+          return (currentShuffleOptions && q.type !== 'text') ? shuffleQuestionOptions(q) : { ...q };
+        });
+
+        // Slice to selected count
+        let limit = activeQuestions.length;
+        const countVal = parseInt(quizQuestionCountInput.value);
+        if (!isNaN(countVal) && countVal >= 1) {
+          limit = Math.min(countVal, activeQuestions.length);
+        }
+        activeQuestions = activeQuestions.slice(0, limit);
+      }
+
+      currentQuizIndex = quizIdx;
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      correctCount = 0;
+      isAnswered = false;
+
+      cheatViolationReason = null;
+      antiCheatEnabled = (quizIdx === 6) ? antiCheatGeneralCheckbox.checked : antiCheatUnitCheckbox.checked;
+      imagesEnabled = true; // K.O.K. images are part of the question - always shown
+      glossaryEnabled = (quizIdx === 6) ? glossaryGeneralCheckbox.checked : glossaryUnitCheckbox.checked;
+
+      dashboardSection.classList.add('hidden');
+      resultsSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+
+      startAntiCheat();
+
+      if (currentQuizIndex === 6) {
+        quizUnitText.textContent = currentLang === 'el' ? "ΓΕΝΙΚΟ ΤΕΣΤ" : "GENERAL TEST";
+      } else {
+        const unitNameLabel = indexToUnitLabel[currentQuizIndex];
+        quizUnitText.textContent = unitNameLabel.toUpperCase();
+      }
+      
+      // Countdown Timer Start Logic
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      
+      const timerEnabled = (quizIdx === 6) ? timerEnableGeneralCheckbox.checked : timerEnableUnitCheckbox.checked;
+      const durationMinutes = (quizIdx === 6) ? parseInt(timerDurationGeneralInput.value) : parseInt(timerDurationUnitInput.value);
+      
+      if (timerEnabled && durationMinutes > 0) {
+        isTimerRunning = true;
+        quizTimerEnabled = true;
+        quizTimerTotalSeconds = durationMinutes * 60;
+        timeLeftSeconds = durationMinutes * 60;
+        quizTimerText.classList.remove('hidden');
+        timerCountdown.classList.remove('timer-warning');
+        updateTimerDisplay();
+        
+        timerInterval = setInterval(() => {
+          timeLeftSeconds--;
+          updateTimerDisplay();
+          
+          if (timeLeftSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isTimerRunning = false;
+            timeIsUp();
+          }
+        }, 1000);
+      } else {
+        isTimerRunning = false;
+        quizTimerEnabled = false;
+        quizTimerText.classList.add('hidden');
+      }
+      
+      loadQuestion();
+    }
+
+    // Timer Update Display Function
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeftSeconds / 60);
+      const seconds = timeLeftSeconds % 60;
+      const formatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      timerCountdown.textContent = formatted;
+      
+      if (timeLeftSeconds < 120) { // under 2 minutes
+        timerCountdown.classList.add('timer-warning');
+      } else {
+        timerCountdown.classList.remove('timer-warning');
+      }
+    }
+
+    // Time is Up auto submit
+    function timeIsUp() {
+      const alertMsg = currentLang === 'el' 
+        ? "Ο χρόνος έληξε! Το κουίζ θα υποβληθεί αυτόματα με τις απαντήσεις που έχετε δώσει έως τώρα." 
+        : "Time's up! The quiz will be submitted automatically with the answers you have provided so far.";
+      alert(alertMsg);
+      showResults();
+    }
+
+    // Load Question
+    // === Optional question image (Wikimedia Commons) ===
+        let imagesEnabled = true;
+    const _imgMemCache = {};
+    const IMG_CACHE_KEY = 'quizImageCache';
+    function getCachedImage(query) {
+      if (query in _imgMemCache) return _imgMemCache[query];
+      try {
+        const c = JSON.parse(sessionStorage.getItem(IMG_CACHE_KEY) || '{}');
+        if (query in c) { _imgMemCache[query] = c[query]; return c[query]; }
+      } catch (e) {}
+      return undefined;
+    }
+    function setCachedImage(query, url) {
+      _imgMemCache[query] = url;
+      try {
+        const c = JSON.parse(sessionStorage.getItem(IMG_CACHE_KEY) || '{}');
+        c[query] = url;
+        sessionStorage.setItem(IMG_CACHE_KEY, JSON.stringify(c));
+      } catch (e) {}
+    }
+    async function fetchQuestionImage(query) {
+      if (!query) return null;
+      const cached = getCachedImage(query);
+      if (cached !== undefined) return cached;
+      try {
+        const apiUrl = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrlimit=1'
+          + '&gsrsearch=' + encodeURIComponent(query)
+          + '&prop=imageinfo&iiprop=url%7Cmime&iiurlwidth=800&format=json&origin=*';
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const pages = data && data.query && data.query.pages;
+        if (!pages) { setCachedImage(query, null); return null; }
+        const first = Object.values(pages)[0];
+        const info = first && first.imageinfo && first.imageinfo[0];
+        if (!info) { setCachedImage(query, null); return null; }
+        const mime = (info.mime || '').toLowerCase();
+        if (mime && !mime.startsWith('image/')) { setCachedImage(query, null); return null; }
+        const imgUrl = info.thumburl || info.url || null;
+        setCachedImage(query, imgUrl);
+        return imgUrl;
+      } catch (e) {
+        setCachedImage(query, null);
+        return null;
+      }
+    }
+    const _STOP_WORDS = new Set([
+      'the','a','an','of','to','in','on','at','by','for','with','and','or','but','not','no','is','are','was','were','be','been','being','has','have','had','do','does','did','this','that','these','those','it','its','what','which','who','how','when','where','why','can','could','would','should','may','might','will','shall','must','also','more','less','very','so','as','if','than','then','only','just','all','any','some','each','every','one','two','three','four','five','about','into','from','out','over','under','again','here','there','both','few','most','other','same','too','my','your','his','her','our','their','you','he','she','we','they','them','him','us','me','following','mainly','describes','describe','term','study','studies','among','also',
+      'ο','η','το','οι','τα','του','της','των','τον','την','τους','τις','ενας','μια','ενα','και','αν','αλλα','για','με','σε','απο','στο','στα','στη','στην','στις','στους','στον','ως','που','πως','ποιος','ποια','ποιο','ποιοι','ποιες','τι','να','θα','δεν','μη','μην','ειναι','ηταν','εχει','ειχε','σου','μου','αυτο','αυτη','αυτος','αυτοι','αυτες','αυτα','εκεινο','εκεινη','εκεινος','ολος','ολη','ολο','οτι','οπως','καθε','μεσα','μεταξυ','μονο','πιο','πολυ','λιγο','περι','κατα','προς','αναμεσα','επι','μεχρι','ακομα','ακομη','επισης','πρωτος','πρωτη','πρωτο','δευτερος','δευτερη','δευτερο','τριτος','τριτη','τριτο','τεταρτος','τεταρτη','τεταρτο','πεμπτος','πεμπτη','πεμπτο','ποιο','ποιον','ποιαν','ορος','ορο','περιγραφει','περιγραφουν','κυριως','κατα','μεταξυ','σχεση','σχεσεις','επισημες','παρακατω','ακολουθο','ακολουθα','επομενο','επομενη','αυτος','αυτη','αυτο'
+    ]);
+    function _stripAccents(s) {
+      try { return s.normalize('NFD').replace(new RegExp('[\\u0300-\\u036f]', 'g'), ''); }
+      catch (e) { return s; }
+    }
+    function deriveImageQuery(question) {
+      if (!question) return '';
+      const raw = (question.text_en && question.text_en.length > 5) ? question.text_en : (question.text || '');
+      if (!raw) return '';
+      const cleaned = _stripAccents(raw.toLowerCase()).replace(/[^a-zα-ω0-9\s]/gi, ' ');
+      const tokens = cleaned.split(/\s+/).filter(t => t.length >= 4 && !_STOP_WORDS.has(t));
+      if (tokens.length < 2) return '';
+      return tokens.slice(0, 4).join(' ');
+    }
+
+    // Generic stop-words to discard before matching (added to existing _STOP_WORDS at runtime).
+    const _EXTRA_STOPS = ['what','which','who','whose','whom','use','uses','used','using','make','makes','made','making','take','takes','took','taken','taking','give','gives','gave','given','giving','find','finds','found','finding','see','sees','saw','seen','seeing','get','gets','got','getting','need','needs','needed','needing','want','wants','wanted','wanting','help','helps','helped','helping','show','shows','showed','shown','showing','include','includes','included','including','consider','considers','considered','considering','occur','occurs','occurred','occurring','during','within','because','since','through','though','follow','follows','followed','following','among','answer','answers','correct','wrong','right','below','above','before','after','their','they','there','these','those','them','this','that','than','then','very','also','only','just','well','more','most','many','much','some','such','same','than','then','here','what','where','when','how','why','call','calls','called','calling','work','works','worked','working','say','says','said','saying','tell','tells','told','telling','know','knows','knew','known','knowing','think','thinks','thought','thinking','come','comes','came','coming','look','looks','looked','looking','seem','seems','seemed','seeming','mainly','about','into','from','over','under','again','both','each','every','other','same','too','any','our','your','their','its','will','would','should','could','may','might','must','shall'];
+    _EXTRA_STOPS.forEach(w => _STOP_WORDS.add(w));
+
+    // Tiny stemmer: enough to bridge bats↔bat, puppies↔puppy, catches↔catch
+    function _stem(w) {
+      if (!w || w.length < 4) return w;
+      if (w.length > 4 && w.endsWith('ies')) return w.slice(0, -3) + 'y';
+      if (w.length > 4 && w.endsWith('sses')) return w.slice(0, -2);
+      if (w.length > 4 && w.endsWith('es')) return w.slice(0, -2);
+      if (w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1);
+      if (w.length > 6 && w.endsWith('ing')) return w.slice(0, -3);
+      if (w.length > 5 && w.endsWith('ed')) return w.slice(0, -2);
+      return w;
+    }
+
+    async function fetchBestQuestionImage(question) {
+      if (!question) return null;
+      // English text only — Wikipedia article matching needs English titles
+      const raw = (question.text_en && question.text_en.length > 5) ? question.text_en : '';
+      if (!raw) return null;
+      const cleaned = raw.toLowerCase().replace(/[^a-z0-9\s]/gi, ' ');
+      const tokensRaw = cleaned.split(/\s+/).filter(t => t.length >= 4 && !_STOP_WORDS.has(t));
+      if (!tokensRaw.length) return null;
+      const queryTerms = tokensRaw.slice(0, 4);
+      const cacheKey = 'wiki:' + queryTerms.join(' ');
+      const cached = getCachedImage(cacheKey);
+      if (cached !== undefined) return cached;
+
+      // Wikipedia opensearch -> page-summary thumbnail. Articles are curated, so
+      // the lead image on "Bat" is a real bat photo, not a bat-themed motorway.
+      // Progressive fallback: drop the rightmost term on no result; up to 3
+      // suggested titles per attempt are probed for a thumbnail.
+      let terms = queryTerms.slice();
+      while (terms.length > 0) {
+        const searchStr = terms.join(' ');
+        try {
+          const osUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&limit=3&format=json&origin=*&search=' + encodeURIComponent(searchStr);
+          const osRes = await fetch(osUrl);
+          if (osRes.ok) {
+            const osData = await osRes.json();
+            const titles = (osData && osData[1]) || [];
+            for (const title of titles) {
+              try {
+                const sumUrl = 'https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title);
+                const sumRes = await fetch(sumUrl);
+                if (!sumRes.ok) continue;
+                const sumData = await sumRes.json();
+                const img = (sumData.thumbnail && sumData.thumbnail.source)
+                  || (sumData.originalimage && sumData.originalimage.source);
+                if (img) { setCachedImage(cacheKey, img); return img; }
+              } catch (e) {}
+            }
+          }
+        } catch (e) {}
+        if (terms.length === 1) break;
+        terms = terms.slice(0, -1);
+      }
+
+      setCachedImage(cacheKey, null);
+      return null;
+    }
+
+    async function renderQuestionImage(question) {
+      const container = document.getElementById('questionImageContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      container.style.display = 'none';
+      if (!imagesEnabled) return;
+      const url = (question && question.image) ? question.image : null;
+      if (!url) return;
+      const img = new Image();
+      img.alt = (question.imageQuery || question.text || '').toString().slice(0, 120);
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => {
+        if (activeQuestions[currentQuestionIndex] !== question) return;
+        container.appendChild(img);
+        container.style.display = 'flex';
+      };
+      img.onerror = () => { container.innerHTML = ''; container.style.display = 'none'; };
+      img.src = url;
+    }
+
+    function loadQuestion() {
+      const q = activeQuestions[currentQuestionIndex];
+      isAnswered = false;
+      nextBtn.disabled = true;
+
+      const progressTemplate = currentLang === 'el' ? "Ερώτηση {current} από {total}" : "Question {current} of {total}";
+      progressText.textContent = progressTemplate.replace("{current}", currentQuestionIndex + 1).replace("{total}", activeQuestions.length);
+      const progressPercent = (currentQuestionIndex / activeQuestions.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+      questionTitle.textContent = qText;
+      renderQuestionImage(q);
+      hideExplanation();
+      optionsList.innerHTML = '';
+      
+      if (q.type === 'text') {
+        renderTextAnswer(q);
+      } else {
+        q.options.forEach((option, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          const markerChar = String.fromCharCode(65 + idx);
+          const optionText = currentLang === 'el' ? option : ((q.options_en && q.options_en[idx]) || option);
+        
+          btn.innerHTML = `
+            <span class="option-marker">${markerChar}</span>
+            <span>${optionText}</span>
+          `;
+        
+          btn.addEventListener('click', () => selectOption(idx, btn));
+          optionsList.appendChild(btn);
+        });
+      }
+
+      const nextBtnText = currentLang === 'el' ? "Επόμενο" : "Next";
+      const finishBtnText = currentLang === 'el' ? "Τέλος" : "Finish";
+      const isLastQuestion = (currentQuestionIndex === activeQuestions.length - 1);
+      nextBtn.innerHTML = `
+        <span>${isLastQuestion ? finishBtnText : nextBtnText}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      `;
+    }
+
+    // Select Option
+    function selectOption(optionIdx, buttonEl) {
+      if (isAnswered) return;
+      isAnswered = true;
+      userAnswers.push(optionIdx);
+      
+      const q = activeQuestions[currentQuestionIndex];
+      const correctIdx = q.correct_idx;
+      const isCorrect = (optionIdx === correctIdx);
+      
+      if (isCorrect) {
+        correctCount++;
+        buttonEl.classList.add('selected-correct');
+        playSound('correct');
+      } else {
+        buttonEl.classList.add('selected-incorrect');
+        buttonEl.classList.add('shake');
+        playSound('incorrect');
+        
+        const correctBtn = optionsList.children[correctIdx];
+        if (correctBtn) {
+          correctBtn.classList.add('correct-reveal');
+        }
+      }
+      
+      Array.from(optionsList.children).forEach(btn => {
+        btn.disabled = true;
+      });
+
+      showExplanation(q);
+      nextBtn.disabled = false;
+    }
+
+
+    // === Free-text answers (Module 8 / OSINT) ===
+    function normalizeAnswer(v) {
+      return String(v == null ? '' : v).trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+    function textAnswerMatches(q, val) {
+      const v = normalizeAnswer(val);
+      if (!v) return false;
+      if (v === normalizeAnswer(q.answer)) return true;
+      return (q.alias || []).some(a => normalizeAnswer(a) === v);
+    }
+    function renderTextAnswer(q) {
+      const wrap = document.createElement('div');
+      wrap.className = 'text-answer-wrap';
+      const row = document.createElement('div');
+      row.className = 'text-answer-row';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'text-answer-input';
+      input.autocomplete = 'off';
+      input.spellcheck = false;
+      input.placeholder = currentLang === 'el' ? 'Γράψε την απάντησή σου...' : 'Type your answer...';
+
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = currentLang === 'el' ? 'Υποβολή' : 'Submit';
+
+      const submit = () => submitTextAnswer(q, input, btn);
+      btn.addEventListener('click', submit);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+
+      row.appendChild(input); row.appendChild(btn);
+      wrap.appendChild(row);
+      optionsList.appendChild(wrap);
+      setTimeout(() => input.focus(), 50);
+    }
+    function submitTextAnswer(q, input, btn) {
+      if (isAnswered) return;
+      isAnswered = true;
+      const val = input.value;
+      userAnswers.push(val);
+      const good = textAnswerMatches(q, val);
+      input.disabled = true; btn.disabled = true;
+      input.classList.add(good ? 'ok' : 'bad');
+      if (good) { correctCount++; playSound('correct'); }
+      else {
+        playSound('incorrect');
+        const exp = document.createElement('p');
+        exp.className = 'text-expected';
+        exp.textContent = (currentLang === 'el' ? 'Σωστή απάντηση: ' : 'Correct answer: ') + q.answer;
+        input.parentElement.parentElement.appendChild(exp);
+      }
+      showExplanation(q);
+      nextBtn.disabled = false;
+    }
+    // === Explanation (every question has one) ===
+    function hideExplanation() {
+      const box = document.getElementById('explanationBox');
+      if (box) box.classList.add('hidden');
+    }
+
+    function showExplanation(q) {
+      const box = document.getElementById('explanationBox');
+      const txt = document.getElementById('explanationText');
+      if (!box || !txt) return;
+      const text = (q && q.explanation) ? q.explanation : '';
+      if (!text) { box.classList.add('hidden'); return; }
+      txt.textContent = text;
+      box.classList.remove('hidden');
+    }
+
+    // Next Question Button Click
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      
+      if (currentQuestionIndex < activeQuestions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    // === Glossary highlighting in results review ===
+    const glossaryUnitCheckbox = document.getElementById('glossaryUnitCheckbox');
+    const glossaryGeneralCheckbox = document.getElementById('glossaryGeneralCheckbox');
+    let glossaryEnabled = false;
+    const GLOSSARY = {"el": ["Μεσαίωνας", "Σκοτεινοί Αιώνες", "Αναγέννηση", "Αγγλοσάξονες", "Βίκινγκ", "Νορμανδοί", "Εκατονταετής Πόλεμος", "Μαύρος Θάνατος", "Βυζάντιο", "Κωνσταντινούπολη", "Ιουστινιανός", "Αγία Σοφία", "Σταυροφορία", "Σχίσμα", "Πάπας", "Πατριάρχης", "Καρλομάγνος", "Καρολίδες", "αίρεση", "Ιερά Εξέταση", "Ναΐτες", "Cluny", "Γρηγοριανή Μεταρρύθμιση", "Ισλάμ", "Μωάμεθ", "χαλίφης", "Σουνίτες", "Σιίτες", "τζιχάντ", "al-Khwarizmi", "al-Rāzi", "Ibn Sīna", "Ibn al-Haytham"], "en": ["Μεσαίωνας", "Σκοτεινοί Αιώνες", "Αναγέννηση", "Αγγλοσάξονες", "Βίκινγκ", "Νορμανδοί", "Εκατονταετής Πόλεμος", "Μαύρος Θάνατος", "Βυζάντιο", "Κωνσταντινούπολη", "Ιουστινιανός", "Αγία Σοφία", "Σταυροφορία", "Σχίσμα", "Πάπας", "Πατριάρχης", "Καρλομάγνος", "Καρολίδες", "αίρεση", "Ιερά Εξέταση", "Ναΐτες", "Cluny", "Γρηγοριανή Μεταρρύθμιση", "Ισλάμ", "Μωάμεθ", "χαλίφης", "Σουνίτες", "Σιίτες", "τζιχάντ", "al-Khwarizmi", "al-Rāzi", "Ibn Sīna", "Ibn al-Haytham"]};
+    function _escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function highlightGlossary(text, lang) {
+      if (!text || !glossaryEnabled) return text;
+      const terms = (GLOSSARY[lang] || []);
+      if (!terms.length) return text;
+      // Longest-first so multi-word phrases match before their constituent words
+      const sorted = [...terms].sort((a, b) => b.length - a.length);
+      const pattern = sorted.map(_escapeRegex).join('|');
+      // Word boundaries that work across Greek + Latin: a letter/digit MUST NOT
+      // sit immediately before or after the match (Unicode-aware via \p{L}\p{N}).
+      let re;
+      try {
+        re = new RegExp('(?<![\\p{L}\\p{N}])(' + pattern + ')(?![\\p{L}\\p{N}])', 'giu');
+      } catch (e) {
+        // Fallback for older engines without lookbehind/property escapes
+        re = new RegExp('\\b(' + pattern + ')\\b', 'gi');
+      }
+      return text.replace(re, '<span class="glossary-term">$1</span>');
+    }
+
+    // Show Results
+    function showResults() {
+      stopAntiCheat();
+      // Clear countdown interval
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      isTimerRunning = false;
+
+      if (cheatViolationReason) { correctCount = 0; }
+
+      quizSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+
+      const quiz = QUIZZES[currentQuizIndex];
+
+
+
+      const totalQuestions = activeQuestions.length;
+      const scorePercent = Math.round((correctCount / totalQuestions) * 100);
+      
+      scoreNumber.textContent = `${scorePercent}%`;
+      
+      const strokeOffset = 440 - (440 * scorePercent) / 100;
+      setTimeout(() => {
+        scoreFill.style.strokeDashoffset = strokeOffset;
+      }, 100);
+      
+      const displayTitle = currentLang === 'el' ? quiz.title : (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title);
+      resultsQuizTitle.textContent = displayTitle;
+
+      if (cheatViolationReason) {
+        const t = TRANSLATIONS[currentLang] || TRANSLATIONS.el;
+        resultFeedbackTitle.textContent = t.cheatViolationTitle;
+        resultFeedbackText.textContent = t.cheatReasonPrefix + getCheatReasonText();
+      } else if (scorePercent === 100) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Άριστα! 🎉" : "Perfect! 🎉";
+        resultFeedbackText.textContent = currentLang === 'el' 
+          ? "Απαντήσατε σωστά σε όλες τις ερωτήσεις! Έχετε κατανοήσει πλήρως την ενότητα αυτή."
+          : "You answered all questions correctly! You have fully understood this unit.";
+      } else if (scorePercent >= 80) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Εξαιρετική Προσπάθεια! ✨" : "Excellent Effort! ✨";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Πρωτοφανής γνώση του αντικειμένου!`
+          : `You got ${correctCount} out of ${totalQuestions} correct answers. Outstanding knowledge of the subject!`;
+      } else if (scorePercent >= 50) {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Πολύ Καλά! 👍" : "Well Done! 👍";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Έχετε καλή βάση, αλλά μπορείτε να βελτιωθείτε.`
+          : `You got ${correctCount} out of ${totalQuestions} correct answers. Good foundation, but there is room for improvement.`;
+      } else {
+        resultFeedbackTitle.textContent = currentLang === 'el' ? "Χρειάζεται Μελέτη! 📚" : "Needs Study! 📚";
+        resultFeedbackText.textContent = currentLang === 'el'
+          ? `Πετύχατε μόνο ${correctCount} στις ${totalQuestions} σωστές απαντήσεις. Σας προτείνουμε να ξαναδιαβάσετε τις σημειώσεις και να δοκιμάσετε ξανά.`
+          : `You got only ${correctCount} out of ${totalQuestions} correct answers. We suggest you re-read the notes and try again.`;
+      }
+      
+      // Show time used if a timer was enabled for this quiz
+      const _rtt = document.getElementById('resultTimeText');
+      if (_rtt) {
+        if (quizTimerEnabled) {
+          const used = Math.max(0, quizTimerTotalSeconds - Math.max(0, timeLeftSeconds));
+          const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+          const lbl = currentLang === 'el' ? 'Χρόνος' : 'Time';
+          _rtt.textContent = lbl + ': ' + fmt(used) + ' / ' + fmt(quizTimerTotalSeconds);
+          _rtt.classList.remove('hidden');
+        } else {
+          _rtt.classList.add('hidden');
+        }
+      }
+
+      reviewContainer.innerHTML = '';
+      activeQuestions.forEach((q, idx) => {
+        const userChoiceIdx = userAnswers[idx];
+        const correctIdx = q.correct_idx;
+        const isUserCorrect = (userChoiceIdx === correctIdx);
+        
+        const reviewItem = document.createElement('div');
+        reviewItem.className = 'review-item';
+        
+        const qText = currentLang === 'el' ? q.text : (q.text_en || q.text);
+        
+        let optionsMarkup = '';
+        q.options.forEach((opt, optIdx) => {
+          const optMarker = String.fromCharCode(65 + optIdx);
+          let optClass = 'review-opt-neutral';
+          let statusIndicator = '';
+          
+          if (optIdx === correctIdx) {
+            optClass = 'review-opt-correct';
+            statusIndicator = currentLang === 'el' ? ' (Σωστό)' : ' (Correct)';
+          } else if (userChoiceIdx !== undefined && optIdx === userChoiceIdx && !isUserCorrect) {
+            optClass = 'review-opt-incorrect';
+            statusIndicator = currentLang === 'el' ? ' (Η επιλογή σας)' : ' (Your choice)';
+          }
+          
+          const optText = currentLang === 'el' ? opt : ((q.options_en && q.options_en[optIdx]) || opt);
+          optionsMarkup += `
+            <div class="review-opt ${optClass}">
+              <span class="review-opt-marker">${optMarker}.</span>
+              <span>${highlightGlossary(optText, currentLang)}${statusIndicator}</span>
+            </div>
+          `;
+        });
+        
+        let qStatusText = '';
+        if (userChoiceIdx === undefined) {
+          qStatusText = currentLang === 'el' 
+            ? ' <span style="color: var(--error); font-size: 0.85rem; font-weight: 600;">(Δεν απαντήθηκε λόγω χρόνου)</span>'
+            : ' <span style="color: var(--error); font-size: 0.85rem; font-weight: 600;">(Not answered due to time limit)</span>';
+        }
+        
+        const escapedTitle = quiz.title.replace(/'/g, "\'");
+        const escapedQText = qText.replace(/'/g, "\'");
+        
+        const reportBtnText = currentLang === 'el' ? 'Αναφορά' : 'Report';
+        reviewItem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;">
+            <div class="review-item-q">${idx + 1}. ${highlightGlossary(qText, currentLang)}${qStatusText}</div>
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="reportQuestion('${escapedTitle}', '${idx + 1}', '${escapedQText}')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <span>${reportBtnText}</span>
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${optionsMarkup}
+          </div>
+        `;
+        reviewContainer.appendChild(reviewItem);
+      });
+
+      const attemptFp = currentQuizIndex + ':' + userAnswers.join(',') + ':' + correctCount + ':' + totalQuestions;
+      if (showResults._lastFp !== attemptFp) {
+        showResults._lastFp = attemptFp;
+        recordQuizAttempt({
+          ts: Date.now(),
+          topic: 'mesaionas',
+          topicTitleEl: 'Μεσαιωνική Ιστορία',
+          topicTitleEn: 'Medieval History',
+          quizTitleEl: quiz.title,
+          quizTitleEn: (TITLE_TRANSLATIONS.en[quiz.title] || quiz.title),
+          scorePercent: scorePercent,
+          correctCount: correctCount,
+          totalQuestions: totalQuestions
+        });
+      }
+      renderHistoryForCurrentQuiz();
+    }
+
+    const QUIZ_HISTORY_KEY = 'quizProgressHistory';
+    function loadQuizHistory() {
+      try { return JSON.parse(safeStorage.getItem(QUIZ_HISTORY_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function recordQuizAttempt(entry) {
+      const arr = loadQuizHistory();
+      arr.push(entry);
+      try { safeStorage.setItem(QUIZ_HISTORY_KEY, JSON.stringify(arr)); } catch (e) {}
+    }
+    function renderHistoryForCurrentQuiz() {
+      const title = document.getElementById('historyTitle');
+      const list = document.getElementById('historyList');
+      if (!title || !list) return;
+      title.textContent = currentLang === 'el' ? 'Ιστορικό για αυτό το κουίζ' : 'History for this quiz';
+      const quiz = QUIZZES[currentQuizIndex];
+      if (!quiz) { list.innerHTML = ''; return; }
+      const entries = loadQuizHistory().filter(e => e.topic === 'mesaionas' && e.quizTitleEl === quiz.title);
+      if (!entries.length) {
+        list.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9rem;">${currentLang === 'el' ? 'Δεν υπάρχει ιστορικό ακόμη.' : 'No history yet.'}</div>`;
+        return;
+      }
+      entries.sort((a, b) => b.ts - a.ts);
+      const locale = currentLang === 'el' ? 'el-GR' : 'en-US';
+      list.innerHTML = entries.map(e => {
+        const dateStr = new Date(e.ts).toLocaleString(locale);
+        return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--card-hover); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem;">
+          <span style="color: var(--text-muted);">${dateStr}</span>
+          <span style="font-weight: 600; color: var(--text-main);">${e.correctCount}/${e.totalQuestions} &middot; ${e.scorePercent}%</span>
+        </div>`;
+      }).join('');
+    }
+
+    // Google Form individual question report redirection
+    function reportQuestion(quizTitle, unitName, questionText) {
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const questionField = "entry.86795942";
+      
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quizTitle + " - " + unitName)}&${questionField}=${encodeURIComponent(questionText)}`;
+      window.open(prefillUrl, '_blank');
+    }
+
+    // Google Form general report button click listener
+    generalReportBtn.addEventListener('click', () => {
+      const quiz = QUIZZES[currentQuizIndex];
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeo6LugpoFPOkkesGPXlGnb7xM7CYK0V4LwZ_Sw-p-TYFjxkw/viewform";
+      const courseField = "entry.1821168796";
+      const unitField = "entry.702179006";
+      const prefillUrl = `${formUrl}?usp=pp_url&${courseField}=${encodeURIComponent(COURSE_NAME)}&${unitField}=${encodeURIComponent(quiz.title)}`;
+      window.open(prefillUrl, '_blank');
+    });
+
+    // Restart Quiz
+    restartBtn.addEventListener('click', () => {
+      startQuiz(currentQuizIndex, currentOrderType);
+    });
+
+    // Go Back to Dashboard
+    backBtn.addEventListener('click', () => {
+      resultsSection.classList.add('hidden');
+      quizSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+      initDashboard();
+    });
+
+    // Save Results as PDF
+    pdfBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Initialize Page
+    applyTheme(currentTheme);
+    applyLanguage(currentLang);
+
+    // === Custom quiz from URL parameter (from quizess.html chat bot) ===
+    // If we were navigated here with ?customQuiz=<localStorageKey>, look up the
+    // generated quiz spec, push it onto QUIZZES, and auto-start it. Any failure
+    // silently falls through to the normal dashboard.
+    (function() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const cqKey = params.get('customQuiz');
+        if (!cqKey) return;
+        const raw = safeStorage.getItem(cqKey);
+        if (!raw) return;
+        const spec = JSON.parse(raw);
+        if (!spec || !Array.isArray(spec.questions) || !spec.questions.length) return;
+        QUIZZES.push({
+          title: spec.title || 'Custom Quiz',
+          filename: 'custom',
+          questions: spec.questions
+        });
+        setTimeout(function() {
+          try { startQuiz(QUIZZES.length - 1, 'original'); } catch (e) {}
+        }, 0);
+      } catch (e) {}
+    })();
+  </script>
+</body>
+</html>
