@@ -1110,7 +1110,7 @@
     
     // Safe storage: Brave/Chromium can throw SecurityError on localStorage under file://
     const safeStorage = (function(){
-      try { const k='__ls_test__'; window.safeStorage.setItem(k,'1'); window.safeStorage.removeItem(k); return window.localStorage; }
+      try { const k='__ls_test__'; window.localStorage.setItem(k,'1'); window.localStorage.removeItem(k); return window.localStorage; }
       catch(e){ const mem={}; return { getItem:function(k){return k in mem?mem[k]:null;}, setItem:function(k,v){mem[k]=String(v);}, removeItem:function(k){delete mem[k];} }; }
     })();
     // Theme and Language State Management

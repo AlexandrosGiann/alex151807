@@ -95,6 +95,16 @@
   .score-num{font-size:2.4rem;font-weight:800;color:var(--primary);margin:0}
   .score-sub{color:var(--text-muted);margin:6px 0 0;font-size:.92rem}
 
+  .violation{margin-top:12px;padding:12px 15px;border-radius:10px;font-size:.9rem;line-height:1.55;
+        background:rgba(239,68,68,.12);border-left:4px solid var(--danger)}
+  .hist-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .hist-row{display:flex;justify-content:space-between;align-items:center;gap:10px;
+        padding:10px 14px;background:#0b1220;border:1px solid var(--border-color);
+        border-radius:10px;font-size:.87rem}
+  .hist-row .when{color:var(--text-muted)}
+  .hist-row .what{color:var(--text-muted);font-size:.82rem}
+  .hist-row .sc{font-weight:700;color:var(--text-main)}
+  .hist-row.viol{border-color:var(--danger)}
   .hidden{display:none !important}
   .float-btns{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:10px}
   .fbtn{width:44px;height:44px;border-radius:50%;background:var(--card-bg);
@@ -132,6 +142,15 @@
       </div>
     </div>
 
+    <div class="panel" id="historyPanel">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <p class="panel-h" style="margin:0" data-i18n="historyH">Ιστορικό</p>
+        <button class="btn btn-ghost" id="clearHistBtn" style="padding:6px 12px;font-size:.8rem"
+                data-i18n="clearHist">Εκκαθάριση</button>
+      </div>
+      <div class="hist-list" id="histList"></div>
+    </div>
+
     <div class="panel">
       <p class="panel-h" data-i18n="optionsH">Ρυθμίσεις</p>
       <div class="opts">
@@ -149,6 +168,10 @@
         <label class="opt">
           <input type="checkbox" id="timerChk">
           <span data-i18n="timerLabel">Χρονόμετρο</span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" id="antiCheatChk">
+          <span data-i18n="antiCheatLabel">Ανίχνευση εξαπάτησης</span>
         </label>
         <label class="opt" id="timerMinsWrap" style="opacity:.45">
           <input type="number" id="timerMins" value="5" min="1" max="90" disabled>
@@ -195,6 +218,7 @@
     <div class="panel score-box">
       <p class="score-num" id="scoreNum">0%</p>
       <p class="score-sub" id="scoreSub"></p>
+      <div id="violationSlot"></div>
       <div class="row" style="justify-content:center;margin-top:14px">
         <button class="btn" id="againBtn" data-i18n="againBtn">Ξανά</button>
         <button class="btn btn-ghost" id="reviewBtn" data-i18n="reviewBtn">Δες τις απαντήσεις</button>
@@ -285,6 +309,7 @@ const SETS = [
     noteEn:'Which protocol listens on each port?',
     two:true,
     items:[
+      {label:'7', answer:'Echo'},
       {label:'20, 21', answer:'FTP'},
       {label:'22', answer:'SSH'},
       {label:'23', answer:'Telnet'},
@@ -293,22 +318,44 @@ const SETS = [
       {label:'67, 68', answer:'DHCP'},
       {label:'69', answer:'TFTP'},
       {label:'80', answer:'HTTP'},
-      {label:'110', answer:'POP3', alias:['pop']},
+      {label:'110', answer:'POP3', alias:["pop"]},
+      {label:'119', answer:'NNTP'},
       {label:'123', answer:'NTP'},
-      {label:'143', answer:'IMAP4', alias:['imap']},
-      {label:'161', answer:'SNMP'},
+      {label:'137, 138, 139', answer:'NetBIOS'},
+      {label:'143', answer:'IMAP', alias:["imap4"]},
+      {label:'161, 162', answer:'SNMP'},
+      {label:'179', answer:'BGP'},
+      {label:'194', answer:'IRC'},
       {label:'264', answer:'BGMP'},
       {label:'389', answer:'LDAP'},
       {label:'443', answer:'HTTPS'},
       {label:'445', answer:'SMB'},
+      {label:'464', answer:'Kerberos'},
+      {label:'465', answer:'SMTPS'},
+      {label:'500', answer:'ISAKMP/IKE', alias:["isakmp", "ike", "isakmp ike"]},
+      {label:'514', answer:'Syslog'},
+      {label:'515', answer:'LPR'},
+      {label:'548', answer:'AFP'},
+      {label:'631', answer:'IPP'},
       {label:'636', answer:'LDAPS'},
       {label:'989, 990', answer:'FTPS'},
+      {label:'993', answer:'IMAPS'},
+      {label:'995', answer:'POP3S'},
+      {label:'1194', answer:'OpenVPN'},
+      {label:'1433', answer:'MSSQL', alias:["ms sql", "microsoft sql server", "sql server"]},
+      {label:'1521', answer:'Oracle DB', alias:["oracle"]},
       {label:'1701', answer:'L2TP'},
-      {label:'1720', answer:'H.323', alias:['h323']},
+      {label:'1720', answer:'H.323', alias:["h323"]},
       {label:'1723', answer:'PPTP'},
+      {label:'1812, 1813', answer:'RADIUS'},
+      {label:'2049', answer:'NFS'},
       {label:'3306', answer:'MySQL'},
       {label:'3389', answer:'RDP'},
       {label:'5060, 5061', answer:'SIP'},
+      {label:'5432', answer:'PostgreSQL', alias:["postgres"]},
+      {label:'5900', answer:'VNC'},
+      {label:'11434', answer:'Ollama'},
+      {label:'27017', answer:'MongoDB', alias:["mongo"]},
     ]
   },
   {
@@ -645,7 +692,12 @@ const I18N = {
     dragHint:'Σύρε μια λέξη σε ένα κουτί — ή πάτησέ τη και μετά πάτα το κουτί.',
     typeHint:'Γράψε την απάντηση σε κάθε κουτί.',
     remaining:'έμειναν', pickOne:'Διάλεξε τουλάχιστον ένα σύνολο.',
-    scoreSub:'σωστά από', timeUp:'Ο χρόνος τελείωσε!' },
+    scoreSub:'σωστά από', timeUp:'Ο χρόνος τελείωσε!',
+    antiCheatLabel:'Ανίχνευση εξαπάτησης', historyH:'Ιστορικό', clearHist:'Εκκαθάριση',
+    noHistory:'Δεν υπάρχει ιστορικό ακόμη. Ολοκλήρωσε μια εξάσκηση για να εμφανιστεί εδώ.',
+    setsWord:'σύνολα', cheatTitle:'Η εξάσκηση τερματίστηκε',
+    cheatTab:'Άλλαξες καρτέλα ή παράθυρο.', cheatBlur:'Το παράθυρο έχασε την εστίαση.',
+    cheatFs:'Βγήκες από την πλήρη οθόνη.', cheatFlag:'ακυρώθηκε' },
   en:{ navHome:'Home', navQuiz:'Quizzes', navCore:'Hackviser CORE',
     title:'Hackviser CORE — Recap',
     subtitle:'Put each term in the right place. Drag the words or type the answer — a quick memory check across the modules.',
@@ -657,7 +709,12 @@ const I18N = {
     dragHint:'Drag a word onto a box — or tap the word, then tap the box.',
     typeHint:'Type the answer in each box.',
     remaining:'left', pickOne:'Pick at least one set.',
-    scoreSub:'correct out of', timeUp:'Time is up!' },
+    scoreSub:'correct out of', timeUp:'Time is up!',
+    antiCheatLabel:'Cheating detection', historyH:'History', clearHist:'Clear',
+    noHistory:'No history yet. Finish a practice run to see it here.',
+    setsWord:'sets', cheatTitle:'Practice ended',
+    cheatTab:'You switched tab or window.', cheatBlur:'The window lost focus.',
+    cheatFs:'You left full screen.', cheatFlag:'voided' },
 };
 // Brave/Chromium can throw a SecurityError on localStorage under file://
 let lang = 'el';
@@ -670,6 +727,7 @@ let mode = 'drag';
 let slots = [];          // {setId,label,answer,alias,placed,el}
 let selectedWord = null; // DOM node
 let timerId = null, secsLeft = 0;
+let acEnabled=false, acActive=false, acReason=null, runStartedAt=0;
 
 /* =====================  HELPERS  ===================== */
 const $ = id => document.getElementById(id);
@@ -840,8 +898,74 @@ function paintTimer(){
 }
 function stopTimer(){ if(timerId){clearInterval(timerId);timerId=null;} $('timerBox').classList.add('hidden'); }
 
+/* =====================  ANTI-CHEAT  ===================== */
+function acOnVisibility(){ if(document.hidden) acViolate('tab'); }
+function acOnBlur(){ acViolate('blur'); }
+function acOnFs(){ if(!document.fullscreenElement) acViolate('fs'); }
+function startAntiCheat(){
+  if(!acEnabled || acActive) return;
+  acActive=true; acReason=null;
+  document.addEventListener('visibilitychange', acOnVisibility);
+  window.addEventListener('blur', acOnBlur);
+  document.addEventListener('fullscreenchange', acOnFs);
+  if(document.documentElement.requestFullscreen){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }
+}
+function stopAntiCheat(){
+  if(!acActive) return;
+  acActive=false;
+  document.removeEventListener('visibilitychange', acOnVisibility);
+  window.removeEventListener('blur', acOnBlur);
+  document.removeEventListener('fullscreenchange', acOnFs);
+  if(document.fullscreenElement && document.exitFullscreen){ document.exitFullscreen().catch(()=>{}); }
+}
+function acViolate(reason){
+  if(!acActive) return;
+  acReason = reason;
+  checkAll(false, true);
+}
+function acReasonText(){
+  return acReason==='tab' ? t('cheatTab') : acReason==='blur' ? t('cheatBlur') : t('cheatFs');
+}
+
+/* =====================  HISTORY  ===================== */
+const RECAP_HISTORY_KEY = 'recapHistory';
+function safeGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function safeSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function loadHistory(){
+  try{ return JSON.parse(safeGet(RECAP_HISTORY_KEY) || '[]'); }catch(e){ return []; }
+}
+function recordRun(entry){
+  const arr = loadHistory();
+  arr.push(entry);
+  while(arr.length > 50) arr.shift();          // keep the last 50 runs
+  safeSet(RECAP_HISTORY_KEY, JSON.stringify(arr));
+  renderHistory();
+}
+function renderHistory(){
+  const list = document.getElementById('histList');
+  if(!list) return;
+  const arr = loadHistory().slice().sort((a,b)=>b.ts-a.ts);
+  if(!arr.length){
+    list.innerHTML = '<div style="color:var(--text-muted);font-size:.88rem">'+t('noHistory')+'</div>';
+    return;
+  }
+  const locale = lang==='el' ? 'el-GR' : 'en-US';
+  list.innerHTML = arr.map(e=>{
+    const when = new Date(e.ts).toLocaleString(locale);
+    const mode = e.mode==='type' ? t('modeType') : t('modeDrag');
+    const viol = e.violated ? ' viol' : '';
+    const flag = e.violated ? ' · '+t('cheatFlag') : '';
+    return '<div class="hist-row'+viol+'">'+
+      '<span><span class="when">'+when+'</span>'+
+      '<br><span class="what">'+e.setCount+' '+t('setsWord')+' · '+mode+flag+'</span></span>'+
+      '<span class="sc">'+e.correct+'/'+e.total+' · '+e.percent+'%</span></div>';
+  }).join('');
+}
+
 /* =====================  CHECK  ===================== */
-function checkAll(auto){
+function checkAll(auto, violated){
   let ok=0;
   slots.forEach(rec=>{
     const val = mode==='type' ? (rec.input?rec.input.value:'') : (rec.placed||'');
@@ -856,9 +980,20 @@ function checkAll(auto){
     if(good) ok++;
   });
   stopTimer();
+  stopAntiCheat();
   const pct = slots.length ? Math.round(ok/slots.length*100) : 0;
   $('scoreNum').textContent = pct+'%';
   $('scoreSub').textContent = (auto? t('timeUp')+' ' : '') + ok+' '+t('scoreSub')+' '+slots.length;
+
+  const vs = $('violationSlot');
+  if (vs) {
+    vs.innerHTML = violated
+      ? '<div class="violation"><b>'+t('cheatTitle')+'</b><br>'+acReasonText()+'</div>'
+      : '';
+  }
+  recordRun({ ts: Date.now(), correct: ok, total: slots.length, percent: pct,
+              setCount: picked.size, mode: mode, violated: !!violated });
+
   $('resultView').classList.remove('hidden');
   $('resultView').scrollIntoView({behavior:'smooth',block:'center'});
 }
@@ -884,6 +1019,10 @@ $('startBtn').addEventListener('click',()=>{
   $('playView').classList.remove('hidden');
   $('resultView').classList.add('hidden');
   stopTimer();
+  acEnabled = $('antiCheatChk').checked;
+  acReason = null;
+  runStartedAt = Date.now();
+  if(acEnabled) startAntiCheat();
   if($('timerChk').checked){
     const m=Math.max(1,Math.min(90,parseInt($('timerMins').value)||5));
     startTimer(m);
@@ -900,7 +1039,7 @@ $('retryBtn').addEventListener('click',()=>{
   $('resultView').classList.add('hidden');
 });
 $('backBtn').addEventListener('click',()=>{
-  stopTimer();
+  stopTimer(); stopAntiCheat();
   $('playView').classList.add('hidden');
   $('resultView').classList.add('hidden');
   $('setupView').classList.remove('hidden');
@@ -918,12 +1057,19 @@ $('langBtn').addEventListener('click',()=>{
   lang = lang==='el'?'en':'el';
   try{ localStorage.setItem('lang',lang); }catch(e){}
   applyI18n();
+  renderHistory();
   if(!$('playView').classList.contains('hidden')) buildBoard();
+});
+
+$('clearHistBtn').addEventListener('click',()=>{
+  try{ localStorage.removeItem(RECAP_HISTORY_KEY); }catch(e){}
+  renderHistory();
 });
 
 applyI18n();
 buildChips();
 updateSummary();
+renderHistory();
 </script>
 </body>
 </html>
